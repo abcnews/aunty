@@ -10,13 +10,13 @@ Install the package globally:
 npm install -g abcnews/aunty-cli
 ```
 
-Add an `aunty` property to your `package.json` file:
+Add an `aunty` property to your `package.json` file (you'll extend this later):
 
 ```json
 "aunty": {...}
 ```
 
-Run tasks in your terminal from the root of your project (you'll extend this later):
+Run tasks in your terminal from the root of your project:
 
 ```bash
 aunty {deploy|release|etc.}
