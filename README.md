@@ -16,7 +16,7 @@ Add an `aunty` property to your `package.json` file (you'll extend this later):
 "aunty": {...}
 ```
 
-Run tasks in your terminal from the root of your project:
+Run tasks from the root of your project:
 
 ```bash
 aunty {deploy|release|etc.}
