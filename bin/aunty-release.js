@@ -7,6 +7,7 @@ const {resolve} = require('path');
 const minimist = require('minimist');
 
 // Ours
+const {getConfig} = require('../lib/config');
 const {abort} = require('../lib/error');
 const {createTag, getCurrentTags, getRemotes,
   hasChanges, hasTag, pushTag} = require('../lib/git');
@@ -14,6 +15,7 @@ const {getPackage} = require('../lib/package');
 const {bad, cmd, hvy, opt, sec} = require('../lib/text');
 
 const version = getPackage('version');
+getConfig('deploy'); // Quickly config exists for deployment
 
 const argv = minimist(process.argv.slice(2), {
   boolean: [
