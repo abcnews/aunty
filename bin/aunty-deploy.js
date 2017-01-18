@@ -1,25 +1,23 @@
 #!/usr/bin/env node
 
 // Native
-const {join, resolve} = require('path');
-const exec = require('child_process').exec;
+const {exec} = require('child_process');
+const {join} = require('path');
 
 // Packages
-const chalk = require('chalk');
 const minimist = require('minimist');
 
 // Ours
-const {abort} = require('../lib/error');
+const {getConfig} = require('../lib/config');
 const {getCredentials} = require('../lib/credentials');
-const {getCurrentBranch} = require('../lib/git');
 const {ftp, rsync, symlink} = require('../lib/deploy');
+const {abort} = require('../lib/error');
+const {getCurrentBranch} = require('../lib/git');
+const {getPackage} = require('../lib/package');
+const {bad, cmd, hvy, opt, req, sec} = require('../lib/text');
 
-const name = require(resolve('package')).name;
-const config = require(resolve('package')).aunty.deploy;
-
-if (typeof config !== 'object') {
-  abort(`This project has no ${chalk.dim('aunty.deploy')} property in its ${chalk.dim('package.json')} file.`);
-}
+const name = getPackage('name');
+const config = getConfig('deploy');
 
 const EXPECTED_PROPERTIES = ['from', 'to', 'type', 'username', 'password', 'host'];
 const RECOGNISED_TYPES = ['ftp', 'ssh'];
@@ -29,65 +27,79 @@ const TARGET_DEFAULTS = {
 };
 const ERRORS = {
   NO_TARGETS: 'There are no targets to deploy to.',
-  TARGET_DOESNT_EXIST: targetName => `The target ${chalk.red(targetName)} doesn\'t exist in the project configuration`,
-  TARGET_NOT_CONFIGURED: (targetName, prop) => `The target ${chalk.red(targetName)} in your configuration is incomplete or has incomplete credentials. Missing: ${chalk.red(prop)}`,
-  UNRECOGNISED_TYPE: (targetName, type) => `The target ${chalk.red(targetName)} has an unrecognised deployment type: ${chalk.red(type)}. Acceptable types are: ${RECOGNISED_TYPES.join(', ')}`
+  TARGET_DOESNT_EXIST: targetName => `The target ${bad(targetName)} doesn\'t exist in the project configuration`,
+  TARGET_NOT_CONFIGURED: (targetName, prop) => `The target ${bad(targetName)} in your configuration is incomplete or has incomplete credentials. Missing: ${bad(prop)}`,
+  UNRECOGNISED_TYPE: (targetName, type) => `The target ${bad(targetName)} has an unrecognised deployment type: ${bad(type)}. Acceptable types are: ${RECOGNISED_TYPES.join(', ')}`
 };
 
 const argv = minimist(process.argv.slice(2), {
-  string: ['credentials', 'id', 'target'],
-  boolean: ['force', 'help'],
+  string: [
+    'credentials',
+    'id',
+    'target'
+  ],
+  boolean: [
+    'force',
+    'help'
+  ],
   alias: {
     credentials: 'c',
-    id: 'i',
-    target: 't',
     force: 'f',
-    help: 'h'
+    help: 'h',
+    id: 'i',
+    target: 't'
   },
   default: {
-    credentials: join((process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE), '.abc-credentials')
+    credentials: join(
+      (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE),
+      '.abc-credentials'
+    )
   }
 });
 
 const help = () => {
   console.log(`
-  ${chalk.bold('aunty deploy')} [options]
+Usage: ${cmd('aunty deploy')} ${opt('[options]')}
 
-  ${chalk.dim('Options:')}
-    -c ${chalk.bold.underline('FILE')}, --credentials=${chalk.bold.underline('FILE')}   Local file where target's config/credentials are held      ${chalk.dim('["~/.abc-credentials"]')}
-    -i ${chalk.bold.underline('ID')}, --id=${chalk.bold.underline('ID')}                Id for this deployment (can be used in destination path)   ${chalk.dim('[\`git branch\`]')}
-    -t ${chalk.bold.underline('TARGET')}, --target=${chalk.bold.underline('TARGET')}    Specific target to deploy to                               ${chalk.dim('[]')}
-    -f, --force                   Ignore all warnings and deploy anyway                      ${chalk.dim('[false]')}
-    -h, --help                    Output usage information and exit                          ${chalk.dim('[false]')}
+${sec('Options')}
 
-  Deployment details should be configured by adding ${chalk.dim('aunty:deploy:{target}')} to your ${chalk.dim('package.json')}:
+  ${opt('-c FILE')},  ${opt('--credentials=FILE')}  Local file where target config/credentials are held ${opt('[default: "~/.abc-credentials"]')}
+  ${opt('-i ID')},     ${opt('--id=ID')}            Id for this deployment (can be used in destination path) ${opt('[default: \`git branch\`]')}
+  ${opt('-t TARGET')}, ${opt('--target=TARGET')}    Specific target to deploy to ${opt('[default: ----]')}
+  ${opt('-f')}, ${opt('--force')}                   Ignore all warnings and deploy anyway ${opt('[default: false]')}
+  ${opt('-h')}, ${opt('--help')}                    Display this help message and exit
 
-    ${chalk.yellow(`"aunty": {
-      "deploy": {
-        "{target}": {
-          "files": "**",
-          "from": "build",
-          "to": "/www/res/sites/news-projects/<name>/<id>"
-        }
+${sec(`Example ${hvy('package.json')} config`)}:
+
+  ${req(`"aunty": {
+    "deploy": {
+      "{target}": {
+        "files": "**",
+        "from": "build",
+        "to": "/www/res/sites/news-projects/${opt('<name>')}/${opt('<id>')}"
       }
-    }`)}`);
-  console.log(`
+    }
+  }`)}
 
-  ${chalk.gray('–')} If no ${chalk.dim('target')} option is specified, all targets found in ${chalk.dim('package.json')} will be deployed to.
-  ${chalk.gray('–')} The ${chalk.dim('files')} property is optional and will default to ${chalk.dim('"**"')} (all files).
-  ${chalk.gray('–')} The ${chalk.dim('<name>')} placeholder will be replaced with the value of the ${chalk.dim('name')} property in ${chalk.dim('package.json')}.
-  ${chalk.gray('–')} The ${chalk.dim('<id>')} placeholder will be replaced with the ${chalk.dim('id')} setting.
+  • If no ${opt('--target')} is specified, all targets found in ${hvy('package.json')} will be deployed to.
+  • The ${opt('--files')} property is optional and will default to ${opt('"**"')} (all files).
+  • The ${opt('<name>')} placeholder will be replaced with the ${opt('name')} property in ${hvy('package.json')}.
+  • The ${opt('<id>')} placeholder will be replaced with the ${opt('--id')} setting.
 
-  ${chalk.dim('Examples:')}
-  ${chalk.gray('–')} Deploy the project to all targets configured in your ${chalk.dim('package.json')}
-    ${chalk.cyan('$ aunty deploy')}
-  ${chalk.gray('–')} Deploy the project only to the ${chalk.dim('contentftp')} target
-    ${chalk.cyan('$ aunty deploy --target="contentftp"')}
-  ${chalk.gray('–')} Deploy the project specifying where credentials are held
-    ${chalk.cyan('$ aunty deploy --credentials=".local-abc-credentials"')}
-  ${chalk.gray('–')} Deploy the project to a specific remote sub-directory
-    ${chalk.cyan('$ aunty deploy --id="testing-feature-xyz"')}
-`)
+${sec('Examples')}
+
+  ${cmd('aunty deploy')}
+    Deploy the project to all targets configured in your ${hvy('package.json')}.
+
+  ${cmd('aunty deploy')} ${opt('--target="contentftp"')}
+    Deploy the project only to the ${opt('contentftp')} target.
+
+  ${cmd('aunty deploy')} ${opt('--credentials=".local-abc-credentials"')}
+    Deploy the project, specifying where credentials are held.
+
+  ${cmd('aunty deploy')} ${opt('--id="testing-feature-xyz"')}
+    Deploy the project to a remote sub-directory (assuming ${opt('<id>')} is in config).
+  `);
 };
 
 if (argv.help) {
@@ -159,7 +171,7 @@ async function deploy () {
   });
 
   targets.forEach(target => {
-    console.log(`Deploying from ${chalk.blue(target.from)} to ${chalk.blue(target.to)} on ${chalk.blue(target.__key__)} (${chalk.blue(target.host)})`);
+    console.log(`Deploying from ${hvy(target.from)} to ${hvy(target.to)} on ${hvy(target.host)}`);
 
     if (RECOGNISED_TYPES.indexOf(target.type) === -1) {
       abort(ERRORS.UNRECOGNISED_TYPE(target.__key__, target.type));

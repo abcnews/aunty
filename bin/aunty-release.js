@@ -4,45 +4,56 @@
 const {resolve} = require('path');
 
 // Packages
-const chalk = require('chalk');
 const minimist = require('minimist');
 
 // Ours
 const {abort} = require('../lib/error');
-const {hasChanges, getCurrentTags, hasTag, createTag, pushTag} = require('../lib/git');
+const {createTag, getCurrentTags, getRemotes,
+  hasChanges, hasTag, pushTag} = require('../lib/git');
+const {getPackage} = require('../lib/package');
+const {bad, cmd, hvy, opt, sec} = require('../lib/text');
 
-const {version} = require(resolve('package'));
+const version = getPackage('version');
 
 const argv = minimist(process.argv.slice(2), {
-  boolean: ['skip-tag', 'force', 'help'],
+  boolean: [
+    'skip-tagging',
+    'force',
+    'help'
+  ],
   alias: {
-    'skip-tag': 's',
+    'skip-tagging': 's',
     force: 'f',
     help: 'h'
   }
 });
 
 const ERRORS = {
-  DIRTY: `You shouldn't release builds which may contain un-committed changes! Use the ${chalk.dim('--force')} option to release anyway.`,
-  UNTAGGED: `You can't skip tagging because the tag ${chalk.red(version)} doesn't exist!`,
-  TAG_ELSEWHERE: `You can't skip tagging because the tag ${chalk.red(version)} exists, but your current HEAD doesn't point to it!`,
-  TAG_EXISTS: `The tag ${chalk.red(version)} already exists! Try skipping tagging with the ${chalk.dim('--skip-tag')} option.`
+  DIRTY: `You shouldn't release builds which may contain un-committed changes! Use the ${opt('--force')} option to release anyway.`,
+  UNTAGGED: `You can't skip tagging because the tag ${bad(version)} doesn't exist!`,
+  TAG_ELSEWHERE: `You can't skip tagging because the tag ${bad(version)} exists, but your current HEAD doesn't point to it!`,
+  TAG_EXISTS: `The tag ${bad(version)} already exists! Try skipping tagging with the ${opt('--skip-tagging')} option.`
 };
 
 const help = () => {
   console.log(`
-  ${chalk.bold('aunty release')} [options] [options for ${chalk.dim('aunty deploy')}]
+Usage: ${cmd('aunty release')} ${opt('[options]')} ${opt('[deploy_options]')}
 
-  ${chalk.dim('Options:')}
-    -s, --skip-tag   Skip tag creation and pass existing tag as ${chalk.dim('name')} option to ${chalk.dim('aunty deploy')}   ${chalk.dim('[false]')}
-    -f, --force      Ignore all warnings and release anyway                                   ${chalk.dim('[false]')}
-    -h, --help       Output usage information and exit                                        ${chalk.dim('[false]')}
+${sec('Options')}
 
-  ${chalk.dim('Examples:')}
-  ${chalk.gray('–')} Tag a new release (using ${chalk.dim('package.json:version')}), then deploy it
-    ${chalk.cyan('$ aunty release')}
-  ${chalk.gray('–')} Deploy an existing release tag we expect to find on the current HEAD
-    ${chalk.cyan('$ aunty release --skip-tag')}
+  ${opt('-s')}, ${opt('--skip-tagging')}  Skip tag creation and using the existing tag ${opt('[default: false]')}
+  ${opt('-f')}, ${opt('--force')}         Ignore all warnings and release anyway ${opt('[default: false]')}
+  ${opt('-h')}, ${opt('--help')}          Display this help message and exit
+
+${sec('Examples')}
+
+  ${cmd('aunty release')}
+    Tag a release with ${hvy('git')} (using ${hvy('package.json:version')}), then deploy it,
+    passing the tag as the ${opt('--id')} option to ${cmd('aunty deploy')}
+
+  ${cmd(`aunty release ${opt('--skip-tagging')}`)}
+    Expect the version's tag to exist on the current ${hvy('git')} working copy,
+    then deploy it, passing the tag as the ${opt('--id')} option to ${cmd('aunty deploy')}
 `);
 };
 
@@ -79,7 +90,7 @@ async function release () {
     abort(err.message);
   }
 
-  if (argv['skip-tag']) {
+  if (argv['skip-tagging']) {
     if (!isCurrentVersionTagged) {
       abort(ERRORS.UNTAGGED);
     } else if (!isTagOnHead) {
@@ -92,10 +103,16 @@ async function release () {
 
     try {
       await createTag(version);
-      console.log(`Created tag ${chalk.blue(version)}`);
+      console.log(`Created tag ${hvy(version)}`);
 
-      await pushTag(version);
-      console.log(`Pushed tag ${chalk.blue(version)} to remote`);
+      const remotes = await getRemotes();
+
+      if (remotes.length) {
+        remotes.forEach(async function (remote) {
+          await pushTag(remote, version);
+          console.log(`Pushed tag ${hvy(version)} to remote ${hvy(remote)}`);
+        });
+      }
     } catch (err) {
       abort(err.message);
     }

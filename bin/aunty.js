@@ -4,95 +4,117 @@
 const {resolve} = require('path');
 
 // Packages
-const chalk = require('chalk');
+const minimist = require('minimist');
 const nodeVersion = require('node-version');
 
 // Ours
-const {error, abort} = require('../lib/error');
-
-let config;
-
-try {
-  config = require(resolve('package')).aunty;
-} catch (err) {
-  abort(`Aunty should be run in the root directory of a project with a valid ${chalk.dim('package.json')} file.`);
-}
-
-if (typeof config !== 'object') {
-  abort(`This project has no ${chalk.dim('aunty')} property in its ${chalk.dim('package.json')} file.`);
-}
+const pkg = require('../package');
+const {abort, error} = require('../lib/error');
+const {abc, cmd, hvy, opt, req, sec} = require('../lib/text');
 
 // Support for keywords "async" and "await"
 require('async-to-gen/register')({excludes: null});
 
 // Throw an error if node version is too low
 if (nodeVersion.major < 6) {
-  abort('Aunty requires at least version 6 of Node');
+  abort(`${hvy('aunty')} requires at least version 6 of Node`);
 }
 
-const usage = () => {
+const argv = minimist(process.argv.slice(2), {
+  boolean: [
+    'help',
+    'version'
+  ],
+  alias: {
+    help: 'h',
+    version: 'v'
+  }
+});
+
+const COMMANDS = [
+  'config',
+  'deploy',
+  'help',
+  'release',
+  'c',
+  'd',
+  'r',
+];
+
+const COMMANDS_ALIASES = {
+  c: 'config',
+  d: 'deploy',
+  r: 'release'
+};
+
+if (argv.version) {
+  console.log(`${hvy('aunty')} v${pkg.version}`);
+  process.exit(0);
+}
+
+const help = () => {
   console.log(`
-  ${chalk.bold('aunty')} <command> [options]
+   ${cmd(' @@@@@   @@@@@@   @@@@@ ')}                                  @@@
+   ${cmd('@@@@@@@ @@@@@@@@ @@@@@@@')}                                  @@@
+   ${cmd('@@@ @@@@ @@  @@@@ @@ @@@')}     @@@@@.   @@@  @@@  @@@@@@.   @@@@@@  @@@  @@@
+   ${cmd('@@@  @@@@     @@@@ @ @@@')}        '@@@  @@@  @@@  @@@ '@@@  @@@     @@@  @@@
+   ${cmd('@@@  @@@@@    @@@@@  @@@')}    .@@@@@@@  @@@  @@@  @@@  @@@  @@@     @@@  @@@
+   ${cmd('@@@   @@@@     @@@@  @@@')}    @@@  @@@  @@@. @@@  @@@  @@@  @@@@    @@@. @@@
+   ${cmd('@@@ @@ @@@@  @@ @@@@ @@@')}    '@@@@@@@   '@@@@@@  @@@  @@@   '@@@@   '@@@@@@
+   ${cmd('@@@@@@@ @@@@@@@@ @@@@@@@')}                                               @@@
+   ${cmd(' @@@@@   @@@@@@   @@@@@ ')}                                           '@@@@'
 
-  ${chalk.dim('Commands:')}
-    deploy        Deploy the project in the current directory
-    release       Tag a new release (using ${chalk.dim('package.json:version')}), then deploy it
-    help [cmd]    Display complete help for [cmd]
+Usage: ${cmd('aunty')} ${req('<command>')} ${opt('[options]')} ${opt('[command_options]')}
 
-  ${chalk.dim('Examples:')}
-  ${chalk.gray('–')} Deploy the project in the current directory
-    ${chalk.cyan('$ aunty deploy')}
-  ${chalk.gray('–')} Display comprehensive help for the subcommand ${chalk.dim('`release`')}
-    ${chalk.cyan('$ aunty help release')}
+${sec('Options')}
+
+  ${opt('-h')}, ${opt('--help')}     Display this help message and exit
+  ${opt('-v')}, ${opt('--version')}  Print ${hvy('aunty')}'s version
+
+${sec('Commands')}
+
+  ${cmd('aunty config')}
+    Output the current project's known configuration.
+
+  ${cmd('aunty deploy')}
+    Deploy the project in the current directory.
+
+  ${cmd('aunty release')}
+    Tag and deploy the project in the current directory.
+
+  ${cmd('aunty help')} ${req('<command>')}
+    Display complete help for ${req('command')}.
   `);
 
   process.exit(0);
 }
 
-const commands = new Set([
-  'deploy',
-  'release',
-  'config',
-  'help',
-  'd',
-  'r',
-  'c'
-]);
-
-const aliases = new Map([
-  ['d', 'deploy'],
-  ['r', 'release'],
-  ['c', 'config']
-]);
-
-let cmd;
-const args = process.argv.slice(2);
-const index = args.findIndex(a => commands.has(a));
-
-if (index < 0) {
-  usage();
+if (argv._.length === 0 || argv._.length === 1 && argv._[0] === 'help') {
+  help();
 }
 
-cmd = args[index];
-args.splice(index, 1);
+let command = argv._[0];
+let isHelpOnly;
 
-if (cmd === 'help') {
-  if (index < args.length && commands.has(args[index])) {
-    cmd = args[index];
-    args.splice(index, 1);
-    args.unshift('--help');
-  } else {
-    error('Unrecognised command. No help avaialble.');
-    usage();
-  }
+if (command === 'help') {
+  isHelpOnly = true;
+  command = argv._[1];
 }
 
-cmd = aliases.get(cmd) || cmd;
+if (COMMANDS.indexOf(command) < 0) {
+  help();
+}
 
-const bin = resolve(__dirname, 'aunty-' + cmd + '.js');
+command = COMMANDS_ALIASES[command] || command;
 
-// Prepare process.argv for subcommand
-process.argv = process.argv.slice(0, 2).concat(args);
+const bin = resolve(__dirname, 'aunty-' + command + '.js');
+const binArgv = process.argv.slice(0, 2);
+
+if (isHelpOnly) {
+  process.argv = process.argv.slice(0, 2).concat('--help');
+} else {
+  process.argv = process.argv.slice(0, 2).concat(process.argv.slice(3));
+}
 
 // Load sub command
 require(bin, 'may-exclude');

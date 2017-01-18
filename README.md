@@ -1,6 +1,18 @@
+```
+ @@@@@   @@@@@@   @@@@@                                   @@@
+@@@@@@@ @@@@@@@@ @@@@@@@                                  @@@
+@@@ @@@@ @@  @@@@ @@ @@@     @@@@@.   @@@  @@@  @@@@@@.   @@@@@@  @@@  @@@
+@@@  @@@@     @@@@ @ @@@        '@@@  @@@  @@@  @@@ '@@@  @@@     @@@  @@@
+@@@  @@@@@    @@@@@  @@@    .@@@@@@@  @@@  @@@  @@@  @@@  @@@     @@@  @@@
+@@@   @@@@     @@@@  @@@    @@@  @@@  @@@. @@@  @@@  @@@  @@@@    @@@. @@@
+@@@ @@ @@@@  @@ @@@@ @@@    '@@@@@@@   '@@@@@@  @@@  @@@   '@@@@   '@@@@@@
+@@@@@@@ @@@@@@@@ @@@@@@@                                               @@@
+ @@@@@   @@@@@@   @@@@@                                            '@@@@'
+```
+
 # aunty CLI
 
-Common tasks for working internally with ABC News projects
+Common tasks for working with ABC News projects
 
 ## Usage
 
@@ -10,10 +22,10 @@ Install the package globally:
 npm install -g abcnews/aunty-cli
 ```
 
-Add an `aunty` property to your `package.json` file (you'll extend this later):
+For some commands, you'll need to add an `aunty` property to your `package.json` file (you'll extend this later):
 
 ```json
-"aunty": {...}
+"aunty": {…}
 ```
 
 Run tasks from the root of your project:
@@ -26,6 +38,28 @@ For usage instructions, run `aunty` with no arguments, or for specific commands,
 
 ```bash
 aunty help <command>
+```
+
+## Developing
+
+To contribute to the development of **aunty**, clone the project:
+
+```bash
+git clone git@github.com:abcnews/aunty-cli.git
+```
+
+...then, from the project directory, run:
+
+```bash
+npm link
+```
+
+Now the globally-available `aunty` command runs from your clone.
+
+To revert to your original global install, run:
+
+```bash
+npm unlink
 ```
 
 ## Authors
