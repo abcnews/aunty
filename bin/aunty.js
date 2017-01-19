@@ -38,7 +38,7 @@ const COMMANDS = [
   'release',
   'c',
   'd',
-  'r',
+  'r'
 ];
 
 const COMMANDS_ALIASES = {
