@@ -1,4 +1,4 @@
-![The aunty CLI logo](assets/logo.svg)
+![The aunty CLI logo](./assets/logo.svg)
 
 # aunty CLI
 
