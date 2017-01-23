@@ -4,7 +4,6 @@
   "description": "The aunty command line interface",
   "license": "UNLICENSED",
   "private": true,
-  "preferGlobal": true,
   "repository": "abcnews/aunty-cli",
   "contributors": [
     "Colin Gourlay <gourlay.colin@abc.net.au>"
