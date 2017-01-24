@@ -8,7 +8,7 @@ const minimist = require('minimist');
 const nodeVersion = require('node-version');
 
 // Ours
-const pkg = require('../package');
+const pkg = require('../../package');
 const {abort, error} = require('../lib/error');
 const {abc, cmd, hvy, opt, req, sec} = require('../lib/text');
 
@@ -107,7 +107,7 @@ if (COMMANDS.indexOf(command) < 0) {
 
 command = COMMANDS_ALIASES[command] || command;
 
-const bin = resolve(__dirname, 'aunty-' + command + '.js');
+const bin = resolve(__dirname, '../commands/' + command + '.js');
 const binArgv = process.argv.slice(0, 2);
 
 if (isHelpOnly) {

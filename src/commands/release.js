@@ -65,7 +65,7 @@ if (argv.help) {
 }
 
 const deploy = () => {
-  const bin = resolve(__dirname, 'aunty-deploy.js');
+  const bin = resolve(__dirname, 'deploy.js');
 
   process.argv = process.argv.concat(['--id', version]);
 

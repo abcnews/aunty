@@ -1,4 +1,4 @@
-// Packages
+// Ours
 const {bad} = require('./text');
 
 function error (message) {

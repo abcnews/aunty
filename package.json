@@ -9,7 +9,7 @@
     "Colin Gourlay <gourlay.colin@abc.net.au>"
   ],
   "bin": {
-    "aunty": "bin/aunty.js"
+    "aunty": "src/bin/aunty.js"
   },
   "scripts": {},
   "engines": {
