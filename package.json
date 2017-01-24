@@ -13,7 +13,7 @@
   },
   "scripts": {
     "build-lib": "rm -rf lib/* && babel src --out-dir lib --presets=es2017",
-    "postinstall": "npm run build-lib",
+    "install": "npm run build-lib",
     "start": "chokidar 'src' --command 'npm run build-lib' --initial --silent"
   },
   "engines": {
