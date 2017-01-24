@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 // Native
 const {resolve} = require('path');
 
@@ -8,9 +6,9 @@ const minimist = require('minimist');
 const nodeVersion = require('node-version');
 
 // Ours
-const pkg = require('../../package');
-const {abort, error} = require('../error');
-const {abc, cmd, hvy, opt, req, sec} = require('../text');
+const pkg = require('../package');
+const {abort, error} = require('./error');
+const {abc, cmd, hvy, opt, req, sec} = require('./text');
 
 // Throw an error if node version is too low
 if (nodeVersion.major < 6) {
@@ -104,7 +102,7 @@ if (COMMANDS.indexOf(command) < 0) {
 
 command = COMMANDS_ALIASES[command] || command;
 
-const bin = resolve(__dirname, '../commands/' + command + '.js');
+const bin = resolve(__dirname, './commands/' + command + '.js');
 const binArgv = process.argv.slice(0, 2);
 
 if (isHelpOnly) {
