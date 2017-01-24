@@ -4,8 +4,8 @@
 const minimist = require('minimist');
 
 // Ours
-const {getConfig} = require('../lib/config');
-const {cmd, hvy, opt, req, sec} = require('../lib/text');
+const {getConfig} = require('../config');
+const {cmd, hvy, opt, req, sec} = require('../text');
 
 const argv = minimist(process.argv.slice(2), {
   boolean: [

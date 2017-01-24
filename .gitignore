@@ -1,6 +1,9 @@
 # dependencies
 node_modules
 
+# builds
+lib
+
 # logs
 npm-debug.log
 

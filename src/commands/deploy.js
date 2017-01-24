@@ -8,13 +8,13 @@ const {join} = require('path');
 const minimist = require('minimist');
 
 // Ours
-const {getConfig} = require('../lib/config');
-const {getCredentials} = require('../lib/credentials');
-const {ftp, rsync, symlink} = require('../lib/deploy');
-const {abort} = require('../lib/error');
-const {getCurrentBranch} = require('../lib/git');
-const {getPackage} = require('../lib/package');
-const {bad, cmd, hvy, opt, req, sec} = require('../lib/text');
+const {getConfig} = require('../config');
+const {getCredentials} = require('../credentials');
+const {ftp, rsync, symlink} = require('../deploy');
+const {abort} = require('../error');
+const {getCurrentBranch} = require('../git');
+const {getPackage} = require('../package');
+const {bad, cmd, hvy, opt, req, sec} = require('../text');
 
 const name = getPackage('name');
 const config = getConfig('deploy');

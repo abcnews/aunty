@@ -9,11 +9,8 @@ const nodeVersion = require('node-version');
 
 // Ours
 const pkg = require('../../package');
-const {abort, error} = require('../lib/error');
-const {abc, cmd, hvy, opt, req, sec} = require('../lib/text');
-
-// Support for keywords "async" and "await"
-require('async-to-gen/register')({excludes: null});
+const {abort, error} = require('../error');
+const {abc, cmd, hvy, opt, req, sec} = require('../text');
 
 // Throw an error if node version is too low
 if (nodeVersion.major < 6) {
