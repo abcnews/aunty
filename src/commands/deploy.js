@@ -63,11 +63,11 @@ Usage: ${cmd('aunty deploy')} ${opt('[options]')}
 
 ${sec('Options')}
 
-  ${opt('-c FILE')},  ${opt('--credentials=FILE')}  Local file where target config/credentials are held ${opt('[default: "~/.abc-credentials"]')}
-  ${opt('-i ID')},     ${opt('--id=ID')}            Id for this deployment (can be used in destination path) ${opt('[default: \`git branch\`]')}
-  ${opt('-t TARGET')}, ${opt('--target=TARGET')}    Specific target to deploy to ${opt('[default: ----]')}
-  ${opt('-f')}, ${opt('--force')}                   Ignore all warnings and deploy anyway ${opt('[default: false]')}
-  ${opt('-h')}, ${opt('--help')}                    Display this help message and exit
+  ${opt('-c FILE')}, ${opt('--credentials=FILE')}  File where target credentials/config is held ${opt('[default: "~/.abc-credentials"]')}
+  ${opt('-i ID')}, ${opt('--id=ID')}               Id for this deployment (can be used in destination path) ${opt('[default: \`git branch\`]')}
+  ${opt('-t TARGET')}, ${opt('--target=TARGET')}   Target to deploy to ${opt('[default: ----]')}
+  ${opt('-f')}, ${opt('--force')}                  Ignore all warnings and deploy anyway ${opt('[default: false]')}
+  ${opt('-h')}, ${opt('--help')}                   Display this help message and exit
 
 ${sec(`Example ${hvy('package.json')} config`)}:
 
@@ -81,7 +81,7 @@ ${sec(`Example ${hvy('package.json')} config`)}:
     }
   }`)}
 
-  • If no ${opt('--target')} is specified, all targets found in ${hvy('package.json')} will be deployed to.
+  • If no ${opt('--target')} is specified, all targets found in the config will be deployed to.
   • The ${opt('--files')} property is optional and will default to ${opt('"**"')} (all files).
   • The ${opt('<name>')} placeholder will be replaced with the ${opt('name')} property in ${hvy('package.json')}.
   • The ${opt('<id>')} placeholder will be replaced with the ${opt('--id')} setting.
@@ -89,7 +89,7 @@ ${sec(`Example ${hvy('package.json')} config`)}:
 ${sec('Examples')}
 
   ${cmd('aunty deploy')}
-    Deploy the project to all targets configured in your ${hvy('package.json')}.
+    Deploy the project to all targets configured in your config.
 
   ${cmd('aunty deploy')} ${opt('--target="contentftp"')}
     Deploy the project only to the ${opt('contentftp')} target.
