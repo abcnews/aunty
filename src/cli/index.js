@@ -61,7 +61,6 @@ const COMMANDS_ALIASES = {
 };
 
 const help = code => {
-  console.log(getLogo());
   console.log(USAGE);
   process.exit(code || 0);
 }
@@ -73,6 +72,8 @@ if (argv.version) {
   console.log(`${hvy('aunty')} v${pkg.version}`);
   process.exit(0);
 }
+
+console.log(getLogo());
 
 if (argv._.length === 0 || argv._.length === 1 && argv._[0] === 'help') {
   help();
