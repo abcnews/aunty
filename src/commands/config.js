@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 // Packages
 const minimist = require('minimist');
 
@@ -7,7 +5,7 @@ const minimist = require('minimist');
 const {getConfig} = require('../config');
 const {cmd, hvy, opt, req, sec} = require('../text');
 
-const argv = minimist(process.argv.slice(2), {
+const OPTIONS = {
   string: [
     'property'
   ],
@@ -18,29 +16,38 @@ const argv = minimist(process.argv.slice(2), {
     property: 'p',
     help: 'h'
   }
-});
+};
 
-const help = () => {
-  console.log(`
+const USAGE = `
 Usage: ${cmd('aunty config')} ${opt('[options]')}
 
 ${sec('Options')}
 
-  ${opt('-p PROP')}, ${opt('--property=PROP')}  Get a single property
-  ${opt('-h')}, ${opt('--help')}                Display this help message and exit
-  `);
+${opt('-p PROP')}, ${opt('--property=PROP')}  Get a single property
+${opt('-h')}, ${opt('--help')}                Display this help message and exit
+`;
 
+const help = () => {
+  console.log(USAGE);
   process.exit(0);
 }
 
-if (argv.help) {
-  help();
-}
-
-const config = getConfig(argv.property || null);
-
-console.log(`
-The following ${hvy('aunty' + (argv.property ? `.${argv.property}` : ''))} config was found for this project:
+const output = (config, property) => {
+  console.log(`
+The following ${hvy('aunty' + (property ? `.${property}` : ''))} config was found for this project:
 
 ${req(JSON.stringify(config, null, '  '))}
 `);
+};
+
+const config = args => {
+  const argv = minimist(args, OPTIONS);
+
+  if (argv.help) {
+    help();
+  }
+
+  output(getConfig(argv.property), argv.property);
+};
+
+module.exports = config;

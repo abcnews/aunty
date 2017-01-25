@@ -12,7 +12,14 @@ const RSYNC_DEFAULTS = {
   ssh: true,
   recursive: true
 };
+
 const SYMLINK_DEFAULT_NAME = 'latest';
+
+const okMessage = source => {
+  console.log(`
+${source}: ${ok('Done!')}
+`);
+};
 
 async function ftp (target) {
   return new Promise((resolve, reject) => {
@@ -37,7 +44,7 @@ async function ftp (target) {
     .pipe(conn.dest(target.to))
     .on('error', reject)
     .on('end', () => {
-      console.log(`FTP: ${ok('Done!')}`);
+      okMessage('FTP');
       resolve();
     });
   });
@@ -56,7 +63,7 @@ async function rsync (target) {
         return reject(err);
       }
 
-      console.log(`SSH [rsync]: ${ok('Done!')}`);
+      okMessage('SSH [rsync]');
       resolve();
     });
   });
@@ -84,7 +91,7 @@ async function symlink (target) {
 
         stream.on('exit', () => {
           conn.end();
-          console.log(`SSH [symlink]: ${ok('Done!')}`);
+          okMessage('SSH [symlink]');
           resolve();
         });
       });

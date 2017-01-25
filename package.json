@@ -26,7 +26,6 @@
     "jsonfile": "^2.4.0",
     "merge": "^1.2.0",
     "minimist": "^1.2.0",
-    "node-version": "^1.0.0",
     "rsyncwrapper": "^2.0.1",
     "ssh2": "^0.5.4",
     "vinyl-fs": "^2.4.4",

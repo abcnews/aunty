@@ -3,19 +3,14 @@ const {resolve} = require('path');
 
 // Packages
 const minimist = require('minimist');
-const nodeVersion = require('node-version');
 
 // Ours
-const pkg = require('../package');
 const {abort, error} = require('./error');
+const {getLogo} = require('./logo');
 const {abc, cmd, hvy, opt, req, sec} = require('./text');
+const pkg = require('../package');
 
-// Throw an error if node version is too low
-if (nodeVersion.major < 6) {
-  abort(`${hvy('aunty')} requires at least version 6 of Node`);
-}
-
-const argv = minimist(process.argv.slice(2), {
+const OPTIONS = {
   boolean: [
     'help',
     'version'
@@ -24,7 +19,30 @@ const argv = minimist(process.argv.slice(2), {
     help: 'h',
     version: 'v'
   }
-});
+};
+
+const USAGE = `
+Usage: ${cmd('aunty')} ${req('<command>')} ${opt('[options]')} ${opt('[command_options]')}
+
+${sec('Options')}
+
+${opt('-h')}, ${opt('--help')}     Display this help message and exit
+${opt('-v')}, ${opt('--version')}  Print ${hvy('aunty')}'s version
+
+${sec('Commands')}
+
+${cmd('aunty config')}
+  Output the current project's known configuration.
+
+${cmd('aunty deploy')}
+  Deploy the project in the current directory.
+
+${cmd('aunty release')}
+  Tag and deploy the project in the current directory.
+
+${cmd('aunty help')} ${req('<command>')}
+  Display complete help for ${req('command')}.
+`;
 
 const COMMANDS = [
   'config',
@@ -42,45 +60,17 @@ const COMMANDS_ALIASES = {
   r: 'release'
 };
 
-if (argv.version) {
-  console.log(`${hvy('aunty')} v${pkg.version}`);
-  process.exit(0);
+const help = code => {
+  console.log(getLogo());
+  console.log(USAGE);
+  process.exit(code || 0);
 }
 
-const help = () => {
-  console.log(`
- ${cmd('▗▓▓▓▓▙   ▟▓▓▓▓▙   ▟▓▓▓▓▖')}                                     ▗▄▄
- ${cmd('▓▓▓▓▓▓▙ ▜▓▓▓▓▓▓▙ ▜▓▓▓▓▓▓')}                                     ▓▓▓
- ${cmd('▓▓▓ ▜▓▓▙ ▜▛  ▜▓▓▙ ▜▛ ▓▓▓')}   ▜▓▓▓▓▓▙▖  ▓▓▓    ▓▓▓  ▓▓▙▟▓▓▓▓▙▖ ▓▓▓▓▓▛ ▜▓▙    ▗▓▓▘
- ${cmd('▓▓▓ ▝▓▓▓▙ ▘  ▝▓▓▓▙ ▘ ▓▓▓')}       ▝▓▓▓  ▓▓▓    ▓▓▓  ▓▓▓▛  ▝▓▓▓  ▓▓▓    ▜▓▙  ▗▓▓▘
- ${cmd('▓▓▓  ▝▓▓▓▖    ▝▓▓▓▖  ▓▓▓')}  ▗▟▓▓▓▓▓▓▓  ▓▓▓    ▓▓▓  ▓▓▓    ▓▓▓  ▓▓▓     ▜▓▙▗▓▓▘
- ${cmd('▓▓▓ ▗ ▜▓▓▓▖  ▗ ▜▓▓▓▖ ▓▓▓')}  ▓▓▓  ▗▓▓▓  ▓▓▓▖  ▟▓▓▓  ▓▓▓    ▓▓▓  ▓▓▓▖     ▜▓▓▓▘
- ${cmd('▓▓▓ ▟▙ ▜▓▓▙  ▟▙ ▜▓▓▙ ▓▓▓')}  ▝▜▓▓▓▛▜▓▓▓  ▜▓▓▓▓▛▜▓▓  ▓▓▓    ▓▓▓  ▝▓▓▓▓▖   ▗▓▓▘
- ${cmd('▓▓▓▓▓▓▙ ▜▓▓▓▓▓▓▙ ▜▓▓▓▓▓▓')}                                             ▗▓▓▘
- ${cmd('▝▓▓▓▓▛   ▜▓▓▓▓▛   ▜▓▓▓▓▘')}                                           ▟▓▓▛
+const args = process.argv.slice(2);
+const argv = minimist(args, OPTIONS);
 
-Usage: ${cmd('aunty')} ${req('<command>')} ${opt('[options]')} ${opt('[command_options]')}
-
-${sec('Options')}
-
-  ${opt('-h')}, ${opt('--help')}     Display this help message and exit
-  ${opt('-v')}, ${opt('--version')}  Print ${hvy('aunty')}'s version
-
-${sec('Commands')}
-
-  ${cmd('aunty config')}
-    Output the current project's known configuration.
-
-  ${cmd('aunty deploy')}
-    Deploy the project in the current directory.
-
-  ${cmd('aunty release')}
-    Tag and deploy the project in the current directory.
-
-  ${cmd('aunty help')} ${req('<command>')}
-    Display complete help for ${req('command')}.
-  `);
-
+if (argv.version) {
+  console.log(`${hvy('aunty')} v${pkg.version}`);
   process.exit(0);
 }
 
@@ -97,19 +87,11 @@ if (command === 'help') {
 }
 
 if (COMMANDS.indexOf(command) < 0) {
-  help();
+  help(1);
 }
 
 command = COMMANDS_ALIASES[command] || command;
 
-const bin = resolve(__dirname, './commands/' + command + '.js');
-const binArgv = process.argv.slice(0, 2);
+const commandPath = resolve(__dirname, './commands/' + command);
 
-if (isHelpOnly) {
-  process.argv = process.argv.slice(0, 2).concat('--help');
-} else {
-  process.argv = process.argv.slice(0, 2).concat(process.argv.slice(3));
-}
-
-// Load sub command
-require(bin, 'may-exclude');
+require(commandPath)(isHelpOnly ? ['--help'] : args.slice(1));
