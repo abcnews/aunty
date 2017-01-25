@@ -5,10 +5,10 @@ const {resolve} = require('path');
 const minimist = require('minimist');
 
 // Ours
-const {abort, error} = require('./error');
-const {getLogo} = require('./logo');
-const {abc, cmd, hvy, opt, req, sec} = require('./text');
-const pkg = require('../package');
+const {abort, error} = require('../error');
+const {getLogo} = require('../logo');
+const {abc, cmd, hvy, opt, req, sec} = require('../text');
+const pkg = require('../../package');
 
 const OPTIONS = {
   boolean: [

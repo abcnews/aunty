@@ -2,8 +2,8 @@
 const minimist = require('minimist');
 
 // Ours
-const {getConfig} = require('../config');
-const {cmd, hvy, opt, req, sec} = require('../text');
+const {getConfig} = require('../../config');
+const {cmd, hvy, opt, req, sec} = require('../../text');
 
 const OPTIONS = {
   string: [

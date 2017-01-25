@@ -6,12 +6,12 @@ const minimist = require('minimist');
 
 // Ours
 const deploy = require('./deploy');
-const {getConfig} = require('../config');
-const {abort} = require('../error');
+const {getConfig} = require('../../config');
+const {abort} = require('../../error');
 const {createTag, getCurrentTags, getRemotes,
-  hasChanges, hasTag, pushTag} = require('../git');
-const {getPackage} = require('../package');
-const {bad, cmd, hvy, opt, sec} = require('../text');
+  hasChanges, hasTag, pushTag} = require('../../git');
+const {getPackage} = require('../../package');
+const {bad, cmd, hvy, opt, sec} = require('../../text');
 
 const OPTIONS = {
   boolean: [
@@ -52,6 +52,8 @@ const ERRORS = {
   TAG_ELSEWHERE: tag => `You can't skip tagging because the tag ${bad(tag)} exists, but your current HEAD doesn't point to it!`,
   TAG_EXISTS: tag => `The tag ${bad(tag)} already exists! Try skipping tagging with the ${opt('--skip-tagging')} option.`
 };
+
+const formatList = (list, formatter) => list.map(item => formatter(item)).join(', ');
 
 async function release (args) {
   const argv = minimist(args, OPTIONS);
@@ -103,17 +105,17 @@ async function release (args) {
       const remotes = await getRemotes();
 
       if (remotes.length) {
-        remotes.forEach(async function (remote) {
-          await pushTag(remote, version);
-          console.log(`Pushed tag ${hvy(version)} to remote ${hvy(remote)}`);
-        });
+        await Promise.all(remotes.map(remote => {
+          return pushTag(remote, version);
+        }));
+        console.log(`Pushed tag ${hvy(version)} to remote(s) ${formatList(remotes, hvy)}`);
       }
     } catch (err) {
       abort(err.message);
     }
   }
 
-  deploy(args.concat(['--id', version]));
+  deploy(args.concat(['--id', version]), true);
 }
 
 module.exports = release;

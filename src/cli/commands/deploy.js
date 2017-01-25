@@ -6,13 +6,13 @@ const {join} = require('path');
 const minimist = require('minimist');
 
 // Ours
-const {getConfig} = require('../config');
-const {getCredentials} = require('../credentials');
-const {ftp, rsync, symlink} = require('../deploy');
-const {abort} = require('../error');
-const {getCurrentBranch} = require('../git');
-const {getPackage} = require('../package');
-const {bad, cmd, hvy, opt, req, sec} = require('../text');
+const {getConfig} = require('../../config');
+const {getCredentials} = require('../../credentials');
+const {ftp, rsync, symlink} = require('../../deploy');
+const {abort} = require('../../error');
+const {getCurrentBranch} = require('../../git');
+const {getPackage} = require('../../package');
+const {bad, cmd, hvy, opt, req, sec} = require('../../text');
 
 const OPTIONS = {
   string: [
@@ -93,10 +93,13 @@ const EXPECTED_PROPERTIES = ['from', 'to', 'type', 'username', 'password', 'host
 
 const RECOGNISED_TYPES = ['ftp', 'ssh'];
 
+const RECOGNISED_HOST_PATH_TO_URL_MAPPINGS = {
+  'contentftp.abc.net.au': [/\/www\/(.*)/, 'http://www.abc.net.au/$1'],
+  'newsdev3.aus.aunty.abc.net.au': [/\/var\/www\/html\/(.*)/, 'http://newsdev3.aus.aunty.abc.net.au/$1']
+};
+
 async function deployToTarget (target) {
-  console.log(`
-Deploying from ${hvy(target.from)} to ${hvy(target.to)} on ${hvy(target.host)}
-`);
+  console.log(`Deploying from ${hvy(target.from)} to ${hvy(target.to)} on ${hvy(target.host)}…\n`);
 
   if (RECOGNISED_TYPES.indexOf(target.type) === -1) {
     abort(ERRORS.UNRECOGNISED_TYPE(target.__key__, target.type));
@@ -114,9 +117,19 @@ Deploying from ${hvy(target.from)} to ${hvy(target.to)} on ${hvy(target.host)}
   } catch (err) {
     abort(err);
   }
+
+  const mapping = RECOGNISED_HOST_PATH_TO_URL_MAPPINGS[target.host];
+
+  if (mapping) {
+    const publicURL = target.to.replace(mapping[0], mapping[1]);
+
+    if (target.to !== publicURL) {
+      console.log(`\nPublic URL: ${hvy(target.to.replace(mapping[0], mapping[1]))}/`);
+    }
+  }
 }
 
-async function deploy (args) {
+async function deploy (args, shouldRespectTargetSymlinks) {
   const argv = minimist(args, OPTIONS);
 
   if (argv.help) {
@@ -155,7 +168,8 @@ async function deploy (args) {
     const target = Object.assign(
       {__key__: targetName, id, name, files: '**'},
       config[targetName],
-      credentials[targetName]
+      credentials[targetName],
+      shouldRespectTargetSymlinks ? {} : {symlink: null}
     );
 
     EXPECTED_PROPERTIES.forEach(prop => {

@@ -1,7 +1,7 @@
 // Packages
 const jsonfile = require('jsonfile');
 
-async function getCredentials (path) {
+const getCredentials = path => {
   return new Promise((resolve, reject) => {
     jsonfile.readFile(path, (err, obj) => {
       if (err) {
@@ -11,7 +11,7 @@ async function getCredentials (path) {
       resolve(obj);
     });
   });
-}
+};
 
 module.exports = {
   getCredentials
