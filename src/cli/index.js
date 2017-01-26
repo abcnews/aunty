@@ -7,7 +7,6 @@ const minimist = require('minimist');
 // Ours
 const {getLogo} = require('../logo');
 const {cmd, hvy, opt, req, sec} = require('../text');
-const pkg = require('../../package');
 
 const OPTIONS = {
   boolean: [
@@ -59,17 +58,12 @@ const COMMANDS_ALIASES = {
   r: 'release'
 };
 
-const help = (exit, code) => {
-  console.log(USAGE);
-  exit(code);
-};
-
-const cli = (args, exit) => {
+const cli = (args, pkg, exit) => {
   const argv = minimist(args, OPTIONS);
 
   if (argv.version) {
     console.log(`${hvy('aunty')} v${pkg.version}`);
-    exit(0);
+    exit();
   }
 
   console.log(getLogo());
@@ -77,7 +71,8 @@ const cli = (args, exit) => {
   if (argv._.length === 0 || (
     argv._.length === 1 && argv._[0] === 'help')
   ) {
-    help(exit);
+    console.log(USAGE);
+    exit();
   }
 
   let command = argv._[0];
@@ -89,7 +84,8 @@ const cli = (args, exit) => {
   }
 
   if (COMMANDS.indexOf(command) < 0) {
-    help(exit, 1);
+    console.log(USAGE);
+    exit(1);
   }
 
   command = COMMANDS_ALIASES[command] || command;
