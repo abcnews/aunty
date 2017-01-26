@@ -27,27 +27,27 @@ ${opt('-p PROP')}, ${opt('--property=PROP')}  Get a single property
 ${opt('-h')}, ${opt('--help')}                Display this help message and exit
 `;
 
-const help = () => {
-  console.log(USAGE);
-  process.exit(0);
-}
-
-const output = (config, property) => {
-  console.log(`
-The following ${hvy('aunty' + (property ? `.${property}` : ''))} config was found for this project:
-
-${req(JSON.stringify(config, null, '  '))}
-`);
-};
-
-const config = args => {
+const config = (args, exit) => {
   const argv = minimist(args, OPTIONS);
 
   if (argv.help) {
-    help();
+    console.log(USAGE);
+    exit();
   }
 
-  output(getConfig(argv.property), argv.property);
+  let config;
+
+  try {
+    config = getConfig(argv.property);
+  } catch (err) {
+    exit(err.message);
+  }
+
+  console.log(`
+The following ${hvy('aunty' + (argv.property ? `.${argv.property}` : ''))} config was found for this project:
+
+${req(JSON.stringify(config, null, '  '))}
+`);
 };
 
 module.exports = config;

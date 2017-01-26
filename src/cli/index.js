@@ -5,9 +5,8 @@ const {resolve} = require('path');
 const minimist = require('minimist');
 
 // Ours
-const {abort, error} = require('../error');
 const {getLogo} = require('../logo');
-const {abc, cmd, hvy, opt, req, sec} = require('../text');
+const {cmd, hvy, opt, req, sec} = require('../text');
 const pkg = require('../../package');
 
 const OPTIONS = {
@@ -60,39 +59,44 @@ const COMMANDS_ALIASES = {
   r: 'release'
 };
 
-const help = code => {
+const help = (exit, code) => {
   console.log(USAGE);
-  process.exit(code || 0);
-}
+  exit(code);
+};
 
-const args = process.argv.slice(2);
-const argv = minimist(args, OPTIONS);
+const cli = (args, exit) => {
+  const argv = minimist(args, OPTIONS);
 
-if (argv.version) {
-  console.log(`${hvy('aunty')} v${pkg.version}`);
-  process.exit(0);
-}
+  if (argv.version) {
+    console.log(`${hvy('aunty')} v${pkg.version}`);
+    exit(0);
+  }
 
-console.log(getLogo());
+  console.log(getLogo());
 
-if (argv._.length === 0 || argv._.length === 1 && argv._[0] === 'help') {
-  help();
-}
+  if (argv._.length === 0 || (
+    argv._.length === 1 && argv._[0] === 'help')
+  ) {
+    help(exit);
+  }
 
-let command = argv._[0];
-let isHelpOnly;
+  let command = argv._[0];
+  let isHelpOnly;
 
-if (command === 'help') {
-  isHelpOnly = true;
-  command = argv._[1];
-}
+  if (command === 'help') {
+    isHelpOnly = true;
+    command = argv._[1];
+  }
 
-if (COMMANDS.indexOf(command) < 0) {
-  help(1);
-}
+  if (COMMANDS.indexOf(command) < 0) {
+    help(exit, 1);
+  }
 
-command = COMMANDS_ALIASES[command] || command;
+  command = COMMANDS_ALIASES[command] || command;
 
-const commandPath = resolve(__dirname, './commands/' + command);
+  const commandPath = resolve(__dirname, './commands/' + command);
 
-require(commandPath)(isHelpOnly ? ['--help'] : args.slice(1));
+  require(commandPath)((isHelpOnly ? ['--help'] : args.slice(1)), exit);
+};
+
+module.exports = cli;

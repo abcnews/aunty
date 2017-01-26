@@ -61,7 +61,7 @@ const hasChanges = () => new Promise((resolve, reject) => {
   });
 });
 
-const hasTag = tag => new Promise((resolve, reject) => {
+const hasTag = tag => new Promise(resolve => {
   exec(`git show-ref --tags --verify "refs/tags/${tag}"`, err => {
     resolve(!err);
   });

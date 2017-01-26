@@ -1,11 +1,10 @@
 // Packages
 const rsyncwrapper = require('rsyncwrapper');
-const ssh2 = require('ssh2');
+const SSH2 = require('ssh2');
 const vfs = require('vinyl-fs');
-const vftp = require('vinyl-ftp');
+const VTFP = require('vinyl-ftp');
 
 // Ours
-const {abort, error} = require('./error');
 const {bad, cmd, hvy, ok} = require('./text');
 
 const ICONS = {
@@ -42,7 +41,7 @@ const ftp = target => new Promise((resolve, reject) => {
 
   log(MESSAGES.INITIAL);
 
-  const conn = new vftp({
+  const conn = new VTFP({
     host: target.host,
     port: target.port || 21,
     user: target.username,
@@ -104,12 +103,12 @@ const symlink = target => new Promise((resolve, reject) => {
   const symlinkPath = target.to.replace(target.id, symlinkName);
 
   if (symlinkPath === target.to) {
-    error('Cannot create symlink because target path does not contain a mappable id.');
+    console.warn('Could not create symlink because target path does not contain a mappable id.');
     log(MESSAGES.FAILURE);
     resolve();
   }
 
-  const conn = new ssh2();
+  const conn = new SSH2();
 
   conn.connect(target);
 

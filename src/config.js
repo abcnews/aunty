@@ -5,19 +5,17 @@ const {resolve} = require('path');
 const merge = require('merge');
 
 // Ours
-const {abort} = require('./error');
 const {getPackage} = require('./package');
 const {hvy} = require('./text');
 
 const ERRORS = {
   NO_CONFIG: `This project has no ${hvy('aunty.config.js')} file or ${hvy('aunty')} property in its ${hvy('package.json')} file.`,
-  NO_PROPERTY: property => `This project's ${hvy('aunty')} configuration has no ${hvy(property)} property.`
+  noProperty: property => `This project's ${hvy('aunty')} configuration has no ${hvy(property)} property.`
 };
 
 const getConfig = command => {
   let pkgConfig = getPackage('aunty');
   let standaloneConfig;
-  let config;
 
   try {
     standaloneConfig = require(resolve('aunty.config'));
@@ -26,7 +24,7 @@ const getConfig = command => {
   }
 
   if (typeof pkgConfig !== 'object' && typeof standaloneConfig !== 'object') {
-    abort(ERRORS.NO_CONFIG);
+    throw new Error(ERRORS.NO_CONFIG);
   }
 
   if (typeof pkgConfig !== 'object') {
@@ -37,18 +35,18 @@ const getConfig = command => {
     standaloneConfig = {};
   }
 
-  config = merge.recursive(true, pkgConfig, standaloneConfig);
+  const config = merge.recursive(true, pkgConfig, standaloneConfig);
 
   if (command == null) {
     return config;
   }
 
-  if (typeof config[command] == null) {
-    abort(ERRORS.NO_PROPERTY(command));
+  if (config[command] == null) {
+    throw new Error(ERRORS.noProperty(command));
   }
 
   return config[command];
-}
+};
 
 module.exports = {
   getConfig

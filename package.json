@@ -12,9 +12,10 @@
     "aunty": "bin/aunty.js"
   },
   "scripts": {
-    "build-lib": "shx rm -rf lib/* && babel src --out-dir lib --presets=es2017",
+    "build-lib": "shx rm -rf lib/* && babel src --out-dir lib",
     "postinstall": "npm run build-lib",
-    "start": "chokidar 'src' --command 'npm run build-lib' --initial --silent"
+    "start": "chokidar 'src' --command 'npm run build-lib' --initial --silent",
+    "test": "xo"
   },
   "engines": {
     "node": ">=4.2.0"
@@ -33,6 +34,21 @@
     "vinyl-ftp": "^0.5.0"
   },
   "devDependencies": {
-    "chokidar-cli": "^1.2.0"
+    "chokidar-cli": "^1.2.0",
+    "xo": "^0.17.1"
+  },
+  "babel": {
+    "presets": [
+      "es2017"
+    ]
+  },
+  "xo": {
+    "space": 2,
+    "rules": {
+      "eqeqeq": 0,
+      "import/no-unassigned-import": 0,
+      "import/no-dynamic-require": 0,
+      "no-eq-null": 0
+    }
   }
 }
