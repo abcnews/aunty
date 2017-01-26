@@ -5,7 +5,7 @@ const {resolve} = require('path');
 const {abort} = require('./error');
 const {hvy} = require('./text');
 
-const ERROR_MESSAGE = `This command can only be run in the root directory of a project containing ${hvy('package.json')} file.`;
+const ERROR_MESSAGE = `This command can only be run in the root directory of a project containing a ${hvy('package.json')} file.`;
 
 const getPackage = property => {
   let pkg;
