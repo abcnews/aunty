@@ -12,7 +12,7 @@
     "aunty": "bin/aunty.js"
   },
   "scripts": {
-    "build-lib": "rm -rf lib/* && babel src --out-dir lib --presets=es2017",
+    "build-lib": "shx rm -rf lib/* && babel src --out-dir lib --presets=es2017",
     "postinstall": "npm run build-lib",
     "start": "chokidar 'src' --command 'npm run build-lib' --initial --silent"
   },
@@ -27,6 +27,7 @@
     "merge": "^1.2.0",
     "minimist": "^1.2.0",
     "rsyncwrapper": "^2.0.1",
+    "shx": "^0.2.2",
     "ssh2": "^0.5.4",
     "vinyl-fs": "^2.4.4",
     "vinyl-ftp": "^0.5.0"
