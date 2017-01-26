@@ -2,6 +2,7 @@
 
 // Ours
 const {bad} = require('../lib/text');
+const cli = require('../lib/cli');
 
 const exit = status => {
   if (typeof status === 'string') {
@@ -12,4 +13,4 @@ const exit = status => {
   process.exit(status || 0);
 };
 
-require('../lib/cli')(process.argv.slice(2), exit);
+cli(process.argv.slice(2), exit);

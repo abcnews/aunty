@@ -43,7 +43,7 @@
     ]
   },
   "xo": {
-    "space": 2,
+    "space": true,
     "rules": {
       "eqeqeq": 0,
       "import/no-unassigned-import": 0,
