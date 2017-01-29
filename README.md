@@ -64,7 +64,6 @@ Before submitting a pull request, please check that your changes meet the code s
 npm test
 ```
 
-
 To revert to your original global install, run:
 
 ```bash
