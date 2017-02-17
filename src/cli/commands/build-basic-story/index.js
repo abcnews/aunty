@@ -117,10 +117,19 @@ module.exports = command({
         cwd: `${config.root}/${buildConfig.scripts.from}`
       }),
       through.obj(function (file, enc, next) {
-        browserify(file, buildConfig.scripts.browserifyOptions)
+        browserify(file, Object.assign({
+          basedir: `${config.root}/${buildConfig.scripts.from}`
+        }, buildConfig.scripts.browserifyOptions))
         .bundle((err, result) => {
           if (err) {
-            throw err;
+            if (!argv.taskName) {
+              console.log(file);
+              throw err;
+            }
+
+            warn(indented(`    ${bad(err.message)}`, 4));
+
+            return next(null, file);
           }
 
           file.contents = result;
