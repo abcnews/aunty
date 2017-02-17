@@ -1,88 +1,72 @@
-// Native
-const {exec} = require('child_process');
+// Ours
+const {exec} = require('./processes');
+const {unpack} = require('./utils/async');
+const {EMPTY, NEWLINE} = require('./utils/strings');
+const {identity} = require('./utils');
 
-const createTag = tag => new Promise((resolve, reject) => {
-  exec(`git tag -a ${tag} -m "Tagging version ${tag}"`, err => {
-    if (err) {
-      return reject(err);
-    }
+const PATTERNS = {
+  ACTIVE_BRANCH: /\*\s+([^\n]+)\n/,
+  DETACHED_HEAD: /\(HEAD detached at ([\w]+)\)/
+};
 
-    resolve();
-  });
-});
+async function isRepo() {
+  const [err] = await exec('git rev-parse --git-dir');
 
-const getCurrentBranch = () => new Promise((resolve, reject) => {
-  exec('git branch --quiet', (err, stdout) => {
-    if (err) {
-      return reject(err);
-    }
+  return !err;
+}
 
-    const [, branch] = stdout.match(/\*\s+([^\n]+)\n/);
+async function getConfigValue(key) {
+  const stdout = unpack(await exec(`git config --get ${key}`));
 
-    if (!branch) {
-      return reject(new Error('No branches found at current HEAD.'));
-    }
+  return stdout.split(NEWLINE).filter(identity).join(EMPTY);
+}
 
-    resolve(branch);
-  });
-});
+async function getRemotes() {
+  const stdout = unpack(await exec('git remote'));
 
-const getCurrentTags = () => new Promise((resolve, reject) => {
-  exec('git tag -l --points-at HEAD', (err, stdout) => {
-    if (err) {
-      return reject(err);
-    }
+  return new Set(stdout.split(NEWLINE).filter(identity));
+}
 
-    const tags = '\n'.concat(stdout).match(/([^\n]+)/g);
+async function hasChanges() {
+  return (await exec('git status -s'))[1].length > 0;
+}
 
-    resolve(tags === null ? [] : tags);
-  });
-});
+async function getCurrentLabel() {
+  const stdout = unpack(await exec('git branch'));
+  const [, branch] = stdout.match(PATTERNS.ACTIVE_BRANCH) || [null, 'uncommitted'];
+  const [, detachedHeadCommit] = branch.match(PATTERNS.DETACHED_HEAD) || [];
 
-const getRemotes = () => new Promise((resolve, reject) => {
-  exec('git remote', (err, stdout) => {
-    if (err) {
-      return reject(err);
-    }
+  return detachedHeadCommit || branch;
+}
 
-    const remotes = '\n'.concat(stdout).match(/([^\n]+)/g);
+async function getCurrentTags() {
+  const stdout = unpack(await exec('git tag -l --points-at HEAD'));
 
-    resolve(remotes === null ? [] : remotes);
-  });
-});
+  return new Set(stdout.split(NEWLINE).filter(identity));
+}
 
-const hasChanges = () => new Promise((resolve, reject) => {
-  exec('git status -s', (err, stdout) => {
-    if (err) {
-      return reject(err);
-    }
+async function hasTag(tag) {
+  const [err] = await exec(`git show-ref --tags --verify "refs/tags/${tag}"`);
 
-    resolve(stdout.length > 0);
-  });
-});
+  return !err;
+}
 
-const hasTag = tag => new Promise(resolve => {
-  exec(`git show-ref --tags --verify "refs/tags/${tag}"`, err => {
-    resolve(!err);
-  });
-});
+function createTag(tag) {
+  return exec(`git tag -a ${tag} -m "Tagging version ${tag}"`);
+}
 
-const pushTag = (remote, tag) => new Promise((resolve, reject) => {
-  exec(`git push ${remote} ${tag}`, err => {
-    if (err) {
-      return reject(err);
-    }
-
-    resolve();
-  });
-});
+function pushTag(remote, tag) {
+  return exec(`git push ${remote} ${tag}`, null, true);
+}
 
 module.exports = {
-  createTag,
-  getCurrentBranch,
-  getCurrentTags,
+  isRepo,
+  getConfigValue,
   getRemotes,
   hasChanges,
+  getCurrentLabel,
+  getCurrentTags,
   hasTag,
+  createTag,
   pushTag
 };

@@ -1,7 +1,7 @@
-// Packages
+// External
 const chalk = require('chalk');
 
-module.exports = {
+const MAPPINGS = {
   bad: chalk.red,
   cmd: chalk.yellow,
   hvy: chalk.bold,
@@ -10,3 +10,5 @@ module.exports = {
   req: chalk.magenta,
   sec: chalk.underline
 };
+
+module.exports = Object.assign(chalk, MAPPINGS);

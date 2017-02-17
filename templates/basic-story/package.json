@@ -1,0 +1,23 @@
+{
+  "name": "{{projectName}}",
+  "version": "1.0.0",
+  "description": "A basic ABC News story.",
+  "license": "MIT",
+  "private": true,
+  "contributors": [
+    "{{authorName}} <{{authorEmail}}>"
+  ],
+  "scripts": {
+    "build": "aunty build",
+    "start": "aunty serve --debug"
+  },
+  "dependencies": {
+    "util-news-selectors": "git+ssh://git@stash.abc-dev.net.au:7999/news/util-news-selectors.git#master"
+  },
+  "devDependencies": {
+    "@abcnews/aunty": "{{auntyVersion}}"
+  },
+  "aunty": {
+    "type": "basic-story"
+  }
+}

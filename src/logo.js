@@ -1,13 +1,6 @@
-// Packages
-const chalk = require('chalk');
-
-const joinLines = (literals, separator) => {
-  const literalsLines = literals.map(literal => literal.split('\n'));
-
-  return literalsLines[0].reduce((memo, _, index) => [memo, '\n'].join(
-    literalsLines.map(lines => lines[index]).join(separator)
-  ), '');
-};
+// Ours
+const stringStyles = require('./string-styles');
+const {zipTemplateLiterals} = require('./utils/strings');
 
 const THEMES = [
   'blue',
@@ -38,8 +31,8 @@ const WORM = FLAT_WORM
 .map((line, index, lines) => line.replace(
   WORM_GAP_PATTERN,
   (match, $1, $2) => (index < (lines.length / 2)) ?
-    `${$1} ${chalk.dim($2)}` :
-    `${chalk.dim($1)} ${$2}`
+    `${$1} ${stringStyles.dim($2)}` :
+    `${stringStyles.dim($1)} ${$2}`
   ))
 .join('\n');
 
@@ -54,18 +47,18 @@ const AUNTY = `
                                            ▗▓▓▘
                                          ▟▓▓▛`;
 
-const getLogo = () => {
-  const theme = chalk[
+function getLogo() {
+  const theme = stringStyles[
     THEMES[
       Math.floor(Math.random() * THEMES.length)
     ]
   ];
 
-  return joinLines([
+  return zipTemplateLiterals([
     WORM.replace(LINE_PATTERN, (match, $1) => `\n${theme($1)}`),
     AUNTY
   ], '   ');
-};
+}
 
 module.exports = {
   getLogo

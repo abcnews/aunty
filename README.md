@@ -1,24 +1,20 @@
-<img alt="The aunty CLI logo" style="max-width:100%" src="https://rawgit.com/abcnews/aunty-cli/master/assets/logo.svg">
+# aunty
 
-# aunty CLI
+A toolkit for working with ABC News projects
 
-Common tasks for working with ABC News projects
+<img alt="The aunty logo" style="max-width:100%" src="https://rawgit.com/abcnews/aunty/master/assets/logo.svg">
 
 ## Installation
 
-Install the package globally:
+To use the CLI to create new projects, install the latest aunty release globally:
 
 ```bash
-npm install -g abcnews/aunty-cli
+npm install --global @abcnews/aunty
 ```
+
+Projects based on aunty's project templates already have aunty listed as a local dependency, locked to the version used to create it.
 
 ## Usage
-
-Run tasks from the root of your project:
-
-```bash
-aunty <deploy|release|...> [options]
-```
 
 For usage instructions, run `aunty` with no arguments, or for details on specific commands, run:
 
@@ -26,50 +22,58 @@ For usage instructions, run `aunty` with no arguments, or for details on specifi
 aunty help <command>
 ```
 
-Most commands depend on a configuration object that you can either export from a project-level `aunty.config.js(on)` file:
+The CLI contains three types of command, grouped by purpose:
+
+* Creating new projects (`new`, `init`)
+* Developing projects (`clean`, `build`, `serve`, `view`)
+* Deploying (un)versioned projects (`deploy`, `release`)
+
+### Starting projects
+
+When creating new projects, you should be using the global **aunty**:
+
+```bash
+/some/parent/directory $ aunty new basic-story my-project
+```
+
+or
+
+```bash
+/some/parent/directory/my-project $ aunty init basic-story
+```
+
+### Developing projects
+
+When working inside a project directory that has the aunty dependency installed, you'll automatically be running that local `aunty`:
+
+```bash
+/some/parent/directory/my-basic-story $ aunty <build|serve|...> [options]
+```
+
+This ensures that any changes to future versions of aunty won't impact your project, and you can manually update the local aunty when you're ready to accommodate those changes.
+
+Most project-level commands depend on a configuration object that you can either export from a project-level `aunty.config.js` file:
 
 ```js
 module.exports = {
-  deploy: {…}
+  type: '<project_type>'
 };
 ```
 
-...or you can add an `aunty` property to your `package.json` file:
+...or add to your `package.json` file as an `aunty` property:
 
 ```js
 "aunty": {
-  "deploy": {…}
+  "type": "<project_type>"
 }
 ```
 
-## Developing
-
-To contribute to the development of **aunty**, clone the project:
-
-```bash
-git clone git@github.com:abcnews/aunty-cli.git
-```
-
-...then, from the project directory, run:
-
-```bash
-npm link && npm start
-```
-
-This will link the globally-available `aunty` command to your clone, then start watching the `src` directory for changes (which will be passed through `babel` to generate the `lib` directory that the CLI executes within).
-
-Before submitting a pull request, please check that your changes meet the code style enforced by `xo` by running:
-
-```bash
-npm test
-```
-
-To revert to your original global install, run:
-
-```bash
-npm unlink
-```
+Supported project types have their own default configuration for each command, but you can override it by extending your local configuration. Overrides should be used sparingly, as the advantages of using a single-dependency toolkit are most apparent when we don't deviate far from the project templates.
 
 ## Authors
 
 - Colin Gourlay ([gourlay.colin@abc.net.au](mailto:gourlay.colin@abc.net.au))
+
+## Thanks
+
+This project takes a heap of inspiration from [nwb](https://github.com/insin/nwb), a React/Preact/Inferno toolkit by [Jonny Buchanan](https://twitter.com/jbscript). If you're looking to develop your own toolkit, Jonny's created a fantastic [guide](https://github.com/insin/ad-hoc-reckons) to get you started.
