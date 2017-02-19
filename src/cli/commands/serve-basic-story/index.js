@@ -1,4 +1,5 @@
 // Native
+const {existsSync} = require('fs');
 const {createServer} = require('http');
 
 // External
@@ -33,11 +34,14 @@ module.exports = command({
 
   throws(await build(argv.$));
 
-  const serve = serveStatic(`${config.root}/${BUILD_DIR}`, {
-    index: ['index.html']
-  });
+  const serve = serveStatic(`${config.root}/${BUILD_DIR}`);
+  const serveProject = argv.debug ? serveStatic(`${config.root}`) : null;
 
   const server = createServer((req, res) => {
+    if (argv.debug && existsSync(`${config.root}${req.url}`)) {
+      return serveProject(req, res, finalhandler(req, res));
+    }
+
     serve(req, res, finalhandler(req, res));
   });
   const [, domain] = await exec(`awk '/^domain/ {print $2}' /etc/resolv.conf`);
