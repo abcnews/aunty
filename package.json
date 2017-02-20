@@ -52,6 +52,7 @@
     "serve-static": "^1.11.2",
     "ssh2": "^0.5.4",
     "through2": "^2.0.3",
+    "update-notifier": "^2.1.0",
     "vinyl-fs": "^2.4.4",
     "vinyl-ftp": "^0.5.0"
   },

@@ -3,17 +3,25 @@ const {resolve} = require('path');
 
 // External
 const minimist = require('minimist');
+const updateNotifier = require('update-notifier');
 
 // Ours
+const pkg = require('../../package');
 const {packs, throws} = require('../utils/async');
 const {log} = require('../utils');
 const {OPTIONS, USAGE, ALIASES, COMMANDS, MESSAGES} = require('./constants');
 
-module.exports = packs(async function (args, isLocal) {
+const ONE_HOUR = 36e5;
+
+module.exports = packs(async function (args, isGlobal) {
   const argv = minimist(args, OPTIONS);
 
+  if (isGlobal) {
+    updateNotifier({pkg, updateCheckInterval: ONE_HOUR}).notify();
+  }
+
   if (argv.version) {
-    return log(MESSAGES.version(require('../../package').version, isLocal));
+    return log(MESSAGES.version(pkg.version, !isGlobal));
   }
 
   let commandName = argv._[0] || '';

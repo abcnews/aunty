@@ -8,18 +8,18 @@ const {name} = require('../../package');
 const {bad, ok} = require('../string-styles');
 
 let cli;
-let isLocal;
+let isGlobal;
 
-// Always prefer local CLI to global
+// Always prefer local CLI
 try {
   cli = require(resolve.sync(`${name}/lib/cli`, {basedir: process.cwd()}));
-  isLocal = true;
 } catch (err) {
+  isGlobal = true;
   cli = require('../cli');
 }
 
 (async function () {
-  const [err, wasCommandExecuted] = await cli(process.argv.slice(2), isLocal);
+  const [err, wasCommandExecuted] = await cli(process.argv.slice(2), isGlobal);
 
   if (err) {
     console.error(bad('\nExit-causing error:\n'));
