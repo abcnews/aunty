@@ -8,11 +8,7 @@
     "{{authorName}} <{{authorEmail}}>"
   ],
   "scripts": {
-    "build": "aunty build",
-    "start": "aunty serve --debug"
-  },
-  "dependencies": {
-    "util-news-selectors": "git+ssh://git@stash.abc-dev.net.au:7999/news/util-news-selectors.git#master"
+    "start": "npm install && aunty serve --debug"
   },
   "devDependencies": {
     "@abcnews/aunty": "{{auntyVersion}}"

@@ -1,8 +1,6 @@
-const ns = require('util-news-selectors');
+const rootEl = document.querySelector('[data-{{projectName}}-root]');
+const appEl = document.createElement('div');
 
-const storyEl = document.querySelector(ns('story'));
-const okEl = document.createElement('div');
-
-okEl.className = '{{projectName}}-ok';
-okEl.innerHTML = '<pre>{{projectName}} OK!</pre>';
-storyEl.appendChild(okEl);
+appEl.className = '{{projectName}}';
+appEl.innerHTML = '<pre>{{projectName}} OK!</pre>';
+rootEl.appendChild(appEl);
