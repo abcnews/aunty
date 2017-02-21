@@ -38,7 +38,7 @@ module.exports = command({
   const serveProject = argv.debug ? serveStatic(`${config.root}`) : null;
 
   const server = createServer((req, res) => {
-    if (argv.debug && existsSync(`${config.root}${req.url}`)) {
+    if (argv.debug && req.url !== '/' && existsSync(`${config.root}${req.url}`)) {
       return serveProject(req, res, finalhandler(req, res));
     }
 
