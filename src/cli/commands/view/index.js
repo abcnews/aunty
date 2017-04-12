@@ -3,9 +3,13 @@ const {log} = require('../../../utils');
 const {command} = require('../');
 const {MESSAGES} = require('./constants');
 
-module.exports = command({
+const view = command({
   name: 'view',
   configRequired: true
 }, async function (argv, config) {
   log(MESSAGES.found(config));
 });
+
+module.exports = {
+  view
+};

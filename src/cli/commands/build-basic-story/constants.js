@@ -1,5 +1,5 @@
 // External
-const merge = require('merge');
+const {recursive} = require('merge');
 
 // Ours
 const {cmd, hvy, opt, req, sec} = require('../../../string-styles');
@@ -106,14 +106,14 @@ const COMMON_CONFIG = {
 };
 
 const DEFAULTS = {
-  [KEY]: merge.recursive(true, COMMON_CONFIG, {
+  [KEY]: recursive(true, COMMON_CONFIG, {
     styles: {
       nodeSassOptions: {
         outputStyle: 'compressed'
       }
     }
   }),
-  [D_KEY]: merge.recursive(true, COMMON_CONFIG, {
+  [D_KEY]: recursive(true, COMMON_CONFIG, {
     styles: {
       nodeSassOptions: {
         outputStyle: 'nested',

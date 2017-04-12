@@ -3,7 +3,7 @@ const {join, relative} = require('path');
 
 // External
 const copyTemplateDir = require('copy-template-dir');
-const merge = require('merge');
+const {recursive} = require('merge');
 const pify = require('pify');
 const pkgDir = require('pkg-dir');
 const readPkg = require('read-pkg');
@@ -48,7 +48,7 @@ ${vars}
   created: (dir, file) => `  ${ok('create')} ${relative(dir, file)}`
 };
 
-module.exports.create = packs(async function (config) {
+const create = packs(async function (config) {
   const templateDir = join(__dirname, `../templates/${config.projectType}`);
   const targetDir = join(process.cwd(), config.directoryName);
   const templateVars = {
@@ -63,7 +63,7 @@ module.exports.create = packs(async function (config) {
   files.sort().forEach(file => log(MESSAGES.created(targetDir, file)));
 });
 
-module.exports.getConfig = packs(async function (requiredProps = []) {
+const getConfig = packs(async function (requiredProps = []) {
   if (!root) {
     root = unpack(await getPkgDir());
   }
@@ -101,7 +101,7 @@ module.exports.getConfig = packs(async function (requiredProps = []) {
     name: pkg.name,
     version: pkg.version,
     root: root,
-    ...merge.recursive(true, pkgConfig, configFileConfig)
+    ...recursive(true, pkgConfig, configFileConfig)
   };
 
   requiredProps
@@ -114,3 +114,8 @@ module.exports.getConfig = packs(async function (requiredProps = []) {
 
   return config;
 });
+
+module.exports = {
+  create,
+  getConfig
+};

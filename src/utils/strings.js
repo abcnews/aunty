@@ -6,6 +6,7 @@ const SPACE = ' ';
 const SLASH = '/';
 const COLON = ':';
 const NEWLINE = '\n';
+const CAMELABLE_PATTERN = /-\w/g;
 
 function indented(str, indent = 2) {
   return str.split(`${NEWLINE}`)
@@ -57,6 +58,14 @@ function styleLastSegment(str, style = identity, separator = SLASH) {
   }).join(separator);
 }
 
+function slugToCamelReplacer(camelable) {
+  return camelable.slice(1).toUpperCase();
+}
+
+function slugToCamel(slug) {
+  return slug.replace(CAMELABLE_PATTERN, slugToCamelReplacer);
+}
+
 module.exports = {
   EMPTY,
   SPACE,
@@ -71,5 +80,6 @@ module.exports = {
   padRight,
   listPairs,
   zipTemplateLiterals,
-  styleLastSegment
+  styleLastSegment,
+  slugToCamel
 };

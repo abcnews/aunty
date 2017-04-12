@@ -3,9 +3,9 @@ const {existsSync} = require('fs');
 const {createServer} = require('http');
 
 // External
-const chokidar = require('chokidar');
+const {watch} = require('chokidar');
 const finalhandler = require('finalhandler');
-const merge = require('merge');
+const {recursive} = require('merge');
 const serveStatic = require('serve-static');
 
 // Ours
@@ -15,11 +15,11 @@ const {exec} = require('../../../processes');
 const {
   BUILD_DIR, D_KEY, DEFAULTS, KEY, TASK_NAMES
 } = require('../build-basic-story/constants');
-const build = require('../build-basic-story');
+const {buildBasicStory} = require('../build-basic-story');
 const {command} = require('../');
-const {OPTIONS, USAGE, MESSAGES, HOSTNAME} = require('./constants');
+const {OPTIONS, USAGE, MESSAGES} = require('./constants');
 
-module.exports = command({
+const serveBasicStory = command({
   name: 'serve-basic-story',
   options: OPTIONS,
   usage: USAGE,
@@ -28,11 +28,11 @@ module.exports = command({
   const serveConfig = typeof config.serve === 'object' ? config.serve : {};
   const buildConfigKey = argv.debug ? D_KEY : KEY;
 
-  const buildConfig = merge.recursive(true, DEFAULTS[buildConfigKey],
+  const buildConfig = recursive(true, DEFAULTS[buildConfigKey],
     typeof config[buildConfigKey] === 'object' ? config[buildConfigKey] : {}
   );
 
-  throws(await build(argv.$));
+  throws(await buildBasicStory(argv.$));
 
   const serve = serveStatic(`${config.root}/${BUILD_DIR}`);
   const serveProject = argv.debug ? serveStatic(`${config.root}`) : null;
@@ -44,13 +44,11 @@ module.exports = command({
 
     serve(req, res, finalhandler(req, res));
   });
-  const [, domain] = await exec(`awk '/^domain/ {print $2}' /etc/resolv.conf`);
-  const hostname = `${HOSTNAME}${domain ? `.${domain.replace('\n', '')}` : ''}`;
   const port = serveConfig.port || 8000;
 
   server.listen(port);
 
-  log(MESSAGES.server(hostname, port));
+  log(MESSAGES.server(port));
 
   const changesQueue = [];
 
@@ -63,7 +61,7 @@ module.exports = command({
       const {taskName, evt, path} = changesQueue.shift();
 
       log(MESSAGES.watchEvent(taskName, evt, path.replace(config.root, '')));
-      throws(await build(argv.$.concat(['--taskName', taskName])));
+      throws(await buildBasicStory(argv.$.concat(['--taskName', taskName])));
     }
 
     log(MESSAGES.STILL_WATCHING);
@@ -88,7 +86,7 @@ module.exports = command({
       const globs = (Array.isArray(fileGlobs) ? fileGlobs : [fileGlobs])
         .map(glob => `${config.root}/${taskConfig.from}/${glob}`);
 
-      chokidar.watch(globs, {ignoreInitial: true})
+      watch(globs, {ignoreInitial: true})
       .on('all', (evt, path) => changesQueue.push({taskName, evt, path}))
       .on('error', reject);
 
@@ -106,3 +104,7 @@ module.exports = command({
 
   throws(await watchAndServe);
 });
+
+module.exports = {
+  serveBasicStory
+};

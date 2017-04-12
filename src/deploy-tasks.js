@@ -2,7 +2,7 @@
 const pify = require('pify');
 const rsyncwrapper = require('rsyncwrapper');
 const SSH = require('ssh2');
-const through = require('through2');
+const {obj} = require('through2');
 const vfs = require('vinyl-fs');
 const VTFP = require('vinyl-ftp');
 
@@ -13,7 +13,7 @@ const {styleLastSegment} = require('./utils/strings');
 const {createLogger, warn} = require('./utils');
 
 // Wrapped
-const rsync = packs(pify(rsyncwrapper));
+const _rsync = packs(pify(rsyncwrapper));
 
 const DEFAULTS = {
   RSYNC: {
@@ -27,7 +27,7 @@ const DEFAULTS = {
 
 const MESSAGE_ICONS = {
   INITIAL: ['🙋', '🙋‍♂️'],
-  FAILURE: ['🤦‍♀️', '🤦‍♂️'],
+  FAILURE: ['🙅', '🙅‍♂️'],
   SUCCESS: ['🙆', '🙆‍♂️']
 };
 
@@ -43,7 +43,7 @@ const MESSAGES = {
   put: path => `📄 ${ok('‣')} ${styleLastSegment(path, ok)}`
 };
 
-module.exports.ftp = packs(async function (target) {
+const ftp = packs(async function (target) {
   const log = createLogger('  FTP', hvy);
 
   log(MESSAGES.STARTED);
@@ -68,9 +68,8 @@ module.exports.ftp = packs(async function (target) {
       buffer: false,
       cwd: target.from
     }),
-    // vftp.newer(target.to),
     vftp.dest(target.to),
-    through.obj()
+    obj()
   );
 
   if (err) {
@@ -81,12 +80,12 @@ module.exports.ftp = packs(async function (target) {
   log(MESSAGES.COMPLETED);
 });
 
-module.exports.rsync = packs(async function (target) {
+const rsync = packs(async function (target) {
   const log = createLogger('  SSH [rsync]', hvy);
 
   log(MESSAGES.STARTED);
 
-  const [err] = await rsync({
+  const [err] = await _rsync({
     ...(DEFAULTS.RSYNC),
     ...{
       src: `${target.from}/${Array.isArray(target.files) ?
@@ -103,7 +102,7 @@ module.exports.rsync = packs(async function (target) {
   log(MESSAGES.COMPLETED);
 });
 
-module.exports.symlink = packs(async function (target) {
+const symlink = packs(async function (target) {
   const log = createLogger('  SSH [symlink]', hvy);
 
   log(MESSAGES.STARTED);
@@ -139,3 +138,9 @@ module.exports.symlink = packs(async function (target) {
   log(MESSAGES.symlinked(symlinkPath, target.to));
   log(MESSAGES.COMPLETED);
 });
+
+module.exports = {
+  ftp,
+  rsync,
+  symlink
+};

@@ -10,7 +10,7 @@ const {OPTIONS, DEFAULTS, USAGE, MESSAGES} = require('./constants');
 // Wrapped
 const rm = packs(del);
 
-module.exports = command({
+const clean = command({
   name: 'clean',
   options: OPTIONS,
   usage: USAGE,
@@ -26,3 +26,7 @@ module.exports = command({
 
   log(MESSAGES.deletion(paths.map(path => path.replace(config.root, ''))));
 });
+
+module.exports = {
+  clean
+};

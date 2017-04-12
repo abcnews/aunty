@@ -4,13 +4,15 @@ const {
 } = require('../../../git');
 const {throws} = require('../../../utils/async');
 const {log} = require('../../../utils');
-const build = require('../build');
-const deploy = require('../deploy');
-const DEPLOY_CONSTANTS = require('../deploy/constants');
+const {build} = require('../build');
+const {deploy} = require('../deploy');
+const {
+  DEFAULTS: DEPLOY_DEFAULTS, MESSAGES: DEPLOY_MESSAGES
+} = require('../deploy/constants');
 const {command} = require('../');
 const {OPTIONS, USAGE, MESSAGES} = require('./constants');
 
-module.exports = command({
+const release = command({
   name: 'release',
   options: OPTIONS,
   usage: USAGE,
@@ -26,8 +28,8 @@ module.exports = command({
 
   // 2) Ensure the project has a deployment config
 
-  if (!config.deploy && !DEPLOY_CONSTANTS.DEFAULTS.has(config.type)) {
-    throw DEPLOY_CONSTANTS.MESSAGES.NO_TARGETS;
+  if (!config.deploy && !DEPLOY_DEFAULTS.has(config.type)) {
+    throw DEPLOY_MESSAGES.NO_TARGETS;
   }
 
   // 3) Ensure the project no un-committed changes (skippable)
@@ -64,3 +66,7 @@ module.exports = command({
 
   throws(await deploy(argv.$.concat(['--id', id, '--shouldRespectTargetSymlinks'])));
 });
+
+module.exports = {
+  release
+};

@@ -51,7 +51,7 @@ const deployToServer = packs(async function (target) {
   }
 });
 
-module.exports = command({
+const deploy = command({
   name: 'deploy',
   options: OPTIONS,
   usage: USAGE,
@@ -128,3 +128,7 @@ module.exports = command({
     throws(await deployToServer(target));
   }
 });
+
+module.exports = {
+  deploy
+};

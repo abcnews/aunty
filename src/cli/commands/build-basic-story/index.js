@@ -1,10 +1,10 @@
 // External
 const browserify = require('browserify');
 const uglify = require('gulp-uglify');
-const merge = require('merge');
+const {recursive} = require('merge');
 const map = require('map-stream');
 const nodeSass = require('node-sass');
-const through = require('through2');
+const {obj} = require('through2');
 const vfs = require('vinyl-fs');
 
 // Ours
@@ -12,7 +12,7 @@ const {bad, cmd, ok} = require('../../../string-styles');
 const {pumped, throws} = require('../../../utils/async');
 const {indented, styleLastSegment} = require('../../../utils/strings');
 const {log, warn} = require('../../../utils');
-const clean = require('../clean');
+const {clean} = require('../clean');
 const {command} = require('../');
 const {OPTIONS, USAGE, KEY, D_KEY, DEFAULTS, MESSAGES} = require('./constants');
 
@@ -27,7 +27,7 @@ function fileSuccess(file, root, from, to) {
   return `${srcPath} ${cmd('=>')} ${styleLastSegment(path.replace(from, to), ok)}`;
 }
 
-module.exports = command({
+const buildBasicStory = command({
   name: 'build-basic-story',
   options: OPTIONS,
   usage: USAGE,
@@ -40,7 +40,7 @@ module.exports = command({
     return log(MESSAGES.config(configKey, defaults, true));
   }
 
-  const buildConfig = merge.recursive(true, defaults,
+  const buildConfig = recursive(true, defaults,
     typeof config[configKey] === 'object' ? config[configKey] : {}
   );
 
@@ -58,10 +58,10 @@ module.exports = command({
     // [from] | (sass) | (rename) | log | [to]
 
     throws(await pumped(
-      vfs.src(buildConfig.styles.files, {
+      src(buildConfig.styles.files, {
         cwd: `${config.root}/${buildConfig.styles.from}`
       }),
-      through.obj(function (file, enc, next) {
+      obj((file, enc, next) => {
         if (file.path.indexOf('.scss') > -1) {
           nodeSass.render(Object.assign(
             {
@@ -116,7 +116,7 @@ module.exports = command({
       vfs.src(buildConfig.scripts.files, {
         cwd: `${config.root}/${buildConfig.scripts.from}`
       }),
-      through.obj(function (file, enc, next) {
+      obj((file, enc, next) => {
         browserify(file, Object.assign({
           basedir: `${config.root}/${buildConfig.scripts.from}`
         }, buildConfig.scripts.browserifyOptions))
@@ -168,3 +168,7 @@ module.exports = command({
     ));
   }
 });
+
+module.exports = {
+  buildBasicStory
+};

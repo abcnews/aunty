@@ -26,6 +26,8 @@ ${sec('Options')}
 
 `;
 
+const HOSTNAME = hostname();
+
 const MESSAGES = {
   STILL_WATCHING: `
   Still watching...`,
@@ -35,15 +37,12 @@ const MESSAGES = {
   } build configs...`,
   watchEvent: (taskName, eventName, path) => `
   ${cmd(`${taskName}:${eventName}`)} ${styleLastSegment(path, cmd)}`,
-  server: (hostname, port) => `
-  Server listening at ${hvy(`http://${hostname}:${port}`)}`
+  server: (port) => `
+  Server listening at ${hvy(`http://${HOSTNAME}:${port}`)}`
 };
-
-const HOSTNAME = hostname();
 
 module.exports = {
   OPTIONS,
   USAGE,
-  MESSAGES,
-  HOSTNAME
+  MESSAGES
 };
