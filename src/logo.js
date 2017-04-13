@@ -48,26 +48,19 @@ function randomColor() {
   return COLORS[Math.floor(Math.random() * COLORS.length)];
 }
 
-function getLogo() {
+module.exports.getLogo = () => {
   const color = randomColor();
 
   return zipTemplateLiterals([
     WORM.replace(LINE_PATTERN, (match, $1) => `\n${color($1)}`),
     AUNTY
   ], '   ');
-}
-
-function getErrorLogo() {
-  return zipTemplateLiterals([
-    ERROR_WORM,
-    ERROR,
-    ERROR_WORM,
-    ERROR,
-    ERROR_WORM
-  ], '');
-}
-
-module.exports = {
-  getLogo,
-  getErrorLogo
 };
+
+module.exports.getErrorLogo = () => zipTemplateLiterals([
+  ERROR_WORM,
+  ERROR,
+  ERROR_WORM,
+  ERROR,
+  ERROR_WORM
+], '');

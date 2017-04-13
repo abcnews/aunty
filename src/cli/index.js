@@ -14,7 +14,7 @@ const {OPTIONS, USAGE, ALIASES, COMMANDS, MESSAGES} = require('./constants');
 
 const ONE_HOUR = 36e5;
 
-const cli = packs(async (args, isGlobal) => {
+module.exports.cli = packs(async (args, isGlobal) => {
   const argv = minimist(args, OPTIONS);
 
   if (isGlobal) {
@@ -49,7 +49,3 @@ const cli = packs(async (args, isGlobal) => {
 
   throws(await commandFn(commandFnArgs));
 });
-
-module.exports = {
-  cli
-};

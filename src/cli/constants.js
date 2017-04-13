@@ -4,9 +4,9 @@ const {getLogo} = require('../logo');
 const {cmd, dim, hvy, opt, req, sec} = require('../string-styles');
 const {indented, listPairs} = require('../utils/strings');
 
-const LOGO = getLogo();
+const LOGO = module.exports.LOGO = getLogo();
 
-const OPTIONS = {
+module.exports.OPTIONS = {
   boolean: [
     'help',
     'version'
@@ -17,7 +17,7 @@ const OPTIONS = {
   }
 };
 
-const USAGE = `${LOGO}
+module.exports.USAGE = `${LOGO}
 Usage: ${cmd('aunty')} ${req('<command>')} ${opt('[options]')} ${opt('[command_options]')}
 
 ${sec('Options')}
@@ -79,7 +79,7 @@ ${sec('Helper commands')}
     View the current project's known configuration.
 `;
 
-const ALIASES = {
+const ALIASES = module.exports.ALIASES = {
   b: 'build',
   bbs: 'build-basic-story',
   c: 'clean',
@@ -94,23 +94,14 @@ const ALIASES = {
   v: 'view'
 };
 
-const COMMANDS = new Set(
+module.exports.COMMANDS = new Set(
   []
   .concat(Object.keys(ALIASES).map(key => ALIASES[key]))
   .concat(Object.keys(ALIASES))
 );
 
-const MESSAGES = {
+module.exports.MESSAGES = {
   version: (versionNumber, isLocal) => `
 ${cmd('aunty')} v${versionNumber}${isLocal ? dim(' (local)') : ''}`,
   unrecognised: commandName => `Unrecognised command: ${req(commandName)}`
-};
-
-module.exports = {
-  LOGO,
-  OPTIONS,
-  USAGE,
-  ALIASES,
-  COMMANDS,
-  MESSAGES
 };

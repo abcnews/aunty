@@ -18,7 +18,7 @@ const {buildBasicStory} = require('../build-basic-story');
 const {command} = require('../');
 const {OPTIONS, USAGE, MESSAGES} = require('./constants');
 
-const serveBasicStory = command({
+module.exports.serveBasicStory = command({
   name: 'serve-basic-story',
   options: OPTIONS,
   usage: USAGE,
@@ -103,7 +103,3 @@ const serveBasicStory = command({
 
   throws(await watchAndServe);
 });
-
-module.exports = {
-  serveBasicStory
-};

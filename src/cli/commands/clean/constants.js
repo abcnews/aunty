@@ -8,11 +8,13 @@ const {
   styleLastSegment
 } = require('../../../utils/strings');
 
-const DEFAULTS = {
+module.exports.OPTIONS = DEFAULT_OPTIONS;
+
+const DEFAULTS = module.exports.DEFAULTS = {
   [BASIC_STORY]: ['build']
 };
 
-const USAGE = `
+module.exports.USAGE = `
 Usage: ${cmd('aunty clean')} ${opt('[glob(s)]')} ${opt('[options]')}
 
 ${sec('Arguments')}
@@ -27,16 +29,9 @@ ${sec('Options')}
   ${opt('-h')}, ${opt('--help')}  Display this help message and exit
 `;
 
-const MESSAGES = {
+module.exports.MESSAGES = {
   deletion: paths => indented(paths.length < 1 ? `
 Nothing to delete` : `
 Deleted:
 ${bulleted(paths.map(path => styleLastSegment(path, ok)))}`)
-};
-
-module.exports = {
-  OPTIONS: DEFAULT_OPTIONS,
-  DEFAULTS,
-  USAGE,
-  MESSAGES
 };

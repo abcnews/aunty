@@ -13,7 +13,7 @@ const {createLogger, warn} = require('./utils/console');
 const {styleLastSegment} = require('./utils/strings');
 
 // Wrapped
-const _rsync = packs(pify(rsyncwrapper));
+const rsync = packs(pify(rsyncwrapper));
 
 const DEFAULTS = {
   RSYNC: {
@@ -43,7 +43,7 @@ const MESSAGES = {
   put: path => `📄 ${ok('‣')} ${styleLastSegment(path, ok)}`
 };
 
-const ftp = packs(async target => {
+module.exports.ftp = packs(async target => {
   const log = createLogger('  FTP', hvy);
 
   log(MESSAGES.STARTED);
@@ -80,12 +80,12 @@ const ftp = packs(async target => {
   log(MESSAGES.COMPLETED);
 });
 
-const rsync = packs(async target => {
+module.exports.rsync = packs(async target => {
   const log = createLogger('  SSH [rsync]', hvy);
 
   log(MESSAGES.STARTED);
 
-  const [err] = await _rsync({
+  const [err] = await rsync({
     ...(DEFAULTS.RSYNC),
     ...{
       src: `${target.from}/${Array.isArray(target.files) ?
@@ -102,7 +102,7 @@ const rsync = packs(async target => {
   log(MESSAGES.COMPLETED);
 });
 
-const symlink = packs(async target => {
+module.exports.symlink = packs(async target => {
   const log = createLogger('  SSH [symlink]', hvy);
 
   log(MESSAGES.STARTED);
@@ -138,9 +138,3 @@ const symlink = packs(async target => {
   log(MESSAGES.symlinked(symlinkPath, target.to));
   log(MESSAGES.COMPLETED);
 });
-
-module.exports = {
-  ftp,
-  rsync,
-  symlink
-};

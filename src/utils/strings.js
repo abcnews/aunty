@@ -1,85 +1,61 @@
 // Ours
 const {getLongest, identity} = require('./misc');
 
-const EMPTY = '';
-const SPACE = ' ';
-const SLASH = '/';
-const COLON = ':';
-const NEWLINE = '\n';
 const CAMELABLE_PATTERN = /-\w/g;
+const COLON = ':';
+const EMPTY = '';
+const NEWLINE = '\n';
+const SLASH = '/';
+const SPACE = ' ';
 
-function indented(str, indent = 2) {
-  return str.split(`${NEWLINE}`)
-  .join(`${NEWLINE}${SPACE.repeat(indent)}`);
-}
+module.exports.COLON = COLON;
+module.exports.EMPTY = EMPTY;
+module.exports.NEWLINE = NEWLINE;
+module.exports.SLASH = SLASH;
+module.exports.SPACE = SPACE;
 
-function bulleted(strs) {
-  return strs.map(str => `• ${str}`).join(NEWLINE);
-}
+module.exports.indented = (str, indent = 2) =>
+  str.split(`${NEWLINE}`).join(`${NEWLINE}${SPACE.repeat(indent)}`);
 
-function inlineList(strs) {
-  return strs.reduce((acc, str, index) => {
+module.exports.bulleted = strs =>
+  strs.map(str => `• ${str}`).join(NEWLINE);
+
+module.exports.inlineList = strs =>
+  strs.reduce((acc, str, index) => {
     return [acc, str].join(index === strs.length - 1 ? ' & ' : ', ');
   });
-}
 
-function padding(str, len, char = SPACE) {
-  return char.repeat(len > str.length ? len - str.length : 0);
-}
+const padding = module.exports.padding = (str, len, char = SPACE) =>
+  char.repeat(len > str.length ? len - str.length : 0);
 
-function padLeft(str, len, char = SPACE) {
-  return padding(str, len, char) + String(str);
-}
+module.exports.padLeft = (str, len, char = SPACE) =>
+  padding(str, len, char) + String(str);
 
-function padRight(str, len, char = SPACE) {
-  return String(str) + padding(str, len, char);
-}
+const padRight = module.exports.padRight = (str, len, char = SPACE) =>
+  String(str) + padding(str, len, char);
 
-function listPairs(obj, style = identity) {
+module.exports.listPairs = (obj, style = identity) => {
   const keys = Object.keys(obj);
   const longest = getLongest(keys).length;
 
   return keys.map(key => {
     return `${style(padRight(key, longest))}  ${obj[key]}`;
   }).join(NEWLINE);
-}
+};
 
-function zipTemplateLiterals(literals, separator = EMPTY) {
+module.exports.zipTemplateLiterals = (literals, separator = EMPTY) => {
   const literalsLines = literals.map(literal => literal.split(NEWLINE));
 
   return literalsLines[0].reduce((memo, _, index) => [memo, NEWLINE].join(
     literalsLines.map(lines => lines[index]).join(separator)
   ), EMPTY);
-}
+};
 
-function styleLastSegment(str, style = identity, separator = SLASH) {
+module.exports.styleLastSegment = (str, style = identity, separator = SLASH) => {
   return str.split(separator).map((segment, index, segments) => {
     return (index === segments.length - 1) ? style(segment) : segment;
   }).join(separator);
-}
-
-function slugToCamelReplacer(camelable) {
-  return camelable.slice(1).toUpperCase();
-}
-
-function slugToCamel(slug) {
-  return slug.replace(CAMELABLE_PATTERN, slugToCamelReplacer);
-}
-
-module.exports = {
-  EMPTY,
-  SPACE,
-  SLASH,
-  COLON,
-  NEWLINE,
-  indented,
-  bulleted,
-  inlineList,
-  padding,
-  padLeft,
-  padRight,
-  listPairs,
-  zipTemplateLiterals,
-  styleLastSegment,
-  slugToCamel
 };
+
+module.exports.slugToCamel = slug =>
+  slug.replace(CAMELABLE_PATTERN, x => x.slice(1).toUpperCase());

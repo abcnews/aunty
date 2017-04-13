@@ -12,7 +12,7 @@ const {
 const {command} = require('../');
 const {OPTIONS, USAGE, MESSAGES} = require('./constants');
 
-const release = command({
+module.exports.release = command({
   name: 'release',
   options: OPTIONS,
   usage: USAGE,
@@ -66,7 +66,3 @@ const release = command({
 
   throws(await deploy(argv.$.concat(['--id', id, '--shouldRespectTargetSymlinks'])));
 });
-
-module.exports = {
-  release
-};

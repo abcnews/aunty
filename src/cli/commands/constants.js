@@ -2,13 +2,13 @@
 const {bad, cmd, dim, hvy, ok, opt, sec} = require('../../string-styles');
 const {COLON} = require('../../utils/strings');
 
-const BOXES = {
+const BOXES = module.exports.BOXES = {
   EMPTY: cmd('☐'),
   BAD: bad('☒'),
   OK: ok('☑︎')
 };
 
-const DEFAULTS = {
+module.exports.DEFAULTS = {
   NAME: '__command__',
   OPTIONS: {
     boolean: 'help',
@@ -25,7 +25,7 @@ function formatStack(stack, style) {
   return `${sec(style(last))} ${dim(items.reverse().join(COLON))}`;
 }
 
-const MESSAGES = {
+module.exports.MESSAGES = {
   usage: name => `
 Usage: ${cmd('aunty')} ${cmd(name)} ${opt('[options]')}
 
@@ -37,10 +37,4 @@ ${sec('Options')}
   failed: stack => `\n${BOXES.BAD} ${formatStack(stack, bad)}`,
   completed: stack => `\n${BOXES.OK} ${formatStack(stack, ok)}`,
   unrecognised: type => `\nUnrecognised project type: ${hvy(type)}`
-};
-
-module.exports = {
-  BOXES,
-  DEFAULTS,
-  MESSAGES
 };

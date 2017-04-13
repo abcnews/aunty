@@ -27,7 +27,7 @@ function fileSuccess(file, root, from, to) {
   return `${srcPath} ${cmd('=>')} ${styleLastSegment(path.replace(from, to), ok)}`;
 }
 
-const buildBasicStory = command({
+module.exports.buildBasicStory = command({
   name: 'build-basic-story',
   options: OPTIONS,
   usage: USAGE,
@@ -168,7 +168,3 @@ const buildBasicStory = command({
     ));
   }
 });
-
-module.exports = {
-  buildBasicStory
-};

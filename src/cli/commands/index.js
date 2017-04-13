@@ -8,9 +8,15 @@ const {log} = require('../../utils/console');
 const {LOGO} = require('../constants');
 const {DEFAULTS, MESSAGES} = require('./constants');
 
-let stack = [];
+const stack = [];
 
-function command({name, options, usage, isProxy, configRequired}, fn) {
+const command = module.exports.command = ({
+  name,
+  options,
+  usage,
+  isProxy,
+  configRequired
+}, fn) => {
   name = name || DEFAULTS.COMMAND_NAME;
   options = options || DEFAULTS.OPTIONS;
   usage = usage || MESSAGES.usage(name);
@@ -59,10 +65,10 @@ function command({name, options, usage, isProxy, configRequired}, fn) {
       stack.pop();
     }
   });
-}
+};
 
-function projectTypeRouter({name, isProxy}, commands) {
-  return command({
+module.exports.projectTypeRouter = ({name, isProxy}, commands) =>
+  command({
     name: name,
     isProxy: isProxy,
     configRequired: ['type']
@@ -73,9 +79,3 @@ function projectTypeRouter({name, isProxy}, commands) {
 
     throws(await commands[config.type](argv.$));
   });
-}
-
-module.exports = {
-  command,
-  projectTypeRouter
-};

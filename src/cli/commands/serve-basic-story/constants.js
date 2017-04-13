@@ -5,7 +5,7 @@ const {hostname} = require('os');
 const {inlineList, styleLastSegment} = require('../../../utils/strings');
 const {cmd, hvy, opt, sec} = require('../../../string-styles');
 
-const OPTIONS = {
+module.exports.OPTIONS = {
   boolean: [
     'debug',
     'help'
@@ -16,7 +16,7 @@ const OPTIONS = {
   }
 };
 
-const USAGE = `
+module.exports.USAGE = `
 Usage: ${cmd('aunty serve-basic-story')} ${opt('[options]')}
 
 ${sec('Options')}
@@ -28,7 +28,7 @@ ${sec('Options')}
 
 const HOSTNAME = hostname();
 
-const MESSAGES = {
+module.exports.MESSAGES = {
   STILL_WATCHING: `
   Still watching...`,
   watching: taskNames => `
@@ -39,10 +39,4 @@ const MESSAGES = {
   ${cmd(`${taskName}:${eventName}`)} ${styleLastSegment(path, cmd)}`,
   server: port => `
   Server listening at ${hvy(`http://${HOSTNAME}:${port}`)}`
-};
-
-module.exports = {
-  OPTIONS,
-  USAGE,
-  MESSAGES
 };

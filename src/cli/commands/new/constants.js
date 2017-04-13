@@ -3,7 +3,7 @@ const {PROJECT_TYPES, PROJECT_TYPE_DESCRIPTIONS} = require('../../../constants')
 const {cmd, hvy, opt, req, sec} = require('../../../string-styles');
 const {indented, listPairs} = require('../../../utils/strings');
 
-const OPTIONS = {
+module.exports.OPTIONS = {
   boolean: 'help',
   string: 'name',
   alias: {
@@ -12,7 +12,7 @@ const OPTIONS = {
   }
 };
 
-const USAGE = `
+module.exports.USAGE = `
 Usage: ${cmd('aunty new')} ${req('<project_type>')} ${req('<directory_name>')} ${opt('[options]')}
 
 ${sec('Arguments')}
@@ -30,7 +30,7 @@ ${sec('Options')}
   ${opt('-h')}, ${opt('--help')}            Display this help message and exit
 `;
 
-const MESSAGES = {
+module.exports.MESSAGES = {
   NOT_ENOUGH_ARGUMENTS: `You didn't provide enough arguments.`,
   UNKNOWN_PROJECT_TYPE: `Project type must be one of: ${[...PROJECT_TYPES].map(type => hvy(type)).join(', ')}`,
   invalidProjectName: (name, usage) => `Project name "${name}" is invalid.${
@@ -38,13 +38,6 @@ const MESSAGES = {
 ${usage}`
 };
 
-const PATTERNS = {
+module.exports.PATTERNS = {
   SLUG: /^[a-z0-9\-_]+$/i
-};
-
-module.exports = {
-  OPTIONS,
-  USAGE,
-  MESSAGES,
-  PATTERNS
 };

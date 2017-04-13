@@ -6,7 +6,7 @@ const {throws} = require('../../../utils/async');
 const {command} = require('../');
 const {OPTIONS, USAGE, MESSAGES, PATTERNS} = require('./constants');
 
-const _new = command({
+module.exports.new = command({
   name: 'new',
   options: OPTIONS,
   usage: USAGE
@@ -44,7 +44,3 @@ const _new = command({
     }
   }));
 });
-
-module.exports = {
-  new: _new
-};
