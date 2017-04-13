@@ -58,7 +58,7 @@ const buildBasicStory = command({
     // [from] | (sass) | (rename) | log | [to]
 
     throws(await pumped(
-      src(buildConfig.styles.files, {
+      vfs.src(buildConfig.styles.files, {
         cwd: `${config.root}/${buildConfig.styles.from}`
       }),
       obj((file, enc, next) => {

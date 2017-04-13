@@ -3,7 +3,7 @@ const {basename} = require('path');
 
 // Ours
 const {throws} = require('../../../utils/async');
-const {'new': _new} = require('../new');
+const {new: _new} = require('../new');
 const {command} = require('../');
 const {OPTIONS, USAGE} = require('./constants');
 

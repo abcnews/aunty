@@ -37,7 +37,7 @@ const MESSAGES = {
   } build configs...`,
   watchEvent: (taskName, eventName, path) => `
   ${cmd(`${taskName}:${eventName}`)} ${styleLastSegment(path, cmd)}`,
-  server: (port) => `
+  server: port => `
   Server listening at ${hvy(`http://${HOSTNAME}:${port}`)}`
 };
 

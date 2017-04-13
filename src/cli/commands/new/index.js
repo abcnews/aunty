@@ -46,5 +46,5 @@ const _new = command({
 });
 
 module.exports = {
-  'new': _new
+  new: _new
 };
