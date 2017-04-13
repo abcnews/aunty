@@ -2,7 +2,7 @@
 const {exec} = require('./processes');
 const {unpack} = require('./utils/async');
 const {EMPTY, NEWLINE} = require('./utils/strings');
-const {identity} = require('./utils');
+const {identity} = require('./utils/misc');
 
 const PATTERNS = {
   ACTIVE_BRANCH: /\*\s+([^\n]+)\n/,

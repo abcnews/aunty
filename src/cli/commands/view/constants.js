@@ -1,7 +1,7 @@
 // Ours
 const {hvy} = require('../../../string-styles');
 const {indented} = require('../../../utils/strings');
-const {pretty} = require('../../../utils');
+const {pretty} = require('../../../utils/misc');
 
 const MESSAGES = {
   found: config => indented(pretty`

@@ -14,8 +14,8 @@ const {CONFIG_FILE_NAME} = require('./constants');
 const {hvy, ok} = require('./string-styles');
 const {packs, prequire, unpack} = require('./utils/async');
 const {log} = require('./utils/console');
+const {identity, pretty} = require('./utils/misc');
 const {indented} = require('./utils/strings');
-const {identity, pretty} = require('./utils');
 
 // Wrapped
 const clone = packs(pify(copyTemplateDir));

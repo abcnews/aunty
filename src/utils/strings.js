@@ -1,5 +1,5 @@
 // Ours
-const {getLongest, identity} = require('./');
+const {getLongest, identity} = require('./misc');
 
 const EMPTY = '';
 const SPACE = ' ';

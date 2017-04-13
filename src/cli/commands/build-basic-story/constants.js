@@ -4,7 +4,7 @@ const {recursive} = require('merge');
 // Ours
 const {cmd, hvy, opt, req, sec} = require('../../../string-styles');
 const {indented} = require('../../../utils/strings');
-const {pretty} = require('../../../utils');
+const {pretty} = require('../../../utils/misc');
 
 // Resolved
 const BABELIFY = require.resolve('babelify');

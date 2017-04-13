@@ -5,10 +5,6 @@ const pump = require('pump');
 // Wrapped
 const pumpAsync = pify(pump);
 
-function delay(ms) {
-  return new Promise(resolve => setTimeout(() => resolve(), ms));
-}
-
 function pack(promise) {
   return promise
   .then(result => [null, result])
@@ -49,7 +45,6 @@ function pumped(...streams) {
 }
 
 module.exports = {
-  delay,
   pack,
   packs,
   throws,
