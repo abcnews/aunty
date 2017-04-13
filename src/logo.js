@@ -1,5 +1,5 @@
 // Ours
-const {dim, blue, cyan, green, magenta, red, yellow} = require('./string-styles');
+const {dim, bad, blue, cyan, green, magenta, red, yellow} = require('./string-styles');
 const {zipTemplateLiterals} = require('./utils/strings');
 
 const COLORS = [blue, cyan, green, magenta, red, yellow];
@@ -29,6 +29,8 @@ const WORM = FLAT_WORM
   ))
 .join('\n');
 
+const ERROR_WORM = FLAT_WORM.replace(/(.)/g, (match, $1) => `${randomColor()($1)}`);
+
 const AUNTY = `
                                    ▗▄▄
                                    ▓▓▓
@@ -40,8 +42,14 @@ const AUNTY = `
                                            ▗▓▓▘
                                          ▟▓▓▛`;
 
+const ERROR = '  ERROЯ  '.replace(/(.)/g, (match, $1) => `\n ${bad($1)}`);
+
+function randomColor() {
+  return COLORS[Math.floor(Math.random() * COLORS.length)];
+}
+
 function getLogo() {
-  const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+  const color = randomColor();
 
   return zipTemplateLiterals([
     WORM.replace(LINE_PATTERN, (match, $1) => `\n${color($1)}`),
@@ -49,6 +57,17 @@ function getLogo() {
   ], '   ');
 }
 
+function getErrorLogo() {
+  return zipTemplateLiterals([
+    ERROR_WORM,
+    ERROR,
+    ERROR_WORM,
+    ERROR,
+    ERROR_WORM
+  ], '');
+}
+
 module.exports = {
-  getLogo
+  getLogo,
+  getErrorLogo
 };

@@ -48,10 +48,6 @@ const cli = packs(async function (args, isGlobal) {
   const commandFnArgs = isHelp ? ['--help'] : args.slice(1);
 
   throws(await commandFn(commandFnArgs));
-
-  if (!isHelp) {
-    return true;
-  }
 });
 
 module.exports = {
