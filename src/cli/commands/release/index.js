@@ -3,7 +3,7 @@ const {
   createTag, getCurrentTags, getRemotes, hasChanges, hasTag, isRepo, pushTag
 } = require('../../../git');
 const {throws} = require('../../../utils/async');
-const {log} = require('../../../utils');
+const {log} = require('../../../utils/console');
 const {build} = require('../build');
 const {deploy} = require('../deploy');
 const {

@@ -6,11 +6,12 @@ const resolve = require('resolve');
 // Ours
 const {name} = require('../../package');
 const {getErrorLogo} = require('../logo');
+const {error} = require('../utils/console');
 
 function exit(err) {
   if (err) {
-    console.error(getErrorLogo());
-    console.error(err);
+    error(getErrorLogo());
+    error(err);
     process.exit(1);
   }
 

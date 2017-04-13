@@ -1,5 +1,5 @@
 // Ours
-const {log} = require('../../../utils');
+const {log} = require('../../../utils/console');
 const {command} = require('../');
 const {MESSAGES} = require('./constants');
 

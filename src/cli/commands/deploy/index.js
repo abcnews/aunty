@@ -9,7 +9,7 @@ const pify = require('pify');
 const {ftp, rsync, symlink} = require('../../../deploy-tasks');
 const {isRepo, getCurrentLabel} = require('../../../git');
 const {packs, throws, unpack} = require('../../../utils/async');
-const {log} = require('../../../utils');
+const {log} = require('../../../utils/console');
 const {command} = require('../');
 const {
   OPTIONS,

@@ -10,8 +10,8 @@ const vfs = require('vinyl-fs');
 // Ours
 const {bad, cmd, ok} = require('../../../string-styles');
 const {pumped, throws} = require('../../../utils/async');
+const {log, warn} = require('../../../utils/console');
 const {indented, styleLastSegment} = require('../../../utils/strings');
-const {log, warn} = require('../../../utils');
 const {clean} = require('../clean');
 const {command} = require('../');
 const {OPTIONS, USAGE, KEY, D_KEY, DEFAULTS, MESSAGES} = require('./constants');
@@ -123,7 +123,7 @@ const buildBasicStory = command({
         .bundle((err, result) => {
           if (err) {
             if (!argv.taskName) {
-              console.log(file);
+              log(file);
               throw err;
             }
 

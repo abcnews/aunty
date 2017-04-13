@@ -1,6 +1,3 @@
-// Global
-const {log, warn} = console;
-
 // Native
 const {inspect} = require('util');
 
@@ -8,8 +5,12 @@ inspect.styles.name = 'blue';
 
 const UTIL_INSPECT_OPTIONS = {colors: true, depth: null};
 
-function createLogger(namespace, style = identity) {
-  return message => log(`${style(namespace)}: ${message}`);
+function getLongest(items) {
+  return items.reduce((a, b) => a.length > b.length ? a : b);
+}
+
+function identity(x) {
+  return x;
 }
 
 // Can be used as a funtion or a tagged template literal;
@@ -37,19 +38,8 @@ function pretty(inputs, ...values) {
   return inputs.map(pairWithValue).join('');
 }
 
-function identity(x) {
-  return x;
-}
-
-function getLongest(items) {
-  return items.reduce((a, b) => a.length > b.length ? a : b);
-}
-
 module.exports = {
-  log,
-  warn,
-  createLogger,
-  pretty,
+  getLongest,
   identity,
-  getLongest
+  pretty
 };

@@ -8,8 +8,8 @@ const updateNotifier = require('update-notifier');
 // Ours
 const pkg = require('../../package');
 const {packs, throws} = require('../utils/async');
+const {log, slog} = require('../utils/console');
 const {slugToCamel} = require('../utils/strings');
-const {log} = require('../utils');
 const {OPTIONS, USAGE, ALIASES, COMMANDS, MESSAGES} = require('./constants');
 
 const ONE_HOUR = 36e5;
@@ -29,7 +29,7 @@ const cli = packs(async function (args, isGlobal) {
   const isHelp = (ALIASES[commandName] || commandName) === 'help';
 
   if (!commandName || (isHelp && argv._.length === 1)) {
-    return log(USAGE);
+    return (await slog(USAGE));
   }
 
   if (isHelp) {

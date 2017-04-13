@@ -4,7 +4,7 @@ const minimist = require('minimist');
 // Ours
 const {getConfig} = require('../../projects');
 const {pack, packs, throws} = require('../../utils/async');
-const {log} = require('../../utils');
+const {log} = require('../../utils/console');
 const {LOGO} = require('../constants');
 const {DEFAULTS, MESSAGES} = require('./constants');
 
