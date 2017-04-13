@@ -32,7 +32,7 @@ try {
   cli = require('../cli').cli;
 }
 
-(async function () {
+(async () => {
   const [err] = await cli(process.argv.slice(2), isGlobal);
 
   exit(err);

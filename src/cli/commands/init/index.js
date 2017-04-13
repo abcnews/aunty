@@ -11,7 +11,7 @@ const init = command({
   name: 'init',
   options: OPTIONS,
   usage: USAGE
-}, async function (argv) {
+}, async argv => {
   const args = argv.$.slice(0, 1)
     .concat(['.', `--name=${basename(process.cwd())}`])
     .concat(argv.$.slice(1));

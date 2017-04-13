@@ -49,7 +49,7 @@ ${vars}
   created: (dir, file) => `  ${ok('create')} ${relative(dir, file)}`
 };
 
-const create = packs(async function (config) {
+const create = packs(async config => {
   const templateDir = join(__dirname, `../templates/${config.projectType}`);
   const targetDir = join(process.cwd(), config.directoryName);
   const templateVars = {
@@ -64,7 +64,7 @@ const create = packs(async function (config) {
   files.sort().forEach(file => log(MESSAGES.created(targetDir, file)));
 });
 
-const getConfig = packs(async function (requiredProps = []) {
+const getConfig = packs(async (requiredProps = []) => {
   if (!root) {
     root = unpack(await getPkgDir());
   }

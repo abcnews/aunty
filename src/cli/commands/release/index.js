@@ -17,7 +17,7 @@ const release = command({
   options: OPTIONS,
   usage: USAGE,
   configRequired: true
-}, async function (argv, config) {
+}, async (argv, config) => {
   const id = config.version;
 
   // 1) Ensure the project is a git repo

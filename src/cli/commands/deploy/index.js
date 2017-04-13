@@ -25,7 +25,7 @@ const {
 const getJSON = packs(loadJsonFile);
 const getStats = packs(pify(stat));
 
-const deployToServer = packs(async function (target) {
+const deployToServer = packs(async target => {
   let err;
 
   log(MESSAGES.deploying(target.type, target.from, target.to, target.host));
@@ -56,7 +56,7 @@ const deploy = command({
   options: OPTIONS,
   usage: USAGE,
   configRequired: true
-}, async function (argv, config) {
+}, async (argv, config) => {
   // 1) Get config for target(s), using available defaults
 
   const deployConfig = config.deploy || DEFAULTS.get(config.type);
@@ -97,7 +97,7 @@ const deploy = command({
 
   // 3) Validate & normalise those configs (in parallel)
 
-  await Promise.all(targets.map(async function (target) {
+  await Promise.all(targets.map(async target => {
     // 3.1) Check 'type' is valid
     if (!VALID_TYPES.has(target.type)) {
       throw MESSAGES.unrecognisedType(target.__key__, target.type);

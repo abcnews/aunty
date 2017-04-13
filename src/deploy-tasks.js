@@ -43,7 +43,7 @@ const MESSAGES = {
   put: path => `📄 ${ok('‣')} ${styleLastSegment(path, ok)}`
 };
 
-const ftp = packs(async function (target) {
+const ftp = packs(async target => {
   const log = createLogger('  FTP', hvy);
 
   log(MESSAGES.STARTED);
@@ -80,7 +80,7 @@ const ftp = packs(async function (target) {
   log(MESSAGES.COMPLETED);
 });
 
-const rsync = packs(async function (target) {
+const rsync = packs(async target => {
   const log = createLogger('  SSH [rsync]', hvy);
 
   log(MESSAGES.STARTED);
@@ -102,7 +102,7 @@ const rsync = packs(async function (target) {
   log(MESSAGES.COMPLETED);
 });
 
-const symlink = packs(async function (target) {
+const symlink = packs(async target => {
   const log = createLogger('  SSH [symlink]', hvy);
 
   log(MESSAGES.STARTED);

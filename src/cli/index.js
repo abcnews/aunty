@@ -14,7 +14,7 @@ const {OPTIONS, USAGE, ALIASES, COMMANDS, MESSAGES} = require('./constants');
 
 const ONE_HOUR = 36e5;
 
-const cli = packs(async function (args, isGlobal) {
+const cli = packs(async (args, isGlobal) => {
   const argv = minimist(args, OPTIONS);
 
   if (isGlobal) {

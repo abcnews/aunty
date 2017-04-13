@@ -15,7 +15,7 @@ function command({name, options, usage, isProxy, configRequired}, fn) {
   options = options || DEFAULTS.OPTIONS;
   usage = usage || MESSAGES.usage(name);
 
-  return packs(async function (args = [], ...misc) {
+  return packs(async (args = [], ...misc) => {
     const argv = minimist(args, options);
     const fnArgs = [argv, ...misc];
     let err;
@@ -66,7 +66,7 @@ function projectTypeRouter({name, isProxy}, commands) {
     name: name,
     isProxy: isProxy,
     configRequired: ['type']
-  }, async function (argv, config) {
+  }, async (argv, config) => {
     if (!commands[config.type]) {
       throw MESSAGES.unrecognised(config.type);
     }

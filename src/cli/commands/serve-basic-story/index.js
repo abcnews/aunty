@@ -23,7 +23,7 @@ const serveBasicStory = command({
   options: OPTIONS,
   usage: USAGE,
   configRequired: true
-}, async function (argv, config) {
+}, async (argv, config) => {
   const serveConfig = typeof config.serve === 'object' ? config.serve : {};
   const buildConfigKey = argv.debug ? D_KEY : KEY;
 
@@ -51,7 +51,7 @@ const serveBasicStory = command({
 
   const changesQueue = [];
 
-  async function flushChangesQueue() {
+  const flushChangesQueue = async () => {
     if (changesQueue.length === 0) {
       return;
     }
@@ -64,7 +64,7 @@ const serveBasicStory = command({
     }
 
     log(MESSAGES.STILL_WATCHING);
-  }
+  };
 
   const watchAndServe = pack(new Promise((resolve, reject) => {
     const watchedTaskNames = TASK_NAMES.reduce((watchedTaskNames, taskName) => {

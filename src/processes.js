@@ -10,7 +10,7 @@ const {packs} = require('./utils/async');
 // Wrapped
 const execute = packs(pify(nativeExec, {multiArgs: true}));
 
-const exec = packs(async function (rawCommand, options, isStderrIgnored) {
+const exec = packs(async (rawCommand, options, isStderrIgnored) => {
   const [err, [stdout, stderr]] = await execute(rawCommand, options);
 
   if (err || (stderr && !isStderrIgnored)) {

@@ -15,7 +15,7 @@ const clean = command({
   options: OPTIONS,
   usage: USAGE,
   configRequired: ['type']
-}, async function (argv, config) {
+}, async (argv, config) => {
   let globs = argv._.length ? argv._ : config.clean;
 
   if (!Array.isArray(globs) && typeof globs !== 'string') {

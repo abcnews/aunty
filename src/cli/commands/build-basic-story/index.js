@@ -32,7 +32,7 @@ const buildBasicStory = command({
   options: OPTIONS,
   usage: USAGE,
   configRequired: true
-}, async function (argv, config) {
+}, async (argv, config) => {
   const configKey = argv.debug ? D_KEY : KEY;
   const defaults = DEFAULTS[configKey];
 
