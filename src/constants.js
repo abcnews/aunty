@@ -3,9 +3,11 @@ const CONFIG_FILE_NAME = 'aunty.config.js';
 const DEFAULT_PORT = process.env.PORT || 8000;
 
 const BASIC_STORY = 'basic-story';
+const PREACT_STORY = 'preact-story';
 
 const PROJECT_TYPES = new Set([
-  BASIC_STORY
+  BASIC_STORY,
+  PREACT_STORY
 ]);
 
 const PROJECT_TYPE_DESCRIPTIONS = {
