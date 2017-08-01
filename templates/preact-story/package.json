@@ -21,10 +21,10 @@
     },
     "devDependencies": {
         "@abcnews/aunty": "{{auntyVersion}}",
+        "@abcnews/webpacker": "^0.6.0",
         "prettier": "^1.5.3"
     },
     "dependencies": {
-        "@abcnews/webpacker": "^0.5.0",
         "babel-plugin-transform-react-jsx": "^6.24.1",
         "domready": "^1.0.8",
         "preact": "^8.2.1",
