@@ -24,7 +24,7 @@
     "node": ">=4.2.0"
   },
   "dependencies": {
-    "@abcnews/webpacker": "^0.4.0",
+    "@abcnews/webpacker": "^0.5.0",
     "babel-cli": "^6.22.2",
     "babel-plugin-transform-async-to-generator": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.22.0",
