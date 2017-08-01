@@ -1,5 +1,5 @@
 // Ours
-const {cmd, dim, hvy, opt, req, sec} = require('../../../string-styles');
+const {cmd, opt, req, sec} = require('../../../string-styles');
 
 const WEBPACK_USAGE = `Usage: ${cmd('aunty')} ${req('build')} ${opt('[ftp]')}
 
@@ -9,7 +9,6 @@ ${sec('Building for FTP')}
   URL and use that as your Webpack asset public path.
 `;
 
-
 module.exports = {
-    WEBPACK_USAGE
+  WEBPACK_USAGE
 };
