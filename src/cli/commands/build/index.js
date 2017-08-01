@@ -6,13 +6,14 @@ const {BASIC_STORY} = require('../../../constants');
 const {projectTypeRouter} = require('../');
 const buildBasicStory = require('../build-basic-story');
 const {command} = require('../');
+const {WEBPACK_USAGE} = require('./constants');
 
 // If the project has a webpack.config.js then assume it is built with Webpack
 if (hasWebpackConfig()) {
   module.exports = command({
     name: 'build',
     options: {},
-    usage: ''
+    usage: WEBPACK_USAGE
   }, async function () {
     return build(process.argv);
   });
