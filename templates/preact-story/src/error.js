@@ -2,9 +2,11 @@
 const Preact = require('preact');
 
 class Error extends Preact.Component {
+    componentDidMount () {
+        console.error(this.props.error);
+    }
+    
     render() {
-        const { error } = this.props;
-
         return (
             <div
                 style={{
@@ -19,7 +21,7 @@ class Error extends Preact.Component {
                     zIndex: 1000
                 }}>
                 <pre>
-                    {error.stack}
+                    {this.props.error.stack}
                 </pre>
             </div>
         );
