@@ -7,9 +7,11 @@ class HTML extends Preact.Component {
     }
 
     render() {
+        const rawHTML = { __html: this.props.html };
+        
         return (
             <div
-                dangerouslySetInnerHTML={{ __html: this.props.html }}
+                dangerouslySetInnerHTML={rawHTML}
                 id={this.props.id}
                 className={this.props.className || ''}
             />
