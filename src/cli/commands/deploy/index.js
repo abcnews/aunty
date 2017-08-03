@@ -85,15 +85,17 @@ module.exports = command({
 
   // 2) Create an array of config objects fot each target we know about
 
-  const targets = keys.map(key => ({
-    __key__: key,
-    id,
-    name: config.name,
-    files: '**',
-    ...credentials[key],
-    ...deployConfig[key],
-    ...(argv.shouldRespectTargetSymlinks ? {} : {symlink: null})
-  }));
+  const targets = keys.map(key => Object.assign(
+    {
+      __key__: key,
+      id,
+      name: config.name,
+      files: '**'
+    },
+    credentials[key],
+    deployConfig[key],
+    (argv.shouldRespectTargetSymlinks ? {} : {symlink: null})
+  ));
 
   // 3) Validate & normalise those configs (in parallel)
 

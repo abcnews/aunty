@@ -8,26 +8,20 @@
     "Colin Gourlay <gourlay.colin@abc.net.au>"
   ],
   "bin": {
-    "aunty": "./lib/bin/aunty.js"
+    "aunty": "./src/bin/aunty.js"
   },
   "scripts": {
-    "build": "shx rm -rf lib/* && babel src --out-dir lib",
-    "prepublish": "npm run build",
-    "start": "chokidar 'src' --command 'npm run build' --initial --silent",
     "test": "xo"
   },
   "files": [
-    "lib",
+    "src",
     "templates"
   ],
   "engines": {
-    "node": ">=4.2.0"
+    "node": ">=7.6.0"
   },
   "dependencies": {
     "@abcnews/webpacker": "^0.6.0",
-    "babel-cli": "^6.22.2",
-    "babel-plugin-transform-async-to-generator": "^6.22.0",
-    "babel-plugin-transform-object-rest-spread": "^6.22.0",
     "babel-preset-es2040": "^1.1.1",
     "babelify": "^7.3.0",
     "browserify": "^14.0.0",
@@ -58,15 +52,7 @@
     "vinyl-ftp": "^0.5.0"
   },
   "devDependencies": {
-    "chokidar-cli": "^1.2.0",
-    "shx": "^0.2.2",
     "xo": "^0.17.1"
-  },
-  "babel": {
-    "plugins": [
-      "transform-async-to-generator",
-      "transform-object-rest-spread"
-    ]
   },
   "xo": {
     "overrides": [

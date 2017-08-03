@@ -86,14 +86,15 @@ module.exports.rsync = packs(async function (target) {
 
   log(MESSAGES.STARTED);
 
-  const [err] = await rsync({
-    ...(DEFAULTS.RSYNC),
-    ...{
+  const [err] = await rsync(Object.assign(
+    {},
+    DEFAULTS.RSYNC,
+    {
       src: `${target.from}/${Array.isArray(target.files) ?
         target.files[0] : target.files}`,
       dest: `${target.username}@${target.host}:${target.to}`
     }
-  });
+  ));
 
   if (err) {
     log(MESSAGES.FAILED);
