@@ -13,8 +13,9 @@ const ourPkg = require('../package');
 const {CONFIG_FILE_NAME} = require('./constants');
 const {hvy, ok} = require('./string-styles');
 const {packs, prequire, unpack} = require('./utils/async');
+const {log} = require('./utils/console');
+const {identity, pretty} = require('./utils/misc');
 const {indented} = require('./utils/strings');
-const {identity, log, pretty} = require('./utils');
 
 // Wrapped
 const clone = packs(pify(copyTemplateDir));
@@ -33,7 +34,7 @@ const DEFAULT_TEMPLATE_VARS = {
 };
 
 const MESSAGES = {
-  NO_CONFIG: `This project has no ${hvy(CONFIG_FILE_NAME)} file or ${hvy('aunty')} property in its ${hvy('package.json')} file.`,
+  NO_CONFIG: `This project has no ${hvy(CONFIG_FILE_NAME)} file or ${hvy('aunty')} property in its ${hvy('package.json')}.`,
   NOT_PACKAGE: `This command can only be run inside a project with a ${hvy('package.json')} file.`,
   missingRequiredProp: property => `This project's ${hvy('aunty')} configuration has no ${hvy(property)} property.`,
   creating: (type, dir, vars) => indented(pretty`

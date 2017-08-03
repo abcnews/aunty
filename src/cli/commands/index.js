@@ -4,13 +4,19 @@ const minimist = require('minimist');
 // Ours
 const {getConfig} = require('../../projects');
 const {pack, packs, throws} = require('../../utils/async');
-const {log} = require('../../utils');
+const {log} = require('../../utils/console');
 const {LOGO} = require('../constants');
 const {DEFAULTS, MESSAGES} = require('./constants');
 
 const stack = [];
 
-function command({name, options, usage, isProxy, configRequired}, fn) {
+const command = module.exports.command = ({
+  name,
+  options,
+  usage,
+  isProxy,
+  configRequired
+}, fn) => {
   name = name || DEFAULTS.COMMAND_NAME;
   options = options || DEFAULTS.OPTIONS;
   usage = usage || MESSAGES.usage(name);
@@ -59,23 +65,16 @@ function command({name, options, usage, isProxy, configRequired}, fn) {
       stack.pop();
     }
   });
-}
-
-function projectTypeRouter({name, isProxy}, commands) {
-  return command({
-    name,
-    isProxy,
-    configRequired: ['type']
-  }, async (argv, config) => {
-    if (!commands[config.type]) {
-      throw MESSAGES.unrecognised(config.type);
-    }
-
-    throws(await commands[config.type](argv.$));
-  });
-}
-
-module.exports = {
-  command,
-  projectTypeRouter
 };
+
+module.exports.projectTypeRouter = ({name, isProxy}, commands) => command({
+  name,
+  isProxy,
+  configRequired: ['type']
+}, async (argv, config) => {
+  if (!commands[config.type]) {
+    throw MESSAGES.unrecognised(config.type);
+  }
+
+  throws(await commands[config.type](argv.$));
+});

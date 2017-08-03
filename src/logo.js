@@ -1,15 +1,8 @@
 // Ours
-const stringStyles = require('./string-styles');
+const {dim, bad, blue, cyan, green, magenta, red, yellow} = require('./string-styles');
 const {zipTemplateLiterals} = require('./utils/strings');
 
-const THEMES = [
-  'blue',
-  'cyan',
-  'green',
-  'magenta',
-  'red',
-  'yellow'
-];
+const COLORS = [blue, cyan, green, magenta, red, yellow];
 
 const LINE_PATTERN = /\n(.*)/g;
 
@@ -31,10 +24,12 @@ const WORM = FLAT_WORM
 .map((line, index, lines) => line.replace(
   WORM_GAP_PATTERN,
   (match, $1, $2) => (index < (lines.length / 2)) ?
-    `${$1} ${stringStyles.dim($2)}` :
-    `${stringStyles.dim($1)} ${$2}`
+    `${$1} ${dim($2)}` :
+    `${dim($1)} ${$2}`
   ))
 .join('\n');
+
+const ERROR_WORM = FLAT_WORM.replace(/(.)/g, (match, $1) => `${randomColor()($1)}`);
 
 const AUNTY = `
                                    ▗▄▄
@@ -47,19 +42,25 @@ const AUNTY = `
                                            ▗▓▓▘
                                          ▟▓▓▛`;
 
-function getLogo() {
-  const theme = stringStyles[
-    THEMES[
-      Math.floor(Math.random() * THEMES.length)
-    ]
-  ];
+const ERROR = '  ERROЯ  '.replace(/(.)/g, (match, $1) => `\n ${bad($1)}`);
 
-  return zipTemplateLiterals([
-    WORM.replace(LINE_PATTERN, (match, $1) => `\n${theme($1)}`),
-    AUNTY
-  ], '   ');
+function randomColor() {
+  return COLORS[Math.floor(Math.random() * COLORS.length)];
 }
 
-module.exports = {
-  getLogo
+module.exports.getLogo = () => {
+  const color = randomColor();
+
+  return zipTemplateLiterals([
+    WORM.replace(LINE_PATTERN, (match, $1) => `\n${color($1)}`),
+    AUNTY
+  ], '   ');
 };
+
+module.exports.getErrorLogo = () => zipTemplateLiterals([
+  ERROR_WORM,
+  ERROR,
+  ERROR_WORM,
+  ERROR,
+  ERROR_WORM
+], '');

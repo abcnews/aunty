@@ -4,13 +4,13 @@ const merge = require('merge');
 // Ours
 const {cmd, hvy, opt, req, sec} = require('../../../string-styles');
 const {indented} = require('../../../utils/strings');
-const {pretty} = require('../../../utils');
+const {pretty} = require('../../../utils/misc');
 
 // Resolved
 const BABELIFY = require.resolve('babelify');
 const ES2040 = require.resolve('babel-preset-es2040');
 
-const OPTIONS = {
+module.exports.OPTIONS = {
   boolean: [
     'config',
     'debug',
@@ -25,7 +25,7 @@ const OPTIONS = {
   }
 };
 
-const USAGE = `
+module.exports.USAGE = `
 Usage: ${cmd('aunty build-basic-story')} ${opt('[options]')}
 
 ${sec('Options')}
@@ -49,7 +49,7 @@ ${sec(`Example ${hvy('aunty')} config`)}:
       from: 'src',
       to: 'build',
       browserifyOptions: {…},
-      uglify: true,
+      uglifyOptions: {…}
     },
     public: {
       from: 'public',
@@ -70,16 +70,12 @@ ${sec('Examples')}
     Output the default ${hvy('build_debug')} config.
 `;
 
-const TASK_NAMES = ['styles', 'scripts', 'public'];
+module.exports.TASK_NAMES = ['styles', 'scripts', 'public'];
 
-const KEY = 'build';
-
-const D_KEY = `${KEY}_debug`;
-
-const BUILD_DIR = 'build';
-
+const KEY = module.exports.KEY = 'build';
+const D_KEY = module.exports.D_KEY = `${KEY}_debug`;
+const BUILD_DIR = module.exports.BUILD_DIR = 'build';
 const FROM_PUBLIC_TO_BUILD = {from: 'public', to: BUILD_DIR};
-
 const FROM_SRC_TO_BUILD = {from: 'src', to: BUILD_DIR};
 
 const COMMON_CONFIG = {
@@ -102,7 +98,7 @@ const COMMON_CONFIG = {
   }, FROM_PUBLIC_TO_BUILD)
 };
 
-const DEFAULTS = {
+module.exports.DEFAULTS = {
   [KEY]: merge.recursive(true, COMMON_CONFIG, {
     styles: {
       nodeSassOptions: {
@@ -125,13 +121,15 @@ const DEFAULTS = {
       uglifyOptions: {
         compress: false,
         mangle: false,
-        preserveComments: 'all'
+        output: {
+          comments: 'all'
+        }
       }
     }
   })
 };
 
-const MESSAGES = {
+module.exports.MESSAGES = {
   config: (key, config, isDefault) => indented(pretty`
 Here is the${
   isDefault ? ' default' : ''
@@ -142,15 +140,4 @@ Here is the${
 ${config}`),
   building: (taskName, key) => `
   Building ${taskName}${key === D_KEY ? ' (debug)' : ''}:`
-};
-
-module.exports = {
-  OPTIONS,
-  USAGE,
-  TASK_NAMES,
-  KEY,
-  D_KEY,
-  BUILD_DIR,
-  DEFAULTS,
-  MESSAGES
 };

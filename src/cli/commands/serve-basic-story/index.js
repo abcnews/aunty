@@ -10,16 +10,15 @@ const serveStatic = require('serve-static');
 
 // Ours
 const {pack, throws} = require('../../../utils/async');
-const {log} = require('../../../utils');
-const {exec} = require('../../../processes');
+const {log} = require('../../../utils/console');
 const {
   BUILD_DIR, D_KEY, DEFAULTS, KEY, TASK_NAMES
 } = require('../build-basic-story/constants');
-const build = require('../build-basic-story');
+const {buildBasicStory} = require('../build-basic-story');
 const {command} = require('../');
-const {OPTIONS, USAGE, MESSAGES, HOSTNAME} = require('./constants');
+const {OPTIONS, USAGE, MESSAGES} = require('./constants');
 
-module.exports = command({
+module.exports.serveBasicStory = command({
   name: 'serve-basic-story',
   options: OPTIONS,
   usage: USAGE,
@@ -32,7 +31,7 @@ module.exports = command({
     typeof config[buildConfigKey] === 'object' ? config[buildConfigKey] : {}
   );
 
-  throws(await build(argv.$));
+  throws(await buildBasicStory(argv.$));
 
   const serve = serveStatic(`${config.root}/${BUILD_DIR}`, {
     setHeaders: res => res.setHeader('Access-Control-Allow-Origin', '*')
@@ -46,17 +45,15 @@ module.exports = command({
 
     serve(req, res, finalhandler(req, res));
   });
-  const [, domain] = await exec(`awk '/^domain/ {print $2}' /etc/resolv.conf`);
-  const hostname = `${HOSTNAME}${domain ? `.${domain.replace('\n', '')}` : ''}`;
   const port = serveConfig.port || 8000;
 
   server.listen(port);
 
-  log(MESSAGES.server(hostname, port));
+  log(MESSAGES.server(port));
 
   const changesQueue = [];
 
-  async function flushChangesQueue() {
+  const flushChangesQueue = async () => {
     if (changesQueue.length === 0) {
       return;
     }
@@ -65,11 +62,11 @@ module.exports = command({
       const {taskName, evt, path} = changesQueue.shift();
 
       log(MESSAGES.watchEvent(taskName, evt, path.replace(config.root, '')));
-      throws(await build(argv.$.concat(['--taskName', taskName])));
+      throws(await buildBasicStory(argv.$.concat(['--taskName', taskName])));
     }
 
     log(MESSAGES.STILL_WATCHING);
-  }
+  };
 
   const watchAndServe = pack(new Promise((resolve, reject) => {
     const watchedTaskNames = TASK_NAMES.reduce((watchedTaskNames, taskName) => {

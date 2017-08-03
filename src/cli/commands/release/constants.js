@@ -2,7 +2,7 @@
 const {cmd, hvy, opt, sec} = require('../../../string-styles');
 const {BOXES} = require('../constants');
 
-const OPTIONS = {
+module.exports.OPTIONS = {
   boolean: [
     'force',
     'help'
@@ -13,7 +13,7 @@ const OPTIONS = {
   }
 };
 
-const USAGE = `
+module.exports.USAGE = `
 Usage: ${cmd('aunty release')} ${opt('[options]')} ${opt('[deploy_options]')}
 
 ${sec('Options')}
@@ -34,7 +34,7 @@ ${sec('Examples')}
 
 const FORCE_REMINDER = `Use the ${opt('--force')} option to ignore warnings or release without tagging.`;
 
-const MESSAGES = {
+module.exports.MESSAGES = {
   FORCE_REMINDER: `Use the ${opt('--force')} option to ignore warnings or release without tagging.`,
   NOT_REPO: `You can't tag a release or deploy using a tag name becase this project isn't a git repo.`,
   HAS_CHANGES: `You shouldn't release builds which may contain un-committed changes! ${FORCE_REMINDER}`,
@@ -43,10 +43,4 @@ const MESSAGES = {
     }! ${FORCE_REMINDER}`,
   createdTag: tag => `\n  ${BOXES.OK} Created tag ${hvy(tag)}`,
   pushedTag: (tag, remote) => `\n  ${BOXES.OK} Pushed tag ${hvy(tag)} to remote ${hvy(remote)}`
-};
-
-module.exports = {
-  OPTIONS,
-  USAGE,
-  MESSAGES
 };

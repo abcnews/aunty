@@ -3,11 +3,11 @@ const {basename} = require('path');
 
 // Ours
 const {throws} = require('../../../utils/async');
-const _new = require('../new');
+const {new: _new} = require('../new');
 const {command} = require('../');
 const {OPTIONS, USAGE} = require('./constants');
 
-module.exports = command({
+module.exports.init = command({
   name: 'init',
   options: OPTIONS,
   usage: USAGE

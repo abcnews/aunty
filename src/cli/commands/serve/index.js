@@ -3,13 +3,12 @@ const {hasWebpackConfig, build} = require('@abcnews/webpacker');
 
 // Ours
 const {BASIC_STORY} = require('../../../constants');
-const {projectTypeRouter} = require('../');
-const serveBasicStory = require('../serve-basic-story');
-const {command} = require('../');
+const {command, projectTypeRouter} = require('../');
+const {serveBasicStory} = require('../serve-basic-story');
 
 // If the project has a webpack.config.js then assume it is built with Webpack
 if (hasWebpackConfig()) {
-  module.exports = command({
+  module.exports.serve = command({
     name: 'serve',
     options: {},
     usage: ''
@@ -17,7 +16,7 @@ if (hasWebpackConfig()) {
 
 // Otherwise it's a normal Aunty project
 } else {
-  module.exports = projectTypeRouter({
+  module.exports.serve = projectTypeRouter({
     isProxy: true,
     name: 'serve'
   }, {

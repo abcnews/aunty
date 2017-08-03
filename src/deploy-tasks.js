@@ -9,8 +9,8 @@ const VTFP = require('vinyl-ftp');
 // Ours
 const {bad, cmd, hvy, ok} = require('./string-styles');
 const {packs, pumped, throws} = require('./utils/async');
+const {createLogger, warn} = require('./utils/console');
 const {styleLastSegment} = require('./utils/strings');
-const {createLogger, warn} = require('./utils');
 
 // Wrapped
 const rsync = packs(pify(rsyncwrapper));
@@ -27,7 +27,7 @@ const DEFAULTS = {
 
 const MESSAGE_ICONS = {
   INITIAL: ['🙋', '🙋‍♂️'],
-  FAILURE: ['🤦‍♀️', '🤦‍♂️'],
+  FAILURE: ['🙅', '🙅‍♂️'],
   SUCCESS: ['🙆', '🙆‍♂️']
 };
 

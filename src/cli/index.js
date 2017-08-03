@@ -8,12 +8,13 @@ const updateNotifier = require('update-notifier');
 // Ours
 const pkg = require('../../package');
 const {packs, throws} = require('../utils/async');
-const {log} = require('../utils');
+const {log} = require('../utils/console');
+const {slugToCamel} = require('../utils/strings');
 const {OPTIONS, USAGE, ALIASES, COMMANDS, MESSAGES} = require('./constants');
 
 const ONE_HOUR = 36e5;
 
-module.exports = packs(async (args, isGlobal) => {
+module.exports.cli = packs(async (args, isGlobal) => {
   const argv = minimist(args, OPTIONS);
 
   if (isGlobal) {
@@ -41,12 +42,10 @@ module.exports = packs(async (args, isGlobal) => {
 
   commandName = ALIASES[commandName] || commandName;
 
-  const fn = require(resolve(__dirname, `./commands/${commandName}`));
-  const fnArgs = isHelp ? ['--help'] : args.slice(1);
+  const commandFn = require(
+    resolve(__dirname, `./commands/${commandName}`)
+  )[slugToCamel(commandName)];
+  const commandFnArgs = isHelp ? ['--help'] : args.slice(1);
 
-  throws(await fn(fnArgs));
-
-  if (!isHelp) {
-    return true;
-  }
+  throws(await commandFn(commandFnArgs));
 });

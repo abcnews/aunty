@@ -5,50 +5,28 @@ const pump = require('pump');
 // Wrapped
 const pumpAsync = pify(pump);
 
-function pack(promise) {
-  return promise
+const pack = module.exports.pack = promise =>
+  promise
   .then(result => [null, result])
   .catch(err => [err]);
-}
 
-function packs(fn) {
-  return (...fnArgs) => pack(fn(...fnArgs));
-}
+module.exports.packs = fn =>
+  (...fnArgs) => pack(fn(...fnArgs));
 
-function throws(packed) {
+const throws = module.exports.throws = packed => {
   if (packed[0]) {
     throw packed[0];
   }
 
   return packed;
-}
-
-function unpack(packed, ignoreErrors) {
-  if (ignoreErrors) {
-    return packed[1];
-  }
-
-  return throws(packed)[1];
-}
-
-async function requireAsync(path) {
-  return require(path);
-}
-
-function prequire(path) {
-  return pack(requireAsync(path));
-}
-
-function pumped(...streams) {
-  return pack(pumpAsync(Array.isArray(streams[0]) ?
-    streams[0] : streams));
-}
-
-module.exports = {
-  pack,
-  packs,
-  throws,
-  unpack,
-  prequire,
-  pumped
 };
+
+module.exports.unpack = (packed, ignoreErrors) =>
+  ignoreErrors ? packed[1] : throws(packed)[1];
+
+const requireAsync = async path => require(path);
+
+module.exports.prequire = path => pack(requireAsync(path));
+
+module.exports.pumped = (...streams) =>
+  pack(pumpAsync(Array.isArray(streams[0]) ? streams[0] : streams));

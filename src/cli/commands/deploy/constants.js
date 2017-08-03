@@ -6,7 +6,7 @@ const {BASIC_STORY} = require('../../../constants');
 const {cmd, hvy, opt, req, sec} = require('../../../string-styles');
 const {styleLastSegment} = require('../../../utils/strings');
 
-const OPTIONS = {
+module.exports.OPTIONS = {
   string: [
     'credentials',
     'id',
@@ -32,7 +32,7 @@ const OPTIONS = {
   }
 };
 
-const USAGE = `
+module.exports.USAGE = `
 Usage: ${cmd('aunty deploy')} ${opt('[options]')}
 
 ${sec('Options')}
@@ -73,7 +73,7 @@ ${sec('Examples')}
     Deploy the project, specifying config targets' ${opt('<id>')} replacement.
 `;
 
-const DEFAULTS = new Map([
+module.exports.DEFAULTS = new Map([
   [BASIC_STORY, {
     contentftp: {
       from: 'build',
@@ -82,18 +82,19 @@ const DEFAULTS = new Map([
   }]
 ]);
 
-const REQUIRED_PROPERTIES = ['from', 'to', 'type', 'username', 'password', 'host'];
+module.exports.REQUIRED_PROPERTIES = ['from', 'to', 'type', 'username', 'password', 'host'];
 
-const VALID_TYPES = new Set(['ftp', 'ssh']);
+const VALID_TYPES = module.exports.VALID_TYPES = new Set(['ftp', 'ssh']);
 
 const DOMAIN = 'abc.net.au';
 const NEWSDEV = `newsdev3.aus.aunty.${DOMAIN}`;
-const RECOGNISED_HOST_PATH_TO_URL_MAPPINGS = {
+
+module.exports.RECOGNISED_HOST_PATH_TO_URL_MAPPINGS = {
   [`contentftp.${DOMAIN}`]: [/\/www\/(.*)/, `http://www.${DOMAIN}/$1`],
   [NEWSDEV]: [/\/var\/www\/html\/(.*)/, `http://${NEWSDEV}/$1`]
 };
 
-const MESSAGES = {
+module.exports.MESSAGES = {
   NO_TARGETS: 'There are no targets to deploy to.',
   sourceIsNotDirectory: from => `${hvy(from)} is not a directory.`,
   targetDoesNotExist: key => `The target ${hvy(key)} doesn't exist in the project configuration`,
@@ -107,14 +108,4 @@ const MESSAGES = {
   ${hvy('on')}   ${req(host)}
 `,
   publicURL: url => `\n  Public URL: ${hvy(url)}/`
-};
-
-module.exports = {
-  OPTIONS,
-  USAGE,
-  DEFAULTS,
-  REQUIRED_PROPERTIES,
-  VALID_TYPES,
-  RECOGNISED_HOST_PATH_TO_URL_MAPPINGS,
-  MESSAGES
 };

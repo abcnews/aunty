@@ -3,14 +3,14 @@ const del = require('del');
 
 // Ours
 const {packs, unpack} = require('../../../utils/async');
-const {log} = require('../../../utils');
+const {log} = require('../../../utils/console');
 const {command} = require('../');
 const {OPTIONS, DEFAULTS, USAGE, MESSAGES} = require('./constants');
 
 // Wrapped
 const rm = packs(del);
 
-module.exports = command({
+module.exports.clean = command({
   name: 'clean',
   options: OPTIONS,
   usage: USAGE,
