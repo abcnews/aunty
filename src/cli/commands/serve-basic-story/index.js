@@ -34,7 +34,9 @@ module.exports = command({
 
   throws(await build(argv.$));
 
-  const serve = serveStatic(`${config.root}/${BUILD_DIR}`);
+  const serve = serveStatic(`${config.root}/${BUILD_DIR}`, {
+    setHeaders: res => res.setHeader('Access-Control-Allow-Origin', '*')
+  });
   const serveProject = argv.debug ? serveStatic(`${config.root}`) : null;
 
   const server = createServer((req, res) => {
