@@ -24,7 +24,7 @@ module.exports = command({
   options: OPTIONS,
   usage: USAGE,
   configRequired: true
-}, async function (argv, config) {
+}, async (argv, config) => {
   const serveConfig = typeof config.serve === 'object' ? config.serve : {};
   const buildConfigKey = argv.debug ? D_KEY : KEY;
 

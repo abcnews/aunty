@@ -14,9 +14,7 @@ if (hasWebpackConfig()) {
     name: 'build',
     options: {},
     usage: WEBPACK_USAGE
-  }, async function () {
-    return build(process.argv);
-  });
+  }, async () => build(process.argv));
 
 // Otherwise it's a normal Aunty project
 } else {

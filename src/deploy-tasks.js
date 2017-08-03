@@ -43,7 +43,7 @@ const MESSAGES = {
   put: path => `📄 ${ok('‣')} ${styleLastSegment(path, ok)}`
 };
 
-module.exports.ftp = packs(async function (target) {
+module.exports.ftp = packs(async target => {
   const log = createLogger('  FTP', hvy);
 
   log(MESSAGES.STARTED);
@@ -68,7 +68,6 @@ module.exports.ftp = packs(async function (target) {
       buffer: false,
       cwd: target.from
     }),
-    // vftp.newer(target.to),
     vftp.dest(target.to),
     through.obj()
   );
@@ -81,7 +80,7 @@ module.exports.ftp = packs(async function (target) {
   log(MESSAGES.COMPLETED);
 });
 
-module.exports.rsync = packs(async function (target) {
+module.exports.rsync = packs(async target => {
   const log = createLogger('  SSH [rsync]', hvy);
 
   log(MESSAGES.STARTED);
@@ -104,7 +103,7 @@ module.exports.rsync = packs(async function (target) {
   log(MESSAGES.COMPLETED);
 });
 
-module.exports.symlink = packs(async function (target) {
+module.exports.symlink = packs(async target => {
   const log = createLogger('  SSH [symlink]', hvy);
 
   log(MESSAGES.STARTED);
@@ -125,7 +124,7 @@ module.exports.symlink = packs(async function (target) {
 
   throws(await packs(pify(ssh.on))('ready'));
 
-  let [err, stream] = await packs(pify(ssh.exec))(
+  const [err, stream] = await packs(pify(ssh.exec))(
     `rm -rf ${symlinkPath} && ln -s ${target.to} ${symlinkPath}`
   );
 

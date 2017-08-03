@@ -18,7 +18,7 @@ try {
   cli = require('../cli');
 }
 
-(async function () {
+(async () => {
   const [err, wasCommandExecuted] = await cli(process.argv.slice(2), isGlobal);
 
   if (err) {

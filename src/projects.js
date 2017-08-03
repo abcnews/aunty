@@ -48,7 +48,7 @@ ${vars}
   created: (dir, file) => `  ${ok('create')} ${relative(dir, file)}`
 };
 
-module.exports.create = packs(async function (config) {
+module.exports.create = packs(async config => {
   const templateDir = join(__dirname, `../templates/${config.projectType}`);
   const targetDir = join(process.cwd(), config.directoryName);
   const templateVars = Object.assign(
@@ -64,7 +64,7 @@ module.exports.create = packs(async function (config) {
   files.sort().forEach(file => log(MESSAGES.created(targetDir, file)));
 });
 
-module.exports.getConfig = packs(async function (requiredProps = []) {
+module.exports.getConfig = packs(async (requiredProps = []) => {
   if (!root) {
     root = unpack(await getPkgDir());
   }
@@ -101,7 +101,7 @@ module.exports.getConfig = packs(async function (requiredProps = []) {
   const config = Object.assign({
     name: pkg.name,
     version: pkg.version,
-    root: root
+    root
   }, merge.recursive(true, pkgConfig, configFileConfig));
 
   requiredProps

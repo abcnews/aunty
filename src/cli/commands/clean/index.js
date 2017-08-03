@@ -15,14 +15,14 @@ module.exports = command({
   options: OPTIONS,
   usage: USAGE,
   configRequired: ['type']
-}, async function (argv, config) {
+}, async (argv, config) => {
   let globs = argv._.length ? argv._ : config.clean;
 
   if (!Array.isArray(globs) && typeof globs !== 'string') {
     globs = DEFAULTS[config.type];
   }
 
-  let paths = unpack(await rm(globs, {cwd: config.root}));
+  const paths = unpack(await rm(globs, {cwd: config.root}));
 
   log(MESSAGES.deletion(paths.map(path => path.replace(config.root, ''))));
 });
