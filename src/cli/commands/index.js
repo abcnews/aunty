@@ -67,15 +67,14 @@ const command = module.exports.command = ({
   });
 };
 
-module.exports.projectTypeRouter = ({name, isProxy}, commands) =>
-  command({
-    name: name,
-    isProxy: isProxy,
-    configRequired: ['type']
-  }, async (argv, config) => {
-    if (!commands[config.type]) {
-      throw MESSAGES.unrecognised(config.type);
-    }
+module.exports.projectTypeRouter = ({name, isProxy}, commands) => command({
+  name,
+  isProxy,
+  configRequired: ['type']
+}, async (argv, config) => {
+  if (!commands[config.type]) {
+    throw MESSAGES.unrecognised(config.type);
+  }
 
-    throws(await commands[config.type](argv.$));
-  });
+  throws(await commands[config.type](argv.$));
+});

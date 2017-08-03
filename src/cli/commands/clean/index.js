@@ -22,7 +22,7 @@ module.exports.clean = command({
     globs = DEFAULTS[config.type];
   }
 
-  let paths = unpack(await rm(globs, {cwd: config.root}));
+  const paths = unpack(await rm(globs, {cwd: config.root}));
 
   log(MESSAGES.deletion(paths.map(path => path.replace(config.root, ''))));
 });

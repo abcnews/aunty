@@ -52,10 +52,11 @@ ${vars}
 module.exports.create = packs(async config => {
   const templateDir = join(__dirname, `../templates/${config.projectType}`);
   const targetDir = join(process.cwd(), config.directoryName);
-  const templateVars = {
-    ...DEFAULT_TEMPLATE_VARS,
-    ...config.templateVars
-  };
+  const templateVars = Object.assign(
+    {},
+    DEFAULT_TEMPLATE_VARS,
+    config.templateVars
+  );
 
   log(MESSAGES.creating(config.projectType, targetDir, templateVars));
 
@@ -98,12 +99,11 @@ module.exports.getConfig = packs(async (requiredProps = []) => {
     configFileConfig = {};
   }
 
-  const config = {
+  const config = Object.assign({
     name: pkg.name,
     version: pkg.version,
-    root: root,
-    ...recursive(true, pkgConfig, configFileConfig)
-  };
+    root
+  }, recursive(true, pkgConfig, configFileConfig));
 
   requiredProps
   .filter(identity)

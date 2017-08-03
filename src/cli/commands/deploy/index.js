@@ -79,21 +79,23 @@ module.exports.deploy = command({
     throw MESSAGES.NO_TARGETS;
   }
 
-  let credentials = unpack(await getJSON(argv.credentials));
+  const credentials = unpack(await getJSON(argv.credentials));
 
-  let id = argv.id || (await isRepo() && await getCurrentLabel()) || 'default';
+  const id = argv.id || (await isRepo() && await getCurrentLabel()) || 'default';
 
   // 2) Create an array of config objects fot each target we know about
 
-  const targets = keys.map(key => ({
-    __key__: key,
-    id,
-    name: config.name,
-    files: '**',
-    ...credentials[key],
-    ...deployConfig[key],
-    ...(argv.shouldRespectTargetSymlinks ? {} : {symlink: null})
-  }));
+  const targets = keys.map(key => Object.assign(
+    {
+      __key__: key,
+      id,
+      name: config.name,
+      files: '**'
+    },
+    credentials[key],
+    deployConfig[key],
+    (argv.shouldRespectTargetSymlinks ? {} : {symlink: null})
+  ));
 
   // 3) Validate & normalise those configs (in parallel)
 

@@ -26,7 +26,7 @@ let isGlobal;
 
 // Always prefer local CLI
 try {
-  cli = require(resolve.sync(`${name}/lib/cli`, {basedir: process.cwd()})).cli;
+  cli = require(resolve.sync(`${name}/src/cli`, {basedir: process.cwd()})).cli;
 } catch (err) {
   isGlobal = true;
   cli = require('../cli').cli;

@@ -85,14 +85,15 @@ module.exports.rsync = packs(async target => {
 
   log(MESSAGES.STARTED);
 
-  const [err] = await rsync({
-    ...(DEFAULTS.RSYNC),
-    ...{
+  const [err] = await rsync(Object.assign(
+    {},
+    DEFAULTS.RSYNC,
+    {
       src: `${target.from}/${Array.isArray(target.files) ?
         target.files[0] : target.files}`,
       dest: `${target.username}@${target.host}:${target.to}`
     }
-  });
+  ));
 
   if (err) {
     log(MESSAGES.FAILED);
@@ -123,7 +124,7 @@ module.exports.symlink = packs(async target => {
 
   throws(await packs(pify(ssh.on))('ready'));
 
-  let [err, stream] = await packs(pify(ssh.exec))(
+  const [err, stream] = await packs(pify(ssh.exec))(
     `rm -rf ${symlinkPath} && ln -s ${target.to} ${symlinkPath}`
   );
 
