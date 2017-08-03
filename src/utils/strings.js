@@ -21,9 +21,8 @@ module.exports.bulleted = strs =>
   strs.map(str => `• ${str}`).join(NEWLINE);
 
 module.exports.inlineList = strs =>
-  strs.reduce((acc, str, index) => {
-    return [acc, str].join(index === strs.length - 1 ? ' & ' : ', ');
-  });
+  strs.reduce((acc, str, index) =>
+    [acc, str].join(index === strs.length - 1 ? ' & ' : ', '));
 
 const padding = module.exports.padding = (str, len, char = SPACE) =>
   char.repeat(len > str.length ? len - str.length : 0);
@@ -39,7 +38,7 @@ module.exports.listPairs = (obj, style = identity) => {
   const longest = getLongest(keys).length;
 
   return keys.map(key => {
-    return `${style(padRight(key, longest))}  ${obj[key]}`;
+   return `${style(padRight(key, longest))}  ${obj[key]}`;
   }).join(NEWLINE);
 };
 
