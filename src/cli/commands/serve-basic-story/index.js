@@ -3,9 +3,9 @@ const {existsSync} = require('fs');
 const {createServer} = require('http');
 
 // External
-const {watch} = require('chokidar');
+const chokidar = require('chokidar');
 const finalhandler = require('finalhandler');
-const {recursive} = require('merge');
+const merge = require('merge');
 const serveStatic = require('serve-static');
 
 // Ours
@@ -27,7 +27,7 @@ module.exports.serveBasicStory = command({
   const serveConfig = typeof config.serve === 'object' ? config.serve : {};
   const buildConfigKey = argv.debug ? D_KEY : KEY;
 
-  const buildConfig = recursive(true, DEFAULTS[buildConfigKey],
+  const buildConfig = merge.recursive(true, DEFAULTS[buildConfigKey],
     typeof config[buildConfigKey] === 'object' ? config[buildConfigKey] : {}
   );
 
@@ -87,7 +87,7 @@ module.exports.serveBasicStory = command({
       const globs = (Array.isArray(fileGlobs) ? fileGlobs : [fileGlobs])
         .map(glob => `${config.root}/${taskConfig.from}/${glob}`);
 
-      watch(globs, {ignoreInitial: true})
+      chokidar.watch(globs, {ignoreInitial: true})
       .on('all', (evt, path) => changesQueue.push({taskName, evt, path}))
       .on('error', reject);
 

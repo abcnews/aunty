@@ -2,7 +2,7 @@
 const pify = require('pify');
 const rsyncwrapper = require('rsyncwrapper');
 const SSH = require('ssh2');
-const {obj} = require('through2');
+const through = require('through2');
 const vfs = require('vinyl-fs');
 const VTFP = require('vinyl-ftp');
 
@@ -69,7 +69,7 @@ module.exports.ftp = packs(async target => {
       cwd: target.from
     }),
     vftp.dest(target.to),
-    obj()
+    through.obj()
   );
 
   if (err) {

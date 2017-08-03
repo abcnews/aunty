@@ -1,10 +1,10 @@
 // External
 const browserify = require('browserify');
 const uglify = require('gulp-uglify');
-const {recursive} = require('merge');
+const merge = require('merge');
 const map = require('map-stream');
 const nodeSass = require('node-sass');
-const {obj} = require('through2');
+const through = require('through2');
 const vfs = require('vinyl-fs');
 
 // Ours
@@ -40,7 +40,7 @@ module.exports.buildBasicStory = command({
     return log(MESSAGES.config(configKey, defaults, true));
   }
 
-  const buildConfig = recursive(true, defaults,
+  const buildConfig = merge.recursive(true, defaults,
     typeof config[configKey] === 'object' ? config[configKey] : {}
   );
 
@@ -61,7 +61,7 @@ module.exports.buildBasicStory = command({
       vfs.src(buildConfig.styles.files, {
         cwd: `${config.root}/${buildConfig.styles.from}`
       }),
-      obj((file, enc, next) => {
+      through.obj((file, enc, next) => {
         if (file.path.indexOf('.scss') > -1) {
           nodeSass.render(Object.assign(
             {
@@ -116,7 +116,7 @@ module.exports.buildBasicStory = command({
       vfs.src(buildConfig.scripts.files, {
         cwd: `${config.root}/${buildConfig.scripts.from}`
       }),
-      obj((file, enc, next) => {
+      through.obj((file, enc, next) => {
         browserify(file, Object.assign({
           basedir: `${config.root}/${buildConfig.scripts.from}`
         }, buildConfig.scripts.browserifyOptions))

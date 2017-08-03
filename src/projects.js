@@ -3,7 +3,7 @@ const {join, relative} = require('path');
 
 // External
 const copyTemplateDir = require('copy-template-dir');
-const {recursive} = require('merge');
+const merge = require('merge');
 const pify = require('pify');
 const pkgDir = require('pkg-dir');
 const readPkg = require('read-pkg');
@@ -103,7 +103,7 @@ module.exports.getConfig = packs(async (requiredProps = []) => {
     name: pkg.name,
     version: pkg.version,
     root
-  }, recursive(true, pkgConfig, configFileConfig));
+  }, merge.recursive(true, pkgConfig, configFileConfig));
 
   requiredProps
   .filter(identity)
