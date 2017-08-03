@@ -8,14 +8,14 @@ const {log} = require('../../utils');
 const {LOGO} = require('../constants');
 const {DEFAULTS, MESSAGES} = require('./constants');
 
-let stack = [];
+const stack = [];
 
 function command({name, options, usage, isProxy, configRequired}, fn) {
   name = name || DEFAULTS.COMMAND_NAME;
   options = options || DEFAULTS.OPTIONS;
   usage = usage || MESSAGES.usage(name);
 
-  return packs(async function (args = [], ...misc) {
+  return packs(async (args = [], ...misc) => {
     const argv = minimist(args, options);
     const fnArgs = [argv, ...misc];
     let err;
@@ -63,10 +63,10 @@ function command({name, options, usage, isProxy, configRequired}, fn) {
 
 function projectTypeRouter({name, isProxy}, commands) {
   return command({
-    name: name,
-    isProxy: isProxy,
+    name,
+    isProxy,
     configRequired: ['type']
-  }, async function (argv, config) {
+  }, async (argv, config) => {
     if (!commands[config.type]) {
       throw MESSAGES.unrecognised(config.type);
     }

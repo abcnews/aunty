@@ -13,7 +13,7 @@ const {OPTIONS, USAGE, ALIASES, COMMANDS, MESSAGES} = require('./constants');
 
 const ONE_HOUR = 36e5;
 
-module.exports = packs(async function (args, isGlobal) {
+module.exports = packs(async (args, isGlobal) => {
   const argv = minimist(args, OPTIONS);
 
   if (isGlobal) {

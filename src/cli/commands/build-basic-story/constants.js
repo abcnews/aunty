@@ -83,12 +83,11 @@ const FROM_PUBLIC_TO_BUILD = {from: 'public', to: BUILD_DIR};
 const FROM_SRC_TO_BUILD = {from: 'src', to: BUILD_DIR};
 
 const COMMON_CONFIG = {
-  styles: {
+  styles: Object.assign({
     files: '**/[^_]*.{sc,c}ss',
-    watched: '**/*.{sc,c}ss',
-    ...FROM_SRC_TO_BUILD
-  },
-  scripts: {
+    watched: '**/*.{sc,c}ss'
+  }, FROM_SRC_TO_BUILD),
+  scripts: Object.assign({
     files: 'index.js',
     watched: '**/*.js',
     browserifyOptions: {
@@ -96,13 +95,11 @@ const COMMON_CONFIG = {
         [BABELIFY, {presets: [ES2040]}]
       ]
     },
-    uglifyOptions: {},
-    ...FROM_SRC_TO_BUILD
-  },
-  public: {
-    files: '**/*',
-    ...FROM_PUBLIC_TO_BUILD
-  }
+    uglifyOptions: {}
+  }, FROM_SRC_TO_BUILD),
+  public: Object.assign({
+    files: '**/*'
+  }, FROM_PUBLIC_TO_BUILD)
 };
 
 const DEFAULTS = {

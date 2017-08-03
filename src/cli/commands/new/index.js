@@ -10,7 +10,7 @@ module.exports = command({
   name: 'new',
   options: OPTIONS,
   usage: USAGE
-}, async function (argv) {
+}, async argv => {
   if (argv._.length < 2) {
     throw MESSAGES.NOT_ENOUGH_ARGUMENTS;
   }

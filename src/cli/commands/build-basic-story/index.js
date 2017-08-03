@@ -32,7 +32,7 @@ module.exports = command({
   options: OPTIONS,
   usage: USAGE,
   configRequired: true
-}, async function (argv, config) {
+}, async (argv, config) => {
   const configKey = argv.debug ? D_KEY : KEY;
   const defaults = DEFAULTS[configKey];
 
@@ -61,7 +61,7 @@ module.exports = command({
       vfs.src(buildConfig.styles.files, {
         cwd: `${config.root}/${buildConfig.styles.from}`
       }),
-      through.obj(function (file, enc, next) {
+      through.obj((file, enc, next) => {
         if (file.path.indexOf('.scss') > -1) {
           nodeSass.render(Object.assign(
             {
@@ -116,7 +116,7 @@ module.exports = command({
       vfs.src(buildConfig.scripts.files, {
         cwd: `${config.root}/${buildConfig.scripts.from}`
       }),
-      through.obj(function (file, enc, next) {
+      through.obj((file, enc, next) => {
         browserify(file, Object.assign({
           basedir: `${config.root}/${buildConfig.scripts.from}`
         }, buildConfig.scripts.browserifyOptions))
