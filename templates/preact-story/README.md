@@ -1,6 +1,6 @@
 # {{projectName}}
 
-A project generated from [aunty](https://github.com/abcnews/aunty)'s `basic-story` template.
+A project generated from [aunty](https://github.com/abcnews/aunty)'s `preact-story` template.
 
 
 ## Hot Reload
@@ -33,6 +33,8 @@ a new build (a change to `./components/app` or its dependencies) it will automat
 
 If there was an error when compiling you will see an error box instead of your app. Once you fix the error it will vanish
 and your app will be back.
+
+If you need to hot reload a file outside of the `./components/app` dependency structure then you will have to add a separate `module.hot.accept` handler.
 
 
 ## Using React components with Preact
