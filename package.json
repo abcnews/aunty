@@ -22,7 +22,7 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "@abcnews/webpacker": "^0.6.0",
+    "@abcnews/webpacker": "^0.7.0",
     "babel-preset-es2040": "^1.1.1",
     "babelify": "^7.3.0",
     "browserify": "^14.0.0",
