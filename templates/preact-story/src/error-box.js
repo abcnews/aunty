@@ -1,13 +1,13 @@
 /** @jsx Preact.h */
 const Preact = require('preact');
 
-class Error extends Preact.Component {
-    componentDidMount () {
+class ErrorBox extends Preact.Component {
+    componentDidMount() {
         console.error(this.props.error);
     }
-    
+
     render() {
-        const error_style = {
+        const errorStyle = {
             background: '#900',
             color: 'white',
             padding: '20px',
@@ -18,10 +18,10 @@ class Error extends Preact.Component {
             boxShadow: '0 4px 10px rgba(0,0,0,0.4)',
             zIndex: 1000
         };
-        
+
         return (
             <div
-                style={error_style}>
+                style={errorStyle}>
                 <pre>
                     {this.props.error.stack}
                 </pre>
@@ -30,4 +30,4 @@ class Error extends Preact.Component {
     }
 }
 
-module.exports = Error;
+module.exports = ErrorBox;

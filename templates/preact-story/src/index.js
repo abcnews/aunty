@@ -19,8 +19,8 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
             renderFunction();
         } catch (e) {
             // Render the error to the screen in place of the actual app
-            const { Error } = require('./error');
-            root = Preact.render(<Error error={e} />, element, root);
+            const ErrorBox = require('./error-box');
+            root = Preact.render(<ErrorBox error={e} />, element, root);
         }
     };
 
