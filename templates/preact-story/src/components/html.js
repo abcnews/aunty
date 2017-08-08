@@ -1,4 +1,3 @@
-/** @jsx Preact.h */
 const Preact = require('preact');
 
 class HTML extends Preact.Component {
@@ -8,7 +7,7 @@ class HTML extends Preact.Component {
 
     render() {
         const rawHTML = { __html: this.props.html };
-        
+
         return (
             <div
                 dangerouslySetInnerHTML={rawHTML}

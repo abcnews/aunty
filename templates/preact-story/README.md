@@ -3,6 +3,24 @@
 A project generated from [aunty](https://github.com/abcnews/aunty)'s `preact-story` template.
 
 
+## Odyssey
+
+Oddysey must be available on the page before the main story component is loaded.
+
+You can see this happening at the bottom of `src/index.js`:
+
+```javascript
+// Load when Odyssey is ready
+if (window.__ODYSSEY__) {
+    render();
+} else {
+    window.addEventListener('odyssey:api', () => {
+        render();
+    });
+}
+```
+
+
 ## Hot Reload
 
 Hot reload is enabled by default on the development server. Your 'app' should be separated into the `src/index.js` loader
@@ -17,8 +35,8 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
         try {
             renderFunction();
         } catch (e) {
-            const { Error } = require('./error');
-            root = Preact.render(<Error error={e} />, element, root);
+            const ErrorBox = require('./error-box');
+            root = Preact.render(<ErrorBox error={e} />, element, root);
         }
     };
 

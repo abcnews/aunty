@@ -1,6 +1,4 @@
-/** @jsx Preact.h */
 const Preact = require('preact');
-const domready = require('domready');
 
 const element = document.querySelector('[data-{{projectName}}-root]');
 
@@ -30,4 +28,11 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
     });
 }
 
-domready(render);
+// Load when Odyssey is ready
+if (window.__ODYSSEY__) {
+    render();
+} else {
+    window.addEventListener('odyssey:api', () => {
+        render();
+    });
+}

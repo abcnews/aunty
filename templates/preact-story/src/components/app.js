@@ -1,4 +1,3 @@
-/** @jsx Preact.h */
 const Preact = require('preact');
 
 const HTML = require('./html');
