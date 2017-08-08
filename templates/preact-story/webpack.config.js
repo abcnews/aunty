@@ -1,4 +1,4 @@
-const { webpackConfig } = require('@abcnews/webpacker');
+const { webpackConfig } = require('@abcnews/aunty/webpacker');
 
 let config = webpackConfig();
 

@@ -21,7 +21,6 @@
     },
     "devDependencies": {
         "@abcnews/aunty": "{{auntyVersion}}",
-        "@abcnews/webpacker": "^1.0.0",
         "prettier": "^1.5.3"
     },
     "dependencies": {
