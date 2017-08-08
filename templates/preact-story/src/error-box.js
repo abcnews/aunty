@@ -1,4 +1,3 @@
-/** @jsx Preact.h */
 const Preact = require('preact');
 
 class ErrorBox extends Preact.Component {

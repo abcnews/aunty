@@ -25,20 +25,8 @@
         "prettier": "^1.5.3"
     },
     "dependencies": {
-        "babel-plugin-transform-react-jsx": "^6.24.1",
-        "domready": "^1.0.8",
         "preact": "^8.2.1",
         "preact-compat": "^3.16.0",
         "smoothscroll": "^0.3.0"
-    },
-    "babel": {
-        "plugins": [
-            [
-                "transform-react-jsx",
-                {
-                    "pragma": "h"
-                }
-            ]
-        ]
     }
 }
