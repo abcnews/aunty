@@ -2,10 +2,9 @@ const Preact = require('preact');
 
 const element = document.querySelector('[data-{{projectName}}-root]');
 
-let root;
 let render = () => {
     let App = require('./components/app');
-    root = Preact.render(<App />, element, root);
+    Preact.render(<App />, element, element.lastChild);
 };
 
 // Do some hot reload magic with errors
@@ -18,7 +17,7 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
         } catch (e) {
             // Render the error to the screen in place of the actual app
             const ErrorBox = require('./error-box');
-            root = Preact.render(<ErrorBox error={e} />, element, root);
+            Preact.render(<ErrorBox error={e} />, element, element.lastChild);
         }
     };
 
@@ -28,11 +27,5 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
     });
 }
 
-// Load when Odyssey is ready
-if (window.__ODYSSEY__) {
-    render();
-} else {
-    window.addEventListener('odyssey:api', () => {
-        render();
-    });
-}
+// Optionally change this to wait for Odyssey
+render();
