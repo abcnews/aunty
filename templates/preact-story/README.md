@@ -5,9 +5,9 @@ A project generated from [aunty](https://github.com/abcnews/aunty)'s `preact-sto
 
 ## Odyssey
 
-Oddysey must be available on the page before the main story component is loaded.
+If you want to make use of Odyssey, it must be available on the page before the main story component is loaded.
 
-You can see this happening at the bottom of `src/index.js`:
+Make sure the Odyssey `<script>` is being referenced and then add something like this to the bottom of `src/index.js`:
 
 ```javascript
 // Load when Odyssey is ready
@@ -36,7 +36,7 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
             renderFunction();
         } catch (e) {
             const ErrorBox = require('./error-box');
-            root = Preact.render(<ErrorBox error={e} />, element, root);
+            Preact.render(<ErrorBox error={e} />, element, element.lastChild);
         }
     };
 
