@@ -1,51 +1,49 @@
+// External
+const execa = require('execa');
+
 // Ours
-const {exec} = require('./processes');
-const {unpack} = require('./utils/async');
-const {EMPTY, NEWLINE} = require('./utils/strings');
-const {identity} = require('./utils/misc');
+const {pack} = require('./utils/async');
+const {NEWLINE} = require('./utils/strings');
 
 const PATTERNS = {
-  ACTIVE_BRANCH: /\*\s+([^\n]+)\n/,
+  ACTIVE_BRANCH: /\*\s+([^\n]+)/,
   DETACHED_HEAD: /\(HEAD detached at ([\w]+)\)/
 };
 
-module.exports.isRepo = async () =>
-  !(await exec('git rev-parse --git-dir'))[0];
+function git(args = [], options = {}) {
+  args = (typeof args === 'string') ? args.split(' ') : args;
 
-module.exports.getConfigValue = async key => {
-  const stdout = unpack(await exec(`git config --get ${key}`));
+  return execa('git', args, options);
+}
 
-  return stdout.split(NEWLINE).filter(identity).join(EMPTY);
-};
+module.exports.isRepo = async cwd =>
+  !(await pack(git('rev-parse --git-dir', {cwd})))[0];
 
-module.exports.getRemotes = async () => {
-  const stdout = unpack(await exec('git remote'));
+module.exports.getConfigValue = async key =>
+  (await git(`config --get ${key}`)).stdout;
 
-  return new Set(stdout.split(NEWLINE).filter(identity));
-};
+module.exports.getRemotes = async () =>
+  new Set((await git('remote')).stdout.split(NEWLINE).filter(x => x));
 
 module.exports.hasChanges = async () =>
-  (await exec('git status -s'))[1].length > 0;
+  (await git('status -s')).stdout.length > 0;
 
 module.exports.getCurrentLabel = async () => {
-  const stdout = unpack(await exec('git branch'));
+  const stdout = (await git('branch')).stdout;
   const [, branch] = stdout.match(PATTERNS.ACTIVE_BRANCH) || [null, 'uncommitted'];
   const [, detachedHeadCommit] = branch.match(PATTERNS.DETACHED_HEAD) || [];
 
   return detachedHeadCommit || branch;
 };
 
-module.exports.getCurrentTags = async () => {
-  const stdout = unpack(await exec('git tag -l --points-at HEAD'));
-
-  return new Set(stdout.split(NEWLINE).filter(identity));
-};
+module.exports.getCurrentTags = async () =>
+  new Set((await git('tag -l --points-at HEAD')).stdout.split(NEWLINE));
 
 module.exports.hasTag = async tag =>
-  !(await exec(`git show-ref --tags --verify "refs/tags/${tag}"`))[0];
+  !(await pack(git(`show-ref --tags --verify refs/tags/${tag}`)))[0];
 
-module.exports.createTag = async tag =>
-  exec(`git tag -a ${tag} -m "Tagging version ${tag}"`);
+module.exports.createTag = tag =>
+  git(['tag', '-a', tag, '-m', `"Tagging version ${tag}"`]);
 
-module.exports.pushTag = async (remote, tag) =>
-  exec(`git push ${remote} ${tag}`, null, true);
+module.exports.pushTag = (remote, tag) =>
+  git(['push', remote, tag]);
