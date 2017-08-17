@@ -26,8 +26,7 @@ const ALIASES = module.exports.ALIASES = {
   n: 'new',
   r: 'release',
   sbs: 'serve-basic-story',
-  s: 'serve',
-  v: 'view'
+  s: 'serve'
 };
 
 module.exports.COMMANDS = new Set(
@@ -97,8 +96,5 @@ ${sec('Helper commands')}
 
   ${cmd('aunty help')} ${req('<command>')}
     Display complete help for this ${req('command')}.
-
-  ${cmd('aunty view')}
-    View the current project's known configuration.
 `
 };
