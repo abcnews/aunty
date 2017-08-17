@@ -59,14 +59,15 @@ module.exports.MESSAGES = {
   targetDoesNotExist: key => `The target ${hvy(key)} doesn't exist in the project configuration`,
   targetNotConfigured: (key, prop) => `The target ${hvy(key)} in your configuration is incomplete or has incomplete credentials. Missing: ${hvy(prop)}`,
   unrecognisedType: (key, type) => `The target ${hvy(key)} has ${type ? 'an unrecognised' : 'no'} deployment type${type ? `: ${hvy(type)}` : ''}. Acceptable types are: ${Array.from(VALID_TYPES).map(x => hvy(x)).join(', ')}`,
-  deploying: (type, from, to, host) => `
-  Deploying using ${type}:
+  deploying: (type, from, to, host) =>
+    `Deploying using ${type}:
 
-  ${hvy('from')} ${styleLastSegment(from, req)}
-  ${hvy('to')}   ${styleLastSegment(to, req)}
-  ${hvy('on')}   ${req(host)}
+${hvy('from')} ${styleLastSegment(from, req)}
+${hvy('to')}   ${styleLastSegment(to, req)}
+${hvy('on')}   ${req(host)}
 `,
-  publicURL: url => `\n  Public URL: ${hvy(url)}/`,
+  publicURL: url => `
+Public URL: ${hvy(url)}/`,
   usage: name => `
 Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 

@@ -11,7 +11,7 @@ const vfs = require('vinyl-fs');
 const {pumped, throws} = require('../../utils/async');
 const {bad, cmd, ok} = require('../../utils/color');
 const {log, warn} = require('../../utils/console');
-const {indented, styleLastSegment} = require('../../utils/strings');
+const {styleLastSegment} = require('../../utils/strings');
 const {clean} = require('../clean');
 const {command} = require('../');
 const {OPTIONS, KEY, D_KEY, DEFAULTS, MESSAGES} = require('./constants');
@@ -73,13 +73,13 @@ module.exports.buildBasicStory = command({
             buildConfig.styles.nodeSassOptions
           ), (err, result) => {
             if (err) {
-              log(`  • ${fileFailure(file, config.root)}`);
+              log(`• ${fileFailure(file, config.root)}`);
 
               if (!argv.taskName) {
                 throw err;
               }
 
-              warn(indented(`    ${bad(err.message)}`, 4));
+              warn(bad(err.message));
 
               return next(null, file);
             }
@@ -97,7 +97,7 @@ module.exports.buildBasicStory = command({
         cb(null, file);
       }),
       map((file, cb) => {
-        log(`  • ${fileSuccess(file, config.root,
+        log(`• ${fileSuccess(file, config.root,
           buildConfig.styles.from, buildConfig.styles.to)}`);
         cb(null, file);
       }),
@@ -127,7 +127,7 @@ module.exports.buildBasicStory = command({
               throw err;
             }
 
-            warn(indented(`    ${bad(err.message)}`, 4));
+            warn(bad(err.message));
 
             return next(null, file);
           }
@@ -138,7 +138,7 @@ module.exports.buildBasicStory = command({
       }),
       uglify(buildConfig.scripts.uglifyOptions),
       map((file, cb) => {
-        log(`  • ${fileSuccess(file, config.root,
+        log(`• ${fileSuccess(file, config.root,
           buildConfig.scripts.from, buildConfig.scripts.to)}`);
         cb(null, file);
       }),
@@ -158,7 +158,7 @@ module.exports.buildBasicStory = command({
         cwd: `${config.root}/${buildConfig.public.from}`
       }),
       map((file, cb) => {
-        log(`  • ${fileSuccess(file, config.root,
+        log(`• ${fileSuccess(file, config.root,
           buildConfig.public.from, buildConfig.public.to)}`);
         cb(null, file);
       }),

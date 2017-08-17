@@ -18,11 +18,11 @@ module.exports.MESSAGES = {
   FORCE_REMINDER: `Use the ${opt('--force')} option to ignore warnings or release without tagging.`,
   NOT_REPO: `You can't tag a release or deploy using a tag name becase this project isn't a git repo.`,
   HAS_CHANGES: `You shouldn't release builds which may contain un-committed changes! ${FORCE_REMINDER}`,
-  hasTag: (tag, isTagOnHead) => `The tag ${hvy(tag)} already exists${
-      isTagOnHead ? '' : ` and your current HEAD doesn't point to it`
-    }! ${FORCE_REMINDER}`,
-  createdTag: tag => `\n  Created tag ${hvy(tag)}`,
-  pushedTag: (tag, remote) => `\n  Pushed tag ${hvy(tag)} to remote ${hvy(remote)}`,
+  hasTag: (tag, isTagOnHead) =>
+    `The tag ${hvy(tag)} already exists${isTagOnHead ? '' :
+      ` and your current HEAD doesn't point to it`}! ${FORCE_REMINDER}`,
+  createdTag: tag => `Created tag ${hvy(tag)}`,
+  pushedTag: (tag, remote) => `Pushed tag ${hvy(tag)} to remote ${hvy(remote)}`,
   usage: name => `
 Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')} ${opt('[deploy_options]')}
 

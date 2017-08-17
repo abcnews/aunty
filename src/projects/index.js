@@ -16,7 +16,6 @@ const {log} = require('../utils/console');
 const {isRepo, createRepo} = require('../utils/git');
 const {identity, pretty} = require('../utils/misc');
 const {install} = require('../utils/npm');
-const {indented} = require('../utils/strings');
 const {CONFIG_FILE_NAME} = require('./constants');
 
 // Wrapped
@@ -39,7 +38,7 @@ const MESSAGES = {
   NO_CONFIG: `This project has no ${hvy(CONFIG_FILE_NAME)} file or ${hvy('aunty')} property in its ${hvy('package.json')}.`,
   NOT_PACKAGE: `This command can only be run inside a project with a ${hvy('package.json')} file.`,
   missingRequiredProp: property => `This project's ${hvy('aunty')} configuration has no ${hvy(property)} property.`,
-  creating: (type, dir, vars) => indented(pretty`
+  creating: (type, dir, vars) => pretty`
 Creating a ${hvy(type)} project in:
 
 ${hvy(dir)}
@@ -47,7 +46,7 @@ ${hvy(dir)}
 ...using template variables:
 
 ${vars}
-  `, 2),
+  `,
   created: (dir, file) => `  ${ok('create')} ${relative(dir, file)}`
 };
 
@@ -66,17 +65,15 @@ module.exports.create = packs(async config => {
 
   files.sort().forEach(file => log(MESSAGES.created(targetDir, file)));
 
-  log('\n  Installing dependencies…');
+  log('Installing dependencies…');
   await install(['--only=dev'], targetDir);
-  log('    …OK');
 
   if (await isRepo(targetDir)) {
-    return log('  Git repo already exists');
+    return log('Git repo already exists');
   }
 
-  log('\n  Creating git repo…');
+  log('Creating git repo…');
   await createRepo(targetDir);
-  log('    …OK');
 });
 
 module.exports.getConfig = packs(async (requiredProps = []) => {

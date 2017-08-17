@@ -1,12 +1,7 @@
 // Ours
 const {BASIC_STORY, DEFAULT_OPTIONS} = require('../../projects/constants');
 const {cmd, ok, opt, sec} = require('../../utils/color');
-const {
-  bulleted,
-  indented,
-  listPairs,
-  styleLastSegment
-} = require('../../utils/strings');
+const {bulleted, indented, listPairs, styleLastSegment} = require('../../utils/strings');
 
 module.exports.OPTIONS = DEFAULT_OPTIONS;
 
@@ -15,10 +10,9 @@ const DEFAULTS = module.exports.DEFAULTS = {
 };
 
 module.exports.MESSAGES = {
-  deletion: paths => indented(paths.length < 1 ? `
-Nothing to delete` : `
-Deleted:
-${bulleted(paths.map(path => styleLastSegment(path, ok)))}`),
+  deletion: paths =>
+    paths.length < 1 ? `Nothing to delete` : `Deleted:
+${bulleted(paths.map(path => styleLastSegment(path, ok)))}`,
   usage: name => `
 Usage: ${cmd(`aunty ${name}`)} ${opt('[glob(s)]')} ${opt('[options]')}
 

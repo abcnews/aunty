@@ -15,8 +15,8 @@ module.exports.OPTIONS = {
 module.exports.MESSAGES = {
   NOT_ENOUGH_ARGUMENTS: `You didn't provide enough arguments.`,
   UNKNOWN_PROJECT_TYPE: `Project type must be one of: ${[...PROJECT_TYPES].map(type => hvy(type)).join(', ')}`,
-  invalidProjectName: name => `Project name "${name}" is invalid.${
-    name.indexOf('.') > -1 ? ` Did you mean to use ${cmd('aunty init')}?` : ''}`,
+  invalidProjectName: name =>
+    `Project name "${name}" is invalid.${name.indexOf('.') > -1 ? ` Did you mean to use ${cmd('aunty init')}?` : ''}`,
   usage: name => `
 Usage: ${cmd(`aunty ${name}`)} ${req('<project_type>')} ${req('<directory_name>')} ${opt('[options]')}
 

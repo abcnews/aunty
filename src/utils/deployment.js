@@ -44,7 +44,7 @@ const MESSAGES = {
 };
 
 module.exports.ftp = packs(async target => {
-  const log = createLogger('  FTP', hvy);
+  const log = createLogger('FTP', hvy);
 
   log(MESSAGES.STARTED);
 
@@ -81,7 +81,7 @@ module.exports.ftp = packs(async target => {
 });
 
 module.exports.rsync = packs(async target => {
-  const log = createLogger('  SSH [rsync]', hvy);
+  const log = createLogger('SSH [rsync]', hvy);
 
   log(MESSAGES.STARTED);
 
@@ -104,7 +104,7 @@ module.exports.rsync = packs(async target => {
 });
 
 module.exports.symlink = packs(async target => {
-  const log = createLogger('  SSH [symlink]', hvy);
+  const log = createLogger('SSH [symlink]', hvy);
 
   log(MESSAGES.STARTED);
 

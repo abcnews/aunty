@@ -4,7 +4,6 @@ const merge = require('merge');
 // Ours
 const {cmd, hvy, opt, req, sec} = require('../../utils/color');
 const {pretty} = require('../../utils/misc');
-const {indented} = require('../../utils/strings');
 
 // Resolved
 const BABELIFY = require.resolve('babelify');
@@ -85,16 +84,12 @@ module.exports.DEFAULTS = {
 };
 
 module.exports.MESSAGES = {
-  config: (key, config, isDefault) => indented(pretty`
-Here is the${
-  isDefault ? ' default' : ''
-} ${hvy(key)} config${
-  isDefault ? '' : ', including defaults'
-}:
+  config: (key, config, isDefault) =>
+    pretty`Here is the${isDefault ? ' default' : ''} ${hvy(key)} config${isDefault ? '' : ', including defaults'}:
 
-${config}`),
-  building: (taskName, key) => `
-  Building ${taskName}${key === D_KEY ? ' (debug)' : ''}:`,
+${config}`,
+  building: (taskName, key) =>
+    `Building ${taskName}${key === D_KEY ? ' (debug)' : ''}:`,
   usage: name => `
 Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 

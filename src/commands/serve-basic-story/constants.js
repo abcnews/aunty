@@ -21,12 +21,9 @@ const HOSTNAME = hostname();
 module.exports.MESSAGES = {
   STILL_WATCHING: `
   Still watching...`,
-  watching: taskNames => `
-  Watching files in ${
-    inlineList(taskNames.map(taskName => hvy(taskName)))
-  } build configs...`,
+  watching: taskNames =>
+    `Watching files in ${inlineList(taskNames.map(taskName => hvy(taskName)))} build configs...`,
   watchEvent: (taskName, eventName, path) => `
   ${cmd(`${taskName}:${eventName}`)} ${styleLastSegment(path, cmd)}`,
-  server: port => `
-  Server listening at ${hvy(`http://${HOSTNAME}:${port}`)}`
+  server: port => `Server listening at ${hvy(`http://${HOSTNAME}:${port}`)}`
 };

@@ -40,11 +40,11 @@ module.exports.listPairs = (obj, style = identity) => {
   }).join(NEWLINE);
 };
 
-module.exports.zipTemplateLiterals = (literals, separator = EMPTY) => {
+module.exports.zipTemplateLiterals = (literals, numSpacesBetween) => {
   const literalsLines = literals.map(literal => literal.split(NEWLINE));
 
   return literalsLines[0].reduce((memo, _, index) => [memo, NEWLINE].join(
-    literalsLines.map(lines => lines[index]).join(separator)
+    literalsLines.map(lines => lines[index]).join(SPACE.repeat(numSpacesBetween))
   ), EMPTY);
 };
 

@@ -12,7 +12,7 @@ module.exports.DEFAULTS = {
 };
 
 module.exports.MESSAGES = {
-  unrecognised: type => `\nUnrecognised project type: ${hvy(type)}`,
+  unrecognised: type => `Unrecognised project type: ${hvy(type)}`,
   usage: name => `
 Usage: ${cmd('aunty')} ${cmd(name)} ${opt('[options]')}
 

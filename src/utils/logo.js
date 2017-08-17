@@ -44,7 +44,7 @@ module.exports.createLogo = () => {
     )))
   .join(NEWLINE);
 
-  return zipTemplateLiterals([worm, dim(AUNTY)], '   ');
+  return zipTemplateLiterals([worm, dim(AUNTY)], 3);
 };
 
 module.exports.createCommandLogo = commandName => zipTemplateLiterals([color(`
@@ -57,5 +57,5 @@ module.exports.createErrorLogo = () => {
   const worm = WORM.replace(/(.)/g, (match, $1) => `${pickRandomColor()($1)}`);
   const text = '  ERROЯ  '.replace(/(.)/g, (match, $1) => `${NEWLINE} ${bad($1)}`);
 
-  return zipTemplateLiterals([worm, text, worm, text, worm], '');
+  return zipTemplateLiterals([worm, text, worm, text, worm]);
 };
