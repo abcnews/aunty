@@ -38,7 +38,7 @@ module.exports.listPairs = (obj, style = identity) => {
   const longest = getLongest(keys).length;
 
   return keys.map(key => {
-   return `${style(padRight(key, longest))}  ${obj[key]}`;
+    return `${style(padRight(key, longest))}  ${obj[key]}`;
   }).join(NEWLINE);
 };
 

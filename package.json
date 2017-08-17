@@ -64,7 +64,8 @@
       "import/no-dynamic-require": 0,
       "import/no-unassigned-import": 0,
       "no-await-in-loop": 0,
-      "no-eq-null": 0
+      "no-eq-null": 0,
+      "no-multi-assign": 0
     },
     "ignores": [
       "templates/preact-story/**"
