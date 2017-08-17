@@ -14,7 +14,7 @@ module.exports.clean = command({
   name: 'clean',
   options: OPTIONS,
   usage: MESSAGES.usage,
-  configRequired: ['type']
+  isConfigRequired: true
 }, async (argv, config) => {
   let globs = argv._.length ? argv._ : config.clean;
 

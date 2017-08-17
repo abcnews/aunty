@@ -15,7 +15,7 @@ const command = module.exports.command = ({
   options,
   usage,
   isProxy,
-  configRequired
+  isConfigRequired
 }, fn) => {
   name = name || DEFAULTS.COMMAND_NAME;
   options = options || DEFAULTS.OPTIONS;
@@ -26,7 +26,6 @@ const command = module.exports.command = ({
     const fnArgs = [argv, ...misc];
     let err;
     let config;
-    let requiredProps;
 
     if (argv.help) {
       return log(typeof usage === 'function' ? usage(name) : usage);
@@ -39,9 +38,8 @@ const command = module.exports.command = ({
 
     argv.$ = args;
 
-    if (configRequired) {
-      requiredProps = Array.isArray(configRequired) ? configRequired : [];
-      [err, config] = await getConfig(requiredProps);
+    if (isConfigRequired) {
+      [err, config] = await getConfig();
       fnArgs.splice(1, 0, config);
     }
 
@@ -58,7 +56,7 @@ const command = module.exports.command = ({
 module.exports.projectTypeRouter = ({name, isProxy}, commands) => command({
   name,
   isProxy,
-  configRequired: ['type']
+  isConfigRequired: true
 }, async (argv, config) => {
   if (!commands[config.type]) {
     throw MESSAGES.unrecognised(config.type);

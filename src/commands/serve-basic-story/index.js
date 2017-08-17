@@ -21,7 +21,7 @@ const {OPTIONS, MESSAGES} = require('./constants');
 module.exports.serveBasicStory = command({
   name: 'serve-basic-story',
   options: OPTIONS,
-  configRequired: true
+  isConfigRequired: true
 }, async (argv, config) => {
   const serveConfig = typeof config.serve === 'object' ? config.serve : {};
   const buildConfigKey = argv.debug ? D_KEY : KEY;

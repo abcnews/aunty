@@ -54,7 +54,7 @@ module.exports.deploy = command({
   name: 'deploy',
   options: OPTIONS,
   usage: MESSAGES.usage,
-  configRequired: true
+  isConfigRequired: true
 }, async (argv, config) => {
   // 1) Get config for target(s), using available defaults
 

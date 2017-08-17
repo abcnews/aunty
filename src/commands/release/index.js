@@ -16,7 +16,7 @@ module.exports.release = command({
   name: 'release',
   options: OPTIONS,
   usage: MESSAGES.usage,
-  configRequired: true
+  isConfigRequired: true
 }, async (argv, config) => {
   const id = config.version;
 

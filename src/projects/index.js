@@ -14,7 +14,7 @@ const {packs, prequire, unpack} = require('../utils/async');
 const {hvy, ok} = require('../utils/color');
 const {log} = require('../utils/console');
 const {isRepo, createRepo} = require('../utils/git');
-const {identity, pretty} = require('../utils/misc');
+const {pretty} = require('../utils/misc');
 const {install} = require('../utils/npm');
 const {CONFIG_FILE_NAME} = require('./constants');
 
@@ -76,7 +76,7 @@ module.exports.create = packs(async config => {
   await createRepo(targetDir);
 });
 
-module.exports.getConfig = packs(async (requiredProps = []) => {
+module.exports.getConfig = packs(async () => {
   if (!root) {
     root = unpack(await getPkgDir());
   }
@@ -115,14 +115,6 @@ module.exports.getConfig = packs(async (requiredProps = []) => {
     version: pkg.version,
     root
   }, merge(true, pkgConfig, configFileConfig));
-
-  requiredProps
-  .filter(identity)
-  .forEach(prop => {
-    if (config[prop] == null) {
-      throw MESSAGES.missingRequiredProp(prop);
-    }
-  });
 
   return config;
 });

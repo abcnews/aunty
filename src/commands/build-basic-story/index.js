@@ -31,7 +31,7 @@ module.exports.buildBasicStory = command({
   name: 'build-basic-story',
   options: OPTIONS,
   usage: MESSAGES.usage,
-  configRequired: true
+  isConfigRequired: true
 }, async (argv, config) => {
   const configKey = argv.debug ? D_KEY : KEY;
   const defaults = DEFAULTS[configKey];
