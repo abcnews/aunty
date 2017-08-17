@@ -1,4 +1,5 @@
 // Ours
+const {command} = require('../../cli');
 const {throws} = require('../../utils/async');
 const {log} = require('../../utils/console');
 const {
@@ -9,7 +10,6 @@ const {deploy} = require('../deploy');
 const {
   DEFAULTS: DEPLOY_DEFAULTS, MESSAGES: DEPLOY_MESSAGES
 } = require('../deploy/constants');
-const {command} = require('../');
 const {OPTIONS, MESSAGES} = require('./constants');
 
 module.exports.release = command({

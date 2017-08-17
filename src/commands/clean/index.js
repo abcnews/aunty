@@ -2,9 +2,9 @@
 const del = require('del');
 
 // Ours
+const {command} = require('../../cli');
 const {packs, unpack} = require('../../utils/async');
 const {log} = require('../../utils/console');
-const {command} = require('../');
 const {OPTIONS, DEFAULTS, MESSAGES} = require('./constants');
 
 // Wrapped

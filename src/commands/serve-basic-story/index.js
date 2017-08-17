@@ -9,13 +9,13 @@ const merge = require('webpack-merge');
 const serveStatic = require('serve-static');
 
 // Ours
+const {command} = require('../../cli');
 const {pack, throws} = require('../../utils/async');
 const {log} = require('../../utils/console');
 const {
   BUILD_DIR, D_KEY, DEFAULTS, KEY, TASK_NAMES
 } = require('../build-basic-story/constants');
 const {buildBasicStory} = require('../build-basic-story');
-const {command} = require('../');
 const {OPTIONS, MESSAGES} = require('./constants');
 
 module.exports.serveBasicStory = command({

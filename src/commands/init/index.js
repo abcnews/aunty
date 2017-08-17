@@ -2,9 +2,9 @@
 const {basename} = require('path');
 
 // Ours
+const {command} = require('../../cli');
 const {throws} = require('../../utils/async');
 const {new: _new} = require('../new');
-const {command} = require('../');
 const {OPTIONS, MESSAGES} = require('./constants');
 
 module.exports.init = command({

@@ -35,10 +35,21 @@ module.exports.COMMANDS = new Set(
   .concat(Object.keys(ALIASES))
 );
 
+module.exports.DEFAULTS = {
+  NAME: '__command__',
+  OPTIONS: {
+    boolean: 'help',
+    alias: {
+      help: 'h'
+    }
+  }
+};
+
 module.exports.MESSAGES = {
   version: (versionNumber, isLocal) => `
 ${cmd('aunty')} v${versionNumber}${isLocal ? dim(' (local)') : ''}`,
   unrecognised: commandName => `Unrecognised command: ${req(commandName)}`,
+  unrecognisedType: type => `Unrecognised project type: ${hvy(type)}`,
   usage: () => `${createLogo()}
 Usage: ${cmd('aunty')} ${req('<command>')} ${opt('[options]')} ${opt('[command_options]')}
 
@@ -96,5 +107,12 @@ ${sec('Helper commands')}
 
   ${cmd('aunty help')} ${req('<command>')}
     Display complete help for this ${req('command')}.
+`,
+  usageFallback: name => `
+Usage: ${cmd('aunty')} ${cmd(name)} ${opt('[options]')}
+
+${sec('Options')}
+
+  ${opt('-h')}, ${opt('--help')}  Display this help message and exit
 `
 };

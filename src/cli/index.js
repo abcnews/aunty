@@ -7,10 +7,12 @@ const updateNotifier = require('update-notifier');
 
 // Ours
 const pkg = require('../../package');
-const {packs, throws} = require('../utils/async');
+const {getConfig} = require('../projects');
+const {pack, packs, throws} = require('../utils/async');
 const {log} = require('../utils/console');
+const {createCommandLogo} = require('../utils/logo');
 const {slugToCamel} = require('../utils/strings');
-const {OPTIONS, ALIASES, COMMANDS, MESSAGES} = require('./constants');
+const {ALIASES, COMMANDS, DEFAULTS, OPTIONS, MESSAGES} = require('./constants');
 
 module.exports.cli = packs(async (args, isGlobal) => {
   const argv = minimist(args, OPTIONS);
@@ -46,4 +48,61 @@ module.exports.cli = packs(async (args, isGlobal) => {
   const commandFnArgs = isHelp ? ['--help'] : args.slice(1);
 
   throws(await commandFn(commandFnArgs));
+});
+
+let isEntryCommand;
+
+const command = module.exports.command = ({
+  name,
+  options,
+  usage,
+  isProxy,
+  isConfigRequired
+}, fn) => {
+  name = name || DEFAULTS.COMMAND_NAME;
+  options = options || DEFAULTS.OPTIONS;
+  usage = usage || MESSAGES.usageFallback;
+
+  return packs(async (args = [], ...misc) => {
+    const argv = minimist(args, options);
+    const fnArgs = [argv, ...misc];
+    let err;
+    let config;
+
+    if (argv.help) {
+      return log(typeof usage === 'function' ? usage(name) : usage);
+    }
+
+    if (!isEntryCommand) {
+      isEntryCommand = true;
+      log(createCommandLogo(name));
+    }
+
+    argv.$ = args;
+
+    if (isConfigRequired) {
+      [err, config] = await getConfig();
+      fnArgs.splice(1, 0, config);
+    }
+
+    if (!err) {
+      [err] = await pack(fn(...fnArgs));
+    }
+
+    if (err) {
+      throw err;
+    }
+  });
+};
+
+module.exports.projectTypeRouter = ({name, isProxy}, commands) => command({
+  name,
+  isProxy,
+  isConfigRequired: true
+}, async (argv, config) => {
+  if (!commands[config.type]) {
+    throw MESSAGES.unrecognisedType(config.type);
+  }
+
+  throws(await commands[config.type](argv.$));
 });

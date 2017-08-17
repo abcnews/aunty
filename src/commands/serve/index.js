@@ -2,8 +2,8 @@
 const {hasWebpackConfig, build} = require('@abcnews/webpacker');
 
 // Ours
+const {command, projectTypeRouter} = require('../../cli');
 const {BASIC_STORY} = require('../../projects/constants');
-const {command, projectTypeRouter} = require('../');
 const {serveBasicStory} = require('../serve-basic-story');
 
 // If the project has a webpack.config.js then assume it is built with Webpack

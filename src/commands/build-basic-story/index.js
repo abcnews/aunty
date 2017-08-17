@@ -8,12 +8,12 @@ const through = require('through2');
 const vfs = require('vinyl-fs');
 
 // Ours
+const {command} = require('../../cli');
 const {pumped, throws} = require('../../utils/async');
 const {bad, cmd, ok} = require('../../utils/color');
 const {log, warn} = require('../../utils/console');
 const {styleLastSegment} = require('../../utils/strings');
 const {clean} = require('../clean');
-const {command} = require('../');
 const {OPTIONS, KEY, D_KEY, DEFAULTS, MESSAGES} = require('./constants');
 
 function fileFailure(file, root) {

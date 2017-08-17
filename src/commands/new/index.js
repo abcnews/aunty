@@ -1,9 +1,9 @@
 // Ours
+const {command} = require('../../cli');
 const {PROJECT_TYPES} = require('../../projects/constants');
 const {create} = require('../../projects');
 const {throws} = require('../../utils/async');
 const {getConfigValue} = require('../../utils/git');
-const {command} = require('../');
 const {OPTIONS, MESSAGES, PATTERNS} = require('./constants');
 
 module.exports.new = command({
