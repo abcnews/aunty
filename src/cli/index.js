@@ -10,15 +10,13 @@ const pkg = require('../../package');
 const {packs, throws} = require('../utils/async');
 const {log} = require('../utils/console');
 const {slugToCamel} = require('../utils/strings');
-const {OPTIONS, USAGE, ALIASES, COMMANDS, MESSAGES} = require('./constants');
-
-const ONE_HOUR = 36e5;
+const {OPTIONS, ALIASES, COMMANDS, MESSAGES} = require('./constants');
 
 module.exports.cli = packs(async (args, isGlobal) => {
   const argv = minimist(args, OPTIONS);
 
   if (isGlobal) {
-    updateNotifier({pkg, updateCheckInterval: ONE_HOUR}).notify();
+    updateNotifier({pkg, updateCheckInterval: 36e5}).notify();
   }
 
   if (argv.version) {
@@ -29,7 +27,7 @@ module.exports.cli = packs(async (args, isGlobal) => {
   const isHelp = (ALIASES[commandName] || commandName) === 'help';
 
   if (!commandName || (isHelp && argv._.length === 1)) {
-    return log(USAGE);
+    return log(MESSAGES.usage());
   }
 
   if (isHelp) {

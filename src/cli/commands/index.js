@@ -2,13 +2,13 @@
 const minimist = require('minimist');
 
 // Ours
+const {createCommandLogo} = require('../../logo');
 const {getConfig} = require('../../projects');
 const {pack, packs, throws} = require('../../utils/async');
 const {log} = require('../../utils/console');
-const {LOGO} = require('../constants');
 const {DEFAULTS, MESSAGES} = require('./constants');
 
-const stack = [];
+let isEntryCommand;
 
 const command = module.exports.command = ({
   name,
@@ -29,17 +29,16 @@ const command = module.exports.command = ({
     let requiredProps;
 
     if (usage && argv.help) {
-      log(LOGO);
       log(usage);
       return;
     }
 
-    argv.$ = args;
-
-    if (!isProxy) {
-      stack.push(name);
-      log(MESSAGES.started(stack));
+    if (!isEntryCommand) {
+      isEntryCommand = true;
+      log(createCommandLogo(name));
     }
+
+    argv.$ = args;
 
     if (configRequired) {
       requiredProps = Array.isArray(configRequired) ? configRequired : [];
@@ -52,17 +51,7 @@ const command = module.exports.command = ({
     }
 
     if (err) {
-      if (!isProxy) {
-        log(MESSAGES.failed(stack));
-        stack.pop();
-      }
-
       throw err;
-    }
-
-    if (!isProxy) {
-      log(MESSAGES.completed(stack));
-      stack.pop();
     }
   });
 };

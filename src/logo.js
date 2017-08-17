@@ -1,14 +1,12 @@
 // Ours
-const {dim, bad, blue, cyan, green, magenta, red, yellow} = require('./string-styles');
-const {zipTemplateLiterals} = require('./utils/strings');
+const {bad, blue, cyan, dim, green, hvy, magenta, red, yellow} = require('./string-styles');
+const {NEWLINE, zipTemplateLiterals} = require('./utils/strings');
 
 const COLORS = [blue, cyan, green, magenta, red, yellow];
 
-const LINE_PATTERN = /\n(.*)/g;
+const SHADED_PATTERN = /([▗▙])\s([▜▘])/g;
 
-const WORM_GAP_PATTERN = /([▗▙])\s([▜▘])/g;
-
-const FLAT_WORM = `
+const WORM = `
  ▗▓▓▓▓▙   ▟▓▓▓▓▙   ▟▓▓▓▓▖
  ▓▓▓▓▓▓▙ ▜▓▓▓▓▓▓▙ ▜▓▓▓▓▓▓
  ▓▓▓ ▜▓▓▙ ▜▛  ▜▓▓▙ ▜▛ ▓▓▓
@@ -18,18 +16,6 @@ const FLAT_WORM = `
  ▓▓▓ ▟▙ ▜▓▓▙  ▟▙ ▜▓▓▙ ▓▓▓
  ▓▓▓▓▓▓▙ ▜▓▓▓▓▓▓▙ ▜▓▓▓▓▓▓
  ▝▓▓▓▓▛   ▜▓▓▓▓▛   ▜▓▓▓▓▘`;
-
-const WORM = FLAT_WORM
-.split('\n')
-.map((line, index, lines) => line.replace(
-  WORM_GAP_PATTERN,
-  (match, $1, $2) => (index < (lines.length / 2)) ?
-    `${$1} ${dim($2)}` :
-    `${dim($1)} ${$2}`
-  ))
-.join('\n');
-
-const ERROR_WORM = FLAT_WORM.replace(/(.)/g, (match, $1) => `${randomColor()($1)}`);
 
 const AUNTY = `
                                    ▗▄▄
@@ -42,25 +28,34 @@ const AUNTY = `
                                            ▗▓▓▘
                                          ▟▓▓▛`;
 
-const ERROR = '  ERROЯ  '.replace(/(.)/g, (match, $1) => `\n ${bad($1)}`);
-
-function randomColor() {
+function pickRandomColor() {
   return COLORS[Math.floor(Math.random() * COLORS.length)];
 }
 
-module.exports.getLogo = () => {
-  const color = randomColor();
+const color = pickRandomColor();
 
-  return zipTemplateLiterals([
-    WORM.replace(LINE_PATTERN, (match, $1) => `\n${color($1)}`),
-    AUNTY
-  ], '   ');
+module.exports.createLogo = () => {
+  const worm = WORM
+  .split(NEWLINE)
+  .map((line, index, lines) => color(line.replace(
+    SHADED_PATTERN,
+    (match, $1, $2) => (index < (lines.length / 2)) ?
+      `${$1} ${dim($2)}` : `${dim($1)} ${$2}`
+    )))
+  .join(NEWLINE);
+
+  return zipTemplateLiterals([worm, dim(AUNTY)], '   ');
 };
 
-module.exports.getErrorLogo = () => zipTemplateLiterals([
-  ERROR_WORM,
-  ERROR,
-  ERROR_WORM,
-  ERROR,
-  ERROR_WORM
-], '');
+module.exports.createCommandLogo = commandName => zipTemplateLiterals([color(`
+⣾${dim('⢷')}⡾⢷${dim('⡾')}⣷ 
+⢿⡾${dim('⢷⡾')}⢷⡿ `), `
+${dim('aunty')}
+${hvy(commandName)}`]);
+
+module.exports.createErrorLogo = () => {
+  const worm = WORM.replace(/(.)/g, (match, $1) => `${pickRandomColor()($1)}`);
+  const text = '  ERROЯ  '.replace(/(.)/g, (match, $1) => `${NEWLINE} ${bad($1)}`);
+
+  return zipTemplateLiterals([worm, text, worm, text, worm], '');
+};

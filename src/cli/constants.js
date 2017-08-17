@@ -1,10 +1,8 @@
 // Ours
 const {PROJECT_TYPE_DESCRIPTIONS} = require('../constants');
-const {getLogo} = require('../logo');
+const {createLogo} = require('../logo');
 const {cmd, dim, hvy, opt, req, sec} = require('../string-styles');
 const {indented, listPairs} = require('../utils/strings');
-
-const LOGO = module.exports.LOGO = getLogo();
 
 module.exports.OPTIONS = {
   boolean: [
@@ -17,7 +15,32 @@ module.exports.OPTIONS = {
   }
 };
 
-module.exports.USAGE = `${LOGO}
+const ALIASES = module.exports.ALIASES = {
+  b: 'build',
+  bbs: 'build-basic-story',
+  c: 'clean',
+  cs: 'clean-story',
+  d: 'deploy',
+  h: 'help',
+  i: 'init',
+  n: 'new',
+  r: 'release',
+  sbs: 'serve-basic-story',
+  s: 'serve',
+  v: 'view'
+};
+
+module.exports.COMMANDS = new Set(
+  []
+  .concat(Object.keys(ALIASES).map(key => ALIASES[key]))
+  .concat(Object.keys(ALIASES))
+);
+
+module.exports.MESSAGES = {
+  version: (versionNumber, isLocal) => `
+${cmd('aunty')} v${versionNumber}${isLocal ? dim(' (local)') : ''}`,
+  unrecognised: commandName => `Unrecognised command: ${req(commandName)}`,
+  usage: () => `${createLogo()}
 Usage: ${cmd('aunty')} ${req('<command>')} ${opt('[options]')} ${opt('[command_options]')}
 
 ${sec('Options')}
@@ -77,31 +100,5 @@ ${sec('Helper commands')}
 
   ${cmd('aunty view')}
     View the current project's known configuration.
-`;
-
-const ALIASES = module.exports.ALIASES = {
-  b: 'build',
-  bbs: 'build-basic-story',
-  c: 'clean',
-  cs: 'clean-story',
-  d: 'deploy',
-  h: 'help',
-  i: 'init',
-  n: 'new',
-  r: 'release',
-  sbs: 'serve-basic-story',
-  s: 'serve',
-  v: 'view'
-};
-
-module.exports.COMMANDS = new Set(
-  []
-  .concat(Object.keys(ALIASES).map(key => ALIASES[key]))
-  .concat(Object.keys(ALIASES))
-);
-
-module.exports.MESSAGES = {
-  version: (versionNumber, isLocal) => `
-${cmd('aunty')} v${versionNumber}${isLocal ? dim(' (local)') : ''}`,
-  unrecognised: commandName => `Unrecognised command: ${req(commandName)}`
+`
 };
