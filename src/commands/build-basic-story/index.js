@@ -1,7 +1,7 @@
 // External
 const browserify = require('browserify');
 const uglify = require('gulp-uglify');
-const merge = require('merge');
+const merge = require('webpack-merge');
 const map = require('map-stream');
 const nodeSass = require('node-sass');
 const through = require('through2');
@@ -40,7 +40,7 @@ module.exports.buildBasicStory = command({
     return log(MESSAGES.config(configKey, defaults, true));
   }
 
-  const buildConfig = merge.recursive(true, defaults,
+  const buildConfig = merge(true, defaults,
     typeof config[configKey] === 'object' ? config[configKey] : {}
   );
 

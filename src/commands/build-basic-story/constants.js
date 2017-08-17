@@ -1,5 +1,5 @@
 // External
-const merge = require('merge');
+const merge = require('webpack-merge');
 
 // Ours
 const {cmd, hvy, opt, req, sec} = require('../../utils/color');
@@ -53,14 +53,14 @@ const COMMON_CONFIG = {
 };
 
 module.exports.DEFAULTS = {
-  [KEY]: merge.recursive(true, COMMON_CONFIG, {
+  [KEY]: merge(true, COMMON_CONFIG, {
     styles: {
       nodeSassOptions: {
         outputStyle: 'compressed'
       }
     }
   }),
-  [D_KEY]: merge.recursive(true, COMMON_CONFIG, {
+  [D_KEY]: merge(true, COMMON_CONFIG, {
     styles: {
       nodeSassOptions: {
         outputStyle: 'nested',

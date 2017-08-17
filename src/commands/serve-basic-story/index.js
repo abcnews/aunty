@@ -5,7 +5,7 @@ const {createServer} = require('http');
 // External
 const chokidar = require('chokidar');
 const finalhandler = require('finalhandler');
-const merge = require('merge');
+const merge = require('webpack-merge');
 const serveStatic = require('serve-static');
 
 // Ours
@@ -26,7 +26,7 @@ module.exports.serveBasicStory = command({
   const serveConfig = typeof config.serve === 'object' ? config.serve : {};
   const buildConfigKey = argv.debug ? D_KEY : KEY;
 
-  const buildConfig = merge.recursive(true, DEFAULTS[buildConfigKey],
+  const buildConfig = merge(true, DEFAULTS[buildConfigKey],
     typeof config[buildConfigKey] === 'object' ? config[buildConfigKey] : {}
   );
 
