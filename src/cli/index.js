@@ -41,7 +41,7 @@ module.exports.cli = packs(async (args, isGlobal) => {
   commandName = ALIASES[commandName] || commandName;
 
   const commandFn = require(
-    resolve(__dirname, `./commands/${commandName}`)
+    resolve(__dirname, `../commands/${commandName}`)
   )[slugToCamel(commandName)];
   const commandFnArgs = isHelp ? ['--help'] : args.slice(1);
 
