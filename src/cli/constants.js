@@ -17,15 +17,12 @@ module.exports.OPTIONS = {
 
 const ALIASES = module.exports.ALIASES = {
   b: 'build',
-  bbs: 'build-basic-story',
   c: 'clean',
-  cs: 'clean-story',
   d: 'deploy',
   h: 'help',
   i: 'init',
   n: 'new',
   r: 'release',
-  sbs: 'serve-basic-story',
   s: 'serve'
 };
 
