@@ -2,13 +2,11 @@
 const {getLongest, identity} = require('./misc');
 
 const CAMELABLE_PATTERN = /-\w/g;
-const COLON = ':';
 const EMPTY = '';
 const NEWLINE = '\n';
 const SLASH = '/';
 const SPACE = ' ';
 
-module.exports.COLON = COLON;
 module.exports.EMPTY = EMPTY;
 module.exports.NEWLINE = NEWLINE;
 module.exports.SLASH = SLASH;
