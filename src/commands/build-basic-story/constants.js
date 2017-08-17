@@ -2,9 +2,9 @@
 const merge = require('merge');
 
 // Ours
-const {cmd, hvy, opt, req, sec} = require('../../string-styles');
-const {indented} = require('../../utils/strings');
+const {cmd, hvy, opt, req, sec} = require('../../utils/color');
 const {pretty} = require('../../utils/misc');
+const {indented} = require('../../utils/strings');
 
 // Resolved
 const BABELIFY = require.resolve('babelify');

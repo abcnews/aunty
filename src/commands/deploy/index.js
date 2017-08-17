@@ -6,10 +6,10 @@ const loadJsonFile = require('load-json-file');
 const pify = require('pify');
 
 // Ours
-const {ftp, rsync, symlink} = require('../../deploy-tasks');
-const {isRepo, getCurrentLabel} = require('../../git');
 const {packs, throws, unpack} = require('../../utils/async');
 const {log} = require('../../utils/console');
+const {ftp, rsync, symlink} = require('../../utils/deployment');
+const {isRepo, getCurrentLabel} = require('../../utils/git');
 const {command} = require('../');
 const {
   OPTIONS,

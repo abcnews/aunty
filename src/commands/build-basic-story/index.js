@@ -8,8 +8,8 @@ const through = require('through2');
 const vfs = require('vinyl-fs');
 
 // Ours
-const {bad, cmd, ok} = require('../../string-styles');
 const {pumped, throws} = require('../../utils/async');
+const {bad, cmd, ok} = require('../../utils/color');
 const {log, warn} = require('../../utils/console');
 const {indented, styleLastSegment} = require('../../utils/strings');
 const {clean} = require('../clean');

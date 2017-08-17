@@ -1,6 +1,6 @@
 // Ours
-const {DEFAULT_OPTIONS, PROJECT_TYPE_DESCRIPTIONS} = require('../../constants');
-const {cmd, opt, req, sec} = require('../../string-styles');
+const {DEFAULT_OPTIONS, PROJECT_TYPE_DESCRIPTIONS} = require('../../projects/constants');
+const {cmd, opt, req, sec} = require('../../utils/color');
 const {indented, listPairs} = require('../../utils/strings');
 
 module.exports.OPTIONS = DEFAULT_OPTIONS;

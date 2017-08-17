@@ -1,6 +1,6 @@
 // Ours
-const {PROJECT_TYPES, PROJECT_TYPE_DESCRIPTIONS} = require('../../constants');
-const {cmd, hvy, opt, req, sec} = require('../../string-styles');
+const {PROJECT_TYPES, PROJECT_TYPE_DESCRIPTIONS} = require('../../projects/constants');
+const {cmd, hvy, opt, req, sec} = require('../../utils/color');
 const {indented, listPairs} = require('../../utils/strings');
 
 module.exports.OPTIONS = {

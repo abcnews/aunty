@@ -2,8 +2,8 @@
 const {join} = require('path');
 
 // Ours
-const {BASIC_STORY} = require('../../constants');
-const {cmd, hvy, opt, req, sec} = require('../../string-styles');
+const {BASIC_STORY} = require('../../projects/constants');
+const {cmd, hvy, opt, req, sec} = require('../../utils/color');
 const {styleLastSegment} = require('../../utils/strings');
 
 module.exports.OPTIONS = {

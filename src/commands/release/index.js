@@ -1,9 +1,9 @@
 // Ours
-const {
-  createTag, getCurrentTags, getRemotes, hasChanges, hasTag, isRepo, pushTag
-} = require('../../git');
 const {throws} = require('../../utils/async');
 const {log} = require('../../utils/console');
+const {
+  createTag, getCurrentTags, getRemotes, hasChanges, hasTag, isRepo, pushTag
+} = require('../../utils/git');
 const {build} = require('../build');
 const {deploy} = require('../deploy');
 const {

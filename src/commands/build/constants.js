@@ -1,5 +1,5 @@
 // Ours
-const {cmd, opt, req, sec} = require('../../string-styles');
+const {cmd, opt, req, sec} = require('../../utils/color');
 
 module.exports.MESSAGES = {
   usage: name => `

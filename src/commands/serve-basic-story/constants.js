@@ -2,8 +2,8 @@
 const {hostname} = require('os');
 
 // Ours
+const {cmd, hvy} = require('../../utils/color');
 const {inlineList, styleLastSegment} = require('../../utils/strings');
-const {cmd, hvy, opt, sec} = require('../../string-styles');
 
 module.exports.OPTIONS = {
   boolean: [

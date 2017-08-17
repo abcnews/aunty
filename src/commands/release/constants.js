@@ -1,5 +1,5 @@
 // Ours
-const {cmd, hvy, opt, sec} = require('../../string-styles');
+const {cmd, hvy, opt, sec} = require('../../utils/color');
 const {BOXES} = require('../constants');
 
 module.exports.OPTIONS = {

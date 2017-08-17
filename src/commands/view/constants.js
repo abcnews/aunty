@@ -1,7 +1,7 @@
 // Ours
-const {hvy} = require('../../string-styles');
-const {indented} = require('../../utils/strings');
+const {hvy} = require('../../utils/color');
 const {pretty} = require('../../utils/misc');
+const {indented} = require('../../utils/strings');
 
 module.exports.MESSAGES = {
   found: config => indented(pretty`

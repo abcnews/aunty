@@ -1,5 +1,5 @@
 // Ours
-const {bad, cmd, dim, hvy, ok, opt, sec} = require('../string-styles');
+const {bad, cmd, dim, hvy, ok, opt, sec} = require('../utils/color');
 const {COLON} = require('../utils/strings');
 
 const BOXES = module.exports.BOXES = {

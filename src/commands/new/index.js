@@ -1,8 +1,8 @@
 // Ours
-const {PROJECT_TYPES} = require('../../constants');
-const {getConfigValue} = require('../../git');
+const {PROJECT_TYPES} = require('../../projects/constants');
 const {create} = require('../../projects');
 const {throws} = require('../../utils/async');
+const {getConfigValue} = require('../../utils/git');
 const {command} = require('../');
 const {OPTIONS, MESSAGES, PATTERNS} = require('./constants');
 

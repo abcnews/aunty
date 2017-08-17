@@ -1,6 +1,6 @@
 // Ours
-const {BASIC_STORY, DEFAULT_OPTIONS} = require('../../constants');
-const {cmd, ok, opt, sec} = require('../../string-styles');
+const {BASIC_STORY, DEFAULT_OPTIONS} = require('../../projects/constants');
+const {cmd, ok, opt, sec} = require('../../utils/color');
 const {
   bulleted,
   indented,

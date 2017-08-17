@@ -2,7 +2,7 @@
 const {hasWebpackConfig, build} = require('@abcnews/webpacker');
 
 // Ours
-const {BASIC_STORY} = require('../../constants');
+const {BASIC_STORY} = require('../../projects/constants');
 const {command, projectTypeRouter} = require('../');
 const {buildBasicStory} = require('../build-basic-story');
 const {MESSAGES} = require('./constants');

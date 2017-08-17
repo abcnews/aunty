@@ -7,10 +7,10 @@ const vfs = require('vinyl-fs');
 const VTFP = require('vinyl-ftp');
 
 // Ours
-const {bad, cmd, hvy, ok} = require('./string-styles');
-const {packs, pumped, throws} = require('./utils/async');
-const {createLogger, warn} = require('./utils/console');
-const {styleLastSegment} = require('./utils/strings');
+const {packs, pumped, throws} = require('./async');
+const {bad, cmd, hvy, ok} = require('./color');
+const {createLogger, warn} = require('./console');
+const {styleLastSegment} = require('./strings');
 
 // Wrapped
 const rsync = packs(pify(rsyncwrapper));

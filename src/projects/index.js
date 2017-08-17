@@ -9,13 +9,13 @@ const pkgDir = require('pkg-dir');
 const readPkg = require('read-pkg');
 
 // Ours
-const ourPkg = require('../package');
+const ourPkg = require('../../package');
+const {packs, prequire, unpack} = require('../utils/async');
+const {hvy, ok} = require('../utils/color');
+const {log} = require('../utils/console');
+const {identity, pretty} = require('../utils/misc');
+const {indented} = require('../utils/strings');
 const {CONFIG_FILE_NAME} = require('./constants');
-const {hvy, ok} = require('./string-styles');
-const {packs, prequire, unpack} = require('./utils/async');
-const {log} = require('./utils/console');
-const {identity, pretty} = require('./utils/misc');
-const {indented} = require('./utils/strings');
 
 // Wrapped
 const clone = packs(pify(copyTemplateDir));
@@ -50,7 +50,7 @@ ${vars}
 };
 
 module.exports.create = packs(async config => {
-  const templateDir = join(__dirname, `../templates/${config.projectType}`);
+  const templateDir = join(__dirname, `../../templates/${config.projectType}`);
   const targetDir = join(process.cwd(), config.directoryName);
   const templateVars = Object.assign(
     {},

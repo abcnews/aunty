@@ -2,9 +2,9 @@
 const minimist = require('minimist');
 
 // Ours
-const {createCommandLogo} = require('../logo');
 const {getConfig} = require('../projects');
 const {pack, packs, throws} = require('../utils/async');
+const {createCommandLogo} = require('../utils/logo');
 const {log} = require('../utils/console');
 const {DEFAULTS, MESSAGES} = require('./constants');
 
