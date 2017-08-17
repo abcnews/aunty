@@ -4,12 +4,12 @@ const {getConfigValue} = require('../../git');
 const {create} = require('../../projects');
 const {throws} = require('../../utils/async');
 const {command} = require('../');
-const {OPTIONS, USAGE, MESSAGES, PATTERNS} = require('./constants');
+const {OPTIONS, MESSAGES, PATTERNS} = require('./constants');
 
 module.exports.new = command({
   name: 'new',
   options: OPTIONS,
-  usage: USAGE
+  usage: MESSAGES.usage
 }, async argv => {
   if (argv._.length < 2) {
     throw MESSAGES.NOT_ENOUGH_ARGUMENTS;

@@ -12,8 +12,13 @@ module.exports.OPTIONS = {
   }
 };
 
-module.exports.USAGE = `
-Usage: ${cmd('aunty new')} ${req('<project_type>')} ${req('<directory_name>')} ${opt('[options]')}
+module.exports.MESSAGES = {
+  NOT_ENOUGH_ARGUMENTS: `You didn't provide enough arguments.`,
+  UNKNOWN_PROJECT_TYPE: `Project type must be one of: ${[...PROJECT_TYPES].map(type => hvy(type)).join(', ')}`,
+  invalidProjectName: name => `Project name "${name}" is invalid.${
+    name.indexOf('.') > -1 ? ` Did you mean to use ${cmd('aunty init')}?` : ''}`,
+  usage: name => `
+Usage: ${cmd(`aunty ${name}`)} ${req('<project_type>')} ${req('<directory_name>')} ${opt('[options]')}
 
 ${sec('Arguments')}
 
@@ -28,14 +33,7 @@ ${sec('Options')}
 
   ${opt('-n SLUG')}, ${opt('--name=SLUG')}  Project name ${opt(`[default: ${req('directory_name')}]`)}
   ${opt('-h')}, ${opt('--help')}            Display this help message and exit
-`;
-
-module.exports.MESSAGES = {
-  NOT_ENOUGH_ARGUMENTS: `You didn't provide enough arguments.`,
-  UNKNOWN_PROJECT_TYPE: `Project type must be one of: ${[...PROJECT_TYPES].map(type => hvy(type)).join(', ')}`,
-  invalidProjectName: (name, usage) => `Project name "${name}" is invalid.${
-    name.indexOf('.') > -1 ? ` Did you mean to use ${cmd('aunty init')}?` : ''}
-${usage}`
+`
 };
 
 module.exports.PATTERNS = {

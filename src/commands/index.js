@@ -19,7 +19,7 @@ const command = module.exports.command = ({
 }, fn) => {
   name = name || DEFAULTS.COMMAND_NAME;
   options = options || DEFAULTS.OPTIONS;
-  usage = usage || MESSAGES.usage(name);
+  usage = usage || MESSAGES.usage;
 
   return packs(async (args = [], ...misc) => {
     const argv = minimist(args, options);
@@ -28,9 +28,8 @@ const command = module.exports.command = ({
     let config;
     let requiredProps;
 
-    if (usage && argv.help) {
-      log(usage);
-      return;
+    if (argv.help) {
+      return log(typeof usage === 'function' ? usage(name) : usage);
     }
 
     if (!isEntryCommand) {

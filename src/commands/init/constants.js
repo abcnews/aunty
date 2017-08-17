@@ -5,8 +5,9 @@ const {indented, listPairs} = require('../../utils/strings');
 
 module.exports.OPTIONS = DEFAULT_OPTIONS;
 
-module.exports.USAGE = `
-Usage: ${cmd('aunty init')} ${req('<project_type>')} ${opt('[options]')}
+module.exports.MESSAGES = {
+  usage: name => `
+Usage: ${cmd(`aunty ${name}`)} ${req('<project_type>')} ${opt('[options]')}
 
 ${sec('Arguments')}
 
@@ -19,4 +20,5 @@ ${sec('Options')}
 
   ${opt('-n SLUG')}, ${opt('--name=SLUG')}  Project name ${opt(`[default: current directory name]`)}
   ${opt('-h')}, ${opt('--help')}            Display this help message and exit
-`;
+`
+};

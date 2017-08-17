@@ -10,12 +10,12 @@ const {
   DEFAULTS: DEPLOY_DEFAULTS, MESSAGES: DEPLOY_MESSAGES
 } = require('../deploy/constants');
 const {command} = require('../');
-const {OPTIONS, USAGE, MESSAGES} = require('./constants');
+const {OPTIONS, MESSAGES} = require('./constants');
 
 module.exports.release = command({
   name: 'release',
   options: OPTIONS,
-  usage: USAGE,
+  usage: MESSAGES.usage,
   configRequired: true
 }, async (argv, config) => {
   const id = config.version;

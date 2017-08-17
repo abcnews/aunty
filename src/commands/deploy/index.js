@@ -13,7 +13,6 @@ const {log} = require('../../utils/console');
 const {command} = require('../');
 const {
   OPTIONS,
-  USAGE,
   DEFAULTS,
   REQUIRED_PROPERTIES,
   VALID_TYPES,
@@ -54,7 +53,7 @@ const deployToServer = packs(async target => {
 module.exports.deploy = command({
   name: 'deploy',
   options: OPTIONS,
-  usage: USAGE,
+  usage: MESSAGES.usage,
   configRequired: true
 }, async (argv, config) => {
   // 1) Get config for target(s), using available defaults

@@ -32,8 +32,43 @@ module.exports.OPTIONS = {
   }
 };
 
-module.exports.USAGE = `
-Usage: ${cmd('aunty deploy')} ${opt('[options]')}
+module.exports.DEFAULTS = new Map([
+  [BASIC_STORY, {
+    contentftp: {
+      from: 'build',
+      to: '/www/res/sites/news-projects/<name>/<id>'
+    }
+  }]
+]);
+
+module.exports.REQUIRED_PROPERTIES = ['from', 'to', 'type', 'username', 'password', 'host'];
+
+const VALID_TYPES = module.exports.VALID_TYPES = new Set(['ftp', 'ssh']);
+
+const DOMAIN = 'abc.net.au';
+const NEWSDEV = `newsdev3.aus.aunty.${DOMAIN}`;
+
+module.exports.RECOGNISED_HOST_PATH_TO_URL_MAPPINGS = {
+  [`contentftp.${DOMAIN}`]: [/\/www\/(.*)/, `http://www.${DOMAIN}/$1`],
+  [NEWSDEV]: [/\/var\/www\/html\/(.*)/, `http://${NEWSDEV}/$1`]
+};
+
+module.exports.MESSAGES = {
+  NO_TARGETS: 'There are no targets to deploy to.',
+  sourceIsNotDirectory: from => `${hvy(from)} is not a directory.`,
+  targetDoesNotExist: key => `The target ${hvy(key)} doesn't exist in the project configuration`,
+  targetNotConfigured: (key, prop) => `The target ${hvy(key)} in your configuration is incomplete or has incomplete credentials. Missing: ${hvy(prop)}`,
+  unrecognisedType: (key, type) => `The target ${hvy(key)} has ${type ? 'an unrecognised' : 'no'} deployment type${type ? `: ${hvy(type)}` : ''}. Acceptable types are: ${Array.from(VALID_TYPES).map(x => hvy(x)).join(', ')}`,
+  deploying: (type, from, to, host) => `
+  Deploying using ${type}:
+
+  ${hvy('from')} ${styleLastSegment(from, req)}
+  ${hvy('to')}   ${styleLastSegment(to, req)}
+  ${hvy('on')}   ${req(host)}
+`,
+  publicURL: url => `\n  Public URL: ${hvy(url)}/`,
+  usage: name => `
+Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 
 ${sec('Options')}
 
@@ -71,41 +106,5 @@ ${sec('Examples')}
 
   ${cmd('aunty deploy')} ${opt('--id="testing-feature-xyz"')}
     Deploy the project, specifying config targets' ${opt('<id>')} replacement.
-`;
-
-module.exports.DEFAULTS = new Map([
-  [BASIC_STORY, {
-    contentftp: {
-      from: 'build',
-      to: '/www/res/sites/news-projects/<name>/<id>'
-    }
-  }]
-]);
-
-module.exports.REQUIRED_PROPERTIES = ['from', 'to', 'type', 'username', 'password', 'host'];
-
-const VALID_TYPES = module.exports.VALID_TYPES = new Set(['ftp', 'ssh']);
-
-const DOMAIN = 'abc.net.au';
-const NEWSDEV = `newsdev3.aus.aunty.${DOMAIN}`;
-
-module.exports.RECOGNISED_HOST_PATH_TO_URL_MAPPINGS = {
-  [`contentftp.${DOMAIN}`]: [/\/www\/(.*)/, `http://www.${DOMAIN}/$1`],
-  [NEWSDEV]: [/\/var\/www\/html\/(.*)/, `http://${NEWSDEV}/$1`]
-};
-
-module.exports.MESSAGES = {
-  NO_TARGETS: 'There are no targets to deploy to.',
-  sourceIsNotDirectory: from => `${hvy(from)} is not a directory.`,
-  targetDoesNotExist: key => `The target ${hvy(key)} doesn't exist in the project configuration`,
-  targetNotConfigured: (key, prop) => `The target ${hvy(key)} in your configuration is incomplete or has incomplete credentials. Missing: ${hvy(prop)}`,
-  unrecognisedType: (key, type) => `The target ${hvy(key)} has ${type ? 'an unrecognised' : 'no'} deployment type${type ? `: ${hvy(type)}` : ''}. Acceptable types are: ${Array.from(VALID_TYPES).map(x => hvy(x)).join(', ')}`,
-  deploying: (type, from, to, host) => `
-  Deploying using ${type}:
-
-  ${hvy('from')} ${styleLastSegment(from, req)}
-  ${hvy('to')}   ${styleLastSegment(to, req)}
-  ${hvy('on')}   ${req(host)}
-`,
-  publicURL: url => `\n  Public URL: ${hvy(url)}/`
+`
 };

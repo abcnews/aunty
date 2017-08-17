@@ -25,51 +25,6 @@ module.exports.OPTIONS = {
   }
 };
 
-module.exports.USAGE = `
-Usage: ${cmd('aunty build-basic-story')} ${opt('[options]')}
-
-${sec('Options')}
-
-  ${opt('-d')}, ${opt('--debug')}          Use the ${hvy('build_debug')} config instead of ${hvy('build')}
-  ${opt('-c')}, ${opt('--config')}         Display this project's config and exit
-  ${opt('-D')}, ${opt('--defaultConfig')}  Display the default config and exit
-  ${opt('-h')}, ${opt('--help')}           Display this help message and exit
-
-${sec(`Example ${hvy('aunty')} config`)}:
-
-  ${req(`build: {
-    styles: {
-      files: '**/[^_]*.s?css',
-      from: 'src',
-      to: 'build',
-      nodeSassOptions: {…}
-    },
-    scripts: {
-      files: 'index.js',
-      from: 'src',
-      to: 'build',
-      browserifyOptions: {…},
-      uglifyOptions: {…}
-    },
-    public: {
-      from: 'public',
-      to: 'build'
-    }
-  },
-  build_debug: {…}`)}
-
-${sec('Examples')}
-
-  ${cmd('aunty build-basic-story')} ${opt('--debug')}
-    Build the project using the ${hvy('build_debug')} config.
-
-  ${cmd('aunty build-basic-story')} ${opt('--config')}
-    Output the project's ${hvy('build')} config, including defaults.
-
-  ${cmd('aunty build-basic-story')} ${opt('--debug --defaultConfig')}
-    Output the default ${hvy('build_debug')} config.
-`;
-
 module.exports.TASK_NAMES = ['styles', 'scripts', 'public'];
 
 const KEY = module.exports.KEY = 'build';
@@ -139,5 +94,49 @@ Here is the${
 
 ${config}`),
   building: (taskName, key) => `
-  Building ${taskName}${key === D_KEY ? ' (debug)' : ''}:`
+  Building ${taskName}${key === D_KEY ? ' (debug)' : ''}:`,
+  usage: name => `
+Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
+
+${sec('Options')}
+
+  ${opt('-d')}, ${opt('--debug')}          Use the ${hvy('build_debug')} config instead of ${hvy('build')}
+  ${opt('-c')}, ${opt('--config')}         Display this project's config and exit
+  ${opt('-D')}, ${opt('--defaultConfig')}  Display the default config and exit
+  ${opt('-h')}, ${opt('--help')}           Display this help message and exit
+
+${sec(`Example ${hvy('aunty')} config`)}:
+
+  ${req(`build: {
+    styles: {
+      files: '**/[^_]*.s?css',
+      from: 'src',
+      to: 'build',
+      nodeSassOptions: {…}
+    },
+    scripts: {
+      files: 'index.js',
+      from: 'src',
+      to: 'build',
+      browserifyOptions: {…},
+      uglifyOptions: {…}
+    },
+    public: {
+      from: 'public',
+      to: 'build'
+    }
+  },
+  build_debug: {…}`)}
+
+${sec('Examples')}
+
+  ${cmd('aunty build-basic-story')} ${opt('--debug')}
+    Build the project using the ${hvy('build_debug')} config.
+
+  ${cmd('aunty build-basic-story')} ${opt('--config')}
+    Output the project's ${hvy('build')} config, including defaults.
+
+  ${cmd('aunty build-basic-story')} ${opt('--debug --defaultConfig')}
+    Output the default ${hvy('build_debug')} config.
+`
 };

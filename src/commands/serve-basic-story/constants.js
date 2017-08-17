@@ -16,16 +16,6 @@ module.exports.OPTIONS = {
   }
 };
 
-module.exports.USAGE = `
-Usage: ${cmd('aunty serve-basic-story')} ${opt('[options]')}
-
-${sec('Options')}
-
-  ${opt('-d')}, ${opt('--debug')}  Use the ${hvy('build_debug')} config instead of ${hvy('build')}
-  ${opt('-h')}, ${opt('--help')}   Display this help message and exit
-
-`;
-
 const HOSTNAME = hostname();
 
 module.exports.MESSAGES = {

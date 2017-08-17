@@ -5,12 +5,12 @@ const {basename} = require('path');
 const {throws} = require('../../utils/async');
 const {new: _new} = require('../new');
 const {command} = require('../');
-const {OPTIONS, USAGE} = require('./constants');
+const {OPTIONS, MESSAGES} = require('./constants');
 
 module.exports.init = command({
   name: 'init',
   options: OPTIONS,
-  usage: USAGE
+  usage: MESSAGES.usage
 }, async argv => {
   const args = argv.$.slice(0, 1)
     .concat(['.', `--name=${basename(process.cwd())}`])

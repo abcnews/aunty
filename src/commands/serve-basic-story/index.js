@@ -16,12 +16,11 @@ const {
 } = require('../build-basic-story/constants');
 const {buildBasicStory} = require('../build-basic-story');
 const {command} = require('../');
-const {OPTIONS, USAGE, MESSAGES} = require('./constants');
+const {OPTIONS, MESSAGES} = require('./constants');
 
 module.exports.serveBasicStory = command({
   name: 'serve-basic-story',
   options: OPTIONS,
-  usage: USAGE,
   configRequired: true
 }, async (argv, config) => {
   const serveConfig = typeof config.serve === 'object' ? config.serve : {};

@@ -14,7 +14,7 @@ const {log, warn} = require('../../utils/console');
 const {indented, styleLastSegment} = require('../../utils/strings');
 const {clean} = require('../clean');
 const {command} = require('../');
-const {OPTIONS, USAGE, KEY, D_KEY, DEFAULTS, MESSAGES} = require('./constants');
+const {OPTIONS, KEY, D_KEY, DEFAULTS, MESSAGES} = require('./constants');
 
 function fileFailure(file, root) {
   return `${styleLastSegment(file.path.replace(root, ''), bad)}`;
@@ -30,7 +30,7 @@ function fileSuccess(file, root, from, to) {
 module.exports.buildBasicStory = command({
   name: 'build-basic-story',
   options: OPTIONS,
-  usage: USAGE,
+  usage: MESSAGES.usage,
   configRequired: true
 }, async (argv, config) => {
   const configKey = argv.debug ? D_KEY : KEY;
