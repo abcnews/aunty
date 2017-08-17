@@ -47,3 +47,9 @@ module.exports.createTag = tag =>
 
 module.exports.pushTag = (remote, tag) =>
   git(['push', remote, tag]);
+
+module.exports.createRepo = async cwd => {
+  await git('init', {cwd});
+  await git('add .', {cwd});
+  return git(['commit', '-m', '"Initial commit"'], {cwd});
+};

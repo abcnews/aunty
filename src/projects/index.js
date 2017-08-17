@@ -13,7 +13,9 @@ const ourPkg = require('../../package');
 const {packs, prequire, unpack} = require('../utils/async');
 const {hvy, ok} = require('../utils/color');
 const {log} = require('../utils/console');
+const {isRepo, createRepo} = require('../utils/git');
 const {identity, pretty} = require('../utils/misc');
+const {install} = require('../utils/npm');
 const {indented} = require('../utils/strings');
 const {CONFIG_FILE_NAME} = require('./constants');
 
@@ -63,6 +65,18 @@ module.exports.create = packs(async config => {
   const files = unpack(await clone(templateDir, targetDir, templateVars));
 
   files.sort().forEach(file => log(MESSAGES.created(targetDir, file)));
+
+  log('\n  Installing dependencies…');
+  await install(['--only=dev'], targetDir);
+  log('    …OK');
+
+  if (await isRepo(targetDir)) {
+    return log('  Git repo already exists');
+  }
+
+  log('\n  Creating git repo…');
+  await createRepo(targetDir);
+  log('    …OK');
 });
 
 module.exports.getConfig = packs(async (requiredProps = []) => {
