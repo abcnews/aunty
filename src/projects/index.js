@@ -117,7 +117,7 @@ module.exports.getConfig = packs(async argv => {
   return config;
 });
 
-async function resolveDeployConfig(config) {
+function resolveDeployConfig(config) {
   config.deploy = config.deploy || DEFAULTS.deploy;
 
   Object.keys(config.deploy)
