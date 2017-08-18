@@ -7,7 +7,8 @@ module.exports.PROJECT_TYPES = new Set([
 ]);
 
 module.exports.PROJECT_TYPE_DESCRIPTIONS = {
-  [BASIC_STORY]: 'a vanilla JS app which runs inside a News story.'
+  [BASIC_STORY]: 'a vanilla JS app which runs inside a News story.',
+  [PREACT_STORY]: 'a Preact-enabled app which runs inside a News story.'
 };
 
 module.exports.CONFIG_FILE_NAME = 'aunty.config.js';

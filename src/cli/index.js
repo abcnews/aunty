@@ -53,7 +53,7 @@ module.exports.cli = packs(async (args, isGlobal) => {
 
 let isEntryCommand;
 
-const command = module.exports.command = ({
+module.exports.command = ({
   name,
   options,
   usage,
@@ -95,15 +95,3 @@ const command = module.exports.command = ({
     }
   });
 };
-
-module.exports.projectTypeRouter = ({name, isProxy}, commands) => command({
-  name,
-  isProxy,
-  isConfigRequired: true
-}, async (argv, config) => {
-  if (!commands[config.type]) {
-    throw MESSAGES.unrecognisedType(config.type);
-  }
-
-  throws(await commands[config.type](argv.$));
-});

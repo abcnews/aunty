@@ -77,11 +77,7 @@ ${sec('Project creation commands')}
   Available project templates:
     ${indented(listPairs(PROJECT_TYPE_DESCRIPTIONS, req), 4)}
 
-${sec('Generic development commands')}
-
-  These commands will either execute in their own capacity, or defer to
-  specific commands based on the project's configuration. Project type-specific
-  commands are listed further down.
+${sec('Development commands')}
 
   ${cmd('aunty clean')}
     Delete the current project's build output directories.
@@ -90,18 +86,7 @@ ${sec('Generic development commands')}
     Clean & build the current project.
 
   ${cmd('aunty serve')} ${opt('[options]')}
-    Clean, build & serve the current project.
-
-${sec('Project type-specific development commands')}
-
-  These commands will be run automatically by the generic development commands
-  if your config's project ${hvy('type')} is recognised.
-
-  ${cmd('aunty build-basic-story')}
-    Clean & build a ${hvy('basic-story')} project.
-
-  ${cmd('aunty serve-basic-story')} ${opt('[options]')}
-    Clean, build & serve a ${hvy('basic-story')} project, then rebuild when files change.
+    Clean, build & serve the current project, then rebuild when files change
 
 ${sec('Deployment commands')}
 
