@@ -1,7 +1,21 @@
+// Native
+const {relative} = require('path');
+
 // Ours
-const {PROJECT_TYPES, PROJECT_TYPE_DESCRIPTIONS} = require('../../projects/constants');
-const {cmd, hvy, opt, req, sec} = require('../../utils/color');
+const ourPkg = require('../../../package');
+const {BUILD_DIR, PROJECT_TYPES, PROJECT_TYPE_DESCRIPTIONS} = require('../../projects/constants');
+const {cmd, hvy, ok, opt, req, sec} = require('../../utils/color');
+const {pretty} = require('../../utils/misc');
 const {indented, listPairs} = require('../../utils/strings');
+
+const [MAJOR, MINOR] = ourPkg.version.split('.');
+
+module.exports.DEFAULT_TEMPLATE_VARS = {
+  auntyVersion: [MAJOR, MINOR, 'x'].join('.'),
+  authorName: 'ABC News',
+  buildDir: BUILD_DIR,
+  currentYear: (new Date()).getFullYear()
+};
 
 module.exports.OPTIONS = {
   string: 'name',
@@ -13,6 +27,16 @@ module.exports.OPTIONS = {
 module.exports.MESSAGES = {
   NOT_ENOUGH_ARGUMENTS: `You didn't provide enough arguments.`,
   UNKNOWN_PROJECT_TYPE: `Project type must be one of: ${[...PROJECT_TYPES].map(type => hvy(type)).join(', ')}`,
+  creating: (type, dir, vars) => pretty`
+Creating a ${hvy(type)} project in:
+
+${hvy(dir)}
+
+...using template variables:
+
+${vars}
+  `,
+  created: (dir, file) => `  ${ok('create')} ${relative(dir, file)}`,
   invalidProjectName: name =>
     `Project name "${name}" is invalid.${name.indexOf('.') > -1 ? ` Did you mean to use ${cmd('aunty init')}?` : ''}`,
   usage: name => `

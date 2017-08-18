@@ -1,10 +1,45 @@
+// Native
+const {join} = require('path');
+
+// External
+const copyTemplateDir = require('copy-template-dir');
+const pify = require('pify');
+
 // Ours
 const {command} = require('../../cli');
 const {PROJECT_TYPES} = require('../../projects/constants');
-const {create} = require('../../projects');
-const {throws} = require('../../utils/async');
-const {getConfigValue} = require('../../utils/git');
-const {OPTIONS, MESSAGES, PATTERNS} = require('./constants');
+const {packs, throws, unpack} = require('../../utils/async');
+const {log} = require('../../utils/console');
+const {createRepo, getConfigValue, isRepo} = require('../../utils/git');
+const {install} = require('../../utils/npm');
+const {DEFAULT_TEMPLATE_VARS, OPTIONS, MESSAGES, PATTERNS} = require('./constants');
+
+// Wrapped
+const clone = packs(pify(copyTemplateDir));
+
+const create = packs(async config => {
+  const projectTypeConfig = require(`../../projects/${config.projectType}`);
+  const templateDir = join(__dirname, `../../../templates/${config.projectType}`);
+  const targetDir = join(process.cwd(), config.directoryName);
+  const templateVars = Object.assign({}, DEFAULT_TEMPLATE_VARS, config.templateVars);
+
+  log(MESSAGES.creating(config.projectType, targetDir, templateVars));
+
+  const files = unpack(await clone(templateDir, targetDir, templateVars));
+
+  files.sort().forEach(file => log(MESSAGES.created(targetDir, file)));
+
+  log('Installing dependencies…');
+  await install(['--only=dev'], targetDir);
+  await install(['--save'].concat(projectTypeConfig.dependencies), targetDir);
+
+  if (await isRepo(targetDir)) {
+    return log('Git repo already exists');
+  }
+
+  log('Creating git repo…');
+  await createRepo(targetDir);
+});
 
 module.exports.new = command({
   name: 'new',
