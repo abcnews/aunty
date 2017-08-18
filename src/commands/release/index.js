@@ -4,7 +4,7 @@ const {throws} = require('../../utils/async');
 const {
   createTag, getCurrentTags, getRemotes, hasChanges, hasTag, isRepo, pushTag
 } = require('../../utils/git');
-const {log} = require('../../utils/logging');
+const {dry, info} = require('../../utils/logging');
 const {build} = require('../build');
 const {deploy} = require('../deploy');
 const {
@@ -18,6 +18,12 @@ module.exports.release = command({
   isConfigRequired: true
 }, async (argv, config) => {
   const id = config.version;
+
+  if (argv.dry) {
+    return dry({
+      'Release version': id
+    });
+  }
 
   // 1) Ensure the project is a git repo
 
@@ -50,14 +56,14 @@ module.exports.release = command({
 
     await createTag(id);
 
-    log(MESSAGES.createdTag(id));
+    info(MESSAGES.createdTag(id));
 
     const remotes = await getRemotes();
 
     for (const remote of remotes.values()) {
-      throws(await pushTag(remote, id));
+      await pushTag(remote, id);
 
-      log(MESSAGES.pushedTag(id, remote));
+      info(MESSAGES.pushedTag(id, remote));
     }
   }
 

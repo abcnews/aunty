@@ -4,25 +4,27 @@ const del = require('del');
 // Ours
 const {command} = require('../../cli');
 const {BUILD_DIR} = require('../../projects/constants');
-const {packs, unpack} = require('../../utils/async');
-const {log} = require('../../utils/logging');
+const {dry, info} = require('../../utils/logging');
 const {MESSAGES} = require('./constants');
-
-// Wrapped
-const rm = packs(del);
 
 module.exports.clean = command({
   name: 'clean',
   usage: MESSAGES.usage,
   isConfigRequired: true
 }, async (argv, config) => {
+  const cwd = config.root;
   let globs = argv._.length ? argv._ : config.clean;
 
   if (!Array.isArray(globs) && typeof globs !== 'string') {
     globs = [BUILD_DIR];
   }
 
-  const paths = unpack(await rm(globs, {cwd: config.root}));
+  if (argv.dry) {
+    return dry({
+      'Deletion paths': {globs, cwd}
+    });
+  }
 
-  log(MESSAGES.deletion(paths.map(path => path.replace(config.root, ''))));
+  info('Cleaning…');
+  await del(globs, {cwd});
 });

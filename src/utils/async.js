@@ -1,10 +1,3 @@
-// External
-const pify = require('pify');
-const pump = require('pump');
-
-// Wrapped
-const pumpAsync = pify(pump);
-
 const pack = module.exports.pack = promise =>
   promise
   .then(result => [null, result])
@@ -27,6 +20,3 @@ module.exports.unpack = (packed, ignoreErrors) =>
 const requireAsync = async path => require(path);
 
 module.exports.prequire = path => pack(requireAsync(path));
-
-module.exports.pumped = (...streams) =>
-  pack(pumpAsync(Array.isArray(streams[0]) ? streams[0] : streams));

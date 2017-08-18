@@ -3,34 +3,95 @@ const {existsSync, statSync} = require('fs');
 
 // External
 const loadJsonFile = require('load-json-file');
+const pify = require('pify');
+const pump = require('pump');
+const rsyncwrapper = require('rsyncwrapper');
+const SSH = require('ssh2');
+const through = require('through2');
+const vfs = require('vinyl-fs');
+const VTFP = require('vinyl-ftp');
 
 // Ours
 const {command} = require('../../cli');
 const {packs, throws, unpack} = require('../../utils/async');
-const {ftp, rsync, symlink} = require('../../utils/deployment');
-const {log} = require('../../utils/logging');
-const {OPTIONS, MESSAGES, REQUIRED_PROPERTIES, VALID_TYPES} = require('./constants');
+const {dry, info, warn} = require('../../utils/logging');
+const {DEFAULTS, OPTIONS, MESSAGES, REQUIRED_PROPERTIES, VALID_TYPES} = require('./constants');
 
 // Wrapped
 const getJSON = packs(loadJsonFile);
 
-const deployToServer = packs(async target => {
-  let err;
+const ftp = packs(target => {
+  const vftp = new VTFP({
+    host: target.host,
+    port: target.port || 21,
+    user: target.username,
+    password: target.password,
+    parallel: 10
+  });
 
-  log(MESSAGES.deploying(target.type, target.from, target.to, target.host));
+  return pify(pump)(
+    vfs.src(target.files, {
+      buffer: false,
+      cwd: target.from
+    }),
+    vftp.dest(target.to),
+    through.obj()
+  );
+});
+
+const rsync = packs(target => {
+  return pify(rsyncwrapper)(Object.assign(
+    {},
+    DEFAULTS.RSYNC,
+    {
+      src: `${target.from}/${Array.isArray(target.files) ?
+        target.files[0] : target.files}`,
+      dest: `${target.username}@${target.host}:${target.to}`
+    }
+  ));
+});
+
+const symlink = packs(async target => {
+  const symlinkName = typeof target.symlink === 'string' ?
+    target.symlink : DEFAULTS.SYMLINK.NAME;
+  const symlinkPath = target.to.replace(target.id, symlinkName);
+
+  if (symlinkPath === target.to) {
+    warn(MESSAGES.NO_MAPPABLE_ID);
+    return;
+  }
+
+  const ssh = new SSH();
+
+  ssh.connect(target);
+
+  await pify(ssh.on)('ready');
+
+  const stream = await pify(ssh.exec)(
+    `rm -rf ${symlinkPath} && ln -s ${target.to} ${symlinkPath}`
+  );
+
+  await pify(stream.on)('exit');
+
+  ssh.end();
+});
+
+const deployToServer = packs(async target => {
+  info(MESSAGES.deployment(target.type, target.from, target.to, target.host));
+  info('Deploying…');
 
   if (target.type === 'ftp') {
-    throws(await ftp(target));
+    await ftp(target);
   } else if (target.type === 'ssh') {
-    throws(await rsync(target));
+    await rsync(target);
 
-    if (!err && target.symlink) {
-      throws(await symlink(target));
+    if (target.symlink) {
+      await symlink(target);
     }
   }
 
   if (target.publicURL) {
-    log(MESSAGES.publicURL(target.publicURL));
+    info(MESSAGES.publicURL(target.publicURL));
   }
 });
 
@@ -92,6 +153,14 @@ module.exports.deploy = command({
       throw (MESSAGES.sourceIsNotDirectory(target.from));
     }
   }));
+
+  if (argv.dry) {
+    return dry(targets.reduce((memo, target) => {
+      memo[`Deployment to ${target.__key__}`] = target;
+
+      return memo;
+    }, {}));
+  }
 
   for (const target of targets) {
     throws(await deployToServer(target));

@@ -8,9 +8,9 @@ const pify = require('pify');
 // Ours
 const {command} = require('../../cli');
 const {PROJECT_TYPES} = require('../../projects/constants');
-const {packs, throws, unpack} = require('../../utils/async');
+const {packs, throws} = require('../../utils/async');
 const {createRepo, getConfigValue, isRepo} = require('../../utils/git');
-const {log} = require('../../utils/logging');
+const {dry, info} = require('../../utils/logging');
 const {install} = require('../../utils/npm');
 const {DEFAULT_TEMPLATE_VARS, OPTIONS, MESSAGES, PATTERNS} = require('./constants');
 
@@ -24,23 +24,29 @@ const create = packs(async config => {
   const targetDir = join(process.cwd(), config.directoryName);
   const templateVars = Object.assign({}, DEFAULT_TEMPLATE_VARS, config.templateVars);
 
-  log(MESSAGES.creating(config.projectType, targetDir, templateVars));
+  if (config.isDry) {
+    return dry({
+      'Project directory': targetDir,
+      'Project template variables': templateVars,
+      'Project dependencies': projectTypeConfig.dependencies || []
+    });
+  }
 
-  let files = unpack(await clone(commonTemplateDir, targetDir, templateVars));
+  info(MESSAGES.creating(config.projectType, targetDir, templateVars));
 
-  files = files.concat(unpack(await clone(projectTypeTemplateDir, targetDir, templateVars)));
+  info('Cloning project template…');
+  await clone(commonTemplateDir, targetDir, templateVars);
+  await clone(projectTypeTemplateDir, targetDir, templateVars);
 
-  files.sort().forEach(file => log(MESSAGES.created(targetDir, file)));
-
-  log('Installing dependencies…');
+  info('Installing dependencies…');
   await install(['--only=dev'], targetDir);
   await install(['--save'].concat(projectTypeConfig.dependencies), targetDir);
 
   if (await isRepo(targetDir)) {
-    return log('Git repo already exists');
+    return info('Git repo already exists');
   }
 
-  log('Creating git repo…');
+  info('Creating git repo…');
   await createRepo(targetDir);
 });
 
@@ -80,6 +86,7 @@ module.exports.new = command({
       authorEmail,
       projectType,
       projectName
-    }
+    },
+    isDry: argv.dry
   }));
 });

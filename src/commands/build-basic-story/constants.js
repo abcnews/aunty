@@ -3,7 +3,6 @@ const merge = require('webpack-merge');
 
 // Ours
 const {cmd, hvy, opt, req, sec} = require('../../utils/color');
-const {pretty} = require('../../utils/logging');
 
 // Resolved
 const BABELIFY = require.resolve('babelify');
@@ -11,13 +10,9 @@ const ES2040 = require.resolve('babel-preset-es2040');
 
 module.exports.OPTIONS = {
   boolean: [
-    'config',
     'debug',
     'defaults'
-  ],
-  alias: {
-    config: 'c'
-  }
+  ]
 };
 
 module.exports.TASK_NAMES = ['styles', 'scripts', 'public'];
@@ -80,20 +75,13 @@ module.exports.DEFAULTS = {
 };
 
 module.exports.MESSAGES = {
-  config: (key, config, isDefault) =>
-    pretty`Here is the${isDefault ? ' default' : ''} ${hvy(key)} config${isDefault ? '' : ', including defaults'}:
-
-${config}`,
-  building: (taskName, key) =>
-    `Building ${taskName}${key === D_KEY ? ' (debug)' : ''}:`,
   usage: name => `
 Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 
 ${sec('Options')}
 
   ${opt('--debug')}               Use the ${hvy('build_debug')} config instead of ${hvy('build')}
-  ${opt('--config')}              Display this project's config and exit
-  ${opt('--defaults')}            Display the default config and exit
+  ${opt('--defaults')}            Display the default config and exit (like ${opt('--dry')})
 
 ${sec(`Example ${hvy('aunty')} config`)}:
 
@@ -122,9 +110,6 @@ ${sec('Examples')}
 
   ${cmd('aunty build-basic-story')} ${opt('--debug')}
     Build the project using the ${hvy('build_debug')} config.
-
-  ${cmd('aunty build-basic-story')} ${opt('--config')}
-    Output the project's ${hvy('build')} config, including defaults.
 
   ${cmd('aunty build-basic-story')} ${opt('--debug --defaults')}
     Output the default ${hvy('build_debug')} config.

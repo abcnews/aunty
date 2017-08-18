@@ -9,6 +9,16 @@ module.exports.REQUIRED_PROPERTIES = ['from', 'to', 'type', 'username', 'passwor
 
 const VALID_TYPES = module.exports.VALID_TYPES = new Set(['ftp', 'ssh']);
 
+module.exports.DEFAULTS = {
+  RSYNC: {
+    ssh: true,
+    recursive: true
+  },
+  SYMLINK: {
+    NAME: 'latest'
+  }
+};
+
 module.exports.OPTIONS = {
   boolean: [
     'shouldRespectTargetSymlinks'
@@ -29,19 +39,21 @@ module.exports.OPTIONS = {
 
 module.exports.MESSAGES = {
   NO_TARGETS: 'There are no targets to deploy to.',
-  sourceIsNotDirectory: from => `${hvy(from)} is not a directory.`,
-  targetDoesNotExist: key => `The target ${hvy(key)} doesn't exist in the project configuration`,
-  targetNotConfigured: (key, prop) => `The target ${hvy(key)} in your configuration is incomplete or has incomplete credentials. Missing: ${hvy(prop)}`,
-  unrecognisedType: (key, type) => `The target ${hvy(key)} has ${type ? 'an unrecognised' : 'no'} deployment type${type ? `: ${hvy(type)}` : ''}. Acceptable types are: ${Array.from(VALID_TYPES).map(x => hvy(x)).join(', ')}`,
-  deploying: (type, from, to, host) =>
-    `Deploying using ${type}:
-
-${hvy('from')} ${styleLastSegment(from, req)}
-${hvy('to')}   ${styleLastSegment(to, req)}
-${hvy('on')}   ${req(host)}
-`,
-  publicURL: url => `
-Public URL: ${hvy(url)}`,
+  NO_MAPPABLE_ID: 'Could not create symlink because target path does not contain a mappable id.',
+  sourceIsNotDirectory: from =>
+    `${hvy(from)} is not a directory.`,
+  targetDoesNotExist: key =>
+    `The target ${hvy(key)} doesn't exist in the project configuration`,
+  targetNotConfigured: (key, prop) =>
+    `The target ${hvy(key)} in your configuration is incomplete or has incomplete credentials. Missing: ${hvy(prop)}`,
+  unrecognisedType: (key, type) =>
+    `The target ${hvy(key)} has ${type ? 'an unrecognised' : 'no'} deployment type${type ? `: ${hvy(type)}` : ''}. Acceptable types are: ${Array.from(VALID_TYPES).map(x => hvy(x)).join(', ')}`,
+  deployment: (type, from, to, host) => `Deployment (${hvy(type)}):
+  ┣ ${hvy('from')} ${styleLastSegment(from, req)}
+  ┣ ${hvy('to')}   ${styleLastSegment(to, req)}
+  ┗ ${hvy('on')}   ${req(host)}`,
+  publicURL: url =>
+    `Public URL: ${hvy(url)}`,
   usage: name => `
 Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 

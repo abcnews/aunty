@@ -4,28 +4,20 @@ const uglify = require('gulp-uglify');
 const merge = require('webpack-merge');
 const map = require('map-stream');
 const nodeSass = require('node-sass');
+const pify = require('pify');
+const pump = require('pump');
 const through = require('through2');
 const vfs = require('vinyl-fs');
 
 // Ours
 const {command} = require('../../cli');
-const {pumped, throws} = require('../../utils/async');
-const {bad, cmd, ok} = require('../../utils/color');
-const {log, warn} = require('../../utils/logging');
-const {styleLastSegment} = require('../../utils/strings');
+const {throws} = require('../../utils/async');
+const {dry, info, warn} = require('../../utils/logging');
 const {clean} = require('../clean');
 const {OPTIONS, KEY, D_KEY, DEFAULTS, MESSAGES} = require('./constants');
 
-function fileFailure(file, root) {
-  return `${styleLastSegment(file.path.replace(root, ''), bad)}`;
-}
-
-function fileSuccess(file, root, from, to) {
-  const srcPath = (file.srcPath || file.path).replace(root, '');
-  const path = file.path.replace(root, '');
-
-  return `${srcPath} ${cmd('=>')} ${styleLastSegment(path.replace(from, to), ok)}`;
-}
+// Wrapped
+const pumped = pify(pump);
 
 module.exports.buildBasicStory = command({
   name: 'build-basic-story',
@@ -37,15 +29,19 @@ module.exports.buildBasicStory = command({
   const defaults = DEFAULTS[configKey];
 
   if (argv.defaults) {
-    return log(MESSAGES.config(configKey, defaults, true));
+    return dry({
+      [`Defaults for ${configKey}`]: defaults
+    });
   }
 
   const buildConfig = merge(true, defaults,
     typeof config[configKey] === 'object' ? config[configKey] : {}
   );
 
-  if (argv.config) {
-    return log(MESSAGES.config(configKey, buildConfig));
+  if (argv.dry) {
+    return dry({
+      [`Config for ${configKey}`]: buildConfig
+    });
   }
 
   if (argv.taskName == null) {
@@ -53,11 +49,11 @@ module.exports.buildBasicStory = command({
   }
 
   if (argv.taskName == null || argv.taskName == 'styles') {
-    log(MESSAGES.building('styles', configKey));
+    info(`Building styles${configKey === D_KEY ? ' (debug)' : ''}…`);
 
-    // [from] | (sass) | (rename) | log | [to]
+    // [from] | (sass) | (rename) | [to]
 
-    throws(await pumped(
+    await pumped(
       vfs.src(buildConfig.styles.files, {
         cwd: `${config.root}/${buildConfig.styles.from}`
       }),
@@ -73,13 +69,11 @@ module.exports.buildBasicStory = command({
             buildConfig.styles.nodeSassOptions
           ), (err, result) => {
             if (err) {
-              log(`• ${fileFailure(file, config.root)}`);
-
               if (!argv.taskName) {
                 throw err;
               }
 
-              warn(bad(err.message));
+              warn(err.message);
 
               return next(null, file);
             }
@@ -96,23 +90,18 @@ module.exports.buildBasicStory = command({
         file.path = file.path.replace('.scss', '.css');
         cb(null, file);
       }),
-      map((file, cb) => {
-        log(`• ${fileSuccess(file, config.root,
-          buildConfig.styles.from, buildConfig.styles.to)}`);
-        cb(null, file);
-      }),
       vfs.dest('./', {
         cwd: `${config.root}/${buildConfig.styles.to}`
       })
-    ));
+    );
   }
 
   if (argv.taskName == null || argv.taskName == 'scripts') {
-    log(MESSAGES.building('scripts', configKey));
+    info(`Building scripts${configKey === D_KEY ? ' (debug)' : ''}…`);
 
     // [from] | browserify | uglify | log | [to]
 
-    throws(await pumped(
+    await pumped(
       vfs.src(buildConfig.scripts.files, {
         cwd: `${config.root}/${buildConfig.scripts.from}`
       }),
@@ -123,11 +112,10 @@ module.exports.buildBasicStory = command({
         .bundle((err, result) => {
           if (err) {
             if (!argv.taskName) {
-              log(file);
               throw err;
             }
 
-            warn(bad(err.message));
+            warn(err.message);
 
             return next(null, file);
           }
@@ -137,34 +125,24 @@ module.exports.buildBasicStory = command({
         });
       }),
       uglify(buildConfig.scripts.uglifyOptions),
-      map((file, cb) => {
-        log(`• ${fileSuccess(file, config.root,
-          buildConfig.scripts.from, buildConfig.scripts.to)}`);
-        cb(null, file);
-      }),
       vfs.dest('./', {
         cwd: `${config.root}/${buildConfig.scripts.to}`
       })
-    ));
+    );
   }
 
   if (argv.taskName == null || argv.taskName == 'public') {
-    log(MESSAGES.building('public', configKey));
+    info(`Building public${configKey === D_KEY ? ' (debug)' : ''}…`);
 
-    // [from] | log | [to]
+    // [from] | [to]
 
-    throws(await pumped(
+    await pumped(
       vfs.src(buildConfig.public.files, {
         cwd: `${config.root}/${buildConfig.public.from}`
-      }),
-      map((file, cb) => {
-        log(`• ${fileSuccess(file, config.root,
-          buildConfig.public.from, buildConfig.public.to)}`);
-        cb(null, file);
       }),
       vfs.dest('./', {
         cwd: `${config.root}/${buildConfig.public.to}`
       })
-    ));
+    );
   }
 });

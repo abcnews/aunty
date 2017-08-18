@@ -11,10 +11,8 @@ const serveStatic = require('serve-static');
 // Ours
 const {command} = require('../../cli');
 const {pack, throws} = require('../../utils/async');
-const {log} = require('../../utils/logging');
-const {
-  BUILD_DIR, D_KEY, DEFAULTS, KEY, TASK_NAMES
-} = require('../build-basic-story/constants');
+const {dry, info, warn} = require('../../utils/logging');
+const {BUILD_DIR, D_KEY, DEFAULTS, KEY, TASK_NAMES} = require('../build-basic-story/constants');
 const {buildBasicStory} = require('../build-basic-story');
 const {OPTIONS, MESSAGES} = require('./constants');
 
@@ -29,6 +27,12 @@ module.exports.serveBasicStory = command({
   const buildConfig = merge(true, DEFAULTS[buildConfigKey],
     typeof config[buildConfigKey] === 'object' ? config[buildConfigKey] : {}
   );
+
+  if (argv.dry) {
+    return dry({
+      'Serve config': serveConfig
+    });
+  }
 
   throws(await buildBasicStory(argv.$));
 
@@ -48,7 +52,7 @@ module.exports.serveBasicStory = command({
 
   server.listen(port);
 
-  log(MESSAGES.server(port));
+  info(MESSAGES.server(port));
 
   const changesQueue = [];
 
@@ -60,11 +64,11 @@ module.exports.serveBasicStory = command({
     while (changesQueue.length > 0) {
       const {taskName, evt, path} = changesQueue.shift();
 
-      log(MESSAGES.watchEvent(taskName, evt, path.replace(config.root, '')));
+      warn(MESSAGES.watchEvent(taskName, evt, path.replace(config.root, '')));
       throws(await buildBasicStory(argv.$.concat(['--taskName', taskName])));
     }
 
-    log(MESSAGES.STILL_WATCHING);
+    info(MESSAGES.STILL_WATCHING);
   };
 
   const watchAndServe = pack(new Promise((resolve, reject) => {
@@ -97,7 +101,7 @@ module.exports.serveBasicStory = command({
       resolve();
     }
 
-    log(MESSAGES.watching(watchedTaskNames));
+    info(MESSAGES.watching(watchedTaskNames));
 
     setInterval(flushChangesQueue, 100);
   }));

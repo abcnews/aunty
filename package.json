@@ -30,6 +30,7 @@
     "finalhandler": "^1.0.3",
     "gulp-uglify": "^3.0.0",
     "load-json-file": "^2.0.0",
+    "log-symbols": "^2.0.0",
     "map-stream": "0.0.7",
     "minimist": "^1.2.0",
     "node-sass": "^4.4.0",
