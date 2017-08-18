@@ -12,7 +12,7 @@ module.exports.PROJECT_TYPE_DESCRIPTIONS = {
 
 module.exports.CONFIG_FILE_NAME = 'aunty.config.js';
 
-const BUILD_DIR = 'build';
+const BUILD_DIR = module.exports.BUILD_DIR = 'build';
 
 module.exports.DEFAULTS = {
   build: {
