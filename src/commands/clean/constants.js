@@ -1,11 +1,7 @@
 // Ours
-const {BASIC_STORY} = require('../../projects/constants');
+const {BUILD_DIR} = require('../../projects/constants');
 const {cmd, ok, opt, sec} = require('../../utils/color');
-const {bulleted, indented, listPairs, styleLastSegment} = require('../../utils/strings');
-
-const DEFAULTS = module.exports.DEFAULTS = {
-  [BASIC_STORY]: ['build']
-};
+const {bulleted, styleLastSegment} = require('../../utils/strings');
 
 module.exports.MESSAGES = {
   deletion: paths =>
@@ -16,9 +12,6 @@ Usage: ${cmd(`aunty ${name}`)} ${opt('[glob(s)]')} ${opt('[options]')}
 
 ${sec('Arguments')}
 
-  ${opt('glob(s)')} File globs to delete ${opt(`[default: config \`clean\` property | project type defaults* | ""]`)}
-
-  Project type defaults:
-    ${indented(listPairs(DEFAULTS, opt), 4)}
+  ${opt('glob(s)')} File globs to delete ${opt(`[default: config \`clean\` property | "${BUILD_DIR}"]`)}
 `
 };

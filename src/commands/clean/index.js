@@ -3,9 +3,10 @@ const del = require('del');
 
 // Ours
 const {command} = require('../../cli');
+const {BUILD_DIR} = require('../../projects/constants');
 const {packs, unpack} = require('../../utils/async');
 const {log} = require('../../utils/console');
-const {DEFAULTS, MESSAGES} = require('./constants');
+const {MESSAGES} = require('./constants');
 
 // Wrapped
 const rm = packs(del);
@@ -18,7 +19,7 @@ module.exports.clean = command({
   let globs = argv._.length ? argv._ : config.clean;
 
   if (!Array.isArray(globs) && typeof globs !== 'string') {
-    globs = DEFAULTS[config.type];
+    globs = [BUILD_DIR];
   }
 
   const paths = unpack(await rm(globs, {cwd: config.root}));
