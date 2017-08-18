@@ -5,14 +5,13 @@ const del = require('del');
 const {command} = require('../../cli');
 const {packs, unpack} = require('../../utils/async');
 const {log} = require('../../utils/console');
-const {OPTIONS, DEFAULTS, MESSAGES} = require('./constants');
+const {DEFAULTS, MESSAGES} = require('./constants');
 
 // Wrapped
 const rm = packs(del);
 
 module.exports.clean = command({
   name: 'clean',
-  options: OPTIONS,
   usage: MESSAGES.usage,
   isConfigRequired: true
 }, async (argv, config) => {

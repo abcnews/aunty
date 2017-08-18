@@ -4,10 +4,8 @@ const {cmd, hvy, opt, req, sec} = require('../../utils/color');
 const {indented, listPairs} = require('../../utils/strings');
 
 module.exports.OPTIONS = {
-  boolean: 'help',
   string: 'name',
   alias: {
-    help: 'h',
     name: 'n'
   }
 };
@@ -32,7 +30,6 @@ ${sec('Arguments')}
 ${sec('Options')}
 
   ${opt('-n SLUG')}, ${opt('--name=SLUG')}  Project name ${opt(`[default: ${req('directory_name')}]`)}
-  ${opt('-h')}, ${opt('--help')}            Display this help message and exit
 `
 };
 

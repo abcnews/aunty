@@ -33,11 +33,23 @@ module.exports.COMMANDS = new Set(
 );
 
 module.exports.DEFAULTS = {
-  NAME: '__command__',
-  OPTIONS: {
-    boolean: 'help',
+  name: '__command__',
+  options: {
+    boolean: [
+      'dry',
+      'force',
+      'help'
+    ],
+    string: [
+      'id',
+      'target'
+    ],
     alias: {
-      help: 'h'
+      dry: 'd',
+      id: 'i',
+      force: 'f',
+      help: 'h',
+      target: 't'
     }
   }
 };
@@ -52,7 +64,6 @@ Usage: ${cmd('aunty')} ${req('<command>')} ${opt('[options]')} ${opt('[command_o
 
 ${sec('Options')}
 
-  ${opt('-h')}, ${opt('--help')}     Display this help message and exit
   ${opt('-v')}, ${opt('--version')}  Print ${hvy('aunty')}'s version
 
 ${sec('Project creation commands')}
@@ -107,9 +118,5 @@ ${sec('Helper commands')}
 `,
   usageFallback: name => `
 Usage: ${cmd('aunty')} ${cmd(name)} ${opt('[options]')}
-
-${sec('Options')}
-
-  ${opt('-h')}, ${opt('--help')}  Display this help message and exit
 `
 };

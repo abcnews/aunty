@@ -1,17 +1,6 @@
 // Ours
 const {cmd, hvy, opt, sec} = require('../../utils/color');
 
-module.exports.OPTIONS = {
-  boolean: [
-    'force',
-    'help'
-  ],
-  alias: {
-    force: 'f',
-    help: 'h'
-  }
-};
-
 const FORCE_REMINDER = `Use the ${opt('--force')} option to ignore warnings or release without tagging.`;
 
 module.exports.MESSAGES = {
@@ -29,7 +18,6 @@ Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')} ${opt('[deploy_options]')}
 ${sec('Options')}
 
   ${opt('-f')}, ${opt('--force')}  Ignore warnings & skip tagging ${opt('[default: false]')}
-  ${opt('-h')}, ${opt('--help')}   Display this help message and exit
 
 ${sec('Examples')}
 

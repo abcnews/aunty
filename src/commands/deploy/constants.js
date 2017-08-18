@@ -2,27 +2,22 @@
 const {join} = require('path');
 
 // Ours
-const {BASIC_STORY} = require('../../projects/constants');
 const {cmd, hvy, opt, req, sec} = require('../../utils/color');
 const {styleLastSegment} = require('../../utils/strings');
 
+module.exports.REQUIRED_PROPERTIES = ['from', 'to', 'type', 'username', 'password', 'host'];
+
+const VALID_TYPES = module.exports.VALID_TYPES = new Set(['ftp', 'ssh']);
+
 module.exports.OPTIONS = {
-  string: [
-    'credentials',
-    'id',
-    'target'
-  ],
   boolean: [
-    'force',
-    'shouldRespectTargetSymlinks',
-    'help'
+    'shouldRespectTargetSymlinks'
+  ],
+  string: [
+    'credentials'
   ],
   alias: {
-    credentials: 'c',
-    force: 'f',
-    help: 'h',
-    id: 'i',
-    target: 't'
+    credentials: 'c'
   },
   default: {
     credentials: join(
@@ -30,27 +25,6 @@ module.exports.OPTIONS = {
       '.abc-credentials'
     )
   }
-};
-
-module.exports.DEFAULTS = new Map([
-  [BASIC_STORY, {
-    contentftp: {
-      from: 'build',
-      to: '/www/res/sites/news-projects/<name>/<id>'
-    }
-  }]
-]);
-
-module.exports.REQUIRED_PROPERTIES = ['from', 'to', 'type', 'username', 'password', 'host'];
-
-const VALID_TYPES = module.exports.VALID_TYPES = new Set(['ftp', 'ssh']);
-
-const DOMAIN = 'abc.net.au';
-const NEWSDEV = `newsdev3.aus.aunty.${DOMAIN}`;
-
-module.exports.RECOGNISED_HOST_PATH_TO_URL_MAPPINGS = {
-  [`contentftp.${DOMAIN}`]: [/\/www\/(.*)/, `http://www.${DOMAIN}/$1`],
-  [NEWSDEV]: [/\/var\/www\/html\/(.*)/, `http://${NEWSDEV}/$1`]
 };
 
 module.exports.MESSAGES = {
@@ -67,7 +41,7 @@ ${hvy('to')}   ${styleLastSegment(to, req)}
 ${hvy('on')}   ${req(host)}
 `,
   publicURL: url => `
-Public URL: ${hvy(url)}/`,
+Public URL: ${hvy(url)}`,
   usage: name => `
 Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 
@@ -77,7 +51,6 @@ ${sec('Options')}
   ${opt('-i ID')}, ${opt('--id=ID')}               Id for this deployment (can be used in destination path) ${opt('[default: git branch]')}
   ${opt('-t TARGET')}, ${opt('--target=TARGET')}   Target to deploy to ${opt('[default: ----]')}
   ${opt('-f')}, ${opt('--force')}                  Ignore all warnings and deploy anyway ${opt('[default: false]')}
-  ${opt('-h')}, ${opt('--help')}                   Display this help message and exit
 
 ${sec(`Example ${hvy('aunty')} config`)}:
 

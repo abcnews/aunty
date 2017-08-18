@@ -36,7 +36,7 @@ module.exports.buildBasicStory = command({
   const configKey = argv.debug ? D_KEY : KEY;
   const defaults = DEFAULTS[configKey];
 
-  if (argv.defaultConfig) {
+  if (argv.defaults) {
     return log(MESSAGES.config(configKey, defaults, true));
   }
 

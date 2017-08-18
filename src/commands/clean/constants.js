@@ -1,9 +1,7 @@
 // Ours
-const {BASIC_STORY, DEFAULT_OPTIONS} = require('../../projects/constants');
+const {BASIC_STORY} = require('../../projects/constants');
 const {cmd, ok, opt, sec} = require('../../utils/color');
 const {bulleted, indented, listPairs, styleLastSegment} = require('../../utils/strings');
-
-module.exports.OPTIONS = DEFAULT_OPTIONS;
 
 const DEFAULTS = module.exports.DEFAULTS = {
   [BASIC_STORY]: ['build']
@@ -22,9 +20,5 @@ ${sec('Arguments')}
 
   Project type defaults:
     ${indented(listPairs(DEFAULTS, opt), 4)}
-
-${sec('Options')}
-
-  ${opt('-h')}, ${opt('--help')}  Display this help message and exit
 `
 };

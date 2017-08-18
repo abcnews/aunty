@@ -7,13 +7,8 @@ const {inlineList, styleLastSegment} = require('../../utils/strings');
 
 module.exports.OPTIONS = {
   boolean: [
-    'debug',
-    'help'
-  ],
-  alias: {
-    debug: 'd',
-    help: 'h'
-  }
+    'debug'
+  ]
 };
 
 const HOSTNAME = hostname();

@@ -10,11 +10,10 @@ const {deploy} = require('../deploy');
 const {
   DEFAULTS: DEPLOY_DEFAULTS, MESSAGES: DEPLOY_MESSAGES
 } = require('../deploy/constants');
-const {OPTIONS, MESSAGES} = require('./constants');
+const {MESSAGES} = require('./constants');
 
 module.exports.release = command({
   name: 'release',
-  options: OPTIONS,
   usage: MESSAGES.usage,
   isConfigRequired: true
 }, async (argv, config) => {

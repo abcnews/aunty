@@ -1,9 +1,7 @@
 // Ours
-const {DEFAULT_OPTIONS, PROJECT_TYPE_DESCRIPTIONS} = require('../../projects/constants');
+const {PROJECT_TYPE_DESCRIPTIONS} = require('../../projects/constants');
 const {cmd, opt, req, sec} = require('../../utils/color');
 const {indented, listPairs} = require('../../utils/strings');
-
-module.exports.OPTIONS = DEFAULT_OPTIONS;
 
 module.exports.MESSAGES = {
   usage: name => `
@@ -18,7 +16,6 @@ ${sec('Arguments')}
 
 ${sec('Options')}
 
-  ${opt('-n SLUG')}, ${opt('--name=SLUG')}  Project name ${opt(`[default: current directory name]`)}
-  ${opt('-h')}, ${opt('--help')}            Display this help message and exit
+  ${opt('-n SLUG')}, ${opt('--name=SLUG')}  Project name ${opt(`[default: cwd]`)}
 `
 };

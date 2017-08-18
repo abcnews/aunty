@@ -1,28 +1,18 @@
 // Native
-const {stat} = require('fs');
+const {existsSync, statSync} = require('fs');
 
 // External
 const loadJsonFile = require('load-json-file');
-const pify = require('pify');
 
 // Ours
 const {command} = require('../../cli');
 const {packs, throws, unpack} = require('../../utils/async');
 const {log} = require('../../utils/console');
 const {ftp, rsync, symlink} = require('../../utils/deployment');
-const {isRepo, getCurrentLabel} = require('../../utils/git');
-const {
-  OPTIONS,
-  DEFAULTS,
-  REQUIRED_PROPERTIES,
-  VALID_TYPES,
-  RECOGNISED_HOST_PATH_TO_URL_MAPPINGS,
-  MESSAGES
-} = require('./constants');
+const {OPTIONS, MESSAGES, REQUIRED_PROPERTIES, VALID_TYPES} = require('./constants');
 
 // Wrapped
 const getJSON = packs(loadJsonFile);
-const getStats = packs(pify(stat));
 
 const deployToServer = packs(async target => {
   let err;
@@ -39,14 +29,8 @@ const deployToServer = packs(async target => {
     }
   }
 
-  const mapping = RECOGNISED_HOST_PATH_TO_URL_MAPPINGS[target.host];
-
-  if (mapping) {
-    const publicURL = target.to.replace(mapping[0], mapping[1]);
-
-    if (target.to !== publicURL) {
-      log(MESSAGES.publicURL(target.to.replace(mapping[0], mapping[1])));
-    }
+  if (target.publicURL) {
+    log(MESSAGES.publicURL(target.publicURL));
   }
 });
 
@@ -56,15 +40,9 @@ module.exports.deploy = command({
   usage: MESSAGES.usage,
   isConfigRequired: true
 }, async (argv, config) => {
-  // 1) Get config for target(s), using available defaults
+  // 1) Get known/specified deployment target(s)
 
-  const deployConfig = config.deploy || DEFAULTS.get(config.type);
-
-  if (typeof deployConfig !== 'object') {
-    throw MESSAGES.NO_TARGETS;
-  }
-
-  let keys = Object.keys(deployConfig);
+  let keys = Object.keys(config.deploy);
 
   if (argv.target) {
     keys = keys.filter(key => key === argv.target);
@@ -78,21 +56,19 @@ module.exports.deploy = command({
     throw MESSAGES.NO_TARGETS;
   }
 
+  // 2) Create an array of config objects for each target we know about
+
   const credentials = unpack(await getJSON(argv.credentials));
-
-  const id = argv.id || (await isRepo() && await getCurrentLabel()) || 'default';
-
-  // 2) Create an array of config objects fot each target we know about
 
   const targets = keys.map(key => Object.assign(
     {
       __key__: key,
-      id,
+      id: config.id,
       name: config.name,
       files: '**'
     },
     credentials[key],
-    deployConfig[key],
+    config.deploy[key],
     (argv.shouldRespectTargetSymlinks ? {} : {symlink: null})
   ));
 
@@ -111,19 +87,11 @@ module.exports.deploy = command({
       }
     });
 
-    // 3.3) Complete 'from' & 'to' paths
-    target.from = `${config.root}/${target.from}`;
-    target.to = target.to.replace('<name>', target.name).replace('<id>', id);
-
-    // 3.4) Check 'from' directory exists
-    const stats = unpack(await getStats(target.from));
-
-    if (!stats.isDirectory()) {
+    // 3.3) Check 'from' directory exists
+    if (!existsSync(target.from) || !statSync(target.from).isDirectory()) {
       throw (MESSAGES.sourceIsNotDirectory(target.from));
     }
   }));
-
-  // 4) Deploy to each target (in series)
 
   for (const target of targets) {
     throws(await deployToServer(target));

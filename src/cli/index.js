@@ -2,6 +2,7 @@
 const {resolve} = require('path');
 
 // External
+const merge = require('webpack-merge');
 const minimist = require('minimist');
 const updateNotifier = require('update-notifier');
 
@@ -59,8 +60,8 @@ const command = module.exports.command = ({
   isProxy,
   isConfigRequired
 }, fn) => {
-  name = name || DEFAULTS.COMMAND_NAME;
-  options = options || DEFAULTS.OPTIONS;
+  name = name || DEFAULTS.name;
+  options = merge(options || {}, DEFAULTS.options);
   usage = usage || MESSAGES.usageFallback;
 
   return packs(async (args = [], ...misc) => {
@@ -81,7 +82,7 @@ const command = module.exports.command = ({
     argv.$ = args;
 
     if (isConfigRequired) {
-      [err, config] = await getConfig();
+      [err, config] = await getConfig(argv);
       fnArgs.splice(1, 0, config);
     }
 

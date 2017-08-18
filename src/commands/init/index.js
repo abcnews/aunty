@@ -5,11 +5,10 @@ const {basename} = require('path');
 const {command} = require('../../cli');
 const {throws} = require('../../utils/async');
 const {new: _new} = require('../new');
-const {OPTIONS, MESSAGES} = require('./constants');
+const {MESSAGES} = require('./constants');
 
 module.exports.init = command({
   name: 'init',
-  options: OPTIONS,
   usage: MESSAGES.usage
 }, async argv => {
   const args = argv.$.slice(0, 1)

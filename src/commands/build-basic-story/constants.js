@@ -13,14 +13,10 @@ module.exports.OPTIONS = {
   boolean: [
     'config',
     'debug',
-    'defaultConfig',
-    'help'
+    'defaults'
   ],
   alias: {
-    config: 'c',
-    debug: 'd',
-    defaultConfig: 'D',
-    help: 'h'
+    config: 'c'
   }
 };
 
@@ -95,10 +91,9 @@ Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 
 ${sec('Options')}
 
-  ${opt('-d')}, ${opt('--debug')}          Use the ${hvy('build_debug')} config instead of ${hvy('build')}
-  ${opt('-c')}, ${opt('--config')}         Display this project's config and exit
-  ${opt('-D')}, ${opt('--defaultConfig')}  Display the default config and exit
-  ${opt('-h')}, ${opt('--help')}           Display this help message and exit
+  ${opt('--debug')}               Use the ${hvy('build_debug')} config instead of ${hvy('build')}
+  ${opt('--config')}              Display this project's config and exit
+  ${opt('--defaults')}            Display the default config and exit
 
 ${sec(`Example ${hvy('aunty')} config`)}:
 
@@ -131,7 +126,7 @@ ${sec('Examples')}
   ${cmd('aunty build-basic-story')} ${opt('--config')}
     Output the project's ${hvy('build')} config, including defaults.
 
-  ${cmd('aunty build-basic-story')} ${opt('--debug --defaultConfig')}
+  ${cmd('aunty build-basic-story')} ${opt('--debug --defaults')}
     Output the default ${hvy('build_debug')} config.
 `
 };
