@@ -1,14 +1,14 @@
 {
     "name": "{{projectName}}",
     "version": "1.0.0",
-    "description": "A Preact-enabled ABC News story",
+    "description": "A project generated from aunty's `{{projectType}}` template.",
     "license": "MIT",
     "private": true,
     "contributors": [
         "{{authorName}} <{{authorEmail}}>"
     ],
     "aunty": {
-        "type": "preact-story"
+        "type": "{{projectType}}"
     },
     "scripts": {
         "start": "aunty serve"

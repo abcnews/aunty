@@ -40,6 +40,7 @@ module.exports.new = command({
     templateVars: {
       authorName,
       authorEmail,
+      projectType,
       projectName
     }
   }));

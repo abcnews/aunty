@@ -1,19 +1,19 @@
 {
   "name": "{{projectName}}",
   "version": "1.0.0",
-  "description": "A basic ABC News story.",
+  "description": "A project generated from aunty's `{{projectType}}` template.",
   "license": "MIT",
   "private": true,
   "contributors": [
     "{{authorName}} <{{authorEmail}}>"
   ],
+  "aunty": {
+    "type": "{{projectType}}"
+  },
   "scripts": {
-    "start": "npm install && aunty serve --debug"
+    "start": "aunty serve --debug"
   },
   "devDependencies": {
     "@abcnews/aunty": "{{auntyVersion}}"
-  },
-  "aunty": {
-    "type": "basic-story"
   }
 }

@@ -15,7 +15,7 @@ const {log} = require('../utils/console');
 const {isRepo, createRepo, getCurrentLabel} = require('../utils/git');
 const {pretty} = require('../utils/misc');
 const {install} = require('../utils/npm');
-const {CONFIG_FILE_NAME, DEFAULTS, KNOWN_TARGETS} = require('./constants');
+const {BUILD_DIR, CONFIG_FILE_NAME, DEFAULTS, KNOWN_TARGETS} = require('./constants');
 
 // Wrapped
 const clone = packs(pify(copyTemplateDir));
@@ -31,6 +31,7 @@ const [MAJOR, MINOR] = ourPkg.version.split('.');
 const DEFAULT_TEMPLATE_VARS = {
   auntyVersion: [MAJOR, MINOR, 'x'].join('.'),
   authorName: 'ABC News',
+  buildDir: BUILD_DIR,
   currentYear: (new Date()).getFullYear()
 };
 
@@ -53,11 +54,7 @@ module.exports.create = packs(async config => {
   const projectTypeConfig = require(`./${config.projectType}`);
   const templateDir = join(__dirname, `../../templates/${config.projectType}`);
   const targetDir = join(process.cwd(), config.directoryName);
-  const templateVars = Object.assign(
-    {},
-    DEFAULT_TEMPLATE_VARS,
-    config.templateVars
-  );
+  const templateVars = Object.assign({}, DEFAULT_TEMPLATE_VARS, config.templateVars);
 
   log(MESSAGES.creating(config.projectType, targetDir, templateVars));
 
