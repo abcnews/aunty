@@ -8,13 +8,7 @@
         "{{authorName}} <{{authorEmail}}>"
     ],
     "aunty": {
-        "deploy": {
-            "contentftp": {
-                "files": "**",
-                "from": "build",
-                "to": "/www/res/sites/news-projects/<name>/<id>"
-            }
-        }
+        "type": "preact-story"
     },
     "scripts": {
         "start": "aunty serve"
