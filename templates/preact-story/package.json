@@ -14,12 +14,6 @@
         "start": "aunty serve"
     },
     "devDependencies": {
-        "@abcnews/aunty": "{{auntyVersion}}",
-        "prettier": "^1.5.3"
-    },
-    "dependencies": {
-        "preact": "^8.2.1",
-        "preact-compat": "^3.16.0",
-        "smoothscroll": "^0.3.0"
+        "@abcnews/aunty": "{{auntyVersion}}"
     }
 }

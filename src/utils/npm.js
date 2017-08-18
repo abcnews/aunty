@@ -8,7 +8,7 @@ function npm(args = [], options = {}) {
 }
 
 module.exports.install = (args = [], cwd) => {
-  args = ['install', '--save', '--silent', '--no-progress'].concat(args);
+  args = ['install', '--silent', '--no-progress'].concat(args);
 
   return npm(args, {cwd});
 };

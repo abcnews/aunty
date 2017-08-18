@@ -50,6 +50,7 @@ ${vars}
 };
 
 module.exports.create = packs(async config => {
+  const projectTypeConfig = require(`./${config.projectType}`);
   const templateDir = join(__dirname, `../../templates/${config.projectType}`);
   const targetDir = join(process.cwd(), config.directoryName);
   const templateVars = Object.assign(
@@ -66,6 +67,7 @@ module.exports.create = packs(async config => {
 
   log('Installing dependencies…');
   await install(['--only=dev'], targetDir);
+  await install(['--save'].concat(projectTypeConfig.dependencies), targetDir);
 
   if (await isRepo(targetDir)) {
     return log('Git repo already exists');
