@@ -1,7 +1,7 @@
 // Ours
 const {PROJECT_TYPE_DESCRIPTIONS} = require('../projects/constants');
+const {createLogo} = require('../utils/branding');
 const {cmd, dim, hvy, opt, req, sec} = require('../utils/color');
-const {createLogo} = require('../utils/logo');
 const {indented, listPairs} = require('../utils/strings');
 
 module.exports.OPTIONS = {

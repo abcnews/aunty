@@ -6,7 +6,7 @@ const readPkg = require('read-pkg');
 const {packs, prequire, unpack} = require('../utils/async');
 const {hvy} = require('../utils/color');
 const {isRepo, getCurrentLabel} = require('../utils/git');
-const {pretty} = require('../utils/misc');
+const {pretty} = require('../utils/logging');
 const {CONFIG_FILE_NAME, DEFAULTS, KNOWN_TARGETS} = require('./constants');
 
 // Wrapped

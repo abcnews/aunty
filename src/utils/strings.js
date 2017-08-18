@@ -1,6 +1,3 @@
-// Ours
-const {getLongest, identity} = require('./misc');
-
 const CAMELABLE_PATTERN = /-\w/g;
 const EMPTY = '';
 const NEWLINE = '\n';
@@ -11,6 +8,11 @@ module.exports.EMPTY = EMPTY;
 module.exports.NEWLINE = NEWLINE;
 module.exports.SLASH = SLASH;
 module.exports.SPACE = SPACE;
+
+const identity = x => x;
+
+const getLongest = items =>
+  items.reduce((a, b) => a.length > b.length ? a : b);
 
 module.exports.indented = (str, indent = 2) =>
   str.split(`${NEWLINE}`).join(`${NEWLINE}${SPACE.repeat(indent)}`);

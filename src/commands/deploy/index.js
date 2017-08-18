@@ -7,8 +7,8 @@ const loadJsonFile = require('load-json-file');
 // Ours
 const {command} = require('../../cli');
 const {packs, throws, unpack} = require('../../utils/async');
-const {log} = require('../../utils/console');
 const {ftp, rsync, symlink} = require('../../utils/deployment');
+const {log} = require('../../utils/logging');
 const {OPTIONS, MESSAGES, REQUIRED_PROPERTIES, VALID_TYPES} = require('./constants');
 
 // Wrapped

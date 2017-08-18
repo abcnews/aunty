@@ -8,8 +8,8 @@ const VTFP = require('vinyl-ftp');
 
 // Ours
 const {packs, pumped, throws} = require('./async');
-const {bad, cmd, hvy, ok} = require('./color');
-const {createLogger, warn} = require('./console');
+const {bad, cmd, ok} = require('./color');
+const {createLogger, warn} = require('./logging');
 const {styleLastSegment} = require('./strings');
 
 // Wrapped
@@ -44,7 +44,7 @@ const MESSAGES = {
 };
 
 module.exports.ftp = packs(async target => {
-  const log = createLogger('FTP', hvy);
+  const log = createLogger('FTP');
 
   log(MESSAGES.STARTED);
 
@@ -81,7 +81,7 @@ module.exports.ftp = packs(async target => {
 });
 
 module.exports.rsync = packs(async target => {
-  const log = createLogger('SSH [rsync]', hvy);
+  const log = createLogger('SSH [rsync]');
 
   log(MESSAGES.STARTED);
 
@@ -104,7 +104,7 @@ module.exports.rsync = packs(async target => {
 });
 
 module.exports.symlink = packs(async target => {
-  const log = createLogger('SSH [symlink]', hvy);
+  const log = createLogger('SSH [symlink]');
 
   log(MESSAGES.STARTED);
 

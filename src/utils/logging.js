@@ -1,14 +1,22 @@
+// Global
+const {error, log, warn} = console;
+
 // Native
 const {inspect} = require('util');
+
+// Ours
+const {hvy} = require('./color');
 
 inspect.styles.name = 'blue';
 
 const UTIL_INSPECT_OPTIONS = {colors: true, depth: null};
 
-module.exports.getLongest = items =>
-  items.reduce((a, b) => a.length > b.length ? a : b);
+module.exports.error = error;
+module.exports.log = log;
+module.exports.warn = warn;
 
-module.exports.identity = x => x;
+module.exports.createLogger = namespace =>
+  message => log(`${hvy(namespace)}: ${message}`);
 
 // Can be used as a funtion or a tagged template literal;
 module.exports.pretty = (inputs, ...values) => {

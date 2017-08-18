@@ -3,7 +3,7 @@ const merge = require('webpack-merge');
 
 // Ours
 const {cmd, hvy, opt, req, sec} = require('../../utils/color');
-const {pretty} = require('../../utils/misc');
+const {pretty} = require('../../utils/logging');
 
 // Resolved
 const BABELIFY = require.resolve('babelify');

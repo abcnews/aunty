@@ -1,10 +1,10 @@
 // Ours
 const {command} = require('../../cli');
 const {throws} = require('../../utils/async');
-const {log} = require('../../utils/console');
 const {
   createTag, getCurrentTags, getRemotes, hasChanges, hasTag, isRepo, pushTag
 } = require('../../utils/git');
+const {log} = require('../../utils/logging');
 const {build} = require('../build');
 const {deploy} = require('../deploy');
 const {

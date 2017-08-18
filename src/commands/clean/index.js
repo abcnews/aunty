@@ -5,7 +5,7 @@ const del = require('del');
 const {command} = require('../../cli');
 const {BUILD_DIR} = require('../../projects/constants');
 const {packs, unpack} = require('../../utils/async');
-const {log} = require('../../utils/console');
+const {log} = require('../../utils/logging');
 const {MESSAGES} = require('./constants');
 
 // Wrapped

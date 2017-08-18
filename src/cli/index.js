@@ -10,8 +10,8 @@ const updateNotifier = require('update-notifier');
 const pkg = require('../../package');
 const {getConfig} = require('../projects');
 const {pack, packs, throws} = require('../utils/async');
-const {log} = require('../utils/console');
-const {createCommandLogo} = require('../utils/logo');
+const {createCommandLogo} = require('../utils/branding');
+const {log} = require('../utils/logging');
 const {slugToCamel} = require('../utils/strings');
 const {ALIASES, COMMANDS, DEFAULTS, OPTIONS, MESSAGES} = require('./constants');
 

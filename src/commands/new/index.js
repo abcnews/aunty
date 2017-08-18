@@ -9,8 +9,8 @@ const pify = require('pify');
 const {command} = require('../../cli');
 const {PROJECT_TYPES} = require('../../projects/constants');
 const {packs, throws, unpack} = require('../../utils/async');
-const {log} = require('../../utils/console');
 const {createRepo, getConfigValue, isRepo} = require('../../utils/git');
+const {log} = require('../../utils/logging');
 const {install} = require('../../utils/npm');
 const {DEFAULT_TEMPLATE_VARS, OPTIONS, MESSAGES, PATTERNS} = require('./constants');
 

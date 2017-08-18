@@ -11,7 +11,7 @@ const serveStatic = require('serve-static');
 // Ours
 const {command} = require('../../cli');
 const {pack, throws} = require('../../utils/async');
-const {log} = require('../../utils/console');
+const {log} = require('../../utils/logging');
 const {
   BUILD_DIR, D_KEY, DEFAULTS, KEY, TASK_NAMES
 } = require('../build-basic-story/constants');
