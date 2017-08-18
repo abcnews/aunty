@@ -19,13 +19,16 @@ const clone = packs(pify(copyTemplateDir));
 
 const create = packs(async config => {
   const projectTypeConfig = require(`../../projects/${config.projectType}`);
-  const templateDir = join(__dirname, `../../../templates/${config.projectType}`);
+  const commonTemplateDir = join(__dirname, `../../../templates/_common`);
+  const projectTypeTemplateDir = join(__dirname, `../../../templates/${config.projectType}`);
   const targetDir = join(process.cwd(), config.directoryName);
   const templateVars = Object.assign({}, DEFAULT_TEMPLATE_VARS, config.templateVars);
 
   log(MESSAGES.creating(config.projectType, targetDir, templateVars));
 
-  const files = unpack(await clone(templateDir, targetDir, templateVars));
+  let files = unpack(await clone(commonTemplateDir, targetDir, templateVars));
+
+  files = files.concat(unpack(await clone(projectTypeTemplateDir, targetDir, templateVars)));
 
   files.sort().forEach(file => log(MESSAGES.created(targetDir, file)));
 

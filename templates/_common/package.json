@@ -1,7 +1,7 @@
 {
   "name": "{{projectName}}",
   "version": "1.0.0",
-  "description": "A project generated from aunty's `{{projectType}}` template.",
+  "description": "A project generated from aunty's {{projectType}} template.",
   "license": "MIT",
   "private": true,
   "contributors": [
@@ -11,7 +11,7 @@
     "type": "{{projectType}}"
   },
   "scripts": {
-    "start": "aunty serve --debug"
+    "start": "aunty serve"
   },
   "devDependencies": {
     "@abcnews/aunty": "{{auntyVersion}}"
