@@ -64,7 +64,9 @@ module.exports.release = command({
 
   // 4) For each target, build the project and deploy it
 
-  await Promise.all(Object.keys(config.deploy).map(async target => {
+  const targets = argv.target ? [argv.target] : Object.keys(config.deploy);
+
+  await Promise.all(targets.map(async target => {
     const args = ['--id', id, '--target', target];
 
     throws(await build(args));
