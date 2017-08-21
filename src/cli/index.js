@@ -15,6 +15,10 @@ const {log} = require('../utils/logging');
 const {slugToCamel} = require('../utils/strings');
 const {ALIASES, COMMANDS, DEFAULTS, OPTIONS, MESSAGES} = require('./constants');
 
+const isArgHelpCommand = arg => {
+  return (ALIASES[arg] || arg) === 'help';
+};
+
 module.exports.cli = packs(async (args, isGlobal) => {
   const argv = minimist(args, OPTIONS);
 
@@ -27,9 +31,11 @@ module.exports.cli = packs(async (args, isGlobal) => {
   }
 
   let commandName = argv._[0] || '';
-  const isHelp = (ALIASES[commandName] || commandName) === 'help';
+  const isHelp = isArgHelpCommand(commandName);
 
-  if (!commandName || (isHelp && argv._.length === 1)) {
+  if (!commandName || (isHelp && (
+    argv._.length === 1 || isArgHelpCommand(argv._[1])
+  ))) {
     return log(MESSAGES.usage());
   }
 
