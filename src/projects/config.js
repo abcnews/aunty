@@ -24,13 +24,23 @@ function resolveDeployConfig(config) {
   .forEach(key => {
     const target = config.deploy[key];
 
-    target.from = `${config.root}/${target.from}`;
-    target.to = target.to.replace('<name>', config.name).replace('<id>', config.id);
+    if (!target._from) {
+      target._from = target.from;
+    }
+
+    if (!target._to) {
+      target._to = target.to;
+    }
+
+    target.from = `${config.root}/${target._from}`;
+    target.to = target._to.replace('<name>', config.name).replace('<id>', config.id);
     target.publicURL = KNOWN_TARGETS[key] ? target.to.replace(
       KNOWN_TARGETS[key].publicPathRewritePattern,
       `${KNOWN_TARGETS[key].publicURLRoot}$1/`
     ) : null;
   });
+
+  return config;
 }
 
 module.exports.getConfig = packs(async argv => {
@@ -60,17 +70,14 @@ module.exports.getConfig = packs(async argv => {
       throw MESSAGES.NO_CONFIG;
     }
 
-    const id = argv.id || (await isRepo() && await getCurrentLabel()) || 'default';
-
     config = Object.assign({
       name: pkg.name,
       version: pkg.version,
-      root,
-      id
+      root
     }, configFileConfig || pkgConfig);
-
-    resolveDeployConfig(config);
   }
 
-  return config;
+  return resolveDeployConfig(Object.assign({
+    id: argv.id || (await isRepo() && await getCurrentLabel()) || 'default'
+  }, config));
 });

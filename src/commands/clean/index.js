@@ -4,7 +4,7 @@ const del = require('del');
 // Ours
 const {command} = require('../../cli');
 const {BUILD_DIR} = require('../../projects/constants');
-const {dry, info} = require('../../utils/logging');
+const {dry, spin} = require('../../utils/logging');
 const {MESSAGES} = require('./constants');
 
 module.exports.clean = command({
@@ -25,6 +25,9 @@ module.exports.clean = command({
     });
   }
 
-  info('Cleaning…');
+  const spinner = spin('Clean');
+
   await del(globs, {cwd});
+
+  spinner.succeed();
 });

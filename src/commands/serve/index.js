@@ -1,5 +1,4 @@
 // External
-const pify = require('pify');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
@@ -7,7 +6,7 @@ const WebpackDevServer = require('webpack-dev-server');
 const {command} = require('../../cli');
 const {createConfig} = require('../../projects/webpack');
 const {throws} = require('../../utils/async');
-const {dry, info} = require('../../utils/logging');
+const {dry, info, spin} = require('../../utils/logging');
 const {MESSAGES} = require('../build/constants');
 const {clean} = require('../clean');
 const {OPTIONS} = require('./constants');
@@ -25,6 +24,7 @@ module.exports.serve = command({
 
   const {port} = devServerConfig;
 
+  delete devServerConfig.host;
   delete devServerConfig.port;
 
   if (argv.dry) {
@@ -43,14 +43,14 @@ module.exports.serve = command({
 
   throws(await clean());
 
-  info('Serving…');
-
+  const spinner = spin('Serve');
   const compiler = webpack(webpackConfig);
   const server = new WebpackDevServer(compiler, devServerConfig);
 
   return new Promise((resolve, reject) => {
     server.listen(port, '0.0.0.0', err => {
       if (err) {
+        spinner.fail();
         reject(err);
       }
     });

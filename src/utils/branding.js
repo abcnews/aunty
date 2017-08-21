@@ -59,3 +59,10 @@ module.exports.createErrorLogo = () => {
 
   return zipTemplateLiterals([worm, text, worm, text, worm]);
 };
+
+module.exports.SPINNER_FRAMES = [
+  '⣏⠀⠀', '⡟⠀⠀', '⠟⠄⠀', '⠛⡄⠀', '⠙⣄⠀', '⠘⣤⠀',
+  '⠐⣤⠂', '⠀⣤⠃', '⠀⣠⠋', '⠀⢠⠛', '⠀⠠⠻', '⠀⠀⢻',
+  '⠀⠀⣹', '⠀⠀⣼', '⠀⠐⣴', '⠀⠘⣤', '⠀⠙⣄', '⠀⠛⡄',
+  '⠠⠛⠄', '⢠⠛⠀', '⣠⠋⠀', '⣤⠃⠀', '⣦⠂⠀', '⣧⠀⠀'
+];

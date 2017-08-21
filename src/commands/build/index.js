@@ -6,7 +6,7 @@ const webpack = require('webpack');
 const {command} = require('../../cli');
 const {createConfig} = require('../../projects/webpack');
 const {packs, throws, unpack} = require('../../utils/async');
-const {dry, info, warn} = require('../../utils/logging');
+const {dry, info, spin, warn} = require('../../utils/logging');
 const {clean} = require('../clean');
 const {MESSAGES} = require('./constants');
 
@@ -34,17 +34,20 @@ module.exports.build = command({
 
   throws(await clean());
 
-  info('Building…');
-
+  const spinner = spin('Build');
   const compiler = webpack(webpackConfig);
   const stats = unpack(await packs(pify(compiler.run.bind(compiler)))());
 
   if (stats.hasErrors()) {
-    console.log(stats);
+    spinner.fail();
+
     throw stats.toJson({}, true).errors[0];
   }
 
   if (stats.hasWarnings()) {
+    spinner.warn();
     stats.toJson({}, true).warnings.forEach(warn);
+  } else {
+    spinner.succeed();
   }
 });

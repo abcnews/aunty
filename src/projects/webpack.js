@@ -63,9 +63,9 @@ module.exports.createConfig = (argv, config, isServer) => {
               loader: require.resolve('css-loader'),
               options: {
                 camelCase: true,
-                localIdentName: isProd ?
-                  null : buildConfig.useCSSModules ?
-                  '[path]__[name]__[local]--[hash:base64:5]' :
+                localIdentName: isProd ? '[hash:base64:5]' :
+                  buildConfig.useCSSModules ?
+                  '[name]__[local]--[hash:base64:5]' :
                   '[local]',
                 modules: buildConfig.useCSSModules,
                 minimize: isProd,

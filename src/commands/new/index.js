@@ -10,7 +10,7 @@ const {command} = require('../../cli');
 const {PROJECT_TYPES} = require('../../projects/constants');
 const {packs, throws} = require('../../utils/async');
 const {createRepo, getConfigValue, isRepo} = require('../../utils/git');
-const {dry, info} = require('../../utils/logging');
+const {dry, info, spin, warn} = require('../../utils/logging');
 const {install} = require('../../utils/npm');
 const {DEFAULT_TEMPLATE_VARS, OPTIONS, MESSAGES, PATTERNS} = require('./constants');
 
@@ -23,6 +23,7 @@ const create = packs(async config => {
   const projectTypeTemplateDir = join(__dirname, `../../../templates/${config.projectType}`);
   const targetDir = join(process.cwd(), config.directoryName);
   const templateVars = Object.assign({}, DEFAULT_TEMPLATE_VARS, config.templateVars);
+  let spinner;
 
   if (config.isDry) {
     return dry({
@@ -34,20 +35,23 @@ const create = packs(async config => {
 
   info(MESSAGES.creating(config.projectType, targetDir, templateVars));
 
-  info('Cloning project template…');
+  spinner = spin('Clone project template');
   await clone(commonTemplateDir, targetDir, templateVars);
   await clone(projectTypeTemplateDir, targetDir, templateVars);
+  spinner.succeed();
 
-  info('Installing dependencies…');
-  await install(['--only=dev'], targetDir);
+  spinner = spin('Install dependencies');
+  await install(['--only=dev', '--prefer-offline'], targetDir);
   await install(['--save'].concat(projectTypeConfig.dependencies), targetDir);
+  spinner.succeed();
 
   if (await isRepo(targetDir)) {
-    return info('Git repo already exists');
+    return warn('Git repo already exists');
   }
 
-  info('Creating git repo…');
+  spinner = spin('Create git repo');
   await createRepo(targetDir);
+  spinner.succeed();
 });
 
 module.exports.new = command({

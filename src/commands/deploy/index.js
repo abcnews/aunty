@@ -14,7 +14,7 @@ const VTFP = require('vinyl-ftp');
 // Ours
 const {command} = require('../../cli');
 const {packs, throws, unpack} = require('../../utils/async');
-const {dry, info, warn} = require('../../utils/logging');
+const {dry, info, spin, warn} = require('../../utils/logging');
 const {DEFAULTS, OPTIONS, MESSAGES, REQUIRED_PROPERTIES, VALID_TYPES} = require('./constants');
 
 // Wrapped
@@ -78,17 +78,26 @@ const symlink = packs(async target => {
 
 const deployToServer = packs(async target => {
   info(MESSAGES.deployment(target.type, target.from, target.to, target.host));
-  info('Deploying…');
 
-  if (target.type === 'ftp') {
-    await ftp(target);
-  } else if (target.type === 'ssh') {
-    await rsync(target);
+  const spinner = spin('Deploy');
 
-    if (target.symlink) {
-      await symlink(target);
+  try {
+    if (target.type === 'ftp') {
+      await ftp(target);
+    } else if (target.type === 'ssh') {
+      await rsync(target);
+
+      if (target.symlink) {
+        await symlink(target);
+      }
     }
+  } catch (err) {
+    spinner.fail();
+
+    throw err;
   }
+
+  spinner.succeed();
 
   if (target.publicURL) {
     info(MESSAGES.publicURL(target.publicURL));

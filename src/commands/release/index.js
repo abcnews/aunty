@@ -4,12 +4,10 @@ const {throws} = require('../../utils/async');
 const {
   createTag, getCurrentTags, getRemotes, hasChanges, hasTag, isRepo, pushTag
 } = require('../../utils/git');
-const {dry, info} = require('../../utils/logging');
+const {dry, spin} = require('../../utils/logging');
 const {build} = require('../build');
 const {deploy} = require('../deploy');
-const {
-  DEFAULTS: DEPLOY_DEFAULTS, MESSAGES: DEPLOY_MESSAGES
-} = require('../deploy/constants');
+const {MESSAGES: DEPLOY_MESSAGES} = require('../deploy/constants');
 const {MESSAGES} = require('./constants');
 
 module.exports.release = command({
@@ -18,6 +16,7 @@ module.exports.release = command({
   isConfigRequired: true
 }, async (argv, config) => {
   const id = config.version;
+  let spinner;
 
   if (argv.dry) {
     return dry({
@@ -33,7 +32,7 @@ module.exports.release = command({
 
   // 2) Ensure the project has a deployment config
 
-  if (!config.deploy && !DEPLOY_DEFAULTS.has(config.type)) {
+  if (typeof config.deploy !== 'object') {
     throw DEPLOY_MESSAGES.NO_TARGETS;
   }
 
@@ -43,31 +42,32 @@ module.exports.release = command({
     throw MESSAGES.HAS_CHANGES;
   }
 
-  // 4) Build the project
-
-  throws(await build([]));
-
-  // 5) Tag a new release (skippable)
+  // 4) Tag a new release (skippable)
 
   if (!argv.force) {
     if (await hasTag(id)) {
       throw MESSAGES.hasTag(id, (await getCurrentTags()).has(id));
     }
 
+    spinner = spin(MESSAGES.createTag(id));
     await createTag(id);
-
-    info(MESSAGES.createdTag(id));
+    spinner.succeed();
 
     const remotes = await getRemotes();
 
     for (const remote of remotes.values()) {
+      spinner = spin(MESSAGES.pushTag(id));
       await pushTag(remote, id);
-
-      info(MESSAGES.pushedTag(id, remote));
+      spinner.succeed();
     }
   }
 
-  // 6) Deploy
+  // 4) For each target, build the project and deploy it
 
-  throws(await deploy(argv.$.concat(['--id', id, '--shouldRespectTargetSymlinks'])));
+  await Promise.all(Object.keys(config.deploy).map(async target => {
+    const args = ['--id', id, '--target', target];
+
+    throws(await build(args));
+    throws(await deploy(args.concat(['--shouldRespectTargetSymlinks'])));
+  }));
 });

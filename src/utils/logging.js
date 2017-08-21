@@ -6,8 +6,10 @@ const {inspect} = require('util');
 
 // External
 const logSymbols = require('log-symbols');
+const ora = require('ora');
 
 // Ours
+const {SPINNER_FRAMES} = require('./branding');
 const {opt, sec} = require('./color');
 
 inspect.styles.name = 'blue';
@@ -51,5 +53,18 @@ module.exports.dry = config => {
 
 ${pretty`${config[key]}`}
 `));
+};
+
+module.exports.spin = text => {
+  const spinner = ora({
+    color: 'cyan',
+    spinner: {
+      frames: SPINNER_FRAMES,
+      interval: 80
+    },
+    text
+  });
+
+  return spinner.start();
 };
 
