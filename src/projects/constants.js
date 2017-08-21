@@ -1,17 +1,23 @@
-const BASIC_STORY = module.exports.BASIC_STORY = 'basic-story';
-const PREACT_STORY = module.exports.PREACT_STORY = 'preact-story';
+// Ours
+const {hvy} = require('../utils/color');
+
+const CONFIG_FILE_NAME = module.exports.CONFIG_FILE_NAME = 'aunty.config.js';
+
+const BASIC_APP = module.exports.BASIC_APP = 'basic-app';
+const PREACT_APP = module.exports.PREACT_APP = 'preact-app';
+const REACT_APP = module.exports.REACT_APP = 'react-app';
 
 module.exports.PROJECT_TYPES = new Set([
-  BASIC_STORY,
-  PREACT_STORY
+  BASIC_APP,
+  PREACT_APP,
+  REACT_APP
 ]);
 
 module.exports.PROJECT_TYPE_DESCRIPTIONS = {
-  [BASIC_STORY]: 'a vanilla JS app which runs inside a News story.',
-  [PREACT_STORY]: 'a Preact-enabled app which runs inside a News story.'
+  [BASIC_APP]: 'a vanilla JS app.',
+  [PREACT_APP]: 'a Preact-enabled app.',
+  [REACT_APP]: 'a React-enabled app.'
 };
-
-module.exports.CONFIG_FILE_NAME = 'aunty.config.js';
 
 const BUILD_DIR = module.exports.BUILD_DIR = 'build';
 
@@ -37,4 +43,9 @@ module.exports.KNOWN_TARGETS = {
     publicPathRewritePattern: /\/var\/www\/html\/(.*)/,
     publicURLRoot: `http://newsdev3.aus.aunty.abc.net.au/`
   }
+};
+
+module.exports.MESSAGES = {
+  NO_CONFIG: `This project has no ${hvy(CONFIG_FILE_NAME)} file or ${hvy('aunty')} property in its ${hvy('package.json')}.`,
+  NOT_PACKAGE: `This command can only be run inside a project with a ${hvy('package.json')} file.`
 };

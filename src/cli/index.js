@@ -8,7 +8,7 @@ const updateNotifier = require('update-notifier');
 
 // Ours
 const pkg = require('../../package');
-const {getConfig} = require('../projects');
+const {getConfig} = require('../projects/config');
 const {pack, packs, throws} = require('../utils/async');
 const {createCommandLogo} = require('../utils/branding');
 const {log} = require('../utils/logging');

@@ -1,0 +1,10 @@
+.root {
+  position: fixed;
+  z-index: 10000;
+  box-sizing: border-box;
+  padding: 20px;
+  width: 100%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  background-color: #900;
+  color: #fff;
+}

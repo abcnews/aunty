@@ -15,7 +15,9 @@ module.exports.DEFAULT_TEMPLATE_VARS = {
 };
 
 module.exports.OPTIONS = {
-  string: 'name',
+  string: [
+    'name'
+  ],
   alias: {
     name: 'n'
   }

@@ -4,10 +4,9 @@ const readPkg = require('read-pkg');
 
 // Ours
 const {packs, prequire, unpack} = require('../utils/async');
-const {hvy} = require('../utils/color');
 const {isRepo, getCurrentLabel} = require('../utils/git');
 const {pretty} = require('../utils/logging');
-const {CONFIG_FILE_NAME, DEFAULTS, KNOWN_TARGETS} = require('./constants');
+const {CONFIG_FILE_NAME, DEFAULTS, KNOWN_TARGETS, MESSAGES} = require('./constants');
 
 // Wrapped
 const getPkg = packs(readPkg);
@@ -18,10 +17,21 @@ let root;
 let pkg;
 let config;
 
-const MESSAGES = {
-  NO_CONFIG: `This project has no ${hvy(CONFIG_FILE_NAME)} file or ${hvy('aunty')} property in its ${hvy('package.json')}.`,
-  NOT_PACKAGE: `This command can only be run inside a project with a ${hvy('package.json')} file.`
-};
+function resolveDeployConfig(config) {
+  config.deploy = config.deploy || DEFAULTS.deploy;
+
+  Object.keys(config.deploy)
+  .forEach(key => {
+    const target = config.deploy[key];
+
+    target.from = `${config.root}/${target.from}`;
+    target.to = target.to.replace('<name>', config.name).replace('<id>', config.id);
+    target.publicURL = KNOWN_TARGETS[key] ? target.to.replace(
+      KNOWN_TARGETS[key].publicPathRewritePattern,
+      `${KNOWN_TARGETS[key].publicURLRoot}$1/`
+    ) : null;
+  });
+}
 
 module.exports.getConfig = packs(async argv => {
   if (!root) {
@@ -64,19 +74,3 @@ module.exports.getConfig = packs(async argv => {
 
   return config;
 });
-
-function resolveDeployConfig(config) {
-  config.deploy = config.deploy || DEFAULTS.deploy;
-
-  Object.keys(config.deploy)
-  .forEach(key => {
-    const target = config.deploy[key];
-
-    target.from = `${config.root}/${target.from}`;
-    target.to = target.to.replace('<name>', config.name).replace('<id>', config.id);
-    target.publicURL = KNOWN_TARGETS[key] ? target.to.replace(
-      KNOWN_TARGETS[key].publicPathRewritePattern,
-      `${KNOWN_TARGETS[key].publicURLRoot}$1/`
-    ) : null;
-  });
-}

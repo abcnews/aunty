@@ -86,7 +86,7 @@ ${sec('Development commands')}
     Clean & build the current project.
 
   ${cmd('aunty serve')} ${opt('[options]')}
-    Clean, build & serve the current project, then rebuild when files change
+    Serve the current project, rebuilding when files change
 
 ${sec('Deployment commands')}
 
