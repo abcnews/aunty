@@ -21,6 +21,8 @@ module.exports.PROJECT_TYPE_DESCRIPTIONS = {
 
 const BUILD_DIR = module.exports.BUILD_DIR = 'build';
 
+module.exports.DEV_SERVER_PORT = 8000;
+
 module.exports.DEFAULTS = {
   build: {
     from: 'src',

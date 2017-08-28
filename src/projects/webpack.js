@@ -8,7 +8,7 @@ const merge = require('webpack-merge');
 const webpack = require('webpack');
 
 // Ours
-const {BUILD_DIR} = require('./constants');
+const {BUILD_DIR, DEV_SERVER_PORT} = require('./constants');
 
 module.exports.createConfig = (argv, config, isServer) => {
   const isProd = process.env.NODE_ENV === 'production';
@@ -164,7 +164,7 @@ module.exports.createConfig = (argv, config, isServer) => {
     },
     // Remember to strip before passing config to new WebpackDevServer
     host: hostname(),
-    port: 8000
+    port: DEV_SERVER_PORT
   }, projectTypeConfig.devServer, config.devServer || {});
 
   if (argv.host) {
