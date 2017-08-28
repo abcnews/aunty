@@ -12,7 +12,8 @@ const {MESSAGES} = require('./constants');
 
 module.exports.build = command({
   name: 'build',
-  isConfigRequired: true
+  isConfigRequired: true,
+  usage: MESSAGES.usage
 }, async (argv, config) => {
   if (!process.env.NODE_ENV) {
     process.env.NODE_ENV = 'production';

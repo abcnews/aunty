@@ -7,13 +7,14 @@ const {command} = require('../../cli');
 const {createConfig} = require('../../projects/webpack');
 const {throws} = require('../../utils/async');
 const {dry, info, spin} = require('../../utils/logging');
-const {MESSAGES} = require('../build/constants');
+const {MESSAGES: BUILD_MESSAGES} = require('../build/constants');
 const {clean} = require('../clean');
-const {OPTIONS} = require('./constants');
+const {MESSAGES, OPTIONS} = require('./constants');
 
 module.exports.serve = command({
   name: 'serve',
   options: OPTIONS,
+  usage: MESSAGES.usage,
   isConfigRequired: true
 }, async (argv, config) => {
   if (!process.env.NODE_ENV) {
@@ -30,12 +31,11 @@ module.exports.serve = command({
   if (argv.dry) {
     return dry({
       'Webpack config': webpackConfig,
-      'Dev server config': devServerConfig,
-      'Dev server public URL': devServerConfig.publicPath
+      'Dev server config': devServerConfig
     });
   }
 
-  info(MESSAGES.build(
+  info(BUILD_MESSAGES.build(
     process.env.NODE_ENV,
     argv.target,
     webpackConfig.output.publicPath
@@ -43,7 +43,7 @@ module.exports.serve = command({
 
   throws(await clean());
 
-  const spinner = spin('Serve');
+  const spinner = spin(`Serve${devServerConfig.hot ? ' (hot)' : ''}`);
   const compiler = webpack(webpackConfig);
   const server = new WebpackDevServer(compiler, devServerConfig);
 

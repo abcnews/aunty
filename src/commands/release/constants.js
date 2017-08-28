@@ -13,7 +13,7 @@ module.exports.MESSAGES = {
   createTag: tag => `Create tag ${hvy(tag)}`,
   pusheTag: (tag, remote) => `Push tag ${hvy(tag)} to remote ${hvy(remote)}`,
   usage: name => `
-Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')} ${opt('[deploy_options]')}
+Usage: ${cmd(`aunty ${name}`)} ${opt('[options] [build_options] [deploy_options]')}
 
 ${sec('Options')}
 
@@ -22,11 +22,15 @@ ${sec('Options')}
 ${sec('Examples')}
 
   ${cmd('aunty release')}
-    Run ${cmd('aunty build')}, tag a release with ${hvy('git')} (using ${hvy('package.json:version')}),
-    then run ${cmd('aunty deploy')}, passing the tag as the ${opt('--id')} option.
+    For each deployment target specified in the project's config:
+      1. Check for uncommitted local changes (exiting if any exist)
+      2. Run \`${cmd('aunty build')} ${opt('--target=<target_name> --id=<package.json:version>')}\`
+      3. Tag a release with ${hvy('git')} (using ${hvy('package.json:version')}), pushing it to any remotes
+      4. Run \`${cmd('aunty deploy')} ${opt('--target=<target_name> --id=<package.json:version>')}\`
 
   ${cmd(`aunty release ${opt('--force')}`)}
-    Ignore warnings about the project's state, run ${cmd('aunty build')}, skip tagging,
-    then run ${cmd('aunty deploy')}, passing ${hvy('package.json:version')} as the ${opt('--id')} option.
+    For each deployment target specified in the project's config:
+      1. Run \`${cmd('aunty build')} ${opt('--target=<target_name> --id=<package.json:version>')}\`
+      2. Run \`${cmd('aunty deploy')} ${opt('--target=<target_name> --id=<package.json:version>')}\`
 `
 };

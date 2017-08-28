@@ -82,18 +82,18 @@ ${sec('Development commands')}
   ${cmd('aunty clean')}
     Delete the current project's build output directories.
 
-  ${cmd('aunty build')}
+  ${cmd('aunty build')} ${opt('[options]')}
     Clean & build the current project.
 
   ${cmd('aunty serve')} ${opt('[options]')}
-    Serve the current project, rebuilding when files change
+    Build & serve the current project, re-building as files change
 
 ${sec('Deployment commands')}
 
   ${cmd('aunty deploy')} ${opt('[options]')}
     Deploy the current project.
 
-  ${cmd('aunty release')} ${opt('[options]')} ${opt('[deploy_options]')}
+  ${cmd('aunty release')} ${opt('[options] [build_options] [deploy_options]')}
     Build, \`${hvy('git tag <package.json:version>')}\`, then deploy the current project.
 
 ${sec('Helper commands')}

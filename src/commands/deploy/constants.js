@@ -59,15 +59,14 @@ Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 
 ${sec('Options')}
 
-  ${opt('-c FILE')}, ${opt('--credentials=FILE')}  File where target credentials/config is held ${opt('[default: "~/.abc-credentials"]')}
-  ${opt('-i ID')}, ${opt('--id=ID')}               Id for this deployment (can be used in destination path) ${opt('[default: git branch]')}
-  ${opt('-t TARGET')}, ${opt('--target=TARGET')}   Target to deploy to ${opt('[default: ----]')}
-  ${opt('-f')}, ${opt('--force')}                  Ignore all warnings and deploy anyway ${opt('[default: false]')}
+  ${opt('-c PATH')}, ${opt('--credentials=PATH')}  File where target credentials/config is held ${opt('[default: "~/.abc-credentials"]')}
+  ${opt('-i NAME')}, ${opt('--id=NAME')}           Id for this deployment (can be used in destination path) ${opt(`[default: ${cmd('git branch')}]`)}
+  ${opt('-t NAME')}, ${opt('--target=NAME')}       Target to deploy to ${opt('[default: ---]')}
 
 ${sec(`Example ${hvy('aunty')} config`)}:
 
   ${req(`deploy: {
-    [target]: {
+    [target_name]: {
       files: '**',
       from: 'build',
       to: '/www/res/sites/news-projects/${opt('<name>')}/${opt('<id>')}'

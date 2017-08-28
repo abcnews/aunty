@@ -1,6 +1,6 @@
 // Ours
 const {BUILD_DIR} = require('../../projects/constants');
-const {cmd, ok, opt, sec} = require('../../utils/color');
+const {cmd, ok, opt, req, sec} = require('../../utils/color');
 const {bulleted, styleLastSegment} = require('../../utils/strings');
 
 module.exports.MESSAGES = {
@@ -8,10 +8,10 @@ module.exports.MESSAGES = {
     paths.length < 1 ? `Nothing to delete` : `Deleted:
 ${bulleted(paths.map(path => styleLastSegment(path, ok)))}`,
   usage: name => `
-Usage: ${cmd(`aunty ${name}`)} ${opt('[glob(s)]')} ${opt('[options]')}
+Usage: ${cmd(`aunty ${name}`)} ${opt(`[${req('glob(s)')}]`)}
 
-${sec('Arguments')}
+${sec('Optional arguments')}
 
-  ${opt('glob(s)')} File globs to delete ${opt(`[default: config \`clean\` property | "${BUILD_DIR}"]`)}
+  ${req('glob(s)')} File globs to delete ${opt(`[default: config 'clean' property | "${BUILD_DIR}"]`)}
 `
 };
