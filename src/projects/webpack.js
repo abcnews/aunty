@@ -10,6 +10,8 @@ const webpack = require('webpack');
 // Ours
 const {BUILD_DIR, DEV_SERVER_PORT} = require('./constants');
 
+const URL_LOADER_LIMIT = 10000;
+
 module.exports.createConfig = (argv, config, isServer) => {
   const isProd = process.env.NODE_ENV === 'production';
   const projectTypeConfig = require(`./${config.type}`);
@@ -67,8 +69,8 @@ module.exports.createConfig = (argv, config, isServer) => {
                   buildConfig.useCSSModules ?
                   '[name]__[local]--[hash:base64:5]' :
                   '[local]',
-                modules: buildConfig.useCSSModules,
                 minimize: isProd,
+                modules: buildConfig.useCSSModules,
                 sourcemaps: !isProd
               }
             },
@@ -96,7 +98,7 @@ module.exports.createConfig = (argv, config, isServer) => {
           test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
           loader: require.resolve('url-loader'),
           options: {
-            limit: 10000,
+            limit: URL_LOADER_LIMIT,
             mimetype: 'application/font-woff'
           }
         },
@@ -104,7 +106,7 @@ module.exports.createConfig = (argv, config, isServer) => {
           test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
           loader: require.resolve('url-loader'),
           options: {
-            limit: 10000,
+            limit: URL_LOADER_LIMIT,
             mimetype: 'application/octet-stream'
           }
         },
@@ -116,7 +118,7 @@ module.exports.createConfig = (argv, config, isServer) => {
           test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
           loader: require.resolve('url-loader'),
           options: {
-            limit: 10000,
+            limit: URL_LOADER_LIMIT,
             mimetype: 'image/svg+xml'
           }
         },
