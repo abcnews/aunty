@@ -21,4 +21,8 @@ if (module.hot) {
   }));
 }
 
+if (process.env.NODE_ENV === 'development') {
+  console.debug(`[{{projectName}}] public path: ${__webpack_public_path__}`);
+}
+
 init();

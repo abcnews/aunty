@@ -22,6 +22,8 @@ if (module.hot) {
 
 if (process.env.NODE_ENV === 'development') {
   require('preact/devtools');
+  
+  console.debug(`[{{projectName}}] public path: ${__webpack_public_path__}`);
 }
 
 init();
