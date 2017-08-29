@@ -57,8 +57,6 @@ module.exports.getConfig = packs(async argv => {
   }
 
   if (!config) {
-    const pkgConfig = pkg.aunty;
-
     const [err, configFileConfig] = await prequire(`${root}/${CONFIG_FILE_NAME}`);
 
     // The standalone config file is optional, but it may have syntax problems
@@ -66,15 +64,17 @@ module.exports.getConfig = packs(async argv => {
       throw pretty(err);
     }
 
-    if (typeof pkgConfig !== 'object' && typeof configFileConfig !== 'object') {
-      throw MESSAGES.NO_CONFIG;
+    let auntyConfig = configFileConfig || pkg.aunty || {};
+
+    if (typeof auntyConfig === 'string') {
+      auntyConfig = {type: auntyConfig};
     }
 
     config = Object.assign({
       name: pkg.name,
       version: pkg.version,
       root
-    }, configFileConfig || pkgConfig);
+    }, auntyConfig);
   }
 
   return resolveDeployConfig(Object.assign({

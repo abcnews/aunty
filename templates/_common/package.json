@@ -7,9 +7,7 @@
   "contributors": [
     "{{authorName}} <{{authorEmail}}>"
   ],
-  "aunty": {
-    "type": "{{projectType}}"
-  },
+  "aunty": "{{projectType}}",
   "scripts": {
     "start": "aunty serve"
   },

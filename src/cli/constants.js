@@ -58,7 +58,6 @@ module.exports.MESSAGES = {
   version: (versionNumber, isLocal) => `
 ${cmd('aunty')} v${versionNumber}${isLocal ? dim(' (local)') : ''}`,
   unrecognised: commandName => `Unrecognised command: ${req(commandName)}`,
-  unrecognisedType: type => `Unrecognised project type: ${hvy(type)}`,
   usage: () => `${createLogo()}
 Usage: ${cmd('aunty')} ${req('<command>')} ${opt('[options]')} ${opt('[command_options]')}
 
