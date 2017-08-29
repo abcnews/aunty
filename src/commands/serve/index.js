@@ -6,6 +6,7 @@ const WebpackDevServer = require('webpack-dev-server');
 const {command} = require('../../cli');
 const {createConfig} = require('../../projects/webpack');
 const {throws} = require('../../utils/async');
+const {cmd} = require('../../utils/color');
 const {dry, info, spin} = require('../../utils/logging');
 const {MESSAGES: BUILD_MESSAGES} = require('../build/constants');
 const {clean} = require('../clean');
@@ -43,7 +44,7 @@ module.exports.serve = command({
 
   throws(await clean());
 
-  const spinner = spin(`Serve${devServerConfig.hot ? ' (hot)' : ''}`);
+  const spinner = spin(`Serve${devServerConfig.hot ? ` (${cmd('hot')})` : ''}`);
   const compiler = webpack(webpackConfig);
   const server = new WebpackDevServer(compiler, devServerConfig);
 
