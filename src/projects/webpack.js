@@ -157,7 +157,7 @@ module.exports.createConfig = (argv, config, isServer) => {
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
-    hot: true,
+    hot: !isProd,
     noInfo: true,
     overlay: true,
     quiet: true,
