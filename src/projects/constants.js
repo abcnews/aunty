@@ -1,7 +1,7 @@
 // Ours
 const {hvy} = require('../utils/color');
 
-const CONFIG_FILE_NAME = module.exports.CONFIG_FILE_NAME = 'aunty.config.js';
+module.exports.CONFIG_FILE_NAME = 'aunty.config.js';
 
 const BASIC_APP = module.exports.BASIC_APP = 'basic-app';
 const PREACT_APP = module.exports.PREACT_APP = 'preact-app';
@@ -48,6 +48,5 @@ module.exports.KNOWN_TARGETS = {
 };
 
 module.exports.MESSAGES = {
-  NO_CONFIG: `This project has no ${hvy(CONFIG_FILE_NAME)} file or ${hvy('aunty')} property in its ${hvy('package.json')}.`,
   NOT_PACKAGE: `This command can only be run inside a project with a ${hvy('package.json')} file.`
 };

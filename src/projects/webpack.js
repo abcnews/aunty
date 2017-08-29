@@ -14,8 +14,12 @@ const URL_LOADER_LIMIT = 10000;
 
 module.exports.createConfig = (argv, config, isServer) => {
   const isProd = process.env.NODE_ENV === 'production';
-  const projectTypeConfig = require(`./${config.type}`);
   const publicURL = argv.target ? config.deploy[argv.target].publicURL : '/';
+  let projectTypeConfig = {};
+
+  if (config.type) {
+    projectTypeConfig = require(`./${config.type}`);
+  }
 
   const buildConfig = merge({
     useCSSModules: true,
@@ -35,7 +39,7 @@ module.exports.createConfig = (argv, config, isServer) => {
     presets: [
       require.resolve('babel-preset-es2015')
     ]
-  }, projectTypeConfig.babel, config.babel || {});
+  }, projectTypeConfig.babel || {}, config.babel || {});
 
   const webpackConfig = merge({
     cache: true,
@@ -140,7 +144,7 @@ module.exports.createConfig = (argv, config, isServer) => {
         from: `${config.root}/public`
       }])
     ]
-  }, projectTypeConfig.webpack, config.webpack || {});
+  }, projectTypeConfig.webpack || {}, config.webpack || {});
 
   if (isProd) {
     webpackConfig.plugins.push(new webpack.optimize.UglifyJsPlugin());
@@ -167,7 +171,7 @@ module.exports.createConfig = (argv, config, isServer) => {
     // Remember to strip before passing config to new WebpackDevServer
     host: hostname(),
     port: DEV_SERVER_PORT
-  }, projectTypeConfig.devServer, config.devServer || {});
+  }, projectTypeConfig.devServer || {}, config.devServer || {});
 
   if (argv.host) {
     devServerConfig.host = argv.host;

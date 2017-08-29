@@ -59,6 +59,7 @@ Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 
 ${sec('Options')}
 
+  ${opt('-d')}, ${opt('--dry')}                    Output the deployment target(s) configuration, then exit
   ${opt('-c PATH')}, ${opt('--credentials=PATH')}  File where target credentials/config is held ${opt('[default: "~/.abc-credentials"]')}
   ${opt('-i NAME')}, ${opt('--id=NAME')}           Id for this deployment (can be used in destination path) ${opt(`[default: ${cmd('git branch')}]`)}
   ${opt('-t NAME')}, ${opt('--target=NAME')}       Target to deploy to ${opt('[default: ---]')}

@@ -33,13 +33,13 @@ The CLI contains three types of command, grouped by purpose:
 When creating new projects, you should be using the global **aunty**:
 
 ```bash
-/some/parent/directory $ aunty new basic-story my-project
+/some/parent/directory $ aunty new preact-app my-project
 ```
 
 or
 
 ```bash
-/some/parent/directory/my-project $ aunty init basic-story
+/some/parent/directory/my-project $ aunty init preact-app
 ```
 
 ### Developing projects
@@ -47,16 +47,20 @@ or
 When working inside a project directory that has the aunty dependency installed, you'll automatically be running that local `aunty`:
 
 ```bash
-/some/parent/directory/my-basic-story $ aunty <build|serve|...> [options]
+/some/parent/directory/my-project $ aunty <build|serve|...> [options]
 ```
 
 This ensures that any changes to future versions of aunty won't impact your project, and you can manually update the local aunty when you're ready to accommodate those changes.
 
-Most project-level commands depend on a configuration object that you can either export from a project-level `aunty.config.js` file:
+Project-level commands can use an optional configuration, which you can either export from a project-level `aunty.config.js` file:
 
 ```js
 module.exports = {
-  type: '<project_type>'
+  type: '<project_type>',
+  webpack: {…},
+  babel: {…},
+  devServer: {…},
+  deploy: {…}
 };
 ```
 
@@ -64,15 +68,30 @@ module.exports = {
 
 ```js
 "aunty": {
-  "type": "<project_type>"
+  "type": "<project_type>",
+  "webpack": {…},
+  "babel": {…},
+  "devServer": {…},
+  "deploy": {…}
 }
 ```
 
-Supported project types have their own default configuration for each command, but you can override it by extending your local configuration. Overrides should be used sparingly, as the advantages of using a single-dependency toolkit are most apparent when we don't deviate far from the project templates.
+Supported project `type`s have their own default build configuration, but you can override it by extending your local configuration. The `webpack` property's value will be merged with the project's default webpack configuration, including any babel options you specify on the `babel` property. When running the local development server, you can pass additional options on the `devServer` property.
+
+If you're looking to see what the default configuration is, or the impact of your additions, you can always perform a dry run of the `build` and `serve` commands by using the `--dry` (or `-d`) flag:
+
+```bash
+/some/parent/directory/my-project $ aunty serve --dry
+```
+
+Overrides should be used sparingly, as the advantages of using a single-dependency toolkit are most apparent when we don't deviate far from the project templates.
+
+If you don't need to override any of the project defaults, your entire aunty config can be a string containing the project type, as a shorthand for `{type: "<project_type>"}`.
 
 ## Authors
 
 - Colin Gourlay ([gourlay.colin@abc.net.au](mailto:gourlay.colin@abc.net.au))
+- Nathan Hoad ([hoad.nathan@abc.net.au](mailto:hoad.nathan@abc.net.au))
 
 ## Thanks
 
