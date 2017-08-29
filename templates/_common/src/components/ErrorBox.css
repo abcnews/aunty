@@ -6,11 +6,11 @@
   z-index: 10000;
   box-sizing: border-box;
   margin: 0;
-  padding: 20px;
+  padding: 2rem;
   width: 100vw;
   height: 100vh;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   background-color: #900;
   color: #fff;
   font-family: Menlo, Consolas, monospace;
+  font-size: large;
 }
