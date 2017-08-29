@@ -25,7 +25,7 @@ aunty help <command>
 The CLI contains three types of command, grouped by purpose:
 
 * Creating new projects (`new`, `init`)
-* Developing projects (`clean`, `build`, `serve`, `view`)
+* Developing projects (`clean`, `build`, `serve`)
 * Deploying (un)versioned projects (`deploy`, `release`)
 
 ### Starting projects

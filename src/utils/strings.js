@@ -1,18 +1,18 @@
-// Ours
-const {getLongest, identity} = require('./misc');
-
 const CAMELABLE_PATTERN = /-\w/g;
-const COLON = ':';
 const EMPTY = '';
 const NEWLINE = '\n';
 const SLASH = '/';
 const SPACE = ' ';
 
-module.exports.COLON = COLON;
 module.exports.EMPTY = EMPTY;
 module.exports.NEWLINE = NEWLINE;
 module.exports.SLASH = SLASH;
 module.exports.SPACE = SPACE;
+
+const identity = x => x;
+
+const getLongest = items =>
+  items.reduce((a, b) => a.length > b.length ? a : b);
 
 module.exports.indented = (str, indent = 2) =>
   str.split(`${NEWLINE}`).join(`${NEWLINE}${SPACE.repeat(indent)}`);
@@ -38,15 +38,15 @@ module.exports.listPairs = (obj, style = identity) => {
   const longest = getLongest(keys).length;
 
   return keys.map(key => {
-   return `${style(padRight(key, longest))}  ${obj[key]}`;
+    return `${style(padRight(key, longest))}  ${obj[key]}`;
   }).join(NEWLINE);
 };
 
-module.exports.zipTemplateLiterals = (literals, separator = EMPTY) => {
+module.exports.zipTemplateLiterals = (literals, numSpacesBetween) => {
   const literalsLines = literals.map(literal => literal.split(NEWLINE));
 
   return literalsLines[0].reduce((memo, _, index) => [memo, NEWLINE].join(
-    literalsLines.map(lines => lines[index]).join(separator)
+    literalsLines.map(lines => lines[index]).join(SPACE.repeat(numSpacesBetween))
   ), EMPTY);
 };
 

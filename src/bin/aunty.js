@@ -5,12 +5,12 @@ const resolve = require('resolve');
 
 // Ours
 const {name} = require('../../package');
-const {getErrorLogo} = require('../logo');
-const {error} = require('../utils/console');
+const {createErrorLogo} = require('../utils/branding');
+const {error, log} = require('../utils/logging');
 
 function exit(err) {
   if (err) {
-    error(getErrorLogo());
+    log(createErrorLogo());
     error(err);
     process.exit(1);
   }

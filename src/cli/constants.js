@@ -1,10 +1,8 @@
 // Ours
-const {PROJECT_TYPE_DESCRIPTIONS} = require('../constants');
-const {getLogo} = require('../logo');
-const {cmd, dim, hvy, opt, req, sec} = require('../string-styles');
+const {PROJECT_TYPE_DESCRIPTIONS} = require('../projects/constants');
+const {createLogo} = require('../utils/branding');
+const {cmd, dim, hvy, opt, req, sec} = require('../utils/color');
 const {indented, listPairs} = require('../utils/strings');
-
-const LOGO = module.exports.LOGO = getLogo();
 
 module.exports.OPTIONS = {
   boolean: [
@@ -17,12 +15,55 @@ module.exports.OPTIONS = {
   }
 };
 
-module.exports.USAGE = `${LOGO}
+const ALIASES = module.exports.ALIASES = {
+  b: 'build',
+  c: 'clean',
+  d: 'deploy',
+  h: 'help',
+  i: 'init',
+  n: 'new',
+  r: 'release',
+  s: 'serve'
+};
+
+module.exports.COMMANDS = new Set(
+  []
+  .concat(Object.keys(ALIASES).map(key => ALIASES[key]))
+  .concat(Object.keys(ALIASES))
+);
+
+module.exports.DEFAULTS = {
+  name: '__command__',
+  options: {
+    boolean: [
+      'dry',
+      'force',
+      'help'
+    ],
+    string: [
+      'id',
+      'target'
+    ],
+    alias: {
+      dry: 'd',
+      id: 'i',
+      force: 'f',
+      help: 'h',
+      target: 't'
+    }
+  }
+};
+
+module.exports.MESSAGES = {
+  version: (versionNumber, isLocal) => `
+${cmd('aunty')} v${versionNumber}${isLocal ? dim(' (local)') : ''}`,
+  unrecognised: commandName => `Unrecognised command: ${req(commandName)}`,
+  unrecognisedType: type => `Unrecognised project type: ${hvy(type)}`,
+  usage: () => `${createLogo()}
 Usage: ${cmd('aunty')} ${req('<command>')} ${opt('[options]')} ${opt('[command_options]')}
 
 ${sec('Options')}
 
-  ${opt('-h')}, ${opt('--help')}     Display this help message and exit
   ${opt('-v')}, ${opt('--version')}  Print ${hvy('aunty')}'s version
 
 ${sec('Project creation commands')}
@@ -36,72 +77,31 @@ ${sec('Project creation commands')}
   Available project templates:
     ${indented(listPairs(PROJECT_TYPE_DESCRIPTIONS, req), 4)}
 
-${sec('Generic development commands')}
-
-  These commands will either execute in their own capacity, or defer to
-  specific commands based on the project's configuration. Project type-specific
-  commands are listed further down.
+${sec('Development commands')}
 
   ${cmd('aunty clean')}
     Delete the current project's build output directories.
 
-  ${cmd('aunty build')}
+  ${cmd('aunty build')} ${opt('[options]')}
     Clean & build the current project.
 
   ${cmd('aunty serve')} ${opt('[options]')}
-    Clean, build & serve the current project.
-
-${sec('Project type-specific development commands')}
-
-  These commands will be run automatically by the generic development commands
-  if your config's project ${hvy('type')} is recognised.
-
-  ${cmd('aunty build-basic-story')}
-    Clean & build a ${hvy('basic-story')} project.
-
-  ${cmd('aunty serve-basic-story')} ${opt('[options]')}
-    Clean, build & serve a ${hvy('basic-story')} project, then rebuild when files change.
+    Build & serve the current project, re-building as files change
 
 ${sec('Deployment commands')}
 
   ${cmd('aunty deploy')} ${opt('[options]')}
     Deploy the current project.
 
-  ${cmd('aunty release')} ${opt('[options]')} ${opt('[deploy_options]')}
+  ${cmd('aunty release')} ${opt('[options] [build_options] [deploy_options]')}
     Build, \`${hvy('git tag <package.json:version>')}\`, then deploy the current project.
 
 ${sec('Helper commands')}
 
   ${cmd('aunty help')} ${req('<command>')}
     Display complete help for this ${req('command')}.
-
-  ${cmd('aunty view')}
-    View the current project's known configuration.
-`;
-
-const ALIASES = module.exports.ALIASES = {
-  b: 'build',
-  bbs: 'build-basic-story',
-  c: 'clean',
-  cs: 'clean-story',
-  d: 'deploy',
-  h: 'help',
-  i: 'init',
-  n: 'new',
-  r: 'release',
-  sbs: 'serve-basic-story',
-  s: 'serve',
-  v: 'view'
-};
-
-module.exports.COMMANDS = new Set(
-  []
-  .concat(Object.keys(ALIASES).map(key => ALIASES[key]))
-  .concat(Object.keys(ALIASES))
-);
-
-module.exports.MESSAGES = {
-  version: (versionNumber, isLocal) => `
-${cmd('aunty')} v${versionNumber}${isLocal ? dim(' (local)') : ''}`,
-  unrecognised: commandName => `Unrecognised command: ${req(commandName)}`
+`,
+  usageFallback: name => `
+Usage: ${cmd('aunty')} ${cmd(name)} ${opt('[options]')}
+`
 };
