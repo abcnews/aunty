@@ -161,6 +161,10 @@ module.exports.deploy = command({
     if (!existsSync(target.from) || !statSync(target.from).isDirectory()) {
       throw (MESSAGES.sourceIsNotDirectory(target.from));
     }
+
+    // 3.4) Remove temporary properties
+    delete target._from;
+    delete target._to;
   }));
 
   if (argv.dry) {
