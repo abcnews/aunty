@@ -17,6 +17,7 @@ Usage: ${cmd(`aunty ${name}`)} ${opt('[options] [build_options] [deploy_options]
 
 ${sec('Options')}
 
+  ${opt('-d')}, ${opt('--dry')}    Output the release version, then exit
   ${opt('-f')}, ${opt('--force')}  Ignore warnings & skip tagging ${opt('[default: false]')}
 
 ${sec('Examples')}
