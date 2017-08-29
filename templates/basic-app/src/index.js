@@ -6,8 +6,10 @@ function init() {
   root.appendChild((new App()).el);
 }
 
+init();
+
 if (module.hot) {
-  module.hot.accept('./components/App', () => requestAnimationFrame(() => {
+  module.hot.accept('./components/App', () => {
     root.removeChild(root.firstChild);
 
     try {
@@ -17,11 +19,9 @@ if (module.hot) {
 
       root.appendChild((new ErrorBox(err)).el);
     }
-  }));
+  });
 }
 
 if (process.env.NODE_ENV === 'development') {
   console.debug(`[{{projectName}}] public path: ${__webpack_public_path__}`);
 }
-
-init();

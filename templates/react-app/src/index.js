@@ -9,8 +9,10 @@ function init() {
   render(<App />, root);
 }
 
+init();
+
 if (module.hot) {
-  module.hot.accept('./components/App', () => requestAnimationFrame(() => {
+  module.hot.accept('./components/App', () => {
     try {
       init();
     } catch (err) {
@@ -18,11 +20,9 @@ if (module.hot) {
 
       render(<ErrorBox error={err} />, root);
     }
-  }));
+  });
 }
 
 if (process.env.NODE_ENV === 'development') {
   console.debug(`[{{projectName}}] public path: ${__webpack_public_path__}`);
 }
-
-init();
