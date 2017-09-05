@@ -11,7 +11,7 @@ module.exports.MESSAGES = {
     `The tag ${hvy(tag)} already exists${isTagOnHead ? '' :
       ` and your current HEAD doesn't point to it`}! ${FORCE_REMINDER}`,
   createTag: tag => `Create tag ${hvy(tag)}`,
-  pusheTag: (tag, remote) => `Push tag ${hvy(tag)} to remote ${hvy(remote)}`,
+  pushTag: (tag, remote) => `Push tag ${hvy(tag)} to remote ${hvy(remote)}`,
   usage: name => `
 Usage: ${cmd(`aunty ${name}`)} ${opt('[options] [build_options] [deploy_options]')}
 
