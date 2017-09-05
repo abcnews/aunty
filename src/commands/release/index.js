@@ -56,7 +56,7 @@ module.exports.release = command({
     const remotes = await getRemotes();
 
     for (const remote of remotes.values()) {
-      spinner = spin(MESSAGES.pushTag(id));
+      spinner = spin(MESSAGES.pushTag(id, remote));
       await pushTag(remote, id);
       spinner.succeed();
     }
