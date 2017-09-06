@@ -3,6 +3,15 @@ const {cmd, hvy, opt, sec} = require('../../utils/color');
 
 const FORCE_REMINDER = `Use the ${opt('--force')} option to ignore warnings or release without tagging.`;
 
+module.exports.OPTIONS = {
+  string: [
+    'git-remote'
+  ],
+  default: {
+    'git-remote': 'origin'
+  }
+};
+
 module.exports.MESSAGES = {
   FORCE_REMINDER: `Use the ${opt('--force')} option to ignore warnings or release without tagging.`,
   NOT_REPO: `You can't tag a release or deploy using a tag name becase this project isn't a git repo.`,
@@ -17,8 +26,9 @@ Usage: ${cmd(`aunty ${name}`)} ${opt('[options] [build_options] [deploy_options]
 
 ${sec('Options')}
 
-  ${opt('-d')}, ${opt('--dry')}    Output the release version, then exit
-  ${opt('-f')}, ${opt('--force')}  Ignore warnings & skip tagging ${opt('[default: false]')}
+  ${opt('-d')}, ${opt('--dry')}     Output the release version, then exit
+  ${opt('-f')}, ${opt('--force')}   Ignore warnings & skip tagging ${opt('[default: false]')}
+  ${opt('--git-remote')}  Git remote to push release tags to (if it exists) ${opt('[default: "origin"]')}
 
 ${sec('Examples')}
 

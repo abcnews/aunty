@@ -8,10 +8,11 @@ const {dry, spin} = require('../../utils/logging');
 const {build} = require('../build');
 const {deploy} = require('../deploy');
 const {MESSAGES: DEPLOY_MESSAGES} = require('../deploy/constants');
-const {MESSAGES} = require('./constants');
+const {MESSAGES, OPTIONS} = require('./constants');
 
 module.exports.release = command({
   name: 'release',
+  options: OPTIONS,
   usage: MESSAGES.usage,
   isConfigRequired: true
 }, async (argv, config) => {
@@ -54,8 +55,9 @@ module.exports.release = command({
     spinner.succeed();
 
     const remotes = await getRemotes();
+    const remote = argv['git-remote'];
 
-    for (const remote of remotes.values()) {
+    if (remotes.has(remote)) {
       spinner = spin(MESSAGES.pushTag(id, remote));
       await pushTag(remote, id);
       spinner.succeed();
