@@ -35,13 +35,19 @@ module.exports.createConfig = (argv, config, isServer) => {
     process.noDeprecation = true;
   }
 
-  const babelOptions = merge({
+  let babelOptions = merge({
     presets: [
       require.resolve('babel-preset-es2015')
     ]
-  }, projectTypeConfig.babel || {}, config.babel || {});
+  }, projectTypeConfig.babel || {});
 
-  const webpackConfig = merge({
+  if (typeof config.babel === 'function') {
+    babelOptions = config.babel(babelOptions);
+  } else if (typeof config.babel === 'object') {
+    babelOptions = merge(babelOptions, config.babel);
+  }
+
+  let webpackConfig = merge({
     cache: true,
     entry: {
       index: [`${config.root}/${buildConfig.from}/${buildConfig.entry}`]
@@ -144,7 +150,13 @@ module.exports.createConfig = (argv, config, isServer) => {
         from: `${config.root}/public`
       }])
     ]
-  }, projectTypeConfig.webpack || {}, config.webpack || {});
+  }, projectTypeConfig.webpack || {});
+
+  if (typeof config.webpack === 'function') {
+    webpackConfig = config.webpack(webpackConfig);
+  } else if (typeof config.webpack === 'object') {
+    webpackConfig = merge(webpackConfig, config.webpack);
+  }
 
   if (isProd) {
     webpackConfig.plugins.push(new webpack.optimize.UglifyJsPlugin());
@@ -156,7 +168,7 @@ module.exports.createConfig = (argv, config, isServer) => {
     return webpackConfig;
   }
 
-  const devServerConfig = merge({
+  let devServerConfig = merge({
     disableHostCheck: true,
     headers: {
       'Access-Control-Allow-Origin': '*'
@@ -171,7 +183,13 @@ module.exports.createConfig = (argv, config, isServer) => {
     // Remember to strip before passing config to new WebpackDevServer
     host: hostname(),
     port: DEV_SERVER_PORT
-  }, projectTypeConfig.devServer || {}, config.devServer || {});
+  }, projectTypeConfig.devServer || {});
+
+  if (typeof config.devServer === 'function') {
+    devServerConfig = config.devServer(devServerConfig);
+  } else if (typeof config.devServer === 'object') {
+    devServerConfig = merge(devServerConfig, config.devServer);
+  }
 
   if (argv.host) {
     devServerConfig.host = argv.host;
