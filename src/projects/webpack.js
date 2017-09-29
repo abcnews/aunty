@@ -1,5 +1,6 @@
 // Native
 const { hostname } = require('os');
+const path = require('path');
 
 // External
 const autoprefixer = require('autoprefixer');
@@ -72,7 +73,9 @@ module.exports.createConfig = (argv, config, isServer) => {
         rules: [
           {
             test: /\.js$/,
-            exclude: /node_modules/,
+            include: [
+              path.resolve(config.root, buildConfig.from)
+            ],
             loader: require.resolve('babel-loader'),
             options: babelOptions
           },
@@ -182,7 +185,7 @@ module.exports.createConfig = (argv, config, isServer) => {
     return webpackConfig;
   }
 
-  const devServerConfig = merge(
+  let devServerConfig = merge(
     {
       disableHostCheck: true,
       headers: {
