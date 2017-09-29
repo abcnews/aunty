@@ -1,7 +1,7 @@
 // Ours
-const {BUILD_DIR} = require('../../projects/constants');
-const {cmd, ok, opt, req, sec} = require('../../utils/color');
-const {bulleted, styleLastSegment} = require('../../utils/strings');
+const { BUILD_DIR } = require('../../projects/constants');
+const { cmd, ok, opt, req, sec } = require('../../utils/color');
+const { bulleted, styleLastSegment } = require('../../utils/strings');
 
 module.exports.MESSAGES = {
   deletion: paths =>

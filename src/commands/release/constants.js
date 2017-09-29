@@ -1,5 +1,5 @@
 // Ours
-const {cmd, hvy, opt, sec} = require('../../utils/color');
+const { cmd, hvy, opt, sec } = require('../../utils/color');
 
 const FORCE_REMINDER = `Use the ${opt('--force')} option to ignore warnings or release without tagging.`;
 

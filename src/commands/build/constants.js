@@ -1,5 +1,5 @@
 // Ours
-const {cmd, hvy, opt, sec} = require('../../utils/color');
+const { cmd, hvy, opt, sec } = require('../../utils/color');
 
 module.exports.MESSAGES = {
   build: (nodeEnv, target, publicPath) => `Build (${hvy(nodeEnv)}):

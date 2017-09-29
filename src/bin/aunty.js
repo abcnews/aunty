@@ -4,9 +4,9 @@
 const resolve = require('resolve');
 
 // Ours
-const {name} = require('../../package');
-const {createErrorLogo} = require('../utils/branding');
-const {error, log} = require('../utils/logging');
+const { name } = require('../../package');
+const { createErrorLogo } = require('../utils/branding');
+const { error, log } = require('../utils/logging');
 
 function exit(err) {
   if (err) {

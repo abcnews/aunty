@@ -3,10 +3,10 @@ const pkgDir = require('pkg-dir');
 const readPkg = require('read-pkg');
 
 // Ours
-const {packs, prequire, unpack} = require('../utils/async');
-const {isRepo, getCurrentLabel} = require('../utils/git');
-const {pretty} = require('../utils/logging');
-const {CONFIG_FILE_NAME, DEFAULTS, KNOWN_TARGETS, MESSAGES} = require('./constants');
+const { packs, prequire, unpack } = require('../utils/async');
+const { isRepo, getCurrentLabel } = require('../utils/git');
+const { pretty } = require('../utils/logging');
+const { CONFIG_FILE_NAME, DEFAULTS, KNOWN_TARGETS, MESSAGES } = require('./constants');
 
 // Wrapped
 const getPkg = packs(readPkg);

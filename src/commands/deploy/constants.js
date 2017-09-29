@@ -1,9 +1,9 @@
 // Native
-const {join} = require('path');
+const { join } = require('path');
 
 // Ours
-const {cmd, hvy, opt, req, sec} = require('../../utils/color');
-const {styleLastSegment} = require('../../utils/strings');
+const { cmd, hvy, opt, req, sec } = require('../../utils/color');
+const { styleLastSegment } = require('../../utils/strings');
 
 module.exports.REQUIRED_PROPERTIES = ['from', 'to', 'type', 'username', 'password', 'host'];
 

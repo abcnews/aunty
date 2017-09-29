@@ -1,5 +1,5 @@
 // Native
-const {existsSync, statSync} = require('fs');
+const { existsSync, statSync } = require('fs');
 
 // External
 const loadJsonFile = require('load-json-file');
@@ -12,10 +12,10 @@ const vfs = require('vinyl-fs');
 const VTFP = require('vinyl-ftp');
 
 // Ours
-const {command} = require('../../cli');
-const {packs, throws, unpack} = require('../../utils/async');
-const {dry, info, spin, warn} = require('../../utils/logging');
-const {DEFAULTS, OPTIONS, MESSAGES, REQUIRED_PROPERTIES, VALID_TYPES} = require('./constants');
+const { command } = require('../../cli');
+const { packs, throws, unpack } = require('../../utils/async');
+const { dry, info, spin, warn } = require('../../utils/logging');
+const { DEFAULTS, OPTIONS, MESSAGES, REQUIRED_PROPERTIES, VALID_TYPES } = require('./constants');
 
 // Wrapped
 const getJSON = packs(loadJsonFile);

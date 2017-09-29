@@ -1,5 +1,5 @@
 // Native
-const {resolve} = require('path');
+const { resolve } = require('path');
 
 // External
 const merge = require('webpack-merge');
@@ -8,12 +8,12 @@ const updateNotifier = require('update-notifier');
 
 // Ours
 const pkg = require('../../package');
-const {getConfig} = require('../projects/config');
-const {pack, packs, throws} = require('../utils/async');
-const {createCommandLogo} = require('../utils/branding');
-const {log} = require('../utils/logging');
-const {slugToCamel} = require('../utils/strings');
-const {ALIASES, COMMANDS, DEFAULTS, OPTIONS, MESSAGES} = require('./constants');
+const { getConfig } = require('../projects/config');
+const { pack, packs, throws } = require('../utils/async');
+const { createCommandLogo } = require('../utils/branding');
+const { log } = require('../utils/logging');
+const { slugToCamel } = require('../utils/strings');
+const { ALIASES, COMMANDS, DEFAULTS, OPTIONS, MESSAGES } = require('./constants');
 
 const isArgHelpCommand = arg => {
   return (ALIASES[arg] || arg) === 'help';

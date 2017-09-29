@@ -1,5 +1,5 @@
 // Ours
-const {hvy} = require('../utils/color');
+const { hvy } = require('../utils/color');
 
 module.exports.CONFIG_FILE_NAME = 'aunty.config.js';
 

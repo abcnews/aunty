@@ -3,14 +3,14 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
 // Ours
-const {command} = require('../../cli');
-const {createConfig} = require('../../projects/webpack');
-const {throws} = require('../../utils/async');
-const {cmd} = require('../../utils/color');
-const {dry, info, spin} = require('../../utils/logging');
-const {MESSAGES: BUILD_MESSAGES} = require('../build/constants');
-const {clean} = require('../clean');
-const {MESSAGES, OPTIONS} = require('./constants');
+const { command } = require('../../cli');
+const { createConfig } = require('../../projects/webpack');
+const { throws } = require('../../utils/async');
+const { cmd } = require('../../utils/color');
+const { dry, info, spin } = require('../../utils/logging');
+const { MESSAGES: BUILD_MESSAGES } = require('../build/constants');
+const { clean } = require('../clean');
+const { MESSAGES, OPTIONS } = require('./constants');
 
 module.exports.serve = command({
   name: 'serve',
@@ -24,7 +24,7 @@ module.exports.serve = command({
 
   const [webpackConfig, devServerConfig] = createConfig(argv, config, true);
 
-  const {port} = devServerConfig;
+  const { port } = devServerConfig;
 
   delete devServerConfig.host;
   delete devServerConfig.port;

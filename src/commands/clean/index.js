@@ -2,10 +2,10 @@
 const del = require('del');
 
 // Ours
-const {command} = require('../../cli');
-const {BUILD_DIR} = require('../../projects/constants');
-const {dry, spin} = require('../../utils/logging');
-const {MESSAGES} = require('./constants');
+const { command } = require('../../cli');
+const { BUILD_DIR } = require('../../projects/constants');
+const { dry, spin } = require('../../utils/logging');
+const { MESSAGES } = require('./constants');
 
 module.exports.clean = command({
   name: 'clean',

@@ -1,11 +1,11 @@
 // Native
-const {basename} = require('path');
+const { basename } = require('path');
 
 // Ours
-const {command} = require('../../cli');
-const {throws} = require('../../utils/async');
-const {new: _new} = require('../new');
-const {MESSAGES} = require('./constants');
+const { command } = require('../../cli');
+const { throws } = require('../../utils/async');
+const { new: _new } = require('../new');
+const { MESSAGES } = require('./constants');
 
 module.exports.init = command({
   name: 'init',

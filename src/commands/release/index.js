@@ -1,14 +1,14 @@
 // Ours
-const {command} = require('../../cli');
-const {throws} = require('../../utils/async');
+const { command } = require('../../cli');
+const { throws } = require('../../utils/async');
 const {
   createTag, getCurrentTags, getRemotes, hasChanges, hasTag, isRepo, pushTag
 } = require('../../utils/git');
-const {dry, spin} = require('../../utils/logging');
-const {build} = require('../build');
-const {deploy} = require('../deploy');
-const {MESSAGES: DEPLOY_MESSAGES} = require('../deploy/constants');
-const {MESSAGES, OPTIONS} = require('./constants');
+const { dry, spin } = require('../../utils/logging');
+const { build } = require('../build');
+const { deploy } = require('../deploy');
+const { MESSAGES: DEPLOY_MESSAGES } = require('../deploy/constants');
+const { MESSAGES, OPTIONS } = require('./constants');
 
 module.exports.release = command({
   name: 'release',

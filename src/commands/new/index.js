@@ -1,18 +1,18 @@
 // Native
-const {join} = require('path');
+const { join } = require('path');
 
 // External
 const copyTemplateDir = require('copy-template-dir');
 const pify = require('pify');
 
 // Ours
-const {command} = require('../../cli');
-const {PROJECT_TYPES} = require('../../projects/constants');
-const {packs, throws} = require('../../utils/async');
-const {createRepo, getConfigValue, isRepo} = require('../../utils/git');
-const {dry, info, spin, warn} = require('../../utils/logging');
-const {install} = require('../../utils/npm');
-const {DEFAULT_TEMPLATE_VARS, OPTIONS, MESSAGES, PATTERNS} = require('./constants');
+const { command } = require('../../cli');
+const { PROJECT_TYPES } = require('../../projects/constants');
+const { packs, throws } = require('../../utils/async');
+const { createRepo, getConfigValue, isRepo } = require('../../utils/git');
+const { dry, info, spin, warn } = require('../../utils/logging');
+const { install } = require('../../utils/npm');
+const { DEFAULT_TEMPLATE_VARS, OPTIONS, MESSAGES, PATTERNS } = require('./constants');
 
 // Wrapped
 const clone = packs(pify(copyTemplateDir));

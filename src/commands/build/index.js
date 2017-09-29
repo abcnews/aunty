@@ -3,12 +3,12 @@ const pify = require('pify');
 const webpack = require('webpack');
 
 // Ours
-const {command} = require('../../cli');
-const {createConfig} = require('../../projects/webpack');
-const {packs, throws, unpack} = require('../../utils/async');
-const {dry, info, spin, warn} = require('../../utils/logging');
-const {clean} = require('../clean');
-const {MESSAGES} = require('./constants');
+const { command } = require('../../cli');
+const { createConfig } = require('../../projects/webpack');
+const { packs, throws, unpack } = require('../../utils/async');
+const { dry, info, spin, warn } = require('../../utils/logging');
+const { clean } = require('../clean');
+const { MESSAGES } = require('./constants');
 
 module.exports.build = command({
   name: 'build',

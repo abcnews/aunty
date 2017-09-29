@@ -1,16 +1,16 @@
 // Global
-const {error, info, log, warn} = console;
+const { error, info, log, warn } = console;
 
 // Native
-const {inspect} = require('util');
+const { inspect } = require('util');
 
 // External
 const logSymbols = require('log-symbols');
 const ora = require('ora');
 
 // Ours
-const {SPINNER_FRAMES} = require('./branding');
-const {opt, sec} = require('./color');
+const { SPINNER_FRAMES } = require('./branding');
+const { opt, sec } = require('./color');
 
 inspect.styles.name = 'blue';
 

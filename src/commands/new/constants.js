@@ -1,9 +1,9 @@
 // Ours
 const ourPkg = require('../../../package');
-const {BUILD_DIR, PROJECT_TYPES, PROJECT_TYPE_DESCRIPTIONS} = require('../../projects/constants');
-const {cmd, hvy, opt, req, sec} = require('../../utils/color');
-const {pretty} = require('../../utils/logging');
-const {indented, listPairs} = require('../../utils/strings');
+const { BUILD_DIR, PROJECT_TYPES, PROJECT_TYPE_DESCRIPTIONS } = require('../../projects/constants');
+const { cmd, hvy, opt, req, sec } = require('../../utils/color');
+const { pretty } = require('../../utils/logging');
+const { indented, listPairs } = require('../../utils/strings');
 
 const [MAJOR, MINOR] = ourPkg.version.split('.');
 

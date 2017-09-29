@@ -2,8 +2,8 @@
 const execa = require('execa');
 
 // Ours
-const {pack} = require('./async');
-const {NEWLINE} = require('./strings');
+const { pack } = require('./async');
+const { NEWLINE } = require('./strings');
 
 const PATTERNS = {
   ACTIVE_BRANCH: /\*\s+([^\n]+)/,
