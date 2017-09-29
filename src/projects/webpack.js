@@ -45,7 +45,8 @@ module.exports.createConfig = (argv, config, isServer) => {
       ],
       plugins: [
         require.resolve('babel-plugin-transform-object-rest-spread')
-      ]
+      ],
+      cacheDirectory: true
     },
     projectTypeConfig.babel || {}
   );
