@@ -38,22 +38,25 @@ module.exports.createConfig = (argv, config, isServer) => {
     process.noDeprecation = true;
   }
 
-  const babelOptions = merge(
+  let babelOptions = merge(
     {
       presets: [
-        require.resolve('babel-preset-es2015'),
-        {
-          plugins: [
-            [require.resolve('babel-plugin-transform-object-rest-spread')]
-          ]
-        }
+        require.resolve('babel-preset-es2015')
+      ],
+      plugins: [
+        require.resolve('babel-plugin-transform-object-rest-spread')
       ]
     },
-    projectTypeConfig.babel || {},
-    config.babel || {}
+    projectTypeConfig.babel || {}
   );
 
-  const webpackConfig = merge(
+  if (typeof config.babel === 'function') {
+    babelOptions = config.babel(babelOptions);
+  } else if (typeof config.babel === 'object') {
+    babelOptions = merge(babelOptions, config.babel);
+  }
+
+  let webpackConfig = merge(
     {
       cache: true,
       entry: {
@@ -154,16 +157,19 @@ module.exports.createConfig = (argv, config, isServer) => {
           }
         }),
         new webpack.EnvironmentPlugin(Object.keys(process.env)),
-        new CopyPlugin([
-          {
-            from: `${config.root}/public`
-          }
-        ])
+        new CopyPlugin([{
+          from: `${config.root}/public`
+        }])
       ]
     },
-    projectTypeConfig.webpack || {},
-    config.webpack || {}
+    projectTypeConfig.webpack || {}
   );
+
+  if (typeof config.webpack === 'function') {
+    webpackConfig = config.webpack(webpackConfig);
+  } else if (typeof config.webpack === 'object') {
+    webpackConfig = merge(webpackConfig, config.webpack);
+  }
 
   if (isProd) {
     webpackConfig.plugins.push(new webpack.optimize.UglifyJsPlugin());
@@ -192,9 +198,14 @@ module.exports.createConfig = (argv, config, isServer) => {
       host: `${hostname()}.aus.aunty.abc.net.au`,
       port: DEV_SERVER_PORT
     },
-    projectTypeConfig.devServer || {},
-    config.devServer || {}
+    projectTypeConfig.devServer || {}
   );
+
+  if (typeof config.devServer === 'function') {
+    devServerConfig = config.devServer(devServerConfig);
+  } else if (typeof config.devServer === 'object') {
+    devServerConfig = merge(devServerConfig, config.devServer);
+  }
 
   if (argv.host) {
     devServerConfig.host = argv.host;

@@ -60,6 +60,7 @@ module.exports = {
   webpack: {…},
   babel: {…},
   devServer: {…},
+  build: {…},
   deploy: {…}
 };
 ```
@@ -72,11 +73,12 @@ module.exports = {
   "webpack": {…},
   "babel": {…},
   "devServer": {…},
+  "build": {…}, 
   "deploy": {…}
 }
 ```
 
-Supported project `type`s have their own default build configuration, but you can override it by extending your local configuration. The `webpack` property's value will be merged with the project's default webpack configuration, including any babel options you specify on the `babel` property. When running the local development server, you can pass additional options on the `devServer` property.
+Supported project `type`s have their own default build configuration, but you can override it by extending your local configuration. The `webpack` property's value will be merged with the project's default webpack configuration, including any babel options you specify on the `babel` property. When running the local development server, you can pass additional options on the `devServer` property. Optionally, you can supply a function for the `webpack`, `babel` and/or `devServer` properties, which will be passed the config opjects for you to manually modify and return.
 
 If you're looking to see what the default configuration is, or the impact of your additions, you can always perform a dry run of the `build` and `serve` commands by using the `--dry` (or `-d`) flag:
 
