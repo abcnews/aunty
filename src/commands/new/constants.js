@@ -11,13 +11,11 @@ module.exports.DEFAULT_TEMPLATE_VARS = {
   auntyVersion: [MAJOR, MINOR, 'x'].join('.'),
   authorName: 'ABC News',
   buildDir: BUILD_DIR,
-  currentYear: (new Date()).getFullYear()
+  currentYear: new Date().getFullYear()
 };
 
 module.exports.OPTIONS = {
-  string: [
-    'name'
-  ],
+  string: ['name'],
   alias: {
     name: 'n'
   }

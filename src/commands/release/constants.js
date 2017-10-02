@@ -4,9 +4,7 @@ const { cmd, hvy, opt, sec } = require('../../utils/color');
 const FORCE_REMINDER = `Use the ${opt('--force')} option to ignore warnings or release without tagging.`;
 
 module.exports.OPTIONS = {
-  string: [
-    'git-remote'
-  ],
+  string: ['git-remote'],
   default: {
     'git-remote': 'origin'
   }
@@ -17,8 +15,9 @@ module.exports.MESSAGES = {
   NOT_REPO: `You can't tag a release or deploy using a tag name becase this project isn't a git repo.`,
   HAS_CHANGES: `You shouldn't release builds which may contain un-committed changes! ${FORCE_REMINDER}`,
   hasTag: (tag, isTagOnHead) =>
-    `The tag ${hvy(tag)} already exists${isTagOnHead ? '' :
-      ` and your current HEAD doesn't point to it`}! ${FORCE_REMINDER}`,
+    `The tag ${hvy(tag)} already exists${isTagOnHead
+      ? ''
+      : ` and your current HEAD doesn't point to it`}! ${FORCE_REMINDER}`,
   createTag: tag => `Create tag ${hvy(tag)}`,
   pushTag: (tag, remote) => `Push tag ${hvy(tag)} to remote ${hvy(remote)}`,
   usage: name => `

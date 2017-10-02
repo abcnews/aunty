@@ -1,12 +1,13 @@
 const React = require('react');
-const {render} = require('react-dom');
+const { render } = require('react-dom');
 
-const root = document.querySelector('[data-{{projectName}}-root]');
+const PROJECT_NAME = '{{projectName}}';
+const root = document.querySelector(`[data-${PROJECT_NAME}-root]`);
 
 function init() {
   const App = require('./components/App');
 
-  render(<App />, root);
+  render(<App projectName={PROJECT_NAME} />, root);
 }
 
 init();
@@ -24,5 +25,5 @@ if (module.hot) {
 }
 
 if (process.env.NODE_ENV === 'development') {
-  console.debug(`[{{projectName}}] public path: ${__webpack_public_path__}`);
+  console.debug(`[${PROJECT_NAME}] public path: ${__webpack_public_path__}`);
 }

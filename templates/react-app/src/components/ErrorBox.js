@@ -7,11 +7,7 @@ class ErrorBox extends React.Component {
   }
 
   render() {
-    return (
-      <pre className={styles.root}>
-        {this.props.error.stack}
-      </pre>
-    );
+    return <pre className={styles.root}>{this.props.error.stack}</pre>;
   }
 }
 

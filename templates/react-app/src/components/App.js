@@ -7,7 +7,7 @@ class App extends React.Component {
     return (
       <div className={styles.root}>
         <img className={styles.worm} src={worm} />
-        <h1>{{projectName}}</h1>
+        <h1>{this.props.projectName}</h1>
       </div>
     );
   }

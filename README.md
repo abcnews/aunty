@@ -94,6 +94,7 @@ If you don't need to override any of the project defaults, your entire aunty con
 
 - Colin Gourlay ([gourlay.colin@abc.net.au](mailto:gourlay.colin@abc.net.au))
 - Nathan Hoad ([hoad.nathan@abc.net.au](mailto:hoad.nathan@abc.net.au))
+- Simon Elvery ([elvery.simon@abc.net.au](mailto:elvery.simon@abc.net.au))
 
 ## Thanks
 

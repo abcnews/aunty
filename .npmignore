@@ -1,3 +1,5 @@
 .editorconfig
+.eslintrc
+.prettierrc
 CONTRIBUTING.md
 assets

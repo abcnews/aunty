@@ -23,7 +23,7 @@ module.exports.cli = packs(async (args, isGlobal) => {
   const argv = minimist(args, OPTIONS);
 
   if (isGlobal) {
-    updateNotifier({pkg, updateCheckInterval: 36e5}).notify();
+    updateNotifier({ pkg, updateCheckInterval: 36e5 }).notify();
   }
 
   if (argv.version) {
@@ -33,9 +33,7 @@ module.exports.cli = packs(async (args, isGlobal) => {
   let commandName = argv._[0] || '';
   const isHelp = isArgHelpCommand(commandName);
 
-  if (!commandName || (isHelp && (
-    argv._.length === 1 || isArgHelpCommand(argv._[1])
-  ))) {
+  if (!commandName || (isHelp && (argv._.length === 1 || isArgHelpCommand(argv._[1])))) {
     return log(MESSAGES.usage());
   }
 
@@ -49,9 +47,7 @@ module.exports.cli = packs(async (args, isGlobal) => {
 
   commandName = ALIASES[commandName] || commandName;
 
-  const commandFn = require(
-    resolve(__dirname, `../commands/${commandName}`)
-  )[slugToCamel(commandName)];
+  const commandFn = require(resolve(__dirname, `../commands/${commandName}`))[slugToCamel(commandName)];
   const commandFnArgs = isHelp ? ['--help'] : args.slice(1);
 
   throws(await commandFn(commandFnArgs));
@@ -59,13 +55,7 @@ module.exports.cli = packs(async (args, isGlobal) => {
 
 let isEntryCommand;
 
-module.exports.command = ({
-  name,
-  options,
-  usage,
-  isProxy,
-  isConfigRequired
-}, fn) => {
+module.exports.command = ({ name, options, usage, isProxy, isConfigRequired }, fn) => {
   name = name || DEFAULTS.name;
   options = merge(options || {}, DEFAULTS.options);
   usage = usage || MESSAGES.usageFallback;

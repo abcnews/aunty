@@ -5,17 +5,14 @@ const { cmd, dim, hvy, opt, req, sec } = require('../utils/color');
 const { indented, listPairs } = require('../utils/strings');
 
 module.exports.OPTIONS = {
-  boolean: [
-    'help',
-    'version'
-  ],
+  boolean: ['help', 'version'],
   alias: {
     help: 'h',
     version: 'v'
   }
 };
 
-const ALIASES = module.exports.ALIASES = {
+const ALIASES = (module.exports.ALIASES = {
   b: 'build',
   c: 'clean',
   d: 'deploy',
@@ -24,26 +21,17 @@ const ALIASES = module.exports.ALIASES = {
   n: 'new',
   r: 'release',
   s: 'serve'
-};
+});
 
 module.exports.COMMANDS = new Set(
-  []
-  .concat(Object.keys(ALIASES).map(key => ALIASES[key]))
-  .concat(Object.keys(ALIASES))
+  [].concat(Object.keys(ALIASES).map(key => ALIASES[key])).concat(Object.keys(ALIASES))
 );
 
 module.exports.DEFAULTS = {
   name: '__command__',
   options: {
-    boolean: [
-      'dry',
-      'force',
-      'help'
-    ],
-    string: [
-      'id',
-      'target'
-    ],
+    boolean: ['dry', 'force', 'help'],
+    string: ['id', 'target'],
     alias: {
       dry: 'd',
       id: 'i',
@@ -59,6 +47,7 @@ module.exports.MESSAGES = {
 ${cmd('aunty')} v${versionNumber}${isLocal ? dim(' (local)') : ''}`,
   unrecognised: commandName => `Unrecognised command: ${req(commandName)}`,
   usage: () => `${createLogo()}
+
 Usage: ${cmd('aunty')} ${req('<command>')} ${opt('[options]')} ${opt('[command_options]')}
 
 ${sec('Options')}

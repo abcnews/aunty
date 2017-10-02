@@ -3,11 +3,7 @@ const { cmd, opt, sec } = require('../../utils/color');
 const { DEV_SERVER_PORT } = require('../../projects/constants');
 
 module.exports.OPTIONS = {
-  string: [
-    'host',
-    'hot',
-    'port'
-  ]
+  string: ['host', 'hot', 'port']
 };
 
 module.exports.MESSAGES = {
