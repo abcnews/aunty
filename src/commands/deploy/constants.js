@@ -7,7 +7,7 @@ const { styleLastSegment } = require('../../utils/strings');
 
 module.exports.REQUIRED_PROPERTIES = ['from', 'to', 'type', 'username', 'password', 'host'];
 
-const VALID_TYPES = module.exports.VALID_TYPES = new Set(['ftp', 'ssh']);
+const VALID_TYPES = (module.exports.VALID_TYPES = new Set(['ftp', 'ssh']));
 
 module.exports.DEFAULTS = {
   RSYNC: {
@@ -20,48 +20,46 @@ module.exports.DEFAULTS = {
 };
 
 module.exports.OPTIONS = {
-  boolean: [
-    'shouldRespectTargetSymlinks'
-  ],
-  string: [
-    'credentials'
-  ],
+  boolean: ['shouldRespectTargetSymlinks'],
+  string: ['credentials'],
   alias: {
     credentials: 'c'
   },
   default: {
-    credentials: join(
-      (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE),
-      '.abc-credentials'
-    )
+    credentials: join(process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE, '.abc-credentials')
   }
 };
 
 module.exports.MESSAGES = {
   NO_TARGETS: 'There are no targets to deploy to.',
   NO_MAPPABLE_ID: 'Could not create symlink because target path does not contain a mappable id.',
-  sourceIsNotDirectory: from =>
-    `${hvy(from)} is not a directory.`,
-  targetDoesNotExist: key =>
-    `The target ${hvy(key)} doesn't exist in the project configuration`,
+  sourceIsNotDirectory: from => `${hvy(from)} is not a directory.`,
+  targetDoesNotExist: key => `The target ${hvy(key)} doesn't exist in the project configuration`,
   targetNotConfigured: (key, prop) =>
     `The target ${hvy(key)} in your configuration is incomplete or has incomplete credentials. Missing: ${hvy(prop)}`,
   unrecognisedType: (key, type) =>
-    `The target ${hvy(key)} has ${type ? 'an unrecognised' : 'no'} deployment type${type ? `: ${hvy(type)}` : ''}. Acceptable types are: ${Array.from(VALID_TYPES).map(x => hvy(x)).join(', ')}`,
+    `The target ${hvy(key)} has ${type ? 'an unrecognised' : 'no'} deployment type${type
+      ? `: ${hvy(type)}`
+      : ''}. Acceptable types are: ${Array.from(VALID_TYPES)
+      .map(x => hvy(x))
+      .join(', ')}`,
   deployment: (type, from, to, host) => `Deployment (${hvy(type)}):
   ┣ ${hvy('from')} ${styleLastSegment(from, req)}
   ┣ ${hvy('to')}   ${styleLastSegment(to, req)}
   ┗ ${hvy('on')}   ${req(host)}`,
-  publicURL: url =>
-    `Public URL: ${hvy(url)}`,
+  publicURL: url => `Public URL: ${hvy(url)}`,
   usage: name => `
 Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 
 ${sec('Options')}
 
   ${opt('-d')}, ${opt('--dry')}                    Output the deployment target(s) configuration, then exit
-  ${opt('-c PATH')}, ${opt('--credentials=PATH')}  File where target credentials/config is held ${opt('[default: "~/.abc-credentials"]')}
-  ${opt('-i NAME')}, ${opt('--id=NAME')}           Id for this deployment (can be used in destination path) ${opt(`[default: ${cmd('git branch')}]`)}
+  ${opt('-c PATH')}, ${opt('--credentials=PATH')}  File where target credentials/config is held ${opt(
+    '[default: "~/.abc-credentials"]'
+  )}
+  ${opt('-i NAME')}, ${opt('--id=NAME')}           Id for this deployment (can be used in destination path) ${opt(
+    `[default: ${cmd('git branch')}]`
+  )}
   ${opt('-t NAME')}, ${opt('--target=NAME')}       Target to deploy to ${opt('[default: ---]')}
 
 ${sec(`Example ${hvy('aunty')} config`)}:

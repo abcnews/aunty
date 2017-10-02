@@ -40,20 +40,16 @@ const ftp = packs(target => {
 });
 
 const rsync = packs(target => {
-  return pify(rsyncwrapper)(Object.assign(
-    {},
-    DEFAULTS.RSYNC,
-    {
-      src: `${target.from}/${Array.isArray(target.files) ?
-        target.files[0] : target.files}`,
+  return pify(rsyncwrapper)(
+    Object.assign({}, DEFAULTS.RSYNC, {
+      src: `${target.from}/${Array.isArray(target.files) ? target.files[0] : target.files}`,
       dest: `${target.username}@${target.host}:${target.to}`
-    }
-  ));
+    })
+  );
 });
 
 const symlink = packs(async target => {
-  const symlinkName = typeof target.symlink === 'string' ?
-    target.symlink : DEFAULTS.SYMLINK.NAME;
+  const symlinkName = typeof target.symlink === 'string' ? target.symlink : DEFAULTS.SYMLINK.NAME;
   const symlinkPath = target.to.replace(target.id, symlinkName);
 
   if (symlinkPath === target.to) {
@@ -67,9 +63,7 @@ const symlink = packs(async target => {
 
   await pify(ssh.on)('ready');
 
-  const stream = await pify(ssh.exec)(
-    `rm -rf ${symlinkPath} && ln -s ${target.to} ${symlinkPath}`
-  );
+  const stream = await pify(ssh.exec)(`rm -rf ${symlinkPath} && ln -s ${target.to} ${symlinkPath}`);
 
   await pify(stream.on)('exit');
 
@@ -104,78 +98,87 @@ const deployToServer = packs(async target => {
   }
 });
 
-module.exports.deploy = command({
-  name: 'deploy',
-  options: OPTIONS,
-  usage: MESSAGES.usage,
-  isConfigRequired: true
-}, async (argv, config) => {
-  // 1) Get known/specified deployment target(s)
+module.exports.deploy = command(
+  {
+    name: 'deploy',
+    options: OPTIONS,
+    usage: MESSAGES.usage,
+    isConfigRequired: true
+  },
+  async (argv, config) => {
+    // 1) Get known/specified deployment target(s)
 
-  let keys = Object.keys(config.deploy);
+    let keys = Object.keys(config.deploy);
 
-  if (argv.target) {
-    keys = keys.filter(key => key === argv.target);
+    if (argv.target) {
+      keys = keys.filter(key => key === argv.target);
+
+      if (keys.length < 1) {
+        throw MESSAGES.targetDoesNotExist(argv.target);
+      }
+    }
 
     if (keys.length < 1) {
-      throw MESSAGES.targetDoesNotExist(argv.target);
-    }
-  }
-
-  if (keys.length < 1) {
-    throw MESSAGES.NO_TARGETS;
-  }
-
-  // 2) Create an array of config objects for each target we know about
-
-  const credentials = unpack(await getJSON(argv.credentials));
-
-  const targets = keys.map(key => Object.assign(
-    {
-      __key__: key,
-      id: config.id,
-      name: config.name,
-      files: '**'
-    },
-    credentials[key],
-    config.deploy[key],
-    (argv.shouldRespectTargetSymlinks ? {} : {symlink: null})
-  ));
-
-  // 3) Validate & normalise those configs (in parallel)
-
-  await Promise.all(targets.map(async target => {
-    // 3.1) Check 'type' is valid
-    if (!VALID_TYPES.has(target.type)) {
-      throw MESSAGES.unrecognisedType(target.__key__, target.type);
+      throw MESSAGES.NO_TARGETS;
     }
 
-    // 3.2) Check all properties are present
-    REQUIRED_PROPERTIES.forEach(prop => {
-      if (target[prop] == null) {
-        throw MESSAGES.targetNotConfigured(target.__key__, prop);
-      }
-    });
+    // 2) Create an array of config objects for each target we know about
 
-    // 3.3) Check 'from' directory exists
-    if (!existsSync(target.from) || !statSync(target.from).isDirectory()) {
-      throw (MESSAGES.sourceIsNotDirectory(target.from));
+    const credentials = unpack(await getJSON(argv.credentials));
+
+    const targets = keys.map(key =>
+      Object.assign(
+        {
+          __key__: key,
+          id: config.id,
+          name: config.name,
+          files: '**'
+        },
+        credentials[key],
+        config.deploy[key],
+        argv.shouldRespectTargetSymlinks ? {} : { symlink: null }
+      )
+    );
+
+    // 3) Validate & normalise those configs (in parallel)
+
+    await Promise.all(
+      targets.map(async target => {
+        // 3.1) Check 'type' is valid
+        if (!VALID_TYPES.has(target.type)) {
+          throw MESSAGES.unrecognisedType(target.__key__, target.type);
+        }
+
+        // 3.2) Check all properties are present
+        REQUIRED_PROPERTIES.forEach(prop => {
+          if (target[prop] == null) {
+            throw MESSAGES.targetNotConfigured(target.__key__, prop);
+          }
+        });
+
+        // 3.3) Check 'from' directory exists
+        if (!existsSync(target.from) || !statSync(target.from).isDirectory()) {
+          throw MESSAGES.sourceIsNotDirectory(target.from);
+        }
+
+        // 3.4) Remove temporary properties
+        delete target._from;
+        delete target._to;
+      })
+    );
+
+    if (argv.dry) {
+      return dry(
+        targets.reduce((memo, target) => {
+          memo[`Deployment to ${target.__key__}`] = target;
+
+          return memo;
+        }, {})
+      );
     }
 
-    // 3.4) Remove temporary properties
-    delete target._from;
-    delete target._to;
-  }));
-
-  if (argv.dry) {
-    return dry(targets.reduce((memo, target) => {
-      memo[`Deployment to ${target.__key__}`] = target;
-
-      return memo;
-    }, {}));
+    for (const target of targets) {
+      throws(await deployToServer(target));
+    }
   }
-
-  for (const target of targets) {
-    throws(await deployToServer(target));
-  }
-});
+);

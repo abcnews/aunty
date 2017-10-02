@@ -7,13 +7,17 @@ const { throws } = require('../../utils/async');
 const { new: _new } = require('../new');
 const { MESSAGES } = require('./constants');
 
-module.exports.init = command({
-  name: 'init',
-  usage: MESSAGES.usage
-}, async argv => {
-  const args = argv.$.slice(0, 1)
-    .concat(['.', `--name=${basename(process.cwd())}`])
-    .concat(argv.$.slice(1));
+module.exports.init = command(
+  {
+    name: 'init',
+    usage: MESSAGES.usage
+  },
+  async argv => {
+    const args = argv.$
+      .slice(0, 1)
+      .concat(['.', `--name=${basename(process.cwd())}`])
+      .concat(argv.$.slice(1));
 
-  throws(await _new(args));
-});
+    throws(await _new(args));
+  }
+);

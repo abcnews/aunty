@@ -6,13 +6,11 @@
   "license": "MIT",
   "contributors": [
     "Colin Gourlay <gourlay.colin@abc.net.au>",
-    "Nathan Hoad <hoad.nathan@abc.net.au>"
+    "Nathan Hoad <hoad.nathan@abc.net.au>",
+    "Simon Elvery <elvery.simon@abc.net.au>"
   ],
   "bin": {
     "aunty": "./src/bin/aunty.js"
-  },
-  "scripts": {
-    "test": "xo"
   },
   "engines": {
     "node": ">=7.6.0"
@@ -58,23 +56,8 @@
     "webpack-merge": "^4.1.0"
   },
   "devDependencies": {
-    "xo": "^0.18.2"
-  },
-  "xo": {
-    "rules": {
-      "eqeqeq": 0,
-      "import/no-dynamic-require": 0,
-      "import/no-unassigned-import": 0,
-      "no-await-in-loop": 0,
-      "no-eq-null": 0,
-      "no-multi-assign": 0,
-      "object-curly-spacing": 0,
-      "operator-linebreak": 0,
-      "unicorn/filename-case": 0
-    },
-    "ignores": [
-      "templates/**"
-    ],
-    "space": true
+    "eslint": "^4.8.0",
+    "eslint-config-prettier": "2.6.0",
+    "prettier": "1.7.2"
   }
 }

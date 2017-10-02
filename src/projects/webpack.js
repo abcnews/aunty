@@ -41,12 +41,8 @@ module.exports.createConfig = (argv, config, isServer) => {
 
   let babelOptions = merge(
     {
-      presets: [
-        require.resolve('babel-preset-es2015')
-      ],
-      plugins: [
-        require.resolve('babel-plugin-transform-object-rest-spread')
-      ],
+      presets: [require.resolve('babel-preset-es2015')],
+      plugins: [require.resolve('babel-plugin-transform-object-rest-spread')],
       cacheDirectory: true
     },
     projectTypeConfig.babel || {}
@@ -73,9 +69,7 @@ module.exports.createConfig = (argv, config, isServer) => {
         rules: [
           {
             test: /\.js$/,
-            include: [
-              path.resolve(config.root, buildConfig.from)
-            ],
+            include: [path.resolve(config.root, buildConfig.from)],
             loader: require.resolve('babel-loader'),
             options: babelOptions
           },
@@ -91,9 +85,7 @@ module.exports.createConfig = (argv, config, isServer) => {
                   camelCase: true,
                   localIdentName: isProd
                     ? '[hash:base64:5]'
-                    : buildConfig.useCSSModules
-                      ? '[name]__[local]--[hash:base64:5]'
-                      : '[local]',
+                    : buildConfig.useCSSModules ? '[name]__[local]--[hash:base64:5]' : '[local]',
                   minimize: isProd,
                   modules: buildConfig.useCSSModules,
                   sourcemaps: !isProd
@@ -161,9 +153,11 @@ module.exports.createConfig = (argv, config, isServer) => {
           }
         }),
         new webpack.EnvironmentPlugin(Object.keys(process.env)),
-        new CopyPlugin([{
-          from: `${config.root}/public`
-        }])
+        new CopyPlugin([
+          {
+            from: `${config.root}/public`
+          }
+        ])
       ]
     },
     projectTypeConfig.webpack || {}
@@ -226,10 +220,7 @@ module.exports.createConfig = (argv, config, isServer) => {
   webpackConfig.output.publicPath = devServerConfig.publicPath = `http://${devServerConfig.host}:${devServerConfig.port}/`;
 
   if (devServerConfig.hot) {
-    webpackConfig.entry = upgradeEntryToHot(
-      webpackConfig.entry,
-      webpackConfig.output.publicPath
-    );
+    webpackConfig.entry = upgradeEntryToHot(webpackConfig.entry, webpackConfig.output.publicPath);
     webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
   }
 
@@ -237,10 +228,7 @@ module.exports.createConfig = (argv, config, isServer) => {
 };
 
 function upgradeEntryToHot(entry, publicPath) {
-  const heat = [
-    `webpack-dev-server/client?${publicPath}`,
-    'webpack/hot/dev-server'
-  ];
+  const heat = [`webpack-dev-server/client?${publicPath}`, 'webpack/hot/dev-server'];
 
   if (Array.isArray(entry) || typeof entry === 'string') {
     return heat.concat(Array.isArray(entry) ? entry : [entry]);

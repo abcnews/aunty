@@ -1,7 +1,4 @@
-module.exports.dependencies = [
-  'preact',
-  'preact-compat'
-];
+module.exports.dependencies = ['preact', 'preact-compat'];
 
 module.exports.babel = {
   presets: [

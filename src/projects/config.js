@@ -20,8 +20,7 @@ let config;
 function resolveDeployConfig(config) {
   config.deploy = config.deploy || DEFAULTS.deploy;
 
-  Object.keys(config.deploy)
-  .forEach(key => {
+  Object.keys(config.deploy).forEach(key => {
     const target = config.deploy[key];
 
     if (!target._from) {
@@ -34,10 +33,9 @@ function resolveDeployConfig(config) {
 
     target.from = `${config.root}/${target._from}`;
     target.to = target._to.replace('<name>', config.name).replace('<id>', config.id);
-    target.publicURL = KNOWN_TARGETS[key] ? target.to.replace(
-      KNOWN_TARGETS[key].publicPathRewritePattern,
-      `${KNOWN_TARGETS[key].publicURLRoot}$1/`
-    ) : null;
+    target.publicURL = KNOWN_TARGETS[key]
+      ? target.to.replace(KNOWN_TARGETS[key].publicPathRewritePattern, `${KNOWN_TARGETS[key].publicURLRoot}$1/`)
+      : null;
   });
 
   return config;
@@ -49,7 +47,7 @@ module.exports.getConfig = packs(async argv => {
   }
 
   if (root === null) {
-    throw (MESSAGES.NOT_PACKAGE);
+    throw MESSAGES.NOT_PACKAGE;
   }
 
   if (!pkg) {
@@ -67,17 +65,25 @@ module.exports.getConfig = packs(async argv => {
     let auntyConfig = configFileConfig || pkg.aunty || {};
 
     if (typeof auntyConfig === 'string') {
-      auntyConfig = {type: auntyConfig};
+      auntyConfig = { type: auntyConfig };
     }
 
-    config = Object.assign({
-      name: pkg.name,
-      version: pkg.version,
-      root
-    }, auntyConfig);
+    config = Object.assign(
+      {
+        name: pkg.name,
+        version: pkg.version,
+        root
+      },
+      auntyConfig
+    );
   }
 
-  return resolveDeployConfig(Object.assign({
-    id: argv.id || (await isRepo() && await getCurrentLabel()) || 'default'
-  }, config));
+  return resolveDeployConfig(
+    Object.assign(
+      {
+        id: argv.id || ((await isRepo()) && (await getCurrentLabel())) || 'default'
+      },
+      config
+    )
+  );
 });
