@@ -199,7 +199,7 @@ module.exports.createConfig = (argv, config, isServer) => {
         ignored: /node_modules/
       },
       // Remember to strip before passing config to new WebpackDevServer
-      host: `${hostname()}.aus.aunty.abc.net.au`,
+      host: `${hostname().replace('.aus.aunty.abc.net.au', '')}.aus.aunty.abc.net.au`,
       port: DEV_SERVER_PORT
     },
     projectTypeConfig.devServer || {}
