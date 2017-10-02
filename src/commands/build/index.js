@@ -29,11 +29,13 @@ module.exports.build = command(
       });
     }
 
-    info(MESSAGES.build(process.env.NODE_ENV, argv.target, webpackConfig.output.publicPath));
+    if (!argv.preflight) {
+      info(MESSAGES.build(process.env.NODE_ENV, argv.target, webpackConfig.output.publicPath));
+    }
 
     throws(await clean());
 
-    const spinner = spin('Build');
+    const spinner = spin(argv.preflight ? 'Preflight' : 'Build');
     const compiler = webpack(webpackConfig);
     const stats = unpack(await packs(pify(compiler.run.bind(compiler)))());
 

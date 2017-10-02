@@ -19,6 +19,8 @@ module.exports.release = command(
     const id = config.version;
     let spinner;
 
+    const targets = argv.target ? [argv.target] : Object.keys(config.deploy);
+
     if (argv.dry) {
       return dry({
         'Release version': id
@@ -43,7 +45,11 @@ module.exports.release = command(
       throw MESSAGES.HAS_CHANGES;
     }
 
-    // 4) Tag a new release (skippable)
+    // 4) Do a quick build to see that there are no build errors before we tag
+
+    throws(await build(['--id', id, '--target', targets[0], '--preflight']));
+
+    // 5) Tag a new release (skippable)
 
     if (!argv.force) {
       if (await hasTag(id)) {
@@ -64,15 +70,21 @@ module.exports.release = command(
       }
     }
 
-    // 4) For each target, build the project and deploy it
-
-    const targets = argv.target ? [argv.target] : Object.keys(config.deploy);
+    // 6) For each target, build the project and deploy it
 
     await Promise.all(
-      targets.map(async target => {
+      targets.map(async (target, index) => {
         const args = ['--id', id, '--target', target];
 
-        throws(await build(args));
+        // Skip the first one, it was already built in the preflight
+        if (index === 0) {
+          // Pretend to build it just for the logging
+          const spinner = spin('Build');
+          spinner.succeed();
+        } else {
+          throws(await build(args));
+        }
+
         throws(await deploy(args.concat(['--shouldRespectTargetSymlinks'])));
       })
     );
