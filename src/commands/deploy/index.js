@@ -41,9 +41,7 @@ const ftp = packs(target => {
 
 const rsync = packs(target => {
   let opts = Object.assign({}, DEFAULTS.RSYNC, {
-    src: `${target.from}/${Array.isArray(target.files)
-      ? target.files[0]
-      : target.files}`,
+    src: `${target.from}/${Array.isArray(target.files) ? target.files[0] : target.files}`,
     dest: `${target.username}@${target.host}:${target.to}`,
     args: [`--rsync-path="mkdir -p ${target.to} && rsync"`]
   });
@@ -51,8 +49,7 @@ const rsync = packs(target => {
 });
 
 const symlink = packs(async target => {
-  const symlinkName =
-    typeof target.symlink === 'string' ? target.symlink : DEFAULTS.SYMLINK.NAME;
+  const symlinkName = typeof target.symlink === 'string' ? target.symlink : DEFAULTS.SYMLINK.NAME;
   const symlinkPath = target.to.replace(target.id, symlinkName);
 
   if (symlinkPath === target.to) {
@@ -66,9 +63,7 @@ const symlink = packs(async target => {
 
   await pify(ssh.on)('ready');
 
-  const stream = await pify(ssh.exec)(
-    `rm -rf ${symlinkPath} && ln -s ${target.to} ${symlinkPath}`
-  );
+  const stream = await pify(ssh.exec)(`rm -rf ${symlinkPath} && ln -s ${target.to} ${symlinkPath}`);
 
   await pify(stream.on)('exit');
 

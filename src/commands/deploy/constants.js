@@ -30,30 +30,19 @@ module.exports.OPTIONS = {
     credentials: 'c'
   },
   default: {
-    credentials: join(
-      process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
-      '.abc-credentials'
-    )
+    credentials: join(process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE, '.abc-credentials')
   }
 };
 
 module.exports.MESSAGES = {
   NO_TARGETS: 'There are no targets to deploy to.',
-  NO_MAPPABLE_ID:
-    'Could not create symlink because target path does not contain a mappable id.',
+  NO_MAPPABLE_ID: 'Could not create symlink because target path does not contain a mappable id.',
   sourceIsNotDirectory: from => `${hvy(from)} is not a directory.`,
-  targetDoesNotExist: key =>
-    `The target ${hvy(key)} doesn't exist in the project configuration`,
+  targetDoesNotExist: key => `The target ${hvy(key)} doesn't exist in the project configuration`,
   targetNotConfigured: (key, prop) =>
-    `The target ${hvy(
-      key
-    )} in your configuration is incomplete or has incomplete credentials. Missing: ${hvy(
-      prop
-    )}`,
+    `The target ${hvy(key)} in your configuration is incomplete or has incomplete credentials. Missing: ${hvy(prop)}`,
   unrecognisedType: (key, type) =>
-    `The target ${hvy(key)} has ${type
-      ? 'an unrecognised'
-      : 'no'} deployment type${type
+    `The target ${hvy(key)} has ${type ? 'an unrecognised' : 'no'} deployment type${type
       ? `: ${hvy(type)}`
       : ''}. Acceptable types are: ${Array.from(VALID_TYPES.keys())
       .map(x => hvy(x))
@@ -68,22 +57,14 @@ Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 
 ${sec('Options')}
 
-  ${opt('-d')}, ${opt(
-    '--dry'
-  )}                    Output the deployment target(s) configuration, then exit
-  ${opt('-c PATH')}, ${opt(
-    '--credentials=PATH'
-  )}  File where target credentials/config is held ${opt(
+  ${opt('-d')}, ${opt('--dry')}                    Output the deployment target(s) configuration, then exit
+  ${opt('-c PATH')}, ${opt('--credentials=PATH')}  File where target credentials/config is held ${opt(
     '[default: "~/.abc-credentials"]'
   )}
-  ${opt('-i NAME')}, ${opt(
-    '--id=NAME'
-  )}           Id for this deployment (can be used in destination path) ${opt(
+  ${opt('-i NAME')}, ${opt('--id=NAME')}           Id for this deployment (can be used in destination path) ${opt(
     `[default: ${cmd('git branch')}]`
   )}
-  ${opt('-t NAME')}, ${opt('--target=NAME')}       Target to deploy to ${opt(
-    '[default: ---]'
-  )}
+  ${opt('-t NAME')}, ${opt('--target=NAME')}       Target to deploy to ${opt('[default: ---]')}
 
 ${sec(`Example ${hvy('aunty')} config`)}:
 
@@ -95,18 +76,10 @@ ${sec(`Example ${hvy('aunty')} config`)}:
     }
   }`)}
 
-  • If no ${opt(
-    '--target'
-  )} is specified, all targets found in the config will be deployed to.
-  • The ${opt('--files')} property is optional and will default to ${opt(
-    '"**"'
-  )} (all files under ${hvy('from')}).
-  • The ${opt('<name>')} placeholder will be replaced with the ${opt(
-    'name'
-  )} property in ${hvy('package.json')}.
-  • The ${opt('<id>')} placeholder will be replaced with the ${opt(
-    '--id'
-  )} setting.
+  • If no ${opt('--target')} is specified, all targets found in the config will be deployed to.
+  • The ${opt('--files')} property is optional and will default to ${opt('"**"')} (all files under ${hvy('from')}).
+  • The ${opt('<name>')} placeholder will be replaced with the ${opt('name')} property in ${hvy('package.json')}.
+  • The ${opt('<id>')} placeholder will be replaced with the ${opt('--id')} setting.
 
 ${sec('Examples')}
 
