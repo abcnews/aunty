@@ -15,7 +15,7 @@ const VTFP = require('vinyl-ftp');
 const { command } = require('../../cli');
 const { packs, throws, unpack } = require('../../utils/async');
 const { dry, info, spin, warn } = require('../../utils/logging');
-const { DEFAULTS, OPTIONS, MESSAGES, REQUIRED_PROPERTIES, VALID_TYPES } = require('./constants');
+const { DEFAULTS, OPTIONS, MESSAGES, VALID_TYPES } = require('./constants');
 
 // Wrapped
 const getJSON = packs(loadJsonFile);
@@ -40,12 +40,12 @@ const ftp = packs(target => {
 });
 
 const rsync = packs(target => {
-  return pify(rsyncwrapper)(
-    Object.assign({}, DEFAULTS.RSYNC, {
-      src: `${target.from}/${Array.isArray(target.files) ? target.files[0] : target.files}`,
-      dest: `${target.username}@${target.host}:${target.to}`
-    })
-  );
+  let opts = Object.assign({}, DEFAULTS.RSYNC, {
+    src: `${target.from}/${Array.isArray(target.files) ? target.files[0] : target.files}`,
+    dest: `${target.username}@${target.host}:${target.to}`,
+    args: [`--rsync-path="mkdir -p ${target.to} && rsync"`]
+  });
+  return pify(rsyncwrapper)(opts);
 });
 
 const symlink = packs(async target => {
@@ -77,12 +77,13 @@ const deployToServer = packs(async target => {
 
   try {
     if (target.type === 'ftp') {
-      await ftp(target);
+      throws(await ftp(target));
     } else if (target.type === 'ssh') {
-      await rsync(target);
-
+      // ensure target directory has a trailing slash
+      target.to = target.to.replace(/\/?$/, '/');
+      throws(await rsync(target));
       if (target.symlink) {
-        await symlink(target);
+        throws(await symlink(target));
       }
     }
   } catch (err) {
@@ -150,7 +151,7 @@ module.exports.deploy = command(
         }
 
         // 3.2) Check all properties are present
-        REQUIRED_PROPERTIES.forEach(prop => {
+        VALID_TYPES.get(target.type).REQUIRED_PROPERTIES.forEach(prop => {
           if (target[prop] == null) {
             throw MESSAGES.targetNotConfigured(target.__key__, prop);
           }

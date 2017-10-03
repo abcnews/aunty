@@ -5,9 +5,13 @@ const { join } = require('path');
 const { cmd, hvy, opt, req, sec } = require('../../utils/color');
 const { styleLastSegment } = require('../../utils/strings');
 
-module.exports.REQUIRED_PROPERTIES = ['from', 'to', 'type', 'username', 'password', 'host'];
-
-const VALID_TYPES = (module.exports.VALID_TYPES = new Set(['ftp', 'ssh']));
+const VALID_TYPES = (module.exports.VALID_TYPES = new Map());
+VALID_TYPES.set('ftp', {
+  REQUIRED_PROPERTIES: ['from', 'to', 'type', 'username', 'password', 'host']
+});
+VALID_TYPES.set('ssh', {
+  REQUIRED_PROPERTIES: ['from', 'to', 'type', 'username', 'host']
+});
 
 module.exports.DEFAULTS = {
   RSYNC: {
@@ -40,7 +44,7 @@ module.exports.MESSAGES = {
   unrecognisedType: (key, type) =>
     `The target ${hvy(key)} has ${type ? 'an unrecognised' : 'no'} deployment type${type
       ? `: ${hvy(type)}`
-      : ''}. Acceptable types are: ${Array.from(VALID_TYPES)
+      : ''}. Acceptable types are: ${Array.from(VALID_TYPES.keys())
       .map(x => hvy(x))
       .join(', ')}`,
   deployment: (type, from, to, host) => `Deployment (${hvy(type)}):
