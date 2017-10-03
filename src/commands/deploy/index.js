@@ -77,12 +77,11 @@ const deployToServer = packs(async target => {
 
   try {
     if (target.type === 'ftp') {
-      await ftp(target);
+      thorws(await ftp(target));
     } else if (target.type === 'ssh') {
-      await rsync(target);
-
+      throws(await rsync(target));
       if (target.symlink) {
-        await symlink(target);
+        throws(await symlink(target));
       }
     }
   } catch (err) {
