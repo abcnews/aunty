@@ -15,7 +15,7 @@ const VTFP = require('vinyl-ftp');
 const { command } = require('../../cli');
 const { packs, throws, unpack } = require('../../utils/async');
 const { dry, info, spin, warn } = require('../../utils/logging');
-const { DEFAULTS, OPTIONS, MESSAGES, REQUIRED_PROPERTIES, VALID_TYPES } = require('./constants');
+const { DEFAULTS, OPTIONS, MESSAGES, VALID_TYPES } = require('./constants');
 
 // Wrapped
 const getJSON = packs(loadJsonFile);
@@ -42,14 +42,17 @@ const ftp = packs(target => {
 const rsync = packs(target => {
   return pify(rsyncwrapper)(
     Object.assign({}, DEFAULTS.RSYNC, {
-      src: `${target.from}/${Array.isArray(target.files) ? target.files[0] : target.files}`,
+      src: `${target.from}/${Array.isArray(target.files)
+        ? target.files[0]
+        : target.files}`,
       dest: `${target.username}@${target.host}:${target.to}`
     })
   );
 });
 
 const symlink = packs(async target => {
-  const symlinkName = typeof target.symlink === 'string' ? target.symlink : DEFAULTS.SYMLINK.NAME;
+  const symlinkName =
+    typeof target.symlink === 'string' ? target.symlink : DEFAULTS.SYMLINK.NAME;
   const symlinkPath = target.to.replace(target.id, symlinkName);
 
   if (symlinkPath === target.to) {
@@ -63,7 +66,9 @@ const symlink = packs(async target => {
 
   await pify(ssh.on)('ready');
 
-  const stream = await pify(ssh.exec)(`rm -rf ${symlinkPath} && ln -s ${target.to} ${symlinkPath}`);
+  const stream = await pify(ssh.exec)(
+    `rm -rf ${symlinkPath} && ln -s ${target.to} ${symlinkPath}`
+  );
 
   await pify(stream.on)('exit');
 
@@ -149,7 +154,7 @@ module.exports.deploy = command(
         }
 
         // 3.2) Check all properties are present
-        REQUIRED_PROPERTIES.forEach(prop => {
+        VALID_TYPES.get(target.type).REQUIRED_PROPERTIES.forEach(prop => {
           if (target[prop] == null) {
             throw MESSAGES.targetNotConfigured(target.__key__, prop);
           }
