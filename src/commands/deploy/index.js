@@ -84,6 +84,8 @@ const deployToServer = packs(async target => {
     if (target.type === 'ftp') {
       thorws(await ftp(target));
     } else if (target.type === 'ssh') {
+      // ensure target directory has a trailing slash
+      target.to = target.to.replace(/\/?$/, '/');
       throws(await rsync(target));
       if (target.symlink) {
         throws(await symlink(target));
