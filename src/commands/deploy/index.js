@@ -40,14 +40,14 @@ const ftp = packs(target => {
 });
 
 const rsync = packs(target => {
-  return pify(rsyncwrapper)(
-    Object.assign({}, DEFAULTS.RSYNC, {
-      src: `${target.from}/${Array.isArray(target.files)
-        ? target.files[0]
-        : target.files}`,
-      dest: `${target.username}@${target.host}:${target.to}`
-    })
-  );
+  let opts = Object.assign({}, DEFAULTS.RSYNC, {
+    src: `${target.from}/${Array.isArray(target.files)
+      ? target.files[0]
+      : target.files}`,
+    dest: `${target.username}@${target.host}:${target.to}`,
+    args: [`--rsync-path="mkdir -p ${target.to} && rsync"`]
+  });
+  return pify(rsyncwrapper)(opts);
 });
 
 const symlink = packs(async target => {
