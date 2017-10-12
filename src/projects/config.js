@@ -51,7 +51,7 @@ module.exports.getConfig = packs(async argv => {
   }
 
   if (!pkg) {
-    pkg = unpack(await getPkg(root));
+    pkg = unpack(await getPkg(root, { normalize: false }));
   }
 
   if (!config) {
