@@ -132,7 +132,7 @@ module.exports.deploy = command(
         {
           __key__: key,
           id: config.id,
-          name: config.name,
+          name: config.pkg.name,
           files: '**'
         },
         credentials[key],

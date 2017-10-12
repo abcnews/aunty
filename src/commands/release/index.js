@@ -1,3 +1,6 @@
+// External
+const semver = require('semver');
+
 // Ours
 const { command } = require('../../cli');
 const { throws } = require('../../utils/async');
@@ -16,7 +19,7 @@ module.exports.release = command(
     isConfigRequired: true
   },
   async (argv, config) => {
-    const id = config.version;
+    const id = config.pkg.version;
     let spinner;
 
     const targets = argv.target ? [argv.target] : Object.keys(config.deploy);

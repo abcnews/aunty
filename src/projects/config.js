@@ -32,7 +32,7 @@ function resolveDeployConfig(config) {
     }
 
     target.from = `${config.root}/${target._from}`;
-    target.to = target._to.replace('<name>', config.name).replace('<id>', config.id);
+    target.to = target._to.replace('<name>', config.pkg.name).replace('<id>', config.id);
     target.publicURL = KNOWN_TARGETS[key]
       ? target.to.replace(KNOWN_TARGETS[key].publicPathRewritePattern, `${KNOWN_TARGETS[key].publicURLRoot}$1/`)
       : null;
@@ -70,9 +70,8 @@ module.exports.getConfig = packs(async argv => {
 
     config = Object.assign(
       {
-        name: pkg.name,
-        version: pkg.version,
-        root
+        root,
+        pkg
       },
       auntyConfig
     );
