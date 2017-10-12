@@ -32,6 +32,10 @@ module.exports.getCurrentLabel = async () => {
   return detachedHeadCommit || branch;
 };
 
+module.exports.commitAll = message => git(['commit', '-a', '-m', `"${message}"`]);
+
+module.exports.push = () => git('push');
+
 module.exports.getCurrentTags = async () => new Set((await git('tag -l --points-at HEAD')).stdout.split(NEWLINE));
 
 module.exports.hasTag = async tag => !(await pack(git(`show-ref --tags --verify refs/tags/${tag}`)))[0];
