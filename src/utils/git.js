@@ -32,7 +32,7 @@ module.exports.getCurrentLabel = async () => {
   return detachedHeadCommit || branch;
 };
 
-module.exports.commitAll = message => git(['commit', '-a', '-m', `"${message}"`]);
+module.exports.commitAll = message => git(['commit', '-a', '-m', `${message}`]);
 
 module.exports.push = () => git('push');
 
@@ -40,12 +40,12 @@ module.exports.getCurrentTags = async () => new Set((await git('tag -l --points-
 
 module.exports.hasTag = async tag => !(await pack(git(`show-ref --tags --verify refs/tags/${tag}`)))[0];
 
-module.exports.createTag = tag => git(['tag', '-a', tag, '-m', `"Tagging version ${tag}"`]);
+module.exports.createTag = tag => git(['tag', '-a', tag, '-m', `Tagging version ${tag}`]);
 
 module.exports.pushTag = (remote, tag) => git(['push', remote, tag]);
 
 module.exports.createRepo = async cwd => {
   await git('init', { cwd });
   await git('add .', { cwd });
-  return git(['commit', '-m', '"Initial commit"'], { cwd });
+  return git(['commit', '-m', 'Initial commit'], { cwd });
 };
