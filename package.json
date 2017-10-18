@@ -16,6 +16,7 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
+    "@abcnews/generator-aunty": "^1.2.1",
     "autoprefixer": "^7.1.2",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.1",
@@ -55,7 +56,8 @@
     "webpack": "^3.5.5",
     "webpack-dev-server": "^2.7.1",
     "webpack-merge": "^4.1.0",
-    "write-pkg": "^3.1.0"
+    "write-pkg": "^3.1.0",
+    "yeoman-environment": "^2.0.5"
   },
   "devDependencies": {
     "eslint": "^4.8.0",

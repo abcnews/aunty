@@ -33,6 +33,16 @@ module.exports.cli = packs(async (args, isGlobal) => {
   let commandName = argv._[0] || '';
   const isHelp = isArgHelpCommand(commandName);
 
+  // Some commands are provided by the Yeoman generator
+  const yeomanCommands = ['n', 'new', 'i', 'init', 'g', 'generate'];
+  if (yeomanCommands.includes(commandName)) {
+    await require('../commands/yeoman').run(args);
+    return;
+  } else if (isHelp && yeomanCommands.includes(argv._[1])) {
+    await require('../commands/yeoman').run(args.slice(1).concat('--help'));
+    return;
+  }
+
   if (!commandName || (isHelp && (argv._.length === 1 || isArgHelpCommand(argv._[1])))) {
     return log(MESSAGES.usage());
   }

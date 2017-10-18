@@ -56,16 +56,16 @@ ${sec('Options')}
 
 ${sec('Project creation commands')}
 
-  ${cmd('aunty new')} ${req('<project_type>')} ${req('<directory_name>')} ${opt('[options]')}
+  ${cmd('aunty new')} ${req('<directory_name>')} ${opt('[options]')}
     Create a project in a new directory
 
-  ${cmd('aunty init')} ${req('<project_type>')} ${opt('[options]')}
+  ${cmd('aunty init')} ${opt('[options]')}
     Create a project in the current directory
 
-  Available project templates:
-    ${indented(listPairs(PROJECT_TYPE_DESCRIPTIONS, req), 4)}
-
 ${sec('Development commands')}
+
+  ${cmd('aunty generate component')}
+    Generate a new component (and tests)
 
   ${cmd('aunty clean')}
     Delete the current project's build output directories.
