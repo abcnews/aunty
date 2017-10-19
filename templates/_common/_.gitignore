@@ -1,9 +1,0 @@
-# dependencies
-/node_modules
-
-# builds
-/{{buildDir}}
-
-# misc
-.DS_Store
-npm-debug.log
