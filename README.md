@@ -33,13 +33,13 @@ The CLI contains three types of command, grouped by purpose:
 When creating new projects, you should be using the global **aunty**:
 
 ```bash
-/some/parent/directory $ aunty new preact-app my-project
+/some/parent/directory $ aunty new
 ```
 
-or
+or, from within a (preferably empty) directory:
 
 ```bash
-/some/parent/directory/my-project $ aunty init preact-app
+/some/parent/directory/my-project $ aunty init
 ```
 
 ### Developing projects
@@ -89,6 +89,16 @@ If you're looking to see what the default configuration is, or the impact of you
 Overrides should be used sparingly, as the advantages of using a single-dependency toolkit are most apparent when we don't deviate far from the project templates.
 
 If you don't need to override any of the project defaults, your entire aunty config can be a string containing the project type, as a shorthand for `{type: "<project_type>"}`.
+
+
+### Generators
+
+Aunty comes with a few basic generators.
+
+`aunty generate component` will ask you a bunch of questions and generate a component (and tests) for whatever project type you've used.
+
+`aunty generate preview` will generate mobile.html and desktop.html in the public folder with some basic ABC theming. You'll  have to include the actual article content and/or your interactive placeholder yourself.
+
 
 ## Authors
 
