@@ -47,7 +47,7 @@ module.exports.createConfig = (argv, config, isServer) => {
           require.resolve('babel-preset-env'),
           {
             targets: {
-              browsers: config.es6
+              browsers: config.buildWithModules
                 ? ['Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15']
                 : ['> 1%', 'last 2 versions', 'Firefox ESR']
             },
