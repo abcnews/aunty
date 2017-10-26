@@ -120,16 +120,7 @@ module.exports.release = command(
     await Promise.all(
       targets.map(async (target, index) => {
         const args = ['--id', id, '--target', target];
-
-        // Skip the first one, it was already built in the preflight
-        if (index === 0) {
-          // Pretend to build it just for the logging
-          const spinner = spin('Build');
-          spinner.succeed();
-        } else {
-          throws(await build(args));
-        }
-
+        throws(await build(args));
         throws(await deploy(args.concat(['--shouldRespectTargetSymlinks'])));
       })
     );
