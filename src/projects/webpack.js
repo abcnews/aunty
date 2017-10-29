@@ -7,6 +7,7 @@ const autoprefixer = require('autoprefixer');
 const CopyPlugin = require('copy-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 // Ours
 const { BUILD_DIR, DEV_SERVER_PORT } = require('./constants');
@@ -41,7 +42,20 @@ module.exports.createConfig = (argv, config, isServer) => {
 
   let babelOptions = merge(
     {
-      presets: [require.resolve('babel-preset-es2015')],
+      presets: [
+        [
+          require.resolve('babel-preset-env'),
+          {
+            targets: {
+              browsers: config.buildWithModules
+                ? ['Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15']
+                : ['> 1%', 'last 2 versions', 'Firefox ESR']
+            },
+            useBuiltIns: true,
+            modules: false
+          }
+        ]
+      ],
       plugins: [require.resolve('babel-plugin-transform-object-rest-spread')],
       cacheDirectory: true
     },
@@ -63,7 +77,7 @@ module.exports.createConfig = (argv, config, isServer) => {
       output: {
         path: `${config.root}/${buildConfig.to}`,
         publicPath: publicURL,
-        filename: '[name].js'
+        filename: config.buildWithModules ? '[name].modules.js' : '[name].js'
       },
       module: {
         rules: [
@@ -170,7 +184,11 @@ module.exports.createConfig = (argv, config, isServer) => {
   }
 
   if (isProd) {
-    webpackConfig.plugins.push(new webpack.optimize.UglifyJsPlugin());
+    webpackConfig.plugins.push(
+      new UglifyJSPlugin({
+        parallel: true
+      })
+    );
   } else {
     webpackConfig.plugins.push(new webpack.NamedModulesPlugin());
   }
