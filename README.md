@@ -22,9 +22,10 @@ For usage instructions, run `aunty` with no arguments, or for details on specifi
 aunty help <command>
 ```
 
-The CLI contains three types of command, grouped by purpose:
+The CLI contains four types of command, grouped by purpose:
 
 * Creating new projects (`new`, `init`)
+* Generating stuff (`generate`) like components
 * Developing projects (`clean`, `build`, `serve`)
 * Deploying (un)versioned projects (`deploy`, `release`)
 
