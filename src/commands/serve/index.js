@@ -38,7 +38,7 @@ module.exports.serve = command(
       });
     }
 
-    info(BUILD_MESSAGES.build(process.env.NODE_ENV, argv.target, webpackConfig.output.publicPath));
+    info(BUILD_MESSAGES.build(process.env.NODE_ENV, argv.target, webpackConfig[0].output.publicPath));
 
     throws(await clean());
 
