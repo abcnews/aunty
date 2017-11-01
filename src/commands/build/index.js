@@ -11,29 +11,6 @@ const { clean } = require('../clean');
 const { MESSAGES } = require('./constants');
 const Chalk = require('chalk');
 
-/**
- * Do a Webpack build
- * @param {object} webpackConfig 
- * @param {string} label Show a message with the spinner
- */
-async function builder(webpackConfig, label) {
-  const spinner = spin(label);
-  const compiler = webpack(webpackConfig);
-  const stats = unpack(await packs(pify(compiler.run.bind(compiler)))());
-
-  if (stats.hasErrors()) {
-    spinner.fail();
-    throw stats.toJson({}, true).errors[0];
-  }
-
-  if (stats.hasWarnings()) {
-    spinner.warn();
-    stats.toJson({}, true).warnings.forEach(warn);
-  } else {
-    spinner.succeed();
-  }
-}
-
 module.exports.build = command(
   {
     name: 'build',
@@ -59,19 +36,20 @@ module.exports.build = command(
 
     throws(await clean());
 
-    if (argv.preflight) {
-      await builder(webpackConfig, 'Preflight');
+    const spinner = spin(argv.preflight ? 'Preflight' : 'Build');
+    const compiler = webpack(webpackConfig);
+    const stats = unpack(await packs(pify(compiler.run.bind(compiler)))());
+
+    if (stats.hasErrors()) {
+      spinner.fail();
+      throw stats.toJson({}, true).errors[0];
+    }
+
+    if (stats.hasWarnings()) {
+      spinner.warn();
+      stats.toJson({}, true).warnings.forEach(warn);
     } else {
-      if (argv['no-modules']) {
-        // Just build the one file
-        await builder(webpackConfig, 'Building ES5 version ' + Chalk.gray('(index.js)'));
-      } else {
-        // Build a modern version with fewer pollyfills
-        const webpackConfigE6 = createConfig(argv, Object.assign({}, config, { buildWithModules: true }));
-        await builder(webpackConfigE6, 'Building modules version ' + Chalk.gray('(index.modules.js)'));
-        // Build a legacy version as well
-        await builder(webpackConfig, 'Building ES5 version too ' + Chalk.gray('(index.js)'));
-      }
+      spinner.succeed();
     }
   }
 );

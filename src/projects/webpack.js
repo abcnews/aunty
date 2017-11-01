@@ -15,6 +15,22 @@ const { BUILD_DIR, DEV_SERVER_PORT } = require('./constants');
 const URL_LOADER_LIMIT = 10000;
 
 module.exports.createConfig = (argv, config, isServer) => {
+  let webpackConfig = [createWebpackConfig(argv, config)];
+
+  // create two copies of the config if we are going to be building modules too
+  if (!argv['no-modules']) {
+    webpackConfig.push(createWebpackConfig(argv, Object.assign({}, config, { buildWithModules: true })));
+  }
+
+  // if isServer then include the devServer config
+  if (isServer) {
+    return [webpackConfig, createDevServerConfig(argv, config)];
+  } else {
+    return webpackConfig;
+  }
+};
+
+function createWebpackConfig(argv, config) {
   const isProd = process.env.NODE_ENV === 'production';
   const publicURL = argv.target ? config.deploy[argv.target].publicURL : '/';
   let projectTypeConfig = {};
@@ -193,8 +209,18 @@ module.exports.createConfig = (argv, config, isServer) => {
     webpackConfig.plugins.push(new webpack.NamedModulesPlugin());
   }
 
-  if (!isServer) {
-    return webpackConfig;
+  return webpackConfig;
+}
+
+function createDevServerConfig(argv, config) {
+  const webpackConfig = createWebpackConfig(argv, config);
+
+  const isProd = process.env.NODE_ENV === 'production';
+  const publicURL = argv.target ? config.deploy[argv.target].publicURL : '/';
+  let projectTypeConfig = {};
+
+  if (config.type) {
+    projectTypeConfig = require(`./${config.type}`);
   }
 
   let devServerConfig = merge(
@@ -242,8 +268,8 @@ module.exports.createConfig = (argv, config, isServer) => {
     webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
   }
 
-  return [webpackConfig, devServerConfig];
-};
+  return devServerConfig;
+}
 
 function upgradeEntryToHot(entry, publicPath) {
   const heat = [`webpack-dev-server/client?${publicPath}`, 'webpack/hot/dev-server'];
