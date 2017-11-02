@@ -22,9 +22,18 @@ module.exports.createConfig = (argv, config, isServer) => {
     webpackConfig.push(createWebpackConfig(argv, Object.assign({}, config, { buildWithModules: true })));
   }
 
-  // if isServer then include the devServer config
+  // if isServer then include the devServer config and check for hot reload
   if (isServer) {
-    return [webpackConfig, createDevServerConfig(argv, config)];
+    const devServerConfig = createDevServerConfig(argv, config);
+    webpackConfig.map(c => {
+      c.output.publicPath = devServerConfig.publicPath = `http://${devServerConfig.host}:${devServerConfig.port}/`;
+      if (devServerConfig.hot) {
+        c.entry = upgradeEntryToHot(c.entry, c.output.publicPath);
+        c.plugins.push(new webpack.HotModuleReplacementPlugin());
+      }
+      return c;
+    });
+    return [webpackConfig, devServerConfig];
   } else {
     return webpackConfig;
   }
@@ -259,13 +268,6 @@ function createDevServerConfig(argv, config) {
 
   if (typeof argv.hot === 'boolean') {
     devServerConfig.hot = argv.hot;
-  }
-
-  webpackConfig.output.publicPath = devServerConfig.publicPath = `http://${devServerConfig.host}:${devServerConfig.port}/`;
-
-  if (devServerConfig.hot) {
-    webpackConfig.entry = upgradeEntryToHot(webpackConfig.entry, webpackConfig.output.publicPath);
-    webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
   }
 
   return devServerConfig;
