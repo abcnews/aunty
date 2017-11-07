@@ -31,7 +31,7 @@ module.exports.build = command(
     }
 
     if (!argv.preflight) {
-      info(MESSAGES.build(process.env.NODE_ENV, argv.target, webpackConfig.output.publicPath));
+      info(MESSAGES.build(process.env.NODE_ENV, argv.target, webpackConfig[0].output.publicPath));
     }
 
     throws(await clean());
