@@ -34,6 +34,7 @@
     "file-loader": "^0.11.2",
     "guess-root-path": "^1.0.0",
     "html-loader": "^0.5.1",
+    "import-local": "^0.1.1",
     "load-json-file": "^2.0.0",
     "log-symbols": "^2.0.0",
     "minimist": "^1.2.0",
