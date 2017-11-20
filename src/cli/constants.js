@@ -43,8 +43,8 @@ module.exports.DEFAULTS = {
 };
 
 module.exports.MESSAGES = {
-  version: (versionNumber, isLocal) => `
-${cmd('aunty')} v${versionNumber}${isLocal ? dim(' (local)') : ''}`,
+  version: versionNumber => `
+${cmd('aunty')} v${versionNumber}`,
   unrecognised: commandName => `Unrecognised command: ${req(commandName)}`,
   usage: () => `${createLogo()}
 

@@ -19,15 +19,13 @@ const isArgHelpCommand = arg => {
   return (ALIASES[arg] || arg) === 'help';
 };
 
-module.exports.cli = packs(async (args, isGlobal) => {
+module.exports.cli = packs(async args => {
   const argv = minimist(args, OPTIONS);
 
-  if (isGlobal) {
-    updateNotifier({ pkg, updateCheckInterval: 36e5 }).notify();
-  }
+  updateNotifier({ pkg, updateCheckInterval: 36e5 }).notify();
 
   if (argv.version) {
-    return log(MESSAGES.version(pkg.version, !isGlobal));
+    return log(MESSAGES.version(pkg.version));
   }
 
   let commandName = argv._[0] || '';
