@@ -1,8 +1,10 @@
 // Native
 const { hostname } = require('os');
 const path = require('path');
+const FS = require('fs');
 
 // External
+const guessRootPath = require('guess-root-path');
 const autoprefixer = require('autoprefixer');
 const CopyPlugin = require('copy-webpack-plugin');
 const merge = require('webpack-merge');
@@ -15,31 +17,54 @@ const { BUILD_DIR, DEV_SERVER_PORT } = require('./constants');
 const URL_LOADER_LIMIT = 10000;
 
 module.exports.createConfig = (argv, config, isServer) => {
-  let webpackConfig = [createWebpackConfig(argv, config)];
+  const rootPath = config.root || guessRootPath();
 
-  // create two copies of the config if we are going to be building modules too
-  if (!argv['no-modules']) {
-    webpackConfig.push(createWebpackConfig(argv, Object.assign({}, config, { buildWithModules: true })));
-  }
-
-  // if isServer then include the devServer config and check for hot reload
-  if (isServer) {
-    const devServerConfig = createDevServerConfig(argv, config);
-    webpackConfig.map(c => {
-      c.output.publicPath = devServerConfig.publicPath = `http://${devServerConfig.host}:${devServerConfig.port}/`;
-      if (devServerConfig.hot) {
-        c.entry = upgradeEntryToHot(c.entry, c.output.publicPath);
-        c.plugins.push(new webpack.HotModuleReplacementPlugin());
+  // If a config file exists, use it
+  if (FS.existsSync(`${rootPath}/webpack.config.js`)) {
+    let webpackConfig = require(`${rootPath}/webpack.config.js`);
+    if (!webpackConfig instanceof Array) {
+      webpackConfig = [webpackConfig];
+    }
+    // If a function was given then execute it for the final config
+    return webpackConfig.map(c => {
+      if (typeof c === 'function') {
+        return c(argv, config, isServer);
+      } else {
+        return c;
       }
-      return c;
     });
-    return [webpackConfig, devServerConfig];
   } else {
-    return webpackConfig;
+    let webpackConfig = [createWebpackConfig(argv, config)];
+
+    // create two copies of the config if we are going to be building modules too
+    if (argv['modules']) {
+      webpackConfig.push(createWebpackConfig(argv, Object.assign({}, config, { buildWithModules: true })));
+    }
+
+    // if isServer then include the devServer config and check for hot reload
+    if (isServer) {
+      const devServerConfig = createDevServerConfig(argv, config);
+      webpackConfig.map(c => {
+        c.output.publicPath = devServerConfig.publicPath = `http://${devServerConfig.host}:${devServerConfig.port}/`;
+        if (devServerConfig.hot) {
+          c.entry = upgradeEntryToHot(c.entry, c.output.publicPath);
+          c.plugins.push(new webpack.HotModuleReplacementPlugin());
+        }
+        return c;
+      });
+      return [webpackConfig, devServerConfig];
+    } else {
+      return webpackConfig;
+    }
   }
 };
 
 function createWebpackConfig(argv, config) {
+  argv = argv || [];
+  config = config || {
+    root: guessRootPath()
+  };
+
   const isProd = process.env.NODE_ENV === 'production';
   const publicURL = argv.target ? config.deploy[argv.target].publicURL : '/';
   let projectTypeConfig = {};
@@ -288,3 +313,5 @@ function upgradeEntryToHot(entry, publicPath) {
     return memo;
   }, {});
 }
+
+module.exports.createWebpackConfig = createWebpackConfig;

@@ -30,7 +30,7 @@ module.exports.COMMANDS = new Set(
 module.exports.DEFAULTS = {
   name: '__command__',
   options: {
-    boolean: ['dry', 'force', 'help'],
+    boolean: ['dry', 'force', 'help', 'modules'],
     string: ['id', 'target'],
     alias: {
       dry: 'd',
@@ -38,6 +38,9 @@ module.exports.DEFAULTS = {
       force: 'f',
       help: 'h',
       target: 't'
+    },
+    default: {
+      modules: true
     }
   }
 };

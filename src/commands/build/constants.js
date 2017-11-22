@@ -11,6 +11,7 @@ Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 ${sec('Options')}
 
   ${opt('-d')}, ${opt('--dry')}                    Output the generated webpack configuration, then exit
+  ${opt('--modules')}                    Build both modern and legacy versions of the script ${opt('[default: true]')}
   ${opt('-c PATH')}, ${opt('--credentials=PATH')}  File where target credentials/config is held ${opt(
     '[default: "~/.abc-credentials"]'
   )}
