@@ -18,15 +18,15 @@ const URL_LOADER_LIMIT = 10000;
 
 module.exports.createConfig = (argv, config, isServer) => {
   const rootPath = config.root || guessRootPath();
-
+  let webpackConfig;
   // If a config file exists, use it
   if (FS.existsSync(`${rootPath}/webpack.config.js`)) {
-    let webpackConfig = require(`${rootPath}/webpack.config.js`);
+    webpackConfig = require(`${rootPath}/webpack.config.js`);
     if (!webpackConfig instanceof Array) {
       webpackConfig = [webpackConfig];
     }
     // If a function was given then execute it for the final config
-    return webpackConfig.map(c => {
+    webpackConfig = webpackConfig.map(c => {
       if (typeof c === 'function') {
         return c(argv, config, isServer);
       } else {
@@ -34,28 +34,28 @@ module.exports.createConfig = (argv, config, isServer) => {
       }
     });
   } else {
-    let webpackConfig = [createWebpackConfig(argv, config)];
+    webpackConfig = [createWebpackConfig(argv, config)];
 
     // create two copies of the config if we are going to be building modules too
     if (argv['modules'] && (!config.build || config.build.modules !== false)) {
       webpackConfig.push(createWebpackConfig(argv, Object.assign({}, config, { buildWithModules: true })));
     }
+  }
 
-    // if isServer then include the devServer config and check for hot reload
-    if (isServer) {
-      const devServerConfig = createDevServerConfig(argv, config);
-      webpackConfig.map(c => {
-        c.output.publicPath = devServerConfig.publicPath = `http://${devServerConfig.host}:${devServerConfig.port}/`;
-        if (devServerConfig.hot) {
-          c.entry = upgradeEntryToHot(c.entry, c.output.publicPath);
-          c.plugins.push(new webpack.HotModuleReplacementPlugin());
-        }
-        return c;
-      });
-      return [webpackConfig, devServerConfig];
-    } else {
-      return webpackConfig;
-    }
+  // if isServer then include the devServer config and check for hot reload
+  if (isServer) {
+    const devServerConfig = createDevServerConfig(argv, config);
+    webpackConfig.map(c => {
+      c.output.publicPath = devServerConfig.publicPath = `http://${devServerConfig.host}:${devServerConfig.port}/`;
+      if (devServerConfig.hot) {
+        c.entry = upgradeEntryToHot(c.entry, c.output.publicPath);
+        c.plugins.push(new webpack.HotModuleReplacementPlugin());
+      }
+      return c;
+    });
+    return [webpackConfig, devServerConfig];
+  } else {
+    return webpackConfig;
   }
 };
 
