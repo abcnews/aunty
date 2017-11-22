@@ -12,6 +12,7 @@
   "bin": {
     "aunty": "./src/bin/aunty.js"
   },
+  "main": "src/api",
   "engines": {
     "node": ">=7.6.0"
   },
