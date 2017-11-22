@@ -37,7 +37,7 @@ module.exports.createConfig = (argv, config, isServer) => {
     let webpackConfig = [createWebpackConfig(argv, config)];
 
     // create two copies of the config if we are going to be building modules too
-    if (argv['modules']) {
+    if (argv['modules'] && (!config.build || config.build.modules !== false)) {
       webpackConfig.push(createWebpackConfig(argv, Object.assign({}, config, { buildWithModules: true })));
     }
 
