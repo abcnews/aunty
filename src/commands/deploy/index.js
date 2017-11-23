@@ -35,7 +35,6 @@ const ftp = packs(target => {
       cwd: target.from
     }),
     vftp.dest(target.to),
-    through.obj()
   );
 });
 
