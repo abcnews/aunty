@@ -7,7 +7,6 @@ const pify = require('pify');
 const pump = require('pump');
 const rsyncwrapper = require('rsyncwrapper');
 const SSH = require('ssh2');
-const through = require('through2');
 const vfs = require('vinyl-fs');
 const VTFP = require('vinyl-ftp');
 
@@ -34,8 +33,7 @@ const ftp = packs(target => {
       buffer: false,
       cwd: target.from
     }),
-    vftp.dest(target.to),
-    through.obj()
+    vftp.dest(target.to)
   );
 });
 
