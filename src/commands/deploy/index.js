@@ -7,7 +7,6 @@ const pify = require('pify');
 const pump = require('pump');
 const rsyncwrapper = require('rsyncwrapper');
 const SSH = require('ssh2');
-const through = require('through2');
 const vfs = require('vinyl-fs');
 const VTFP = require('vinyl-ftp');
 
