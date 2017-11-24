@@ -34,7 +34,7 @@ const ftp = packs(target => {
       buffer: false,
       cwd: target.from
     }),
-    vftp.dest(target.to),
+    vftp.dest(target.to)
   );
 });
 
