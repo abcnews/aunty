@@ -90,6 +90,10 @@ function createWebpackConfig(argv, config) {
     process.noDeprecation = true;
   }
 
+  const browsers = config.buildWithModules
+    ? ['Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15']
+    : ['> 1%', 'last 2 versions', 'Firefox ESR'];
+
   let babelOptions = merge(
     {
       presets: [
@@ -97,9 +101,7 @@ function createWebpackConfig(argv, config) {
           require.resolve('babel-preset-env'),
           {
             targets: {
-              browsers: config.buildWithModules
-                ? ['Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15']
-                : ['> 1%', 'last 2 versions', 'Firefox ESR']
+              browsers
             },
             useBuiltIns: true,
             modules: false
@@ -159,6 +161,7 @@ function createWebpackConfig(argv, config) {
                 loader: require.resolve('postcss-loader'),
                 options: {
                   config: {
+                    ctx: { browsers },
                     path: `${__dirname}/postcss.config.js`
                   }
                 }

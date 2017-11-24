@@ -1,5 +1,7 @@
-module.exports = {
+module.exports = ({ options }) => ({
   plugins: {
-    autoprefixer: {}
+    autoprefixer: {
+      browsers: options.browsers
+    }
   }
-};
+});
