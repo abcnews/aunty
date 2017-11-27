@@ -81,6 +81,9 @@ ${sec(`Example ${hvy('aunty')} config`)}:
   • The ${opt('<name>')} placeholder will be replaced with the ${opt('name')} property in ${hvy('package.json')}.
   • The ${opt('<id>')} placeholder will be replaced with the ${opt('--id')} setting.
 
+  Note: To deploy to multiple locations on the same target, use an array of
+  config objects, each with their own files/from/to properties.
+        
 ${sec('Examples')}
 
   ${cmd('aunty deploy')}

@@ -21,21 +21,27 @@ function resolveDeployConfig(config) {
   config.deploy = config.deploy || DEFAULTS.deploy;
 
   Object.keys(config.deploy).forEach(key => {
-    const target = config.deploy[key];
+    const value = config.deploy[key];
+    const partialTargets = Array.isArray(value) ? value : [value];
 
-    if (!target._from) {
-      target._from = target.from;
-    }
+    partialTargets.forEach((partialTarget, index) => {
+      if (!partialTarget._from) {
+        partialTarget._from = partialTarget.from;
+      }
 
-    if (!target._to) {
-      target._to = target.to;
-    }
+      if (!partialTarget._to) {
+        partialTarget._to = partialTarget.to;
+      }
 
-    target.from = `${config.root}/${target._from}`;
-    target.to = target._to.replace('<name>', config.pkg.name).replace('<id>', config.id);
-    target.publicURL = KNOWN_TARGETS[key]
-      ? target.to.replace(KNOWN_TARGETS[key].publicPathRewritePattern, `${KNOWN_TARGETS[key].publicURLRoot}$1/`)
-      : null;
+      partialTarget.from = `${config.root}/${partialTarget._from}`;
+      partialTarget.to = partialTarget._to.replace('<name>', config.pkg.name).replace('<id>', config.id);
+      partialTarget.publicURL = KNOWN_TARGETS[key]
+        ? partialTarget.to.replace(
+            KNOWN_TARGETS[key].publicPathRewritePattern,
+            `${KNOWN_TARGETS[key].publicURLRoot}$1/`
+          )
+        : null;
+    });
   });
 
   return config;
