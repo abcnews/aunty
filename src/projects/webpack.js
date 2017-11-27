@@ -5,7 +5,6 @@ const FS = require('fs');
 
 // External
 const guessRootPath = require('guess-root-path');
-const autoprefixer = require('autoprefixer');
 const CopyPlugin = require('copy-webpack-plugin');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
@@ -151,19 +150,10 @@ function createWebpackConfig(argv, config) {
                   camelCase: true,
                   localIdentName: isProd
                     ? '[hash:base64:5]'
-                    : buildConfig.useCSSModules ? '[name]__[local]--[hash:base64:5]' : '[local]',
+                    : buildConfig.useCSSModules ? '[path][name]__[local]--[hash:base64:5]' : '[local]',
                   minimize: isProd,
                   modules: buildConfig.useCSSModules,
                   sourcemaps: !isProd
-                }
-              },
-              {
-                loader: require.resolve('postcss-loader'),
-                options: {
-                  config: {
-                    ctx: { browsers },
-                    path: `${__dirname}/postcss.config.js`
-                  }
                 }
               },
               {
@@ -215,8 +205,7 @@ function createWebpackConfig(argv, config) {
       plugins: [
         new webpack.LoaderOptionsPlugin({
           options: {
-            context: __dirname,
-            postcss: [autoprefixer()]
+            context: config.root
           }
         }),
         new webpack.EnvironmentPlugin(Object.keys(process.env)),
