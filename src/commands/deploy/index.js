@@ -7,35 +7,17 @@ const pify = require('pify');
 const pump = require('pump');
 const rsyncwrapper = require('rsyncwrapper');
 const SSH = require('ssh2');
-const vfs = require('vinyl-fs');
-const VTFP = require('vinyl-ftp');
 
 // Ours
 const { command } = require('../../cli');
 const { packs, throws, unpack } = require('../../utils/async');
 const { dry, info, spin, warn } = require('../../utils/logging');
 const { DEFAULTS, OPTIONS, MESSAGES, VALID_TYPES } = require('./constants');
+const ftpDeploy = require('../../utils/ftp');
 
 // Wrapped
 const getJSON = packs(loadJsonFile);
-
-const ftp = packs(target => {
-  const vftp = new VTFP({
-    host: target.host,
-    port: target.port || 21,
-    user: target.username,
-    password: target.password,
-    parallel: 10
-  });
-
-  return pify(pump)(
-    vfs.src(target.files, {
-      buffer: false,
-      cwd: target.from
-    }),
-    vftp.dest(target.to)
-  );
-});
+const ftp = packs(ftpDeploy);
 
 const rsync = packs(target => {
   let opts = Object.assign({}, DEFAULTS.RSYNC, {
@@ -75,7 +57,7 @@ const deployToServer = packs(async target => {
 
   try {
     if (target.type === 'ftp') {
-      throws(await ftp(target));
+      throws(await ftp(target, spinner));
     } else if (target.type === 'ssh') {
       // ensure target directory has a trailing slash
       target.to = target.to.replace(/\/?$/, '/');
