@@ -91,7 +91,7 @@ function createWebpackConfig(argv, config) {
 
   const browsers = config.buildWithModules
     ? ['Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15']
-    : ['> 1%', 'last 2 versions', 'Firefox ESR'];
+    : ['> 1% in au', '> 5%', 'Firefox ESR'];
 
   let babelOptions = merge(
     {
@@ -149,8 +149,8 @@ function createWebpackConfig(argv, config) {
                 options: {
                   camelCase: true,
                   localIdentName: isProd
-                    ? '[hash:base64:5]'
-                    : buildConfig.useCSSModules ? '[path][name]__[local]--[hash:base64:5]' : '[local]',
+                    ? '[hash:base64:6]'
+                    : buildConfig.useCSSModules ? '[folder]__[name]__[local]--[hash:base64:6]' : '[local]',
                   minimize: isProd,
                   modules: buildConfig.useCSSModules,
                   sourcemaps: !isProd
@@ -203,11 +203,6 @@ function createWebpackConfig(argv, config) {
         ]
       },
       plugins: [
-        new webpack.LoaderOptionsPlugin({
-          options: {
-            context: config.root
-          }
-        }),
         new webpack.EnvironmentPlugin(Object.keys(process.env)),
         new CopyPlugin([
           {
