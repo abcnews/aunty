@@ -107,19 +107,26 @@ module.exports.deploy = command(
 
     const credentials = unpack(await getJSON(argv.credentials));
 
-    const targets = keys.map(key =>
-      Object.assign(
-        {
-          __key__: key,
-          id: config.id,
-          name: config.pkg.name,
-          files: '**'
-        },
-        credentials[key],
-        config.deploy[key],
-        argv.shouldRespectTargetSymlinks ? {} : { symlink: null }
-      )
-    );
+    const targets = keys.reduce((memo, key) => {
+      const value = config.deploy[key];
+      const partialTargets = Array.isArray(value) ? value : [value];
+
+      return memo.concat(
+        partialTargets.map((partialTarget, index) =>
+          Object.assign(
+            {
+              __key__: partialTargets.length > 1 ? `${key}_${index}` : key,
+              id: config.id,
+              name: config.pkg.name,
+              files: '**'
+            },
+            credentials[key],
+            partialTarget,
+            argv.shouldRespectTargetSymlinks ? {} : { symlink: null }
+          )
+        )
+      );
+    }, []);
 
     // 3) Validate & normalise those configs (in parallel)
 
