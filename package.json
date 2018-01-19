@@ -17,7 +17,7 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "@abcnews/generator-aunty": "^2.1.2",
+    "@abcnews/generator-aunty": "^2.1.4",
     "babel-core": "^6.26.0",
     "babel-jest": "^21.2.0",
     "babel-loader": "^7.1.1",
@@ -55,7 +55,7 @@
     "update-notifier": "^2.1.0",
     "url-loader": "^0.5.9",
     "webpack": "^3.5.5",
-    "webpack-dev-server": "^2.7.1",
+    "webpack-dev-server": "2.9.7",
     "webpack-merge": "^4.1.0",
     "write-pkg": "^3.1.0",
     "yeoman-environment": "^2.0.5"
