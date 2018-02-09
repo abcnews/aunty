@@ -133,6 +133,15 @@ function createWebpackConfig(argv, config) {
       module: {
         rules: [
           {
+            test: /\.vue$/,
+            loader: 'vue-loader',
+            options: {
+              loaders: {
+                scss: 'vue-style-loader!css-loader!sass-loader' // <style lang="scss">
+              }
+            }
+          },
+          {
             test: /\.js$/,
             include: [path.resolve(config.root, buildConfig.from)],
             loader: require.resolve('babel-loader'),
