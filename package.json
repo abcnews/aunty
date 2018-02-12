@@ -17,7 +17,7 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "@abcnews/generator-aunty": "^2.1.4",
+    "@abcnews/generator-aunty": "^2.2.3",
     "babel-core": "^6.26.0",
     "babel-jest": "^21.2.0",
     "babel-loader": "^7.1.1",
@@ -54,6 +54,10 @@
     "uglifyjs-webpack-plugin": "^1.0.0-rc.0",
     "update-notifier": "^2.1.0",
     "url-loader": "^0.5.9",
+    "vue": "^2.5.13",
+    "vue-jest": "^2.0.1",
+    "vue-loader": "^14.1.1",
+    "vue-template-compiler": "^2.5.13",
     "webpack": "^3.5.5",
     "webpack-dev-server": "2.9.7",
     "webpack-merge": "^4.1.0",

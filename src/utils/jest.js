@@ -28,6 +28,30 @@ module.exports = {
     const typeConfig = require(`../projects/${projectType}`);
     const babelConfig = typeConfig.babel || {};
 
-    return BabelJest.createTransformer(babelConfig).process(src, filename, config, { sourceMaps: false });
+    if (filename.match(/\.vue$/)) {
+      // Add a dodgy hack in to trick the processor into thinking
+      // it's loading a .babelrc file
+      const findBabelConfig = require('find-babel-config');
+      const oldSync = findBabelConfig.sync;
+      findBabelConfig.sync = function(start, depth) {
+        return {
+          file: 'Internal',
+          config: {
+            presets: [require.resolve('babel-preset-env')]
+          }
+        };
+      };
+
+      // Process the file
+      const processVue = require('vue-jest/lib/process');
+      const processedSrc = processVue(src, filename);
+
+      // Remove the dodgy hack
+      findBabelConfig.sync = oldSync;
+
+      return processedSrc;
+    } else {
+      return BabelJest.createTransformer(babelConfig).process(src, filename, config, { sourceMaps: false });
+    }
   }
 };
