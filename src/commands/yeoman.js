@@ -1,4 +1,5 @@
 var yeoman = require('yeoman-environment');
+var { announce } = require('../utils/audio');
 
 module.exports.run = args => {
   return new Promise((resolve, reject) => {
@@ -24,6 +25,12 @@ module.exports.run = args => {
     args.push('--aunty');
 
     env.register(generator, command);
-    env.run(`${command} ${args.join(' ')}`, () => resolve());
+    env.run(`${command} ${args.join(' ')}`, () => {
+      if (args.indexOf('--announce') > -1 || args.indexOf('-a') > -1) {
+        announce();
+      }
+
+      resolve();
+    });
   });
 };
