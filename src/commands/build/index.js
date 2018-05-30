@@ -22,7 +22,7 @@ module.exports.build = command(
       process.env.NODE_ENV = 'production';
     }
 
-    const webpackConfig = createConfig(argv, config);
+    const webpackConfig = await createConfig(argv, config);
 
     if (argv.dry) {
       return dry({

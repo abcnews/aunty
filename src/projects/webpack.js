@@ -6,6 +6,8 @@ const FS = require('fs');
 // External
 const guessRootPath = require('guess-root-path');
 const CopyPlugin = require('copy-webpack-plugin');
+const pify = require('pify');
+const tcpp = require('tcp-ping');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -13,9 +15,12 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 // Ours
 const { BUILD_DIR, DEV_SERVER_PORT } = require('./constants');
 
+const probe = pify(tcpp.probe);
+
+const INTERNAL_HOST = '.aus.aunty.abc.net.au';
 const URL_LOADER_LIMIT = 10000;
 
-module.exports.createConfig = (argv, config, isServer) => {
+module.exports.createConfig = async (argv, config, isServer) => {
   const rootPath = config.root || guessRootPath();
   let webpackConfig;
   // If a config file exists, use it
@@ -43,7 +48,7 @@ module.exports.createConfig = (argv, config, isServer) => {
 
   // if isServer then include the devServer config and check for hot reload
   if (isServer) {
-    const devServerConfig = createDevServerConfig(argv, config);
+    const devServerConfig = await createDevServerConfig(argv, config);
     webpackConfig.map(c => {
       c.output.publicPath = devServerConfig.publicPath = `http://${devServerConfig.host}:${devServerConfig.port}/`;
       if (devServerConfig.hot) {
@@ -242,7 +247,7 @@ function createWebpackConfig(argv, config) {
   return webpackConfig;
 }
 
-function createDevServerConfig(argv, config) {
+async function createDevServerConfig(argv, config) {
   const webpackConfig = createWebpackConfig(argv, config);
 
   const isProd = process.env.NODE_ENV === 'production';
@@ -252,6 +257,12 @@ function createDevServerConfig(argv, config) {
   if (config.type) {
     projectTypeConfig = require(`./${config.type}`);
   }
+
+  // Try to reach internal known internal network, setting host to
+  // internally visible network address if successful; localhost if not.
+  const host = (await probe(`nucwed${INTERNAL_HOST}`, 80))
+    ? `${hostname().replace(INTERNAL_HOST, '')}${INTERNAL_HOST}`
+    : 'localhost';
 
   let devServerConfig = merge(
     {
@@ -267,7 +278,7 @@ function createDevServerConfig(argv, config) {
         ignored: /node_modules/
       },
       // Remember to strip before passing config to new WebpackDevServer
-      host: `${hostname().replace('.aus.aunty.abc.net.au', '')}.aus.aunty.abc.net.au`,
+      host,
       port: DEV_SERVER_PORT
     },
     projectTypeConfig.devServer || {}

@@ -24,7 +24,7 @@ module.exports.serve = command(
       process.env.NODE_ENV = 'development';
     }
 
-    const [webpackConfig, devServerConfig] = createConfig(argv, config, true);
+    const [webpackConfig, devServerConfig] = await createConfig(argv, config, true);
 
     const { port } = devServerConfig;
 
