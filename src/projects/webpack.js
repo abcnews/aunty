@@ -126,6 +126,7 @@ function createWebpackConfig(argv, config) {
 
   let webpackConfig = merge(
     {
+      mode: isProd ? 'production' : 'development',
       cache: true,
       entry: {
         index: [`${config.root}/${buildConfig.from}/${buildConfig.entry}`]
@@ -223,7 +224,10 @@ function createWebpackConfig(argv, config) {
             from: `${config.root}/public`
           }
         ])
-      ]
+      ],
+      optimization: {
+        namedModules: !isProd
+      }
     },
     projectTypeConfig.webpack || {}
   );
@@ -240,8 +244,6 @@ function createWebpackConfig(argv, config) {
         parallel: true
       })
     );
-  } else {
-    webpackConfig.plugins.push(new webpack.NamedModulesPlugin());
   }
 
   return webpackConfig;
