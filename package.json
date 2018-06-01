@@ -1,6 +1,6 @@
 {
   "name": "@abcnews/aunty",
-  "version": "7.9.0",
+  "version": "8.0.0",
   "description": "A toolkit for working with ABC News projects",
   "repository": "abcnews/aunty",
   "license": "MIT",
