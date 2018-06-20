@@ -1,32 +1,46 @@
-var yeoman = require('yeoman-environment');
-var { announce } = require('../utils/audio');
+const yeoman = require('yeoman-environment');
+const { announce } = require('../utils/audio');
+
+const CREATE_HERE_ARGS = ['init', 'i'];
+const CREATE_ARGS = ['new', 'n'].concat(CREATE_HERE_ARGS);
+const ANNOUNCE_ARGS = ['--announce', '-a'];
+const MESSAGES = {
+  generatorNameMissing: 'Generator name missing',
+  generatorDoesNotExist: name => `The generator '${name}' does not exist.`
+};
 
 module.exports.run = args => {
   return new Promise((resolve, reject) => {
-    var env = yeoman.createEnv();
+    const env = yeoman.createEnv();
+    const commandArg = args.shift();
+    let commandName = 'aunty';
+    let generatorPath = `@abcnews/generator-aunty`;
+    let generatorName;
+    let generator;
 
-    // Work out if it was just the 'new' command
-    let command = args.shift();
+    if (!CREATE_ARGS.includes(commandArg)) {
+      generatorName = args.shift();
 
-    if (command === 'new') {
-      command = 'aunty';
-      generator = require.resolve(`@abcnews/generator-aunty`);
-    } else if (command === 'init') {
-      command = 'aunty';
-      generator = require.resolve(`@abcnews/generator-aunty`);
+      if (!generatorName || generatorName.indexOf('-') === 0) {
+        return reject(new Error(MESSAGES.generatorNameMissing));
+      }
+
+      commandName += ':' + generatorName;
+      generatorPath += '/generators/' + generatorName;
+    } else if (CREATE_HERE_ARGS.includes(commandArg)) {
       args.push('--here');
-    } else {
-      // Command is actually the next arg (after generate)
-      command = args.shift();
-      generator = require.resolve(`@abcnews/generator-aunty/generators/${command}`);
-      command = `aunty:${command}`;
+    }
+
+    try {
+      generator = require.resolve(generatorPath);
+    } catch (error) {
+      return reject(new Error(MESSAGES.generatorDoesNotExist(generatorName)));
     }
 
     args.push('--aunty');
-
-    env.register(generator, command);
-    env.run(`${command} ${args.join(' ')}`, () => {
-      if (args.indexOf('--announce') > -1 || args.indexOf('-a') > -1) {
+    env.register(generator, commandName);
+    env.run(`${commandName} ${args.join(' ')}`, () => {
+      if (ANNOUNCE_ARGS.some(x => args.includes(x))) {
         announce();
       }
 

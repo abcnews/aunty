@@ -3,18 +3,6 @@ const { hvy } = require('../utils/color');
 
 module.exports.CONFIG_FILE_NAME = 'aunty.config.js';
 
-const BASIC_APP = (module.exports.BASIC_APP = 'basic-app');
-const PREACT_APP = (module.exports.PREACT_APP = 'preact-app');
-const REACT_APP = (module.exports.REACT_APP = 'react-app');
-
-module.exports.PROJECT_TYPES = new Set([BASIC_APP, PREACT_APP, REACT_APP]);
-
-module.exports.PROJECT_TYPE_DESCRIPTIONS = {
-  [BASIC_APP]: 'a vanilla JS app.',
-  [PREACT_APP]: 'a Preact-enabled app.',
-  [REACT_APP]: 'a React-enabled app.'
-};
-
 const BUILD_DIR = (module.exports.BUILD_DIR = 'build');
 
 module.exports.DEV_SERVER_PORT = 8000;

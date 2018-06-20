@@ -1,8 +1,6 @@
 // Ours
-const { PROJECT_TYPE_DESCRIPTIONS } = require('../projects/constants');
 const { createLogo } = require('../utils/branding');
-const { cmd, dim, hvy, opt, req, sec } = require('../utils/color');
-const { indented, listPairs } = require('../utils/strings');
+const { cmd, hvy, opt, req, sec } = require('../utils/color');
 
 module.exports.OPTIONS = {
   boolean: ['help', 'version'],
@@ -17,14 +15,22 @@ const ALIASES = (module.exports.ALIASES = {
   c: 'clean',
   d: 'deploy',
   h: 'help',
-  i: 'init',
-  n: 'new',
   r: 'release',
   s: 'serve'
 });
 
+const YEOMAN_ALIASES = {
+  g: 'generate',
+  i: 'init',
+  n: 'new'
+};
+
 module.exports.COMMANDS = new Set(
   [].concat(Object.keys(ALIASES).map(key => ALIASES[key])).concat(Object.keys(ALIASES))
+);
+
+module.exports.YEOMAN_COMMANDS = new Set(
+  [].concat(Object.keys(YEOMAN_ALIASES).map(key => YEOMAN_ALIASES[key])).concat(Object.keys(YEOMAN_ALIASES))
 );
 
 module.exports.DEFAULTS = {
