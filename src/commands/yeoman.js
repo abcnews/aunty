@@ -18,7 +18,7 @@ module.exports.run = args => {
     let generatorName;
     let generator;
 
-    if (!CREATE_ARGS.includes(commandArg)) {
+    if (!CREATE_ARGS.includes(commandArg) && args[0] !== '--help') {
       generatorName = args.shift();
 
       if (!generatorName || generatorName.indexOf('-') === 0) {
