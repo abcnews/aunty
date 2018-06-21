@@ -4,7 +4,7 @@ const WebpackDevServer = require('webpack-dev-server');
 
 // Ours
 const { command } = require('../../cli');
-const { createConfig } = require('../../projects/webpack');
+const { createConfig } = require('../../config/webpack');
 const { throws } = require('../../utils/async');
 const { cmd } = require('../../utils/color');
 const { dry, info, spin } = require('../../utils/logging');
@@ -17,7 +17,7 @@ module.exports.serve = command(
     name: 'serve',
     options: OPTIONS,
     usage: MESSAGES.usage,
-    isConfigRequired: true
+    isProjectConfigRequired: true
   },
   async (argv, config) => {
     if (!process.env.NODE_ENV) {

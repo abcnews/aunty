@@ -1,16 +1,12 @@
+// Native
+
 // External
-const pkgDir = require('pkg-dir');
-const readPkg = require('read-pkg');
+const guessRootPath = require('guess-root-path');
 
 // Ours
-const { packs, prequire, unpack } = require('../utils/async');
-const { isRepo, getCurrentLabel } = require('../utils/git');
-const { pretty } = require('../utils/logging');
+const { isRepoSync, getCurrentLabelSync } = require('../utils/git');
+const { pretty, warn } = require('../utils/logging');
 const { CONFIG_FILE_NAME, DEFAULTS, KNOWN_TARGETS, MESSAGES } = require('./constants');
-
-// Wrapped
-const getPkg = packs(readPkg);
-const getPkgDir = packs(pkgDir);
 
 // Cached
 let root;
@@ -24,7 +20,7 @@ function resolveDeployConfig(config) {
     const value = config.deploy[key];
     const partialTargets = Array.isArray(value) ? value : [value];
 
-    partialTargets.forEach((partialTarget, index) => {
+    partialTargets.forEach(partialTarget => {
       if (!partialTarget._from) {
         partialTarget._from = partialTarget.from;
       }
@@ -47,9 +43,9 @@ function resolveDeployConfig(config) {
   return config;
 }
 
-module.exports.getConfig = packs(async argv => {
+module.exports.getConfig = argv => {
   if (!root) {
-    root = unpack(await getPkgDir());
+    root = guessRootPath();
   }
 
   if (root === null) {
@@ -57,15 +53,23 @@ module.exports.getConfig = packs(async argv => {
   }
 
   if (!pkg) {
-    pkg = unpack(await getPkg(root, { normalize: false }));
+    try {
+      pkg = require(`${root}/package.json`);
+    } catch (err) {
+      throw pretty(err);
+    }
   }
 
   if (!config) {
-    const [err, configFileConfig] = await prequire(`${root}/${CONFIG_FILE_NAME}`);
+    let configFileConfig;
 
-    // The standalone config file is optional, but it may have syntax problems
-    if (err && err.code !== 'MODULE_NOT_FOUND') {
-      throw pretty(err);
+    try {
+      pkg = require(`${root}/${CONFIG_FILE_NAME}`);
+    } catch (err) {
+      // The standalone config file is optional, but it may have syntax problems
+      if (err.code !== 'MODULE_NOT_FOUND') {
+        throw pretty(err);
+      }
     }
 
     let auntyConfig = configFileConfig || pkg.aunty || {};
@@ -81,14 +85,21 @@ module.exports.getConfig = packs(async argv => {
       },
       auntyConfig
     );
+
+    if (config.type && config.type.indexOf('-app') > -1) {
+      // This notice can be removed in a later major bump. Introduced for 9.0.0.
+      warn(
+        `It looks like your aunty config has an outdated project type. Remove the '-app' suffix and you should be good.\n`
+      );
+    }
   }
 
   return resolveDeployConfig(
     Object.assign(
       {
-        id: argv.id || ((await isRepo()) && (await getCurrentLabel())) || 'default'
+        id: (argv && argv.id) || (isRepoSync() && getCurrentLabelSync()) || 'default'
       },
       config
     )
   );
-});
+};

@@ -1,6 +1,6 @@
 // Ours
 const { cmd, opt, sec } = require('../../utils/color');
-const { DEV_SERVER_PORT } = require('../../projects/constants');
+const { DEV_SERVER_PORT } = require('../../config/constants');
 
 module.exports.OPTIONS = {
   string: ['host', 'hot', 'port']

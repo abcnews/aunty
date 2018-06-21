@@ -1,7 +1,7 @@
 // Native
+const { existsSync } = require('fs');
 const { hostname } = require('os');
 const path = require('path');
-const FS = require('fs');
 
 // External
 const guessRootPath = require('guess-root-path');
@@ -13,18 +13,30 @@ const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 // Ours
+const { createConfig: createBabelConfig } = require('./babel');
 const { BUILD_DIR, DEV_SERVER_PORT } = require('./constants');
 
 const probe = pify(tcpp.probe);
 
 const INTERNAL_HOST = '.aus.aunty.abc.net.au';
 const URL_LOADER_LIMIT = 10000;
+const PROJECT_TYPES_DEFAULT_CONFIG = {
+  preact: {
+    resolve: {
+      alias: {
+        react: 'preact-compat',
+        'react-dom': 'preact-compat',
+        'create-react-class': 'preact-compat/lib/create-react-class'
+      }
+    }
+  }
+};
 
 module.exports.createConfig = async (argv, config, isServer) => {
   const rootPath = config.root || guessRootPath();
   let webpackConfig;
   // If a config file exists, use it
-  if (FS.existsSync(`${rootPath}/webpack.config.js`)) {
+  if (existsSync(`${rootPath}/webpack.config.js`)) {
     webpackConfig = require(`${rootPath}/webpack.config.js`);
     if (!webpackConfig instanceof Array) {
       webpackConfig = [webpackConfig];
@@ -71,11 +83,6 @@ function createWebpackConfig(argv, config) {
 
   const isProd = process.env.NODE_ENV === 'production';
   const publicURL = argv.target ? config.deploy[argv.target].publicURL : '/';
-  let projectTypeConfig = {};
-
-  if (config.type) {
-    projectTypeConfig = require(`./${config.type}`);
-  }
 
   const buildConfig = merge(
     {
@@ -94,36 +101,6 @@ function createWebpackConfig(argv, config) {
     process.noDeprecation = true;
   }
 
-  const browsers = config.buildWithModules
-    ? ['Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15']
-    : ['> 1% in au', '> 5%', 'Firefox ESR'];
-
-  let babelOptions = merge(
-    {
-      presets: [
-        [
-          require.resolve('babel-preset-env'),
-          {
-            targets: {
-              browsers
-            },
-            useBuiltIns: true,
-            modules: false
-          }
-        ]
-      ],
-      plugins: [require.resolve('babel-plugin-transform-object-rest-spread')],
-      cacheDirectory: true
-    },
-    projectTypeConfig.babel || {}
-  );
-
-  if (typeof config.babel === 'function') {
-    babelOptions = config.babel(babelOptions);
-  } else if (typeof config.babel === 'object') {
-    babelOptions = merge(babelOptions, config.babel);
-  }
-
   let webpackConfig = merge(
     {
       mode: isProd ? 'production' : 'development',
@@ -140,7 +117,7 @@ function createWebpackConfig(argv, config) {
         rules: [
           {
             test: /\.vue$/,
-            loader: 'vue-loader',
+            loader: require.resolve('vue-loader'),
             options: {
               loaders: {
                 scss: 'vue-style-loader!css-loader!sass-loader' // <style lang="scss">
@@ -151,7 +128,7 @@ function createWebpackConfig(argv, config) {
             test: /\.js$/,
             include: [path.resolve(config.root, buildConfig.from)],
             loader: require.resolve('babel-loader'),
-            options: babelOptions
+            options: createBabelConfig(config)
           },
           {
             test: /\.(css|scss)$/,
@@ -229,7 +206,7 @@ function createWebpackConfig(argv, config) {
         namedModules: !isProd
       }
     },
-    projectTypeConfig.webpack || {}
+    (config.type && PROJECT_TYPES_DEFAULT_CONFIG[config.type]) || {}
   );
 
   if (typeof config.webpack === 'function') {
@@ -250,15 +227,7 @@ function createWebpackConfig(argv, config) {
 }
 
 async function createDevServerConfig(argv, config) {
-  const webpackConfig = createWebpackConfig(argv, config);
-
   const isProd = process.env.NODE_ENV === 'production';
-  const publicURL = argv.target ? config.deploy[argv.target].publicURL : '/';
-  let projectTypeConfig = {};
-
-  if (config.type) {
-    projectTypeConfig = require(`./${config.type}`);
-  }
 
   // Try to reach internal known internal network, setting host to
   // internally visible network address if successful; localhost if not.
@@ -266,25 +235,22 @@ async function createDevServerConfig(argv, config) {
     ? `${hostname().replace(INTERNAL_HOST, '')}${INTERNAL_HOST}`
     : 'localhost';
 
-  let devServerConfig = merge(
-    {
-      disableHostCheck: true,
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
-      hot: !isProd,
-      noInfo: true,
-      overlay: true,
-      quiet: true,
-      watchOptions: {
-        ignored: /node_modules/
-      },
-      // Remember to strip before passing config to new WebpackDevServer
-      host,
-      port: DEV_SERVER_PORT
+  let devServerConfig = {
+    disableHostCheck: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*'
     },
-    projectTypeConfig.devServer || {}
-  );
+    hot: !isProd,
+    noInfo: true,
+    overlay: true,
+    quiet: true,
+    watchOptions: {
+      ignored: /node_modules/
+    },
+    // Remember to strip before passing config to new WebpackDevServer
+    host,
+    port: DEV_SERVER_PORT
+  };
 
   if (typeof config.devServer === 'function') {
     devServerConfig = config.devServer(devServerConfig);

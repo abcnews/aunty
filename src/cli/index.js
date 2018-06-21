@@ -8,7 +8,7 @@ const updateNotifier = require('update-notifier');
 
 // Ours
 const pkg = require('../../package');
-const { getConfig } = require('../projects/config');
+const { getConfig: getProjectConfig } = require('../config/project');
 const { pack, packs, throws } = require('../utils/async');
 const { createCommandLogo } = require('../utils/branding');
 const { log } = require('../utils/logging');
@@ -65,7 +65,7 @@ module.exports.cli = packs(async args => {
 
 let isEntryCommand;
 
-module.exports.command = ({ name, options, usage, isProxy, isConfigRequired }, fn) => {
+module.exports.command = ({ name, options, usage, isProjectConfigRequired }, fn) => {
   name = name || DEFAULTS.name;
   options = merge(options || {}, DEFAULTS.options);
   usage = usage || MESSAGES.usageFallback;
@@ -87,8 +87,8 @@ module.exports.command = ({ name, options, usage, isProxy, isConfigRequired }, f
 
     argv.$ = args;
 
-    if (isConfigRequired) {
-      [err, config] = await getConfig(argv);
+    if (isProjectConfigRequired) {
+      config = getProjectConfig(argv);
       fnArgs.splice(1, 0, config);
     }
 

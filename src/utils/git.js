@@ -1,3 +1,6 @@
+// Native
+const { spawnSync } = require('child_process');
+
 // External
 const execa = require('execa');
 
@@ -16,7 +19,15 @@ function git(args = [], options = {}) {
   return execa('git', args, options);
 }
 
-module.exports.isRepo = async cwd => !(await pack(git('rev-parse --git-dir', { cwd })))[0];
+function gitSync(args = '', options = {}) {
+  args = Array.isArray(args) ? args.join(' ') : args;
+
+  return spawnSync(`git ${args}`, options);
+}
+
+module.exports.isRepo = async () => !(await pack(git('rev-parse --git-dir')))[0];
+
+module.exports.isRepoSync = () => !gitSync('rev-parse --git-dir').error;
 
 module.exports.getConfigValue = async key => (await git(`config --get ${key}`)).stdout;
 
@@ -24,12 +35,19 @@ module.exports.getRemotes = async () => new Set((await git('remote')).stdout.spl
 
 module.exports.hasChanges = async () => (await git('status -s')).stdout.length > 0;
 
-module.exports.getCurrentLabel = async () => {
-  const stdout = (await git('branch')).stdout;
+const _parseLabel = stdout => {
   const [, branch] = stdout.match(PATTERNS.ACTIVE_BRANCH) || [null, 'uncommitted'];
   const [, detachedHeadCommit] = branch.match(PATTERNS.DETACHED_HEAD) || [];
 
   return detachedHeadCommit || branch;
+};
+
+module.exports.getCurrentLabel = async () => {
+  return _parseLabel((await git('branch')).stdout);
+};
+
+module.exports.getCurrentLabelSync = () => {
+  return _parseLabel(gitSync('branch').stdout);
 };
 
 module.exports.commitAll = message => git(['commit', '-a', '-m', `${message}`]);

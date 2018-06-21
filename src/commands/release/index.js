@@ -31,7 +31,7 @@ module.exports.release = command(
     name: 'release',
     options: OPTIONS,
     usage: MESSAGES.usage,
-    isConfigRequired: true
+    isProjectConfigRequired: true
   },
   async (argv, config) => {
     if (argv.bump && !VALID_BUMPS.has(argv.bump)) {
