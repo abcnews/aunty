@@ -84,7 +84,7 @@ module.exports.deploy = command(
     name: 'deploy',
     options: OPTIONS,
     usage: MESSAGES.usage,
-    isConfigRequired: true
+    isProjectConfigRequired: true
   },
   async (argv, config) => {
     // 1) Get known/specified deployment target(s)

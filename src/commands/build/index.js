@@ -4,7 +4,7 @@ const webpack = require('webpack');
 
 // Ours
 const { command } = require('../../cli');
-const { createConfig } = require('../../projects/webpack');
+const { createConfig } = require('../../config/webpack');
 const { packs, throws, unpack } = require('../../utils/async');
 const { dry, info, spin, warn } = require('../../utils/logging');
 const { clean } = require('../clean');
@@ -14,7 +14,7 @@ const Chalk = require('chalk');
 module.exports.build = command(
   {
     name: 'build',
-    isConfigRequired: true,
+    isProjectConfigRequired: true,
     usage: MESSAGES.usage
   },
   async (argv, config) => {

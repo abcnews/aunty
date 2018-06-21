@@ -1,5 +1,5 @@
 // Ours
-const { BUILD_DIR } = require('../../projects/constants');
+const { BUILD_DIR } = require('../../config/constants');
 const { cmd, ok, opt, req, sec } = require('../../utils/color');
 const { bulleted, styleLastSegment } = require('../../utils/strings');
 

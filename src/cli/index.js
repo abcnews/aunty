@@ -8,12 +8,12 @@ const updateNotifier = require('update-notifier');
 
 // Ours
 const pkg = require('../../package');
-const { getConfig } = require('../projects/config');
+const { getConfig: getProjectConfig } = require('../config/project');
 const { pack, packs, throws } = require('../utils/async');
 const { createCommandLogo } = require('../utils/branding');
 const { log } = require('../utils/logging');
 const { slugToCamel } = require('../utils/strings');
-const { ALIASES, COMMANDS, DEFAULTS, OPTIONS, MESSAGES } = require('./constants');
+const { ALIASES, COMMANDS, YEOMAN_COMMANDS, DEFAULTS, OPTIONS, MESSAGES } = require('./constants');
 
 const isArgHelpCommand = arg => {
   return (ALIASES[arg] || arg) === 'help';
@@ -31,14 +31,16 @@ module.exports.cli = packs(async args => {
   let commandName = argv._[0] || '';
   const isHelp = isArgHelpCommand(commandName);
 
-  // Some commands are provided by the Yeoman generator
-  const yeomanCommands = ['n', 'new', 'i', 'init', 'g', 'generate'];
-  if (yeomanCommands.includes(commandName)) {
-    await require('../commands/yeoman').run(args);
-    return;
-  } else if (isHelp && yeomanCommands.includes(argv._[1])) {
-    await require('../commands/yeoman').run(args.slice(1).concat('--help'));
-    return;
+  let yeomanArgs;
+
+  if (YEOMAN_COMMANDS.has(commandName)) {
+    yeomanArgs = args;
+  } else if (isHelp && YEOMAN_COMMANDS.has(argv._[1])) {
+    yeomanArgs = args.slice(1).concat('--help');
+  }
+
+  if (yeomanArgs) {
+    return await require('../commands/yeoman').run(yeomanArgs);
   }
 
   if (!commandName || (isHelp && (argv._.length === 1 || isArgHelpCommand(argv._[1])))) {
@@ -63,7 +65,7 @@ module.exports.cli = packs(async args => {
 
 let isEntryCommand;
 
-module.exports.command = ({ name, options, usage, isProxy, isConfigRequired }, fn) => {
+module.exports.command = ({ name, options, usage, isProjectConfigRequired }, fn) => {
   name = name || DEFAULTS.name;
   options = merge(options || {}, DEFAULTS.options);
   usage = usage || MESSAGES.usageFallback;
@@ -85,8 +87,8 @@ module.exports.command = ({ name, options, usage, isProxy, isConfigRequired }, f
 
     argv.$ = args;
 
-    if (isConfigRequired) {
-      [err, config] = await getConfig(argv);
+    if (isProjectConfigRequired) {
+      config = getProjectConfig(argv);
       fnArgs.splice(1, 0, config);
     }
 
