@@ -31,7 +31,7 @@
     "del": "^3.0.0",
     "execa": "^0.8.0",
     "file-loader": "^1.1.11",
-    "ftp-deploy": "^1.2.2",
+    "ftp-deploy": "^2.0.0",
     "guess-root-path": "^1.0.0",
     "html-loader": "^0.5.5",
     "import-local": "^0.1.1",
