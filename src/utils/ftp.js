@@ -22,9 +22,9 @@ module.exports = (target, spinner) => {
         ftpDeploy.on('uploaded', data => {
           if (spinner) {
             const filesTransferred = padLeft(data.transferredFileCount, data.totalFilesCount.toString().length, ' ');
-            const filename = data.transferredFileCount === data.totalFileCount ? '' : ` ${data.filename}`;
+            const filename = data.transferredFileCount === data.totalFilesCount ? '' : ` ${data.filename}`;
 
-            spinner.text = 'Deploy ' + gray(`(${filesTransferred}/${data.totalFileCount})${filename}`);
+            spinner.text = 'Deploy ' + gray(`(${filesTransferred}/${data.totalFilesCount})${filename}`);
           }
         });
 
