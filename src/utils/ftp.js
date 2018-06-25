@@ -21,7 +21,7 @@ module.exports = (target, spinner) => {
 
         ftpDeploy.on('uploaded', data => {
           if (spinner) {
-            const filesTransferred = padLeft(data.transferredFileCount, data.totalFileCount.toString().length, ' ');
+            const filesTransferred = padLeft(data.transferredFileCount, data.totalFilesCount.toString().length, ' ');
             const filename = data.transferredFileCount === data.totalFileCount ? '' : ` ${data.filename}`;
 
             spinner.text = 'Deploy ' + gray(`(${filesTransferred}/${data.totalFileCount})${filename}`);
@@ -32,11 +32,13 @@ module.exports = (target, spinner) => {
           {
             host: target.host,
             port: target.port || 21,
-            username: target.username,
+            user: target.username,
             password: target.password,
             localRoot: target.from,
             remoteRoot: target.to,
-            include: [target.files]
+            include: [target.files],
+            exclude: [],
+            deleteRoot: false
           },
           err => {
             if (err) return reject(err);
