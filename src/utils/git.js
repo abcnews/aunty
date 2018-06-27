@@ -19,10 +19,14 @@ function git(args = [], options = {}) {
   return execa('git', args, options);
 }
 
-function gitSync(args = '', options = {}) {
-  args = Array.isArray(args) ? args.join(' ') : args;
+const GIT_SYNC_DEFAULTS = {
+  encoding: 'utf-8'
+};
 
-  return spawnSync(`git ${args}`, options);
+function gitSync(args = '', options = {}) {
+  args = typeof args === 'string' ? args.split(' ') : args;
+
+  return spawnSync('git', args, Object.assign({}, GIT_SYNC_DEFAULTS, options));
 }
 
 module.exports.isRepo = async () => !(await pack(git('rev-parse --git-dir')))[0];
