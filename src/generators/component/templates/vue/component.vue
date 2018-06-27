@@ -1,12 +1,12 @@
 <template>
   <div class="wrapper">
-    Find me in <strong>src/components/<%= className %>.js</strong>
+    Find me in <strong>src/components/<%= className %>.vue</strong>
   </div>
 </template>
 
 <script>
 export default {
-  name: "<%= className %>",
+  name: '<%= className %>',
   data() {
     return {};
   }

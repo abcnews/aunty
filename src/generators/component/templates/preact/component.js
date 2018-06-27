@@ -1,12 +1,12 @@
 const { h, Component } = require('preact');
 
-const styles = require('./<%= className %>.scss');
+const styles = require('./styles.scss');
 
 class <%= className %> extends Component {
   render() {
     return (
       <div className={styles.wrapper}>
-        Find me in <strong>src/components/<%= className %>.js</strong>
+        Find me in <strong>src/components/<%= className %>/index.js</strong>
       </div>
     );
   }

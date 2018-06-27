@@ -1,7 +1,7 @@
 const React = require('react');
 const d3 = require('d3-selection');
 
-const styles = require('./<%= className %>.scss');
+const styles = require('./styles.scss');
 
 class <%= className %> extends React.Component {
   constructor(props) {

@@ -1,11 +1,11 @@
 const React = require('react');
-const styles = require('./<%= className %>.scss');
+const styles = require('./styles.scss');
 
 class <%= className %> extends React.Component {
   render() {
     return (
       <div className={styles.wrapper}>
-        Find me in <strong>src/components/<%= className %>.js</strong>
+        Find me in <strong>src/components/<%= className %>/index.js</strong>
       </div>
     );
   }

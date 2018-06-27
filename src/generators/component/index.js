@@ -114,25 +114,32 @@ module.exports = class extends Generator {
         this.destinationPath(`src/components/${this.options.name}.vue`),
         context
       );
+
+      // Copy test over
+      this.fs.copyTpl(
+        `${templatePath}/${component}.test.js`,
+        this.destinationPath(`src/components/__tests__/${this.options.name}.test.js`),
+        context
+      );
     } else {
       this.fs.copyTpl(
         `${templatePath}/${component}.js`,
-        this.destinationPath(`src/components/${this.options.name}.js`),
+        this.destinationPath(`src/components/${this.options.name}/index.js`),
         context
       );
       this.fs.copyTpl(
         `${templatePath}/component.scss`,
-        this.destinationPath(`src/components/${this.options.name}.scss`),
+        this.destinationPath(`src/components/${this.options.name}/styles.scss`),
+        context
+      );
+
+      // Copy test over
+      this.fs.copyTpl(
+        `${templatePath}/${component}.test.js`,
+        this.destinationPath(`src/components/${this.options.name}/index.test.js`),
         context
       );
     }
-
-    // Copy test over
-    this.fs.copyTpl(
-      `${templatePath}/${component}.test.js`,
-      this.destinationPath(`src/components/__tests__/${this.options.name}.test.js`),
-      context
-    );
   }
 
   async install() {

@@ -1,7 +1,7 @@
 const { h, Component } = require('preact');
 const d3 = require('d3-selection');
 
-const styles = require('./<%= className %>.scss');
+const styles = require('./styles.scss');
 
 class <%= className %> extends Component {
   constructor(props) {

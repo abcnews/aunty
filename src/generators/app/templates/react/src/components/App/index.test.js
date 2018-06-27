@@ -1,7 +1,7 @@
 const React = require('react');
 const renderer = require('react-test-renderer');
 
-const App = require('../App');
+const App = require('.');
 
 describe('App', () => {
   test('It renders', () => {

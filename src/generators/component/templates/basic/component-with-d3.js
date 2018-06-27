@@ -1,6 +1,6 @@
 const d3 = require('d3-selection');
 
-const styles = require('./<%= className %>.scss');
+const styles = require('./styles.scss');
 
 function <%= className %>() {
   this.el = document.createElement('div');

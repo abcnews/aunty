@@ -1,4 +1,4 @@
-const styles = require('./App.scss');
+const styles = require('./styles.scss');
 const worm = require('./worm.svg');
 
 function App({ projectName }) {

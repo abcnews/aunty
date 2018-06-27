@@ -1,5 +1,5 @@
 const { h, Component } = require('preact');
-const styles = require('./App.scss');
+const styles = require('./styles.scss');
 const worm = require('./worm.svg');
 
 class App extends Component {

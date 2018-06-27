@@ -1,4 +1,4 @@
-const styles = require('./ErrorBox.css');
+const styles = require('./styles.css');
 
 function ErrorBox({ error }) {
   const el = (this.el = document.createElement('pre'));

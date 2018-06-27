@@ -2,7 +2,7 @@ const { h } = require('preact');
 const render = require('preact-render-to-string');
 const htmlLooksLike = require('html-looks-like');
 
-const App = require('../App');
+const App = require('.');
 
 describe('App', () => {
   test('It renders', () => {
