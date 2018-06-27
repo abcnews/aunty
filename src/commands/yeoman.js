@@ -19,8 +19,8 @@ module.exports.run = args => {
     let generatorName = 'app';
     let generator;
 
-    if (commandArg === 'fragment') {
-      generatorName = commandArg;
+    if (['f', 'fragment'].includes(commandArg)) {
+      generatorName = 'fragment';
     } else if (!CREATE_ARGS.includes(commandArg) && args[0] !== '--help') {
       generatorName = args.shift();
 
