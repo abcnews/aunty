@@ -17,7 +17,6 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "@abcnews/generator-aunty": "^3.0.0",
     "babel-core": "^6.26.3",
     "babel-jest": "^21.2.0",
     "babel-loader": "^7.1.4",
