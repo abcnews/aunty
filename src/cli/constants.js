@@ -20,6 +20,7 @@ const ALIASES = (module.exports.ALIASES = {
 });
 
 const YEOMAN_ALIASES = {
+  f: 'fragment',
   g: 'generate',
   i: 'init',
   n: 'new'
