@@ -8,40 +8,49 @@ const babelJest = require('babel-jest');
 const { createConfig: createBabelConfig } = require('../config/babel');
 const { getConfig: getProjectConfig } = require('../config/project');
 
+const MEDIA_RESOURCE_PATTERN = /\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$/;
+const STYLE_RESOURCE_PATTERN = /\.s?css$/;
+const STYLE_RESOURCE_REPLACEMENT = 'module.exports = new Proxy({}, { get: (styles, method) => method });';
+const VUE_RESOURCE_PATTERN = /\.vue$/;
+
 module.exports = {
   process(src, filename, config) {
-    // Handle media requires
-    if (filename.match(/\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$/)) {
+    // Mock media & style resources
+    if (filename.match(MEDIA_RESOURCE_PATTERN)) {
       return 'module.exports = ' + JSON.stringify(path.basename(filename)) + ';';
-    } else if (filename.match(/\.s?css$/)) {
-      return `module.exports = new Proxy({}, { get: (styles, method) => method });`;
+    } else if (filename.match(STYLE_RESOURCE_PATTERN)) {
+      return STYLE_RESOURCE_REPLACEMENT;
     }
 
-    const projectConfig = getProjectConfig();
-    const babelConfig = createBabelConfig(projectConfig);
+    const babelConfig = createBabelConfig(getProjectConfig());
 
-    if (filename.match(/\.vue$/)) {
-      // Add a dodgy hack in to trick the processor into thinking
-      // it's loading a .babelrc file
-      const findBabelConfig = require('find-babel-config');
-      const oldSync = findBabelConfig.sync;
-      findBabelConfig.sync = () => {
-        return {
-          file: 'Internal',
-          config: babelConfig
-        };
-      };
-
-      // Process the file
-      const processVue = require('vue-jest/lib/process');
-      const processedSrc = processVue(src, filename);
-
-      // Remove the dodgy hack
-      findBabelConfig.sync = oldSync;
-
-      return processedSrc;
+    // Process Vue files, ensuring babel config is used
+    if (filename.match(VUE_RESOURCE_PATTERN)) {
+      return processVue(src, filename, babelConfig);
     }
 
+    // Run everything else through babel
     return babelJest.createTransformer(babelConfig).process(src, filename, config, { sourceMaps: false });
   }
 };
+
+function processVue(src, filename, babelConfig) {
+  // `find-babel-config`is a dependency of `vue-jest` which looks for babel
+  // config in a project's package.json or .babelrc file, rather than allowing
+  // us to pass it directly into its processor. Here, we temporarily replace
+  // its `sync` function before `vue-jest` requires it, allowing us to trick it
+  // into thinking it found our`babelConfig` during its search.
+
+  const findBabelConfig = require('find-babel-config');
+  const _sync = findBabelConfig.sync;
+  let processedSrc;
+
+  findBabelConfig.sync = () => ({
+    file: 'Internal',
+    config: babelConfig
+  });
+  processedSrc = require('vue-jest/lib/process')(src, filename);
+  findBabelConfig.sync = _sync;
+
+  return processedSrc;
+}
