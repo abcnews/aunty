@@ -1,4 +1,5 @@
 const yeoman = require('yeoman-environment');
+const path = require('path');
 const { announce } = require('../utils/audio');
 
 const CREATE_HERE_ARGS = ['init', 'i'];
@@ -14,8 +15,8 @@ module.exports.run = args => {
     const env = yeoman.createEnv();
     const commandArg = args.shift();
     let commandName = 'aunty';
-    let generatorPath = `@abcnews/generator-aunty`;
-    let generatorName;
+    let generatorPath = path.resolve(__dirname + '/../generators');
+    let generatorName = 'app';
     let generator;
 
     if (!CREATE_ARGS.includes(commandArg) && args[0] !== '--help') {
@@ -26,10 +27,11 @@ module.exports.run = args => {
       }
 
       commandName += ':' + generatorName;
-      generatorPath += '/generators/' + generatorName;
     } else if (CREATE_HERE_ARGS.includes(commandArg)) {
       args.push('--here');
     }
+
+    generatorPath += '/' + generatorName;
 
     try {
       generator = require.resolve(generatorPath);
