@@ -1,0 +1,20 @@
+{
+  "name": "<%= projectSlug %>",
+  "version": "1.0.0",
+  "description": "A project generated from aunty's <%= projectType %> app template.",
+  "license": "MIT",
+  "private": true,
+  "contributors": ["<%= authorName %> <<%= authorEmail %>>"],
+  "aunty": {
+    "type": "<%= projectType %>"
+  },
+  "scripts": {
+    "start": "aunty serve",
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      ".*": "<rootDir>/node_modules/@abcnews/aunty/src/utils/jest"
+    }
+  }
+}
