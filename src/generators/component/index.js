@@ -143,42 +143,37 @@ module.exports = class extends Generator {
   }
 
   async install() {
+    const devDependencies = [];
+    const dependencies = [];
+
     switch (this.options.template) {
       case 'preact':
-        this.dependencies = this.dependencies.concat(['preact', 'preact-compat']);
-        this.devDependencies = this.devDependencies.concat([
-          'html-looks-like',
-          'preact-render-to-string',
-          'babel-plugin-transform-react-jsx',
-          'babel-preset-env'
-        ]);
+        devDependencies.push('html-looks-like', 'preact-render-to-string');
+        dependencies.push('preact', 'preact-compat');
         break;
-
       case 'react':
-        this.dependencies = this.dependencies.concat(['react', 'react-dom']);
-        this.devDependencies = this.devDependencies.concat([
-          'react-test-renderer',
-          'babel-preset-react',
-          'babel-preset-env'
-        ]);
+        devDependencies.push('react-test-renderer');
+        dependencies.push('react', 'react-dom');
         break;
-
       case 'vue':
-        this.dependencies = this.dependencies.concat(['vue']);
-        this.devDependencies = this.devDependencies.concat([
-          'vue-loader',
-          'vue-template-compiler',
-          'vue-server-renderer'
-        ]);
+        devDependencies.push('@vue/test-utils');
+        dependencies.push('vue');
         break;
-
       default:
-      case 'basic':
-        this.devDependencies = this.devDependencies.concat(['babel-preset-env']);
+        break;
     }
 
-    await installDependencies(this.devDependencies, '--save-dev', this.log);
-    await installDependencies(this.dependencies, '--save', this.log);
+    const allDependencies = [].concat(devDependencies).concat(dependencies);
+    const projectDirectoryName = this.options.path.split('/').reverse()[0];
+
+    if (allDependencies.includes(projectDirectoryName)) {
+      throw new Error(
+        `npm will refuse to install a package ("${projectDirectoryName}") which matches the project directory name.`
+      );
+    }
+
+    await installDependencies(devDependencies.sort(), ['--save-dev'], this.log);
+    await installDependencies(dependencies.sort(), null, this.log);
   }
 
   end() {
