@@ -118,7 +118,7 @@ module.exports = class extends Generator {
       // Nothing
     }
 
-    const devDependencies = [`@abcnews/aunty${auntyVersion ? `@${auntyVersion}` : ''}`, 'jest'];
+    const devDependencies = [`@abcnews/aunty${auntyVersion ? `@${auntyVersion}` : ''}`];
     const dependencies = [];
 
     switch (this.options.template) {

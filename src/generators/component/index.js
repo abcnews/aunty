@@ -20,7 +20,7 @@ module.exports = class extends Generator {
     this.option('d3', { description: 'This component will use D3' });
 
     this.dependencies = [];
-    this.devDependencies = ['jest'];
+    this.devDependencies = [];
   }
 
   usage() {

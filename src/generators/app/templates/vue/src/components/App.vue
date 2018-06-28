@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import worm from './worm.svg';
+import worm from './App/worm.svg';
 // import NewComponent from "./NewComponent.vue";
 
 export default {

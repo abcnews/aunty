@@ -24,10 +24,10 @@ aunty help <command>
 
 The CLI contains four types of command, grouped by purpose:
 
-* Creating new projects (`new`, `init`)
-* Generating stuff (`generate`) like components
-* Developing projects (`clean`, `build`, `serve`)
-* Deploying (un)versioned projects (`deploy`, `release`)
+- Creating new projects (`new`, `init`)
+- Generating stuff (`generate`) like components
+- Developing projects (`clean`, `build`, `serve`, `test`)
+- Deploying (un)versioned projects (`deploy`, `release`)
 
 ### Starting projects
 
@@ -60,6 +60,7 @@ module.exports = {
   type: '<project_type>',
   webpack: {…},
   babel: {…},
+  jest: {…},
   devServer: {…},
   build: {…},
   deploy: {…}
@@ -73,15 +74,16 @@ module.exports = {
   "type": "<project_type>",
   "webpack": {…},
   "babel": {…},
+  "jest": {…},
   "devServer": {…},
-  "build": {…}, 
+  "build": {…},
   "deploy": {…}
 }
 ```
 
-Supported project `type`s have their own default build configuration, but you can override it by extending your local configuration. The `webpack` property's value will be merged with the project's default webpack configuration, including any babel options you specify on the `babel` property. When running the local development server, you can pass additional options on the `devServer` property. Optionally, you can supply a function for the `webpack`, `babel` and/or `devServer` properties, which will be passed the config opjects for you to manually modify and return.
+Supported project `type`s have their own default build configuration, but you can override it by extending your local configuration. The `webpack` property's value will be merged with the project's default webpack configuration, including any babel options you specify on the `babel` property. The same applies to running tests with `jest` (which also uses the babel config). When running the local development server, you can pass additional options on the `devServer` property. Optionally, you can supply a function for the `webpack`, `babel`, `jest` and/or `devServer` properties, which will be passed the config opjects for you to manually modify and return.
 
-If you're looking to see what the default configuration is, or the impact of your additions, you can always perform a dry run of the `build` and `serve` commands by using the `--dry` (or `-d`) flag:
+If you're looking to see what the default configuration is, or the impact of your additions, you can always perform a dry run of the `build`, `test` and `serve` commands by using the `--dry` (or `-d`) flag:
 
 ```bash
 /some/parent/directory/my-project $ aunty serve --dry
@@ -91,15 +93,13 @@ Overrides should be used sparingly, as the advantages of using a single-dependen
 
 If you don't need to override any of the project defaults, your entire aunty config can be a string containing the project type, as a shorthand for `{type: "<project_type>"}`.
 
-
 ### Generators
 
 Aunty comes with a few basic generators.
 
 `aunty generate component` will ask you a bunch of questions and generate a component (and tests) for whatever project type you've used.
 
-`aunty generate preview` will generate mobile.html and desktop.html in the public folder with some basic ABC theming. You'll  have to include the actual article content and/or your interactive placeholder yourself.
-
+`aunty generate preview` will generate mobile.html and desktop.html in the public folder with some basic ABC theming. You'll have to include the actual article content and/or your interactive placeholder yourself.
 
 ## Authors
 
