@@ -7,7 +7,8 @@
   "contributors": [
     "Colin Gourlay <gourlay.colin@abc.net.au>",
     "Nathan Hoad <hoad.nathan@abc.net.au>",
-    "Simon Elvery <elvery.simon@abc.net.au>"
+    "Simon Elvery <elvery.simon@abc.net.au>",
+    "Joshua Byrd <byrd.joshua@abc.net.au>"
   ],
   "bin": {
     "aunty": "./src/bin/aunty.js",
