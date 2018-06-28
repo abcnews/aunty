@@ -4,8 +4,8 @@ const jest = require('jest');
 // Ours
 const { command } = require('../../cli');
 const { createConfig } = require('../../config/jest');
-const { dry, spin } = require('../../utils/logging');
-const { MESSAGES } = require('./constants');
+const { dry } = require('../../utils/logging');
+const { MESSAGES, USED_ARGS } = require('./constants');
 
 module.exports.test = command(
   {
@@ -19,8 +19,7 @@ module.exports.test = command(
     }
 
     const jestConfig = createConfig(config);
-
-    const jestArgs = argv._.concat(['--config', JSON.stringify(jestConfig)]);
+    const jestArgs = ['--config', JSON.stringify(jestConfig)].concat(argv.$.filter(arg => !USED_ARGS.includes(arg)));
 
     if (argv.dry) {
       return dry({
