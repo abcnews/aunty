@@ -10,11 +10,6 @@
   },
   "scripts": {
     "start": "aunty serve",
-    "test": "jest"
-  },
-  "jest": {
-    "transform": {
-      ".*": "<rootDir>/node_modules/@abcnews/aunty/src/utils/jest"
-    }
+    "test": "aunty test"
   }
 }
