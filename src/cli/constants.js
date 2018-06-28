@@ -16,7 +16,8 @@ const ALIASES = (module.exports.ALIASES = {
   d: 'deploy',
   h: 'help',
   r: 'release',
-  s: 'serve'
+  s: 'serve',
+  t: 'test'
 });
 
 const YEOMAN_ALIASES = {
@@ -84,6 +85,9 @@ ${sec('Development commands')}
 
   ${cmd('aunty serve')} ${opt('[options]')}
     Build & serve the current project, re-building as files change
+
+  ${cmd('aunty test')} ${opt('[options]')}
+    Run any tests in the current project.
 
 ${sec('Deployment commands')}
 
