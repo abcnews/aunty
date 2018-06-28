@@ -10,7 +10,8 @@
     "Simon Elvery <elvery.simon@abc.net.au>"
   ],
   "bin": {
-    "aunty": "./src/bin/aunty.js"
+    "aunty": "./src/bin/aunty.js",
+    "nt": "./src/bin/aunty.js"
   },
   "main": "src/api",
   "engines": {
