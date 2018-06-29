@@ -64,7 +64,7 @@ module.exports.getConfig = argv => {
     let configFileConfig;
 
     try {
-      pkg = require(`${root}/${CONFIG_FILE_NAME}`);
+      configFileConfig = require(`${root}/${CONFIG_FILE_NAME}`);
     } catch (err) {
       // The standalone config file is optional, but it may have syntax problems
       if (err.code !== 'MODULE_NOT_FOUND') {
