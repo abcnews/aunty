@@ -163,15 +163,6 @@ module.exports = class extends Generator {
         break;
     }
 
-    const allDependencies = [].concat(devDependencies).concat(dependencies);
-    const projectDirectoryName = this.options.path.split('/').reverse()[0];
-
-    if (allDependencies.includes(projectDirectoryName)) {
-      throw new Error(
-        `npm will refuse to install a package ("${projectDirectoryName}") which matches the project directory name.`
-      );
-    }
-
     await installDependencies(devDependencies.sort(), ['--save-dev'], this.log);
     await installDependencies(dependencies.sort(), null, this.log);
   }
