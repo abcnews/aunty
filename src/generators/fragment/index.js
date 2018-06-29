@@ -22,7 +22,7 @@ module.exports = class extends Generator {
   end() {
     let config;
 
-    const tag = execa.shellSync('git tag | tail -n 1').stdout;
+    const tag = execa.shellSync('git tag | sort -t "." -k1,1n -k2,2n -k3,3n | tail -n 1').stdout;
     if (tag) {
       config = getConfig({ id: tag });
       printTemplate(`Release (${tag})`, config.pkg.name, config.deploy.contentftp.publicURL);
