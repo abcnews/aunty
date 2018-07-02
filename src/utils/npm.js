@@ -6,8 +6,11 @@ const guessRootPath = require('guess-root-path');
 const execa = require('execa');
 
 // Ours
-const { cmd } = require('./color');
+const { SPINNER_FRAMES } = require('./branding');
+const { bgRed, cmd, ok } = require('./color');
 const { log: _log, spin } = require('./logging');
+
+const NPM_INSTALL_SPINNER_FRAMES = SPINNER_FRAMES.map(x => `      ${cmd(x)}`);
 
 /**
  * Take a list of dependencies and filter out any that are already in the package.json
@@ -17,7 +20,7 @@ const { log: _log, spin } = require('./logging');
 const onlyNewDependencies = (dependencies, isDev) => {
   try {
     const config = require(path.join(guessRootPath(), 'package.json'));
-    const deps = Object.keys(config[isDev ? 'devDependencies' : 'dependencies']);
+    const deps = Object.keys(config[isDev ? 'devDependencies' : 'dependencies...']);
 
     return dependencies.filter(dep => !deps.includes(dep) && dep !== null);
   } catch (ex) {
@@ -41,9 +44,10 @@ module.exports.installDependencies = async (dependencies, args, log = _log) => {
   }
 
   const spinner = spin(
-    `installing ${dependencies.length}${args.includes('--save-dev')
-      ? ' development'
-      : ''} dependenc${dependencies.length == 1 ? 'y' : 'ies'}`
+    `${bgRed.white('npm')} installing ${dependencies.length}${
+      args.includes('--save-dev') ? ' development' : ''
+    } dependenc${dependencies.length == 1 ? 'y' : 'ies'}`,
+    { frames: NPM_INSTALL_SPINNER_FRAMES }
   );
 
   args = ['install', '--silent', '--no-progress'].concat(args).concat(dependencies);
@@ -51,7 +55,5 @@ module.exports.installDependencies = async (dependencies, args, log = _log) => {
   await execa('npm', args);
 
   spinner.stop();
-  dependencies.forEach(d => {
-    log(cmd('      npm'), d);
-  });
+  dependencies.forEach(x => log(`${ok('installed')} ${x}`));
 };

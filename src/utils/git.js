@@ -72,7 +72,7 @@ module.exports.createRepo = async cwd => {
  * Look up the current master version of a thing
  */
 module.exports.getGithubVersion = async repo => {
-  const spinner = spin(`Fetching latest version of ${repo}`, 'white');
+  const spinner = spin(`Fetching latest version of ${repo}`);
   const p = await fetch(`https://raw.githubusercontent.com/${repo}/master/package.json`).then(r => r.json());
 
   spinner.stop();

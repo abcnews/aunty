@@ -50,11 +50,11 @@ ${pretty`${config[key]}`}
   );
 };
 
-module.exports.spin = (text, color) => {
+module.exports.spin = (text, { color = 'cyan', frames = SPINNER_FRAMES }) => {
   const spinner = ora({
-    color: color || 'cyan',
+    color,
     spinner: {
-      frames: SPINNER_FRAMES,
+      frames,
       interval: 80
     },
     text
