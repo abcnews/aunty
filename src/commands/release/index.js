@@ -4,15 +4,13 @@ const writePkg = require('write-pkg');
 
 // Ours
 const { command } = require('../../cli');
-const { packs, throws } = require('../../utils/async');
+const { throws } = require('../../utils/async');
 const {
   commitAll,
   createTag,
   getCurrentLabel,
-  getCurrentTags,
   getRemotes,
   hasChanges,
-  hasTag,
   isRepo,
   push,
   pushTag
@@ -22,9 +20,6 @@ const { build } = require('../build');
 const { deploy } = require('../deploy');
 const { MESSAGES: DEPLOY_MESSAGES } = require('../deploy/constants');
 const { MESSAGES, OPTIONS, VALID_BUMPS } = require('./constants');
-
-// Wrapped
-const setPkg = packs(writePkg);
 
 module.exports.release = command(
   {

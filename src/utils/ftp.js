@@ -1,6 +1,8 @@
-const FTPConnection = require('promise-ftp');
+// External
 const FTPDeploy = require('ftp-deploy');
+const FTPConnection = require('promise-ftp');
 
+// Ours
 const { gray } = require('./color');
 const { padLeft } = require('./strings');
 

@@ -7,7 +7,6 @@ const execa = require('execa');
 
 // Ours
 const { pack } = require('./async');
-const { NEWLINE } = require('./strings');
 
 const PATTERNS = {
   ACTIVE_BRANCH: /\*\s+([^\n]+)/,
@@ -36,7 +35,7 @@ module.exports.isRepoSync = () => !gitSync('rev-parse --git-dir').error;
 
 module.exports.getConfigValue = async key => (await git(`config --get ${key}`)).stdout;
 
-module.exports.getRemotes = async () => new Set((await git('remote')).stdout.split(NEWLINE).filter(x => x));
+module.exports.getRemotes = async () => new Set((await git('remote')).stdout.split('\n').filter(x => x));
 
 module.exports.hasChanges = async () => (await git('status -s')).stdout.length > 0;
 
@@ -58,10 +57,6 @@ module.exports.getCurrentLabelSync = () => {
 module.exports.commitAll = message => git(['commit', '-a', '-m', `${message}`]);
 
 module.exports.push = () => git('push');
-
-module.exports.getCurrentTags = async () => new Set((await git('tag -l --points-at HEAD')).stdout.split(NEWLINE));
-
-module.exports.hasTag = async tag => !(await pack(git(`show-ref --tags --verify refs/tags/${tag}`)))[0];
 
 module.exports.createTag = tag => git(['tag', '-a', tag, '-m', `Tagging version ${tag}`]);
 

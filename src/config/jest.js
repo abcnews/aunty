@@ -1,6 +1,3 @@
-// Native
-const path = require('path');
-
 // External
 const merge = require('webpack-merge');
 

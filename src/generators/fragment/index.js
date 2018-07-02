@@ -1,6 +1,6 @@
 // External
-const Generator = require('yeoman-generator');
 const execa = require('execa');
+const Generator = require('yeoman-generator');
 
 // Ours
 const { getConfig } = require('../../config/project');

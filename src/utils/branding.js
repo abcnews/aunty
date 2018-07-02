@@ -21,7 +21,7 @@ ${dim('aunty')}
 ${hvy(commandName)}`
   ]);
 
-module.exports.createErrorLogo = commandName =>
+module.exports.createErrorLogo = () =>
   zipTemplateLiterals([
     createLogo(red),
     `

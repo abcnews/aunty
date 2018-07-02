@@ -4,7 +4,6 @@ const { existsSync, statSync } = require('fs');
 // External
 const loadJsonFile = require('load-json-file');
 const pify = require('pify');
-const pump = require('pump');
 const rsyncwrapper = require('rsyncwrapper');
 const SSH = require('ssh2');
 

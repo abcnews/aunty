@@ -11,7 +11,3 @@ const throws = (module.exports.throws = packed => {
 });
 
 module.exports.unpack = (packed, ignoreErrors) => (ignoreErrors ? packed[1] : throws(packed)[1]);
-
-const requireAsync = async path => require(path);
-
-module.exports.prequire = path => pack(requireAsync(path));

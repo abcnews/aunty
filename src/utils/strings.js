@@ -4,11 +4,6 @@ const NEWLINE = '\n';
 const SLASH = '/';
 const SPACE = ' ';
 
-module.exports.EMPTY = EMPTY;
-module.exports.NEWLINE = NEWLINE;
-module.exports.SLASH = SLASH;
-module.exports.SPACE = SPACE;
-
 const identity = x => x;
 
 const getLongest = items => items.reduce((a, b) => (a.length > b.length ? a : b));
