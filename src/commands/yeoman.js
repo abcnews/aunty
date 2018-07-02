@@ -1,5 +1,10 @@
-const yeoman = require('yeoman-environment');
+// Native
 const path = require('path');
+
+// External
+const yeoman = require('yeoman-environment');
+
+// Ours
 const { announce } = require('../utils/audio');
 
 const CREATE_HERE_ARGS = ['init', 'i'];

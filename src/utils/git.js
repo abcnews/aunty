@@ -2,6 +2,7 @@
 const { spawnSync } = require('child_process');
 
 // External
+require('isomorphic-fetch'); // Adds `global.fetch`
 const execa = require('execa');
 
 // Ours
@@ -70,4 +71,16 @@ module.exports.createRepo = async cwd => {
   await git('init', { cwd });
   await git('add .', { cwd });
   return git(['commit', '-m', 'Initial commit'], { cwd });
+};
+
+/**
+ * Look up the current master version of a thing
+ */
+module.exports.getGithubVersion = async repo => {
+  const spinner = spin(`Fetching latest version of ${repo}`, 'white');
+  const p = await fetch(`https://raw.githubusercontent.com/${repo}/master/package.json`).then(r => r.json());
+
+  spinner.stop();
+
+  return p.version;
 };
