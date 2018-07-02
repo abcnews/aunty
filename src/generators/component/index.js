@@ -1,9 +1,11 @@
-const Generator = require('yeoman-generator');
+// External
 const guessRootPath = require('guess-root-path');
-const Path = require('path');
 const Inflect = require('i')();
-const Chalk = require('chalk');
-const { installDependencies } = require('../../utils/generator-helpers');
+const Generator = require('yeoman-generator');
+
+// Ours
+const { hvy } = require('../../utils/color');
+const { installDependencies } = require('../../utils/npm');
 
 /**
  * Generate a Component
@@ -105,7 +107,7 @@ module.exports = class extends Generator {
     let component = 'component';
     if (this.options.d3) {
       component = 'component-with-d3';
-      this.dependencies = this.dependencies.concat('d3-selection');
+      this.dependencies.push('d3-selection');
     }
 
     if (this.options.template === 'vue') {
@@ -143,31 +145,28 @@ module.exports = class extends Generator {
   }
 
   async install() {
-    const devDependencies = [];
-    const dependencies = [];
-
     switch (this.options.template) {
       case 'preact':
-        devDependencies.push('html-looks-like', 'preact-render-to-string');
-        dependencies.push('preact', 'preact-compat');
+        this.devDependencies.push('html-looks-like', 'preact-render-to-string');
+        this.dependencies.push('preact', 'preact-compat');
         break;
       case 'react':
-        devDependencies.push('react-test-renderer');
-        dependencies.push('react', 'react-dom');
+        this.devDependencies.push('react-test-renderer');
+        this.dependencies.push('react', 'react-dom');
         break;
       case 'vue':
-        devDependencies.push('@vue/test-utils');
-        dependencies.push('vue');
+        this.devDependencies.push('@vue/test-utils');
+        this.dependencies.push('vue');
         break;
       default:
         break;
     }
 
-    await installDependencies(devDependencies.sort(), ['--save-dev'], this.log);
-    await installDependencies(dependencies.sort(), null, this.log);
+    await installDependencies(this.devDependencies.sort(), ['--save-dev'], this.log);
+    await installDependencies(this.dependencies.sort(), null, this.log);
   }
 
   end() {
-    this.log('\n 👍', Chalk.bold(this.options.name), 'created', '\n');
+    this.log('\n 👍', hvy(this.options.name), 'created', '\n');
   }
 };

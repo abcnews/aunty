@@ -1,8 +1,8 @@
-require('isomorphic-fetch');
-
+// External
 const Generator = require('yeoman-generator');
-const Chalk = require('chalk');
-const { getGithubVersion } = require('../../utils/generator-helpers');
+
+// Ours
+const { getGithubVersion } = require('../../utils/git');
 
 module.exports = class extends Generator {
   constructor(args, opts) {

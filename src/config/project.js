@@ -1,5 +1,3 @@
-// Native
-
 // External
 const guessRootPath = require('guess-root-path');
 

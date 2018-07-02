@@ -46,7 +46,7 @@ module.exports.serve = command(
     const compiler = webpack(webpackConfig);
     const server = new WebpackDevServer(compiler, devServerConfig);
 
-    return new Promise((resolve, reject) => {
+    return new Promise((_, reject) => {
       server.listen(port, '0.0.0.0', err => {
         if (err) {
           spinner.fail();

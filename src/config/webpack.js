@@ -75,7 +75,7 @@ module.exports.createConfig = async (argv, config, isServer) => {
   }
 };
 
-function createWebpackConfig(argv, config) {
+const createWebpackConfig = (module.exports.createWebpackConfig = (argv, config) => {
   argv = argv || [];
   config = config || {
     root: guessRootPath()
@@ -224,7 +224,7 @@ function createWebpackConfig(argv, config) {
   }
 
   return webpackConfig;
-}
+});
 
 async function createDevServerConfig(argv, config) {
   const isProd = process.env.NODE_ENV === 'production';
@@ -288,5 +288,3 @@ function upgradeEntryToHot(entry, publicPath) {
     return memo;
   }, {});
 }
-
-module.exports.createWebpackConfig = createWebpackConfig;

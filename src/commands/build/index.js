@@ -9,7 +9,6 @@ const { packs, throws, unpack } = require('../../utils/async');
 const { dry, info, spin, warn } = require('../../utils/logging');
 const { clean } = require('../clean');
 const { MESSAGES } = require('./constants');
-const Chalk = require('chalk');
 
 module.exports.build = command(
   {

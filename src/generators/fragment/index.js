@@ -1,10 +1,13 @@
-const Generator = require('yeoman-generator');
-const Chalk = require('chalk');
+// External
 const execa = require('execa');
+const Generator = require('yeoman-generator');
+
+// Ours
 const { getConfig } = require('../../config/project');
+const { hvy } = require('../../utils/color');
 
 function printTemplate(label, root, url) {
-  console.log('\n', Chalk.bold.magenta(label));
+  console.log('\n', hvy.magenta(label));
   console.log(
     `\n  <div class="init-interactive" data-${root}-root data-scripts="${url}index.js" data-no-support-msg="true" ></div>\n`
   );

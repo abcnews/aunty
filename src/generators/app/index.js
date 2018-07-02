@@ -1,10 +1,15 @@
-const Generator = require('yeoman-generator');
+// Native
+const path = require('path');
+
+// External
 const fs = require('fs-extra');
-const Chalk = require('chalk');
-const requireg = require('requireg');
-const Path = require('path');
 const getAllPaths = require('get-all-paths');
-const { installDependencies } = require('../../utils/generator-helpers');
+const requireg = require('requireg');
+const Generator = require('yeoman-generator');
+
+// Ours
+const { hvy } = require('../../utils/color');
+const { installDependencies } = require('../../utils/npm');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -27,7 +32,7 @@ module.exports = class extends Generator {
     let prompts = [];
 
     if (this.options.here) {
-      this.options.name = Path.basename(process.cwd());
+      this.options.name = path.basename(process.cwd());
     }
 
     if (!this.options.name) {
@@ -154,6 +159,6 @@ module.exports = class extends Generator {
   end() {
     const where = this.options.here ? 'the current directory' : `./${this.options.projectSlug}`;
 
-    this.log('\n 👍', Chalk.bold(this.options.name), 'created in', Chalk.bold(where), '\n');
+    this.log('\n 👍', hvy(this.options.name), 'created in', hvy(where), '\n');
   }
 };
