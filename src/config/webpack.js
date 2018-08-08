@@ -38,7 +38,7 @@ module.exports.createConfig = async (argv, config, isServer) => {
   // If a config file exists, use it
   if (existsSync(`${rootPath}/webpack.config.js`)) {
     webpackConfig = require(`${rootPath}/webpack.config.js`);
-    if (!webpackConfig instanceof Array) {
+    if (!(webpackConfig instanceof Array)) {
       webpackConfig = [webpackConfig];
     }
     // If a function was given then execute it for the final config
@@ -142,7 +142,9 @@ const createWebpackConfig = (module.exports.createWebpackConfig = (argv, config)
                   camelCase: true,
                   localIdentName: isProd
                     ? '[hash:base64:6]'
-                    : buildConfig.useCSSModules ? '[folder]__[name]__[local]--[hash:base64:6]' : '[local]',
+                    : buildConfig.useCSSModules
+                      ? '[folder]__[name]__[local]--[hash:base64:6]'
+                      : '[local]',
                   minimize: isProd,
                   modules: buildConfig.useCSSModules,
                   sourcemaps: !isProd
