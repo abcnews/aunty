@@ -5,7 +5,7 @@ const PROJECT_TYPES_DEFAULT_CONFIG = {
   preact: {
     plugins: [
       [
-        require.resolve('babel-plugin-transform-react-jsx'),
+        require.resolve('@babel/plugin-transform-react-jsx'),
         {
           pragma: 'h'
         }
@@ -13,7 +13,7 @@ const PROJECT_TYPES_DEFAULT_CONFIG = {
     ]
   },
   react: {
-    presets: [require.resolve('babel-preset-react')]
+    presets: [require.resolve('@babel/preset-react')]
   }
 };
 
@@ -28,17 +28,17 @@ module.exports.createConfig = config => {
     {
       presets: [
         [
-          require.resolve('babel-preset-env'),
+          require.resolve('@babel/preset-env'),
           {
             targets: {
               browsers
             },
-            useBuiltIns: true,
+            useBuiltIns: 'entry',
             modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false
           }
         ]
       ],
-      plugins: [require.resolve('babel-plugin-transform-object-rest-spread')]
+      plugins: [require.resolve('@babel/plugin-proposal-object-rest-spread')]
     },
     (config.type && PROJECT_TYPES_DEFAULT_CONFIG[config.type]) || {}
   );
