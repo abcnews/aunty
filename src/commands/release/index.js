@@ -71,9 +71,10 @@ module.exports.release = command(
       throw MESSAGES.invalidBump(argv.bump);
     }
 
+    const isPrerelease = semver.prerelease(config.pkg.version);
     let bump = !argv.force && VALID_BUMPS.has(argv.bump) && argv.bump;
 
-    if (!argv.force && !bump) {
+    if (!argv.force && !isPrerelease && !bump) {
       log(MESSAGES.changes(config.pkg.version, await getTags(), await getChangelog(config.pkg.version)));
       log(MESSAGES.BUMP_QUESTION);
 
@@ -92,7 +93,11 @@ module.exports.release = command(
     }
 
     const version =
-      bump && semver.valid(config.pkg.version) ? semver.inc(config.pkg.version, bump) : config.pkg.version;
+      (isPrerelease || bump) && semver.valid(config.pkg.version)
+        ? isPrerelease
+          ? config.pkg.version.split('-')[0]
+          : semver.inc(config.pkg.version, bump)
+        : config.pkg.version;
 
     if (argv.dry) {
       return dry({
@@ -111,15 +116,15 @@ module.exports.release = command(
 
     let spinner;
 
-    if (!argv.force && bump) {
-      spinner = spin(MESSAGES.createBump(bump, config.pkg.version, version));
+    if (!argv.force && version !== config.pkg.version) {
+      spinner = spin(MESSAGES.createCommit(config.pkg.version, version));
       await jsonFileUpdater(path.join(config.root, 'package.json')).set('version', version);
       await jsonFileUpdater(path.join(config.root, 'package-lock.json')).set('version', version);
       await commitAll(version);
       spinner.succeed();
 
       if (remotes.has(remote)) {
-        spinner = spin(MESSAGES.pushBump(remote));
+        spinner = spin(MESSAGES.pushCommit(remote));
         await push();
         spinner.succeed();
       }
