@@ -13,8 +13,10 @@ const { bad, dim, opt } = require('../../utils/color');
 const {
   commitAll,
   createTag,
+  getChangelog,
   getCurrentLabel,
   getRemotes,
+  getTags,
   hasChanges,
   isRepo,
   push,
@@ -72,7 +74,9 @@ module.exports.release = command(
     let bump = !argv.force && VALID_BUMPS.has(argv.bump) && argv.bump;
 
     if (!argv.force && !bump) {
+      log(MESSAGES.changes(config.pkg.version, await getTags(), await getChangelog(config.pkg.version)));
       log(MESSAGES.BUMP_QUESTION);
+
       const bumpSelection = (await cliSelect({
         defaultValue: 0,
         selected: opt('❯'),

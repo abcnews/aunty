@@ -16,6 +16,13 @@ module.exports.MESSAGES = {
   FORCE_REMINDER,
   HAS_CHANGES: `You shouldn't release builds which may contain un-committed changes! ${FORCE_REMINDER}`,
   NOT_REPO: `You can't tag a release or deploy using a tag name becase this project isn't a git repo.`,
+  changes: (tag, tags, changelog) =>
+    changelog.length
+      ? `${tags.length ? `Here's what's changed since ${hvy(tag)}` : 'Here are the initial changes'}:
+
+${changelog.join('\n')}
+`
+      : `${cmd('ℹ')} Nothing has changed since ${hvy(tag)}\n`,
   createBump: (bump, from, to) => `Bump ${hvy(bump)} version ${hvy(from)}=>${hvy(to)}`,
   createTag: tag => `Create tag ${hvy(tag)}`,
   hasTag: (tag, isTagOnHead) =>
