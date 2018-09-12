@@ -79,3 +79,13 @@ module.exports.getGithubVersion = async repo => {
 
   return p.version;
 };
+
+module.exports.getTags = async () => (await git('tag')).stdout.split('\n').filter(x => x);
+
+const hasTag = async tag => !(await pack(git(`show-ref --tags --verify refs/tags/${tag}`)))[0];
+
+module.exports.getChangelog = async tag =>
+  (await git(`log ${(await hasTag(tag)) ? `${tag}..HEAD ` : ''}--oneline --color`)).stdout
+    .split('\n')
+    .filter(x => x)
+    .reverse();

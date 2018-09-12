@@ -1,6 +1,6 @@
 {
   "name": "<%= projectSlug %>",
-  "version": "1.0.0",
+  "version": "1.0.0-pre",
   "description": "A project generated from aunty's <%= projectType %> app template.",
   "license": "MIT",
   "private": true,
