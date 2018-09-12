@@ -23,7 +23,7 @@ module.exports.MESSAGES = {
 ${changelog.join('\n')}
 `
       : `${cmd('ℹ')} Nothing has changed since ${hvy(tag)}\n`,
-  createCommit: (from, to) => `Bump version ${hvy(from)} => ${hvy(to)}`,
+  createCommit: (from, to) => `Bump version ${hvy(from)} → ${hvy(to)}`,
   createTag: tag => `Create tag ${hvy(tag)}`,
   hasTag: (tag, isTagOnHead) =>
     `The tag ${hvy(tag)} already exists${
