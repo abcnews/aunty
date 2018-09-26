@@ -140,11 +140,8 @@ const createWebpackConfig = (module.exports.createWebpackConfig = (argv, config)
                 loader: require.resolve('css-loader'),
                 options: {
                   camelCase: true,
-                  localIdentName: isProd
-                    ? '[hash:base64:6]'
-                    : buildConfig.useCSSModules
-                      ? '[folder]__[name]__[local]--[hash:base64:6]'
-                      : '[local]',
+                  context: __dirname, // https://github.com/webpack-contrib/css-loader/issues/413#issuecomment-299578180
+                  localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[hash:base64:6]`,
                   minimize: isProd,
                   modules: buildConfig.useCSSModules,
                   sourcemaps: !isProd
