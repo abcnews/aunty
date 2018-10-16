@@ -243,6 +243,7 @@ async function createDevServerConfig(argv, config) {
     noInfo: true,
     overlay: true,
     quiet: true,
+    https: true,
     watchOptions: {
       ignored: /node_modules/
     },
