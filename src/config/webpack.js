@@ -111,7 +111,12 @@ const createWebpackConfig = (module.exports.createWebpackConfig = (argv, config)
       output: {
         path: `${config.root}/${buildConfig.to}`,
         publicPath: publicURL,
-        filename: config.buildWithModules ? '[name].modules.js' : '[name].js'
+        filename: config.buildWithModules ? '[name].modules.js' : '[name].js',
+        // The update file hash was causing 404s and full page reloads.
+        // This will make the file name more predictable.
+        // See https://github.com/webpack/webpack-dev-server/issues/79#issuecomment-244596129
+        hotUpdateChunkFilename: 'hot/hot-update.js',
+        hotUpdateMainFilename: 'hot/hot-update.json'
       },
       module: {
         rules: [
