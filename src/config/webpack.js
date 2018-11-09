@@ -62,7 +62,9 @@ module.exports.createConfig = async (argv, config, isServer) => {
   if (isServer) {
     const devServerConfig = await createDevServerConfig(argv, config);
     webpackConfig.map(c => {
-      c.output.publicPath = devServerConfig.publicPath = `http://${devServerConfig.host}:${devServerConfig.port}/`;
+      c.output.publicPath = devServerConfig.publicPath = `http${devServerConfig.https ? 's' : ''}://${
+        devServerConfig.host
+      }:${devServerConfig.port}/`;
       if (devServerConfig.hot) {
         c.entry = upgradeEntryToHot(c.entry, c.output.publicPath);
         c.plugins.push(new webpack.HotModuleReplacementPlugin());
@@ -248,6 +250,7 @@ async function createDevServerConfig(argv, config) {
     noInfo: true,
     overlay: true,
     quiet: true,
+    https: true,
     watchOptions: {
       ignored: /node_modules/
     },
