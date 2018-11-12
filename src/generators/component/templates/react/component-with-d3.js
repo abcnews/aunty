@@ -1,9 +1,9 @@
-const React = require('react');
-const d3 = require('d3-selection');
+import React from 'react';
+import d3 from 'd3-selection';
 
-const styles = require('./styles.scss');
+import styles from './styles.scss';
 
-class <%= className %> extends React.Component {
+export default class <%= className %> extends React.Component {
   constructor(props) {
     super(props);
 
@@ -73,5 +73,3 @@ class <%= className %> extends React.Component {
     return <div className={styles.wrapper} ref={el => (this.wrapper = el)} />;
   }
 }
-
-module.exports = <%= className %>;

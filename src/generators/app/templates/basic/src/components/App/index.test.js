@@ -1,4 +1,4 @@
-const App = require('.');
+import App from '.';
 
 test('it renders', () => {
   const component = new App({ projectName: 'test-project' });

@@ -1,9 +1,9 @@
-const { h, Component } = require('preact');
-const d3 = require('d3-selection');
+import { h, Component }  from 'preact';
+import d3 from 'd3-selection';
 
-const styles = require('./styles.scss');
+import styles from './styles.scss';
 
-class <%= className %> extends Component {
+export default class <%= className %> extends Component {
   constructor(props) {
     super(props);
 
@@ -69,5 +69,3 @@ class <%= className %> extends Component {
     return <div className={styles.wrapper} />;
   }
 }
-
-module.exports = <%= className %>;

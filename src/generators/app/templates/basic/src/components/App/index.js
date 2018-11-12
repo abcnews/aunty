@@ -1,7 +1,7 @@
-const styles = require('./styles.scss');
-const worm = require('./worm.svg');
+import styles from './styles.scss';
+import worm from './worm.svg';
 
-function App({ projectName }) {
+export default function App({ projectName }) {
   this.el = document.createElement('div');
   this.el.className = styles.root;
   this.el.innerHTML = `
@@ -9,5 +9,3 @@ function App({ projectName }) {
     <h1>${projectName}</h1>
   `;
 }
-
-module.exports = App;

@@ -1,10 +1,10 @@
-const { h, render } = require('preact');
+import { h, render }  from 'preact';
 
 const PROJECT_NAME = '<%= projectSlug %>';
 const root = document.querySelector(`[data-${PROJECT_NAME}-root]`);
 
 function init() {
-  const App = require('./components/App');
+  import App from './components/App';
   render(<App projectName={PROJECT_NAME} />, root, root.firstChild);
 }
 
@@ -15,7 +15,7 @@ if (module.hot) {
     try {
       init();
     } catch (err) {
-      const ErrorBox = require('./components/ErrorBox');
+      import ErrorBox from './components/ErrorBox';
       render(<ErrorBox error={err} />, root, root.firstChild);
     }
   });

@@ -1,8 +1,8 @@
-const d3 = require('d3-selection');
+import d3 from 'd3-selection';
 
-const styles = require('./styles.scss');
+import styles from './styles.scss';
 
-function <%= className %>() {
+export default function <%= className %>() {
   this.el = document.createElement('div');
   this.el.className = styles.wrapper;
   
@@ -23,5 +23,3 @@ function <%= className %>() {
     .attr('width', 400)
     .attr('height', 300);
 }
-
-module.exports = <%= className %>;

@@ -1,4 +1,4 @@
-const styles = require('./styles.scss');
+import styles from './styles.scss';
 
 function <%= className %>() {
   this.el = document.createElement('div');
@@ -6,4 +6,4 @@ function <%= className %>() {
   this.el.innerHTML = `Find me in src/components/<%= className %>/index.js`;
 }
 
-module.exports = <%= className %>;
+export <%= className %>;

@@ -1,8 +1,8 @@
-const { h, Component } = require('preact');
+import { h, Component }  from 'preact';
 
-const styles = require('./styles.scss');
+import styles from './styles.scss';
 
-class <%= className %> extends Component {
+export default class <%= className %> extends Component {
   render() {
     return (
       <div className={styles.wrapper}>
@@ -11,5 +11,3 @@ class <%= className %> extends Component {
     );
   }
 }
-
-module.exports = <%= className %>;
