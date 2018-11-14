@@ -1,8 +1,8 @@
-const { h, Component } = require('preact');
-const styles = require('./styles.scss');
-const worm = require('./worm.svg');
+import { h, Component } from 'preact';
+import styles from './styles.scss';
+import worm from './worm.svg';
 
-class App extends Component {
+export default class App extends Component {
   render({ projectName }) {
     return (
       <div className={styles.root}>
@@ -12,5 +12,3 @@ class App extends Component {
     );
   }
 }
-
-module.exports = App;

@@ -1,11 +1,13 @@
-const React = require('react');
-const d3 = require('d3-selection');
+import React from 'react';
+import { select } from 'd3-selection';
 
-const styles = require('./styles.scss');
+import styles from './styles.scss';
 
-class <%= className %> extends React.Component {
+export default class <%= className %> extends React.Component {
   constructor(props) {
     super(props);
+
+    this.rootRef = React.createRef();
 
     this.initGraph = this.initGraph.bind(this);
     this.updateGraph = this.updateGraph.bind(this);
@@ -16,9 +18,8 @@ class <%= className %> extends React.Component {
     this.updateGraph(nextProps);
   }
 
-  
   shouldComponentUpdate() {
-    // Stop Preact from managing the DOM itself
+    // Stop React from managing the DOM itself
     return false;
   }
 
@@ -39,18 +40,19 @@ class <%= className %> extends React.Component {
    * @param {object} props The latest props that were given to this component
    */
   initGraph(props) {
-    if (!this.wrapper) return;
+    if (!this.rootRef.current) {
+      return;
+    }
 
-    this.svg = d3
-      .select(this.wrapper)
+    this.svg = select(this.rootRef.current)
       .append('svg')
       .attr('width', 400)
       .attr('height', 300);
-    
-    this.g = this.svg.append('g')
-      .attr('fill', 'black');
 
-    this.rect = this.g.append('rect')
+    this.g = this.svg.append('g').attr('fill', 'black');
+
+    this.rect = this.g
+      .append('rect')
       .attr('x', 0)
       .attr('y', 0)
       .attr('rx', 3)
@@ -64,14 +66,12 @@ class <%= className %> extends React.Component {
    * @param {object} props The latest props given to this component
    */
   updateGraph(props) {
-    if (!this.wrapper) return;
+    if (!this.rootRef.current) return;
 
     // TODO: Use D3 to update the graph
   }
 
   render() {
-    return <div className={styles.wrapper} ref={el => (this.wrapper = el)} />;
+    return <div className={styles.root} ref={this.rootRef} />;
   }
 }
-
-module.exports = <%= className %>;

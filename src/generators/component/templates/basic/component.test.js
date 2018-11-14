@@ -1,4 +1,4 @@
-const <%= className %> = require('.');
+import <%= className %> from '.';
 
 test('it renders', () => {
   const component = new <%= className %>();

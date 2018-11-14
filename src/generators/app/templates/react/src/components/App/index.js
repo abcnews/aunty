@@ -1,8 +1,8 @@
-const React = require('react');
-const styles = require('./styles.scss');
-const worm = require('./worm.svg');
+import React from 'react';
+import styles from './styles.scss';
+import worm from './worm.svg';
 
-class App extends React.Component {
+export default class App extends React.Component {
   render() {
     return (
       <div className={styles.root}>
@@ -12,5 +12,3 @@ class App extends React.Component {
     );
   }
 }
-
-module.exports = App;

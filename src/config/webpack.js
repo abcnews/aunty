@@ -11,6 +11,7 @@ const tcpp = require('tcp-ping');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 
 // Ours
 const { createConfig: createBabelConfig } = require('./babel');
@@ -21,14 +22,34 @@ const probe = pify(tcpp.probe);
 const INTERNAL_HOST = '.aus.aunty.abc.net.au';
 const URL_LOADER_LIMIT = 10000;
 const PROJECT_TYPES_DEFAULT_CONFIG = {
-  preact: {
-    resolve: {
-      alias: {
-        react: 'preact-compat',
-        'react-dom': 'preact-compat',
-        'create-react-class': 'preact-compat/lib/create-react-class'
+  preact: config =>
+    merge(config, {
+      resolve: {
+        alias: {
+          react: 'preact-compat',
+          'react-dom': 'preact-compat',
+          'create-react-class': 'preact-compat/lib/create-react-class'
+        }
       }
-    }
+    }),
+  vue: config => {
+    config.module.rules.forEach(({ __hint__, use }) => {
+      if (__hint__ === 'styles') {
+        use[0] = { loader: require.resolve('vue-style-loader') };
+      }
+    });
+
+    return merge(config, {
+      module: {
+        rules: [
+          {
+            test: /\.vue$/,
+            loader: require.resolve('vue-loader')
+          }
+        ]
+      },
+      plugins: [new VueLoaderPlugin()]
+    });
   }
 };
 
@@ -103,124 +124,121 @@ const createWebpackConfig = (module.exports.createWebpackConfig = (argv, config)
     process.noDeprecation = true;
   }
 
-  let webpackConfig = merge(
-    {
-      mode: isProd ? 'production' : 'development',
-      cache: true,
-      entry: {
-        index: [`${config.root}/${buildConfig.from}/${buildConfig.entry}`]
-      },
-      output: {
-        path: `${config.root}/${buildConfig.to}`,
-        publicPath: publicURL,
-        filename: config.buildWithModules ? '[name].modules.js' : '[name].js',
-        // The update file hash was causing 404s and full page reloads.
-        // This will make the file name more predictable.
-        // See https://github.com/webpack/webpack-dev-server/issues/79#issuecomment-244596129
-        hotUpdateChunkFilename: 'hot/hot-update.js',
-        hotUpdateMainFilename: 'hot/hot-update.json'
-      },
-      module: {
-        rules: [
-          {
-            test: /\.vue$/,
-            loader: require.resolve('vue-loader'),
-            options: {
-              loaders: {
-                scss: 'vue-style-loader!css-loader!sass-loader' // <style lang="scss">
-              }
-            }
-          },
-          {
-            test: /\.js$/,
-            include: [path.resolve(config.root, buildConfig.from)],
-            loader: require.resolve('babel-loader'),
-            options: createBabelConfig(config)
-          },
-          {
-            test: /\.(css|scss)$/,
-            use: [
-              {
-                loader: require.resolve('style-loader')
-              },
-              {
-                loader: require.resolve('css-loader'),
-                options: {
-                  camelCase: true,
-                  context: __dirname, // https://github.com/webpack-contrib/css-loader/issues/413#issuecomment-299578180
-                  localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[hash:base64:6]`,
-                  minimize: isProd,
-                  modules: buildConfig.useCSSModules,
-                  sourcemaps: !isProd
-                }
-              },
-              {
-                loader: require.resolve('sass-loader')
-              }
-            ]
-          },
-          {
-            test: /\.(jpg|png|gif|mp4|m4v|flv|mp3|wav|m4a)$/,
-            loader: require.resolve('file-loader'),
-            options: {
-              name: '[name]-[hash].[ext]'
-            }
-          },
-          {
-            test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('url-loader'),
-            options: {
-              limit: URL_LOADER_LIMIT,
-              mimetype: 'application/font-woff'
-            }
-          },
-          {
-            test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('url-loader'),
-            options: {
-              limit: URL_LOADER_LIMIT,
-              mimetype: 'application/octet-stream'
-            }
-          },
-          {
-            test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('file-loader')
-          },
-          {
-            test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('url-loader'),
-            options: {
-              limit: URL_LOADER_LIMIT,
-              mimetype: 'image/svg+xml'
-            }
-          },
-          {
-            test: /\.html$/,
-            loader: require.resolve('html-loader')
-          }
-        ]
-      },
-      plugins: [
-        new webpack.EnvironmentPlugin(Object.keys(process.env)),
-        new CopyPlugin([
-          {
-            from: `${config.root}/public`
-          }
-        ])
-      ],
-      optimization: {
-        namedModules: !isProd
-      }
+  // Common config
+  let webpackConfig = {
+    mode: isProd ? 'production' : 'development',
+    cache: true,
+    entry: {
+      index: [`${config.root}/${buildConfig.from}/${buildConfig.entry}`]
     },
-    (config.type && PROJECT_TYPES_DEFAULT_CONFIG[config.type]) || {}
-  );
+    output: {
+      path: `${config.root}/${buildConfig.to}`,
+      publicPath: publicURL,
+      filename: config.buildWithModules ? '[name].modules.js' : '[name].js',
+      // The update file hash was causing 404s and full page reloads.
+      // This will make the file name more predictable.
+      // See https://github.com/webpack/webpack-dev-server/issues/79#issuecomment-244596129
+      hotUpdateChunkFilename: 'hot/hot-update.js',
+      hotUpdateMainFilename: 'hot/hot-update.json'
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          include: [path.resolve(config.root, buildConfig.from)],
+          loader: require.resolve('babel-loader'),
+          options: createBabelConfig(config)
+        },
+        {
+          __hint__: 'styles',
+          test: /\.(css|scss)$/,
+          use: [
+            {
+              loader: require.resolve('style-loader')
+            },
+            {
+              loader: require.resolve('css-loader'),
+              options: {
+                camelCase: true,
+                context: __dirname, // https://github.com/webpack-contrib/css-loader/issues/413#issuecomment-299578180
+                localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[hash:base64:6]`,
+                minimize: isProd,
+                modules: buildConfig.useCSSModules,
+                sourcemaps: !isProd
+              }
+            },
+            {
+              loader: require.resolve('sass-loader')
+            }
+          ]
+        },
+        {
+          test: /\.(jpg|png|gif|mp4|m4v|flv|mp3|wav|m4a)$/,
+          loader: require.resolve('file-loader'),
+          options: {
+            name: '[name]-[hash].[ext]'
+          }
+        },
+        {
+          test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
+          loader: require.resolve('url-loader'),
+          options: {
+            limit: URL_LOADER_LIMIT,
+            mimetype: 'application/font-woff'
+          }
+        },
+        {
+          test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+          loader: require.resolve('url-loader'),
+          options: {
+            limit: URL_LOADER_LIMIT,
+            mimetype: 'application/octet-stream'
+          }
+        },
+        {
+          test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+          loader: require.resolve('file-loader')
+        },
+        {
+          test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+          loader: require.resolve('url-loader'),
+          options: {
+            limit: URL_LOADER_LIMIT,
+            mimetype: 'image/svg+xml'
+          }
+        },
+        {
+          test: /\.html$/,
+          loader: require.resolve('html-loader')
+        }
+      ]
+    },
+    plugins: [
+      new webpack.EnvironmentPlugin(Object.keys(process.env)),
+      new CopyPlugin([
+        {
+          from: `${config.root}/public`
+        }
+      ])
+    ],
+    optimization: {
+      namedModules: !isProd
+    }
+  };
 
+  // Add project _type_ config
+  if (PROJECT_TYPES_DEFAULT_CONFIG[config.type]) {
+    webpackConfig = PROJECT_TYPES_DEFAULT_CONFIG[config.type](webpackConfig);
+  }
+
+  // Add project config
   if (typeof config.webpack === 'function') {
     webpackConfig = config.webpack(webpackConfig);
   } else if (typeof config.webpack === 'object') {
     webpackConfig = merge(webpackConfig, config.webpack);
   }
 
+  // Add environment config
   if (isProd) {
     webpackConfig.plugins.push(
       new UglifyJSPlugin({
@@ -228,6 +246,13 @@ const createWebpackConfig = (module.exports.createWebpackConfig = (argv, config)
       })
     );
   }
+
+  // Cleanup hints
+  webpackConfig.module.rules.forEach(rule => {
+    if (rule.__hint__) {
+      delete rule.__hint__;
+    }
+  });
 
   return webpackConfig;
 });
@@ -241,6 +266,7 @@ async function createDevServerConfig(argv, config) {
     ? `${hostname().replace(INTERNAL_HOST, '')}${INTERNAL_HOST}`
     : 'localhost';
 
+  // Common config
   let devServerConfig = {
     disableHostCheck: true,
     headers: {
@@ -259,20 +285,20 @@ async function createDevServerConfig(argv, config) {
     port: DEV_SERVER_PORT
   };
 
+  // Add project config
   if (typeof config.devServer === 'function') {
     devServerConfig = config.devServer(devServerConfig);
   } else if (typeof config.devServer === 'object') {
     devServerConfig = merge(devServerConfig, config.devServer);
   }
 
+  // Add command line arguments config
   if (argv.host) {
     devServerConfig.host = argv.host;
   }
-
   if (argv.port) {
     devServerConfig.port = argv.port;
   }
-
   if (typeof argv.hot === 'boolean') {
     devServerConfig.hot = argv.hot;
   }

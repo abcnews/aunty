@@ -1,14 +1,12 @@
-const React = require('react');
-const styles = require('./styles.css');
+import React from 'react';
+import styles from './styles.css';
 
-class ErrorBox extends React.Component {
+export default class ErrorBox extends React.Component {
   componentDidMount() {
     console.error(this.props.error);
   }
 
   render() {
-    return <pre className={styles.root}>{this.props.error.stack}</pre>;
+    return <pre className={styles.root}>{`${String(this.props.error)}\n\n${this.props.error.stack}`}</pre>;
   }
 }
-
-module.exports = ErrorBox;

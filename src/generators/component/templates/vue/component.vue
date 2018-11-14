@@ -1,6 +1,6 @@
 <template>
-  <div class="wrapper">
-    Find me in <strong>src/components/<%= className %>.vue</strong>
+  <div :class="$style.root">
+    Find me in <strong>src/components/<%= className %>/<%= className %>.vue</strong>
   </div>
 </template>
 
@@ -13,8 +13,8 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.wrapper {
+<style lang="scss" module>
+.root {
   border: 1px solid rgb(255, 115, 0);
   padding: 20px;
   text-align: center;

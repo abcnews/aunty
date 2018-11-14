@@ -1,14 +1,12 @@
-const React = require('react');
-const styles = require('./styles.scss');
+import React from 'react';
+import styles from './styles.scss';
 
-class <%= className %> extends React.Component {
+export default class <%= className %> extends React.Component {
   render() {
     return (
-      <div className={styles.wrapper}>
+      <div className={styles.root}>
         Find me in <strong>src/components/<%= className %>/index.js</strong>
       </div>
     );
   }
 }
-
-module.exports = <%= className %>;

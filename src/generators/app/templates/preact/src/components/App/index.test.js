@@ -1,8 +1,8 @@
-const { h } = require('preact');
-const render = require('preact-render-to-string');
-const htmlLooksLike = require('html-looks-like');
+import { h }  from 'preact';
+import render from 'preact-render-to-string';
+import htmlLooksLike from 'html-looks-like';
 
-const App = require('.');
+import App from '.';
 
 describe('App', () => {
   test('It renders', () => {

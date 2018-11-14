@@ -1,10 +1,10 @@
-const styles = require('./styles.css');
+import styles from './styles.css';
 
-function ErrorBox({ error }) {
+export default function ErrorBox({ error }) {
   const el = (this.el = document.createElement('pre'));
 
   el.className = styles.root;
-  el.textContent = error.stack;
+  el.textContent = `${String(error)}\n\n${error.stack}`;
 
   (function logOnMount() {
     if (!el.parentNode) {
@@ -14,5 +14,3 @@ function ErrorBox({ error }) {
     console.error(error);
   })();
 }
-
-module.exports = ErrorBox;

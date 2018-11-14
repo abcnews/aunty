@@ -1,7 +1,7 @@
-const React = require('react');
-const renderer = require('react-test-renderer');
+import React from 'react';
+import renderer from 'react-test-renderer';
 
-const App = require('.');
+import App from '.';
 
 describe('App', () => {
   test('It renders', () => {

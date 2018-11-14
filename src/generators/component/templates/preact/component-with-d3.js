@@ -1,9 +1,9 @@
-const { h, Component } = require('preact');
-const d3 = require('d3-selection');
+import { h, Component } from 'preact';
+import { select } from 'd3-selection';
 
-const styles = require('./styles.scss');
+import styles from './styles.scss';
 
-class <%= className %> extends Component {
+export default class <%= className %> extends Component {
   constructor(props) {
     super(props);
 
@@ -16,7 +16,6 @@ class <%= className %> extends Component {
     this.updateGraph(nextProps);
   }
 
-  
   shouldComponentUpdate() {
     // Stop Preact from managing the DOM itself
     return false;
@@ -39,16 +38,15 @@ class <%= className %> extends Component {
    * @param {object} props The latest props that were given to this component
    */
   initGraph(props) {
-    this.svg = d3
-      .select(this.base)
+    this.svg = select(this.base)
       .append('svg')
       .attr('width', 400)
       .attr('height', 300);
-    
-    this.g = this.svg.append('g')
-      .attr('fill', 'black');
 
-    this.rect = this.g.append('rect')
+    this.g = this.svg.append('g').attr('fill', 'black');
+
+    this.rect = this.g
+      .append('rect')
       .attr('x', 0)
       .attr('y', 0)
       .attr('rx', 3)
@@ -66,8 +64,6 @@ class <%= className %> extends Component {
   }
 
   render() {
-    return <div className={styles.wrapper} />;
+    return <div className={styles.root} />;
   }
 }
-
-module.exports = <%= className %>;

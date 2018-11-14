@@ -1,8 +1,8 @@
-const { h } = require('preact');
-const render = require('preact-render-to-string');
-const htmlLooksLike = require('html-looks-like');
+import { h } from 'preact';
+import render from 'preact-render-to-string';
+import htmlLooksLike from 'html-looks-like';
 
-const <%= className %> = require('.');
+import <%= className %> from '.';
 
 describe('<%= className %>', () => {
   test('It renders', () => {
