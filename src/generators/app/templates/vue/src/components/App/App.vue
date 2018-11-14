@@ -1,14 +1,14 @@
 <template>
-  <div class="root">
-    <img class="worm" :src="worm" />
+  <div :class="$style.root">
+    <img :class="$style.worm" :src="worm" />
     <h1>{{ projectName }}</h1>
     <!-- <new-component></new-component> -->
   </div>
 </template>
 
 <script>
-import worm from './App/worm.svg';
-// import NewComponent from "./NewComponent.vue";
+import worm from './worm.svg';
+// import NewComponent from "../NewComponent/NewComponent.vue";
 
 export default {
   name: 'App',
@@ -24,7 +24,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" module>
 .root {
   display: flex;
   flex-direction: column;

@@ -1,8 +1,9 @@
+import App from './components/App';
+
 const PROJECT_NAME = '<%= projectSlug %>';
 const root = document.querySelector(`[data-${PROJECT_NAME}-root]`);
 
 function init() {
-  import App from './components/App';
   root.appendChild(new App({ projectName: PROJECT_NAME }).el);
 }
 
@@ -15,8 +16,10 @@ if (module.hot) {
     try {
       init();
     } catch (err) {
-      import ErrorBox from './components/ErrorBox';
-      root.appendChild(new ErrorBox({ error: err }).el);
+      import('./components/ErrorBox').then(exports => {
+        const ErrorBox = exports.default;
+        root.appendChild(new ErrorBox({ error: err }).el);
+      });
     }
   });
 }

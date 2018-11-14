@@ -7,6 +7,6 @@ export default class ErrorBox extends React.Component {
   }
 
   render() {
-    return <pre className={styles.root}>{this.props.error.stack}</pre>;
+    return <pre className={styles.root}>{`${String(this.props.error)}\n\n${this.props.error.stack}`}</pre>;
   }
 }

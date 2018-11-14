@@ -1,40 +1,39 @@
 <template>
-  <div></div>
+  <div :class="$style.root"></div>
 </template>
 
 <script>
-const d3 = require("d3-selection");
+const { select } = require('d3-selection');
 
 export default {
-  name: "<%= className %>",
+  name: '<%= className %>',
   props: {
     data: {
-      default: "red"
+      default: 'black'
     }
   },
   watch: {
     data(newVal, oldVal) {
       // TODO: Use D3 to update the graphic like this:
-      this.g.attr("fill", newVal);
+      this.g.attr('fill', newVal);
     }
   },
   mounted() {
-    this.svg = d3
-      .select(this.$el)
-      .append("svg")
-      .attr("width", 400)
-      .attr("height", 300);
+    this.svg = select(this.$el)
+      .append('svg')
+      .attr('width', 400)
+      .attr('height', 300);
 
-    this.g = this.svg.append("g").attr("fill", this.data);
+    this.g = this.svg.append('g').attr('fill', this.data);
 
     this.rect = this.g
-      .append("rect")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("rx", 3)
-      .attr("ry", 3)
-      .attr("width", 400)
-      .attr("height", 300);
+      .append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('rx', 3)
+      .attr('ry', 3)
+      .attr('width', 400)
+      .attr('height', 300);
   },
   data() {
     return {};
@@ -42,8 +41,8 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.wrapper {
+<style lang="scss" module>
+.root {
   border: 1px solid rgb(255, 115, 0);
   padding: 20px;
   text-align: center;

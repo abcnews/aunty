@@ -93,18 +93,16 @@ module.exports = class extends Generator {
     }
 
     this.options.name = Inflect.classify(this.options.name.replace(' ', '_'));
-
     this.config.set('template', this.options.template);
   }
 
   writing() {
-    const templatePath = this.templatePath(this.options.template);
     const context = {
       className: this.options.name
     };
 
-    // Copy the actual component
     let component = 'component';
+
     if (this.options.d3) {
       component = 'component-with-d3';
       this.dependencies.push('d3-selection');
@@ -112,36 +110,30 @@ module.exports = class extends Generator {
 
     if (this.options.template === 'vue') {
       this.fs.copyTpl(
-        `${templatePath}/${component}.vue`,
-        this.destinationPath(`src/components/${this.options.name}.vue`),
-        context
-      );
-
-      // Copy test over
-      this.fs.copyTpl(
-        `${templatePath}/${component}.test.js`,
-        this.destinationPath(`src/components/__tests__/${this.options.name}.test.js`),
+        this.templatePath(this.options.template, `${component}.vue`),
+        this.destinationPath(`src/components/${this.options.name}/${this.options.name}.vue`),
         context
       );
     } else {
       this.fs.copyTpl(
-        `${templatePath}/${component}.js`,
+        this.templatePath(this.options.template, `${component}.js`),
         this.destinationPath(`src/components/${this.options.name}/index.js`),
-        context
+        context,
+        { globOptions: { noext: true } }
       );
-      this.fs.copyTpl(
-        `${templatePath}/component.scss`,
+      this.fs.copy(
+        this.templatePath(this.options.template, `component.scss`),
         this.destinationPath(`src/components/${this.options.name}/styles.scss`),
         context
       );
-
-      // Copy test over
-      this.fs.copyTpl(
-        `${templatePath}/${component}.test.js`,
-        this.destinationPath(`src/components/${this.options.name}/index.test.js`),
-        context
-      );
     }
+
+    this.fs.copyTpl(
+      this.templatePath(this.options.template, `${component}.test.js`),
+      this.destinationPath(`src/components/${this.options.name}/index.test.js`),
+      context,
+      { globOptions: { noext: true } }
+    );
   }
 
   async install() {

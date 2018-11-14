@@ -1,11 +1,11 @@
 import React from 'react';
-import { render }  from 'react-dom';
+import { render } from 'react-dom';
+import App from './components/App';
 
 const PROJECT_NAME = '<%= projectSlug %>';
 const root = document.querySelector(`[data-${PROJECT_NAME}-root]`);
 
 function init() {
-  import App from './components/App';
   render(<App projectName={PROJECT_NAME} />, root);
 }
 
@@ -16,8 +16,10 @@ if (module.hot) {
     try {
       init();
     } catch (err) {
-      import ErrorBox from './components/ErrorBox';
-      render(<ErrorBox error={err} />, root);
+      import('./components/ErrorBox').then(exports => {
+        const ErrorBox = exports.default;
+        render(<ErrorBox error={err} />, root);
+      });
     }
   });
 }

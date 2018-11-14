@@ -1,9 +1,7 @@
 import styles from './styles.scss';
 
-function <%= className %>() {
+export default function <%= className %>() {
   this.el = document.createElement('div');
-  this.el.className = styles.wrapper;
-  this.el.innerHTML = `Find me in src/components/<%= className %>/index.js`;
+  this.el.className = styles.root;
+  this.el.innerHTML = `Find me in <strong>src/components/<%= className %>/index.js</strong>`;
 }
-
-export <%= className %>;
