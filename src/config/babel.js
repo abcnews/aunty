@@ -40,7 +40,8 @@ module.exports.createConfig = config => {
       ],
       plugins: [
         require.resolve('@babel/plugin-proposal-object-rest-spread'),
-        require.resolve('@babel/plugin-syntax-dynamic-import')
+        require.resolve('@babel/plugin-syntax-dynamic-import'),
+        require.resolve('@babel/plugin-proposal-class-properties')
       ]
     },
     (config.type && PROJECT_TYPES_DEFAULT_CONFIG[config.type]) || {}
