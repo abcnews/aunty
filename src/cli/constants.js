@@ -100,7 +100,7 @@ ${sec('Helper commands')}
 `
 };
 
-const NEW_SHORTHAND_EXPANSION = ['generate', 'app'];
+const NEW_SHORTHAND_EXPANSION = ['generate', 'project'];
 const INIT_SHORTHAND_EXPANSION = NEW_SHORTHAND_EXPANSION.concat(['--here']);
 
 module.exports.SHORTHANDS = {
