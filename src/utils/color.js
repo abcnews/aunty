@@ -8,5 +8,5 @@ module.exports = Object.assign(chalk, {
   ok: chalk.green,
   opt: chalk.cyan,
   req: chalk.magenta,
-  sec: chalk.underline
+  sec: chalk.bold.underline
 });
