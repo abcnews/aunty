@@ -1,10 +1,12 @@
 {
   "name": "<%= projectSlug %>",
   "version": "1.0.0-pre",
-  "description": "A project generated from aunty's <%= projectType %> app template.",
+  "description": "A project generated from aunty's <%= projectType %> project template.",
   "license": "MIT",
   "private": true,
-  "contributors": ["<%= authorName %> <<%= authorEmail %>>"],
+  "contributors": [
+    "<%= authorName %> <<%= authorEmail %>>"
+  ],
   "aunty": {
     "type": "<%= projectType %>"
   },
