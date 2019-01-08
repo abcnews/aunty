@@ -1,0 +1,10 @@
+# dependencies
+/node_modules
+
+# output
+/<%= BUILD_DIRECTORY_NAME %>
+/<%= DEPLOY_FILE_NAME %>
+
+# misc
+.DS_Store
+npm-debug.log

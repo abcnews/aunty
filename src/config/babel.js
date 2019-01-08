@@ -1,7 +1,11 @@
 // External
-const merge = require('webpack-merge');
+const mem = require('mem');
 
-const PROJECT_TYPES_DEFAULT_CONFIG = {
+// Ours
+const { merge } = require('../utils/structures');
+const { getProjectConfig } = require('./project');
+
+const PROJECT_TYPES_CONFIG = {
   preact: {
     plugins: [
       [
@@ -17,21 +21,19 @@ const PROJECT_TYPES_DEFAULT_CONFIG = {
   }
 };
 
-module.exports.createConfig = config => {
-  config = config || {};
+module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
+  const { babel: projectBabelConfig, type } = getProjectConfig();
 
-  const browsers = config.buildWithModules
-    ? ['Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15']
-    : ['> 1% in au', '> 5%', 'Firefox ESR'];
-
-  let babelConfig = merge(
+  return merge(
     {
       presets: [
         [
           require.resolve('@babel/preset-env'),
           {
             targets: {
-              browsers
+              browsers: isModernJS
+                ? ['Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15']
+                : ['> 1% in au', '> 5%', 'Firefox ESR']
             },
             useBuiltIns: 'entry',
             modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false
@@ -44,14 +46,7 @@ module.exports.createConfig = config => {
         require.resolve('@babel/plugin-proposal-class-properties')
       ]
     },
-    (config.type && PROJECT_TYPES_DEFAULT_CONFIG[config.type]) || {}
+    PROJECT_TYPES_CONFIG[type],
+    projectBabelConfig
   );
-
-  if (typeof config.babel === 'function') {
-    babelConfig = config.babel(babelConfig);
-  } else if (typeof config.babel === 'object') {
-    babelConfig = merge(babelConfig, config.babel);
-  }
-
-  return babelConfig;
-};
+});

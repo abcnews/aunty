@@ -2,11 +2,14 @@
 const { spawnSync } = require('child_process');
 
 // External
-require('isomorphic-fetch'); // Adds `global.fetch`
 const execa = require('execa');
+const fetch = require('node-fetch');
+const { compare, valid } = require('semver');
 
 // Ours
 const { pack } = require('./async');
+const { spin } = require('./logging');
+const { combine } = require('./structures');
 
 const PATTERNS = {
   ACTIVE_BRANCH: /\*\s+([^\n]+)/,
@@ -26,12 +29,12 @@ const GIT_SYNC_DEFAULTS = {
 function gitSync(args = '', options = {}) {
   args = typeof args === 'string' ? args.split(' ') : args;
 
-  return spawnSync('git', args, Object.assign({}, GIT_SYNC_DEFAULTS, options));
+  return spawnSync('git', args, combine(GIT_SYNC_DEFAULTS, options));
 }
 
 module.exports.isRepo = async () => !(await pack(git('rev-parse --git-dir')))[0];
 
-module.exports.isRepoSync = () => !gitSync('rev-parse --git-dir').error;
+module.exports.isRepoSync = () => !gitSync('rev-parse --git-dir').stderr;
 
 module.exports.getConfigValue = async key => (await git(`config --get ${key}`)).stdout;
 
@@ -80,7 +83,11 @@ module.exports.getGithubVersion = async repo => {
   return p.version;
 };
 
-module.exports.getTags = async () => (await git('tag')).stdout.split('\n').filter(x => x);
+module.exports.getSemverTags = async () =>
+  (await git('tag')).stdout
+    .split('\n')
+    .filter(valid)
+    .sort(compare);
 
 const hasTag = async tag => !(await pack(git(`show-ref --tags --verify refs/tags/${tag}`)))[0];
 

@@ -1,6 +1,6 @@
 // Ours
 const { blue, cyan, dim, green, hvy, magenta, red, yellow } = require('./color');
-const { zipTemplateLiterals } = require('./strings');
+const { zipTemplateLiterals } = require('./text');
 
 const COLORS = [blue, cyan, green, magenta, yellow];
 
