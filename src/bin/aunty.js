@@ -2,9 +2,10 @@
 
 if (!require('import-local')(__filename)) {
   (async () => {
-    const { createErrorLogo } = require('../utils/branding');
-    const { error, log } = require('../utils/logging');
+    const importLazy = require('import-lazy')(require);
     const { cli } = require('../cli');
+    const { createErrorLogo } = importLazy('../utils/branding');
+    const { error, log } = importLazy('../utils/logging');
 
     function exit(err) {
       if (err) {
