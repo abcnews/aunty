@@ -13,12 +13,12 @@ const createLogo = (module.exports.createLogo = color =>
 ⣾${dim('⢷')}⡾⢷${dim('⡾')}⣷ 
 ⢿⡾${dim('⢷⡾')}⢷⡿ `));
 
-module.exports.createCommandLogo = commandName =>
+module.exports.createCommandLogo = (commandName, isDry) =>
   zipTemplateLiterals([
     createLogo(),
     `
 ${dim('aunty')}
-${hvy(commandName)}`
+${hvy(commandName)}${isDry ? ` ${cyan('[dry]')}` : ''}`
   ]);
 
 module.exports.createErrorLogo = () =>
