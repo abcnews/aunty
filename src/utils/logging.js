@@ -1,5 +1,5 @@
 // Global
-const { error, info, log, warn } = console;
+const { error, log, time, timeEnd } = console;
 
 // Native
 const { inspect } = require('util');
@@ -10,17 +10,27 @@ const ora = require('ora');
 
 // Ours
 const { SPINNER_FRAMES } = require('./branding');
-const { opt, sec } = require('./color');
+const { cmd, opt, sec } = require('./color');
 
 inspect.styles.name = 'blue';
 
+const DEBUG_SYMBOL = cmd('»');
 const UTIL_INSPECT_OPTIONS = { colors: true, depth: null };
 
-module.exports.log = log;
-module.exports.info = (...args) => info(...[logSymbols.info].concat(args));
-module.exports.success = (...args) => info(...[logSymbols.success].concat(args));
-module.exports.warn = (...args) => warn(...[logSymbols.warning].concat(args));
+module.exports.debug = (...args) => log(...[DEBUG_SYMBOL].concat(args));
 module.exports.error = (...args) => error(...[logSymbols.error].concat(args));
+module.exports.info = (...args) => log(...[logSymbols.info].concat(args));
+module.exports.log = log;
+module.exports.success = (...args) => log(...[logSymbols.success].concat(args));
+module.exports.warn = (...args) => error(...[logSymbols.warning].concat(args));
+
+module.exports.timer = name => {
+  const label = `${DEBUG_SYMBOL} ${opt(name)} time`;
+
+  time(label);
+
+  return () => timeEnd(label);
+};
 
 // Can be used as a funtion or a tagged template literal;
 const pretty = (module.exports.pretty = (inputs, ...values) => {
