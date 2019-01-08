@@ -58,12 +58,15 @@ Project-level commands can use an optional configuration, which you can either e
 ```js
 module.exports = {
   type: '<project_type>',
-  webpack: {…},
+  // aunty command configuration
+  build: {…},
+  serve: {…},
+  deploy: {…},
+  // internal tools configuration
   babel: {…},
   jest: {…},
-  devServer: {…},
-  build: {…},
-  deploy: {…}
+  webpack: {…},
+  webpackDevServer: {…}
 };
 ```
 
@@ -72,34 +75,35 @@ module.exports = {
 ```js
 "aunty": {
   "type": "<project_type>",
-  "webpack": {…},
+  "build": {…},
+  "serve": {…},
+  "deploy": {…},
   "babel": {…},
   "jest": {…},
-  "devServer": {…},
-  "build": {…},
-  "deploy": {…}
+  "webpack": {…},
+  "webpackDevServer": {…}
 }
 ```
 
-Supported project `type`s have their own default build configuration, but you can override it by extending your local configuration. The `webpack` property's value will be merged with the project's default webpack configuration, including any babel options you specify on the `babel` property. The same applies to running tests with `jest` (which also uses the babel config). When running the local development server, you can pass additional options on the `devServer` property. Optionally, you can supply a function for the `webpack`, `babel`, `jest` and/or `devServer` properties, which will be passed the config opjects for you to manually modify and return.
+Supported project `type`s (currently: `basic`, `preact`, `react` & `vue`) have their own default build configuration, but you can override it by extending your project configuration.
 
-If you're looking to see what the default configuration is, or the impact of your additions, you can always perform a dry run of the `build`, `test` and `serve` commands by using the `--dry` (or `-d`) flag:
+The `build`, `serve` and `deploy` properties allow you to override the default settings for those respective commands.
+
+Aunty uses some tools internally, which you can also provide custom configuration for. If you supply an object for the `babel`, `jest`, `webpack`, and/or `webpackDevServer` properties, that object will be merged into the default configuration. Optionally, you can supply a function (for any property), which will be passed the default configuration for you to manually modify and return.
+
+If you're looking to see what the default configuration is for any command (and their internal tools), or the impact of your additions, you can always perform a dry run of the command by using the `--dry` (or `-d`) flag:
 
 ```bash
 /some/parent/directory/my-project $ aunty serve --dry
 ```
 
-Overrides should be used sparingly, as the advantages of using a single-dependency toolkit are most apparent when we don't deviate far from the project templates.
+Overrides should be used sparingly, as the advantages of using a single-dependency toolkit are most apparent when we don't deviate far from the defaults.
 
-If you don't need to override any of the project defaults, your entire aunty config can be a string containing the project type, as a shorthand for `{type: "<project_type>"}`.
+If you don't need to override any of the project defaults, your entire aunty configuration can be a string containing the project type, as a shorthand for `{type: "<project_type>"}`. `type` is the only required property in your aunty configuration.
 
 ### Generators
 
-Aunty comes with a few basic generators.
-
-`aunty generate component` will ask you a bunch of questions and generate a component (and tests) for whatever project type you've used.
-
-`aunty generate preview` will generate mobile.html and desktop.html in the public folder with some basic ABC theming. You'll have to include the actual article content and/or your interactive placeholder yourself.
+Aunty comes with a few basic generators. Run `aunty generate --help` for the full list, or `aunty generate <generator> --help` for further details.
 
 ## Authors
 
@@ -110,4 +114,4 @@ Aunty comes with a few basic generators.
 
 ## Thanks
 
-This project takes a heap of inspiration from [nwb](https://github.com/insin/nwb), a React/Preact/Inferno toolkit by [Jonny Buchanan](https://twitter.com/jbscript). If you're looking to develop your own toolkit, Jonny's created a fantastic [guide](https://github.com/insin/ad-hoc-reckons) to get you started.
+This project was originally inspired by [nwb](https://github.com/insin/nwb), a React/Preact/Inferno toolkit by [Jonny Buchanan](https://twitter.com/jbscript). If you're looking to develop your own toolkit, Jonny's created a fantastic [guide](https://github.com/insin/ad-hoc-reckons) to get you started.
