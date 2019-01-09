@@ -1,11 +1,13 @@
 // External
-const guessRootPath = require('guess-root-path');
 const Inflect = require('i')();
 const Generator = require('yeoman-generator');
 
 // Ours
-const { hvy } = require('../../utils/color');
+const { getProjectConfig } = require('../../config/project');
+const { cmd, hvy, opt } = require('../../utils/color');
+const { success } = require('../../utils/logging');
 const { installDependencies } = require('../../utils/npm');
+const { combine } = require('../../utils/structures');
 
 /**
  * Generate a Component
@@ -26,25 +28,19 @@ module.exports = class extends Generator {
   }
 
   usage() {
-    if (this.options.aunty) {
-      return 'aunty generate component [options] [<name>]';
-    } else {
-      return super.usage();
-    }
+    return `${cmd('aunty generate component')} -- ${opt('[options] [<name>]')}`;
   }
 
   initializing() {
     if (!this.config.get('template')) {
-      const directory = guessRootPath();
-      process.chdir(directory);
-      this.destinationRoot(directory);
+      const { root, type } = getProjectConfig();
+
+      process.chdir(root);
+      this.destinationRoot(root);
       this.config.save();
 
-      // Try and guess what template is being used from the aunty config
       try {
-        const packageJson = require(directory + '/package.json');
-        const template = packageJson.aunty.replace('-app', '');
-        this.config.set('template', template);
+        this.config.set('template', type);
       } catch (ex) {
         // Couldn't detect a thing
       }
@@ -89,7 +85,7 @@ module.exports = class extends Generator {
 
     if (prompts.length > 0) {
       const answers = await this.prompt(prompts);
-      this.options = Object.assign({}, this.options, answers);
+      this.options = combine(this.options, answers);
     }
 
     this.options.name = Inflect.classify(this.options.name.replace(' ', '_'));
@@ -159,6 +155,6 @@ module.exports = class extends Generator {
   }
 
   end() {
-    this.log('\n 👍', hvy(this.options.name), 'created', '\n');
+    success(`Created ${hvy(this.options.name)} component`);
   }
 };

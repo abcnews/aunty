@@ -2,99 +2,146 @@
 const { resolve } = require('path');
 
 // External
-const merge = require('webpack-merge');
-const minimist = require('minimist');
-const updateNotifier = require('update-notifier');
+const importLazy = require('import-lazy')(require);
+const minimist = importLazy('minimist');
+const updateNotifier = importLazy('update-notifier');
 
 // Ours
 const pkg = require('../../package');
-const { getConfig: getProjectConfig } = require('../config/project');
+const { getProjectConfig } = require('../config/project');
 const { pack, packs, throws } = require('../utils/async');
 const { createCommandLogo } = require('../utils/branding');
-const { log } = require('../utils/logging');
-const { slugToCamel } = require('../utils/strings');
-const { ALIASES, COMMANDS, YEOMAN_COMMANDS, DEFAULTS, OPTIONS, MESSAGES } = require('./constants');
-
-const isArgHelpCommand = arg => {
-  return (ALIASES[arg] || arg) === 'help';
-};
+const { log, timer } = require('../utils/logging');
+const { merge } = require('../utils/structures');
+const {
+  COMMAND_ALIASES,
+  COMMANDS,
+  DEFAULTS,
+  DRY_VARIATIONS,
+  HELP_VARIATIONS,
+  MESSAGES,
+  SHORTHANDS,
+  VERSION_VARIATIONS
+} = require('./constants');
 
 module.exports.cli = packs(async args => {
-  const argv = minimist(args, OPTIONS);
+  const __DEBUG__stopTimer = timer('CLI');
 
   updateNotifier({ pkg, updateCheckInterval: 36e5 }).notify();
 
-  if (argv.version) {
+  // If we just want aunty's version number, print it, then exit
+
+  if (args.some(arg => VERSION_VARIATIONS.includes(arg))) {
     return log(MESSAGES.version(pkg.version));
   }
 
-  let commandName = argv._[0] || '';
-  const isHelp = isArgHelpCommand(commandName);
+  // Normalise the arguments (see function) and split them
 
-  let yeomanArgs;
+  args = normalise(args);
+  const [commandName, ...commandArgs] = args;
 
-  if (YEOMAN_COMMANDS.has(commandName)) {
-    yeomanArgs = args;
-  } else if (isHelp && YEOMAN_COMMANDS.has(argv._[1])) {
-    yeomanArgs = args.slice(1).concat('--help');
-  }
-
-  if (yeomanArgs) {
-    return await require('../commands/yeoman').run(yeomanArgs);
-  }
-
-  if (!commandName || (isHelp && (argv._.length === 1 || isArgHelpCommand(argv._[1])))) {
-    return log(MESSAGES.usage());
-  }
-
-  if (isHelp) {
-    commandName = argv._[1] || '';
-  }
+  // If we didn't supply a known command name, blow up, unless we wanted
+  // aunty's usage message (in which case, print it, then exit).
 
   if (!COMMANDS.has(commandName)) {
+    if (!commandName || args.includes(HELP_VARIATIONS[0])) {
+      let isProject = true;
+
+      try {
+        const { type } = getProjectConfig();
+
+        isProject = !!type;
+      } catch (e) {
+        isProject = false;
+      }
+
+      return log(MESSAGES.usage(isProject));
+    }
+
     throw MESSAGES.unrecognised(commandName);
   }
 
-  commandName = ALIASES[commandName] || commandName;
+  // Import the command
 
-  const commandFn = require(resolve(__dirname, `../commands/${commandName}`))[slugToCamel(commandName)];
-  const commandFnArgs = isHelp ? ['--help'] : args.slice(1);
+  const __DEBUG__stopImportTimer = timer(`CLI.import(${commandName})`);
 
-  throws(await commandFn(commandFnArgs));
+  const commandFn = require(resolve(__dirname, `./${commandName}`));
+
+  if (process.env.AUNTY_DEBUG) {
+    __DEBUG__stopImportTimer();
+  }
+
+  // Execute the command with the remaining arguments
+
+  const __DEBUG__stopExecuteTimer = timer(`CLI.execute(${commandName})`);
+
+  throws(await commandFn(commandArgs, true));
+
+  if (process.env.AUNTY_DEBUG) {
+    __DEBUG__stopExecuteTimer();
+    __DEBUG__stopTimer();
+  }
 });
 
-let isEntryCommand;
+const normalise = args => {
+  // 1) Move any dry argument variation to second position, as '--dry'
 
-module.exports.command = ({ name, options, usage, isProjectConfigRequired }, fn) => {
+  const dryArgIndex = args.findIndex(arg => DRY_VARIATIONS.includes(arg));
+
+  if (dryArgIndex > -1) {
+    args.splice(dryArgIndex, 1);
+    args.splice(1, 0, DRY_VARIATIONS[0]);
+  }
+
+  // 2) Move any help argument variation to second position, as '--help'
+
+  const helpArgIndex = args.findIndex(arg => HELP_VARIATIONS.includes(arg));
+
+  if (helpArgIndex > -1) {
+    args.splice(helpArgIndex, 1);
+    args.splice(1, 0, HELP_VARIATIONS[0]);
+  }
+
+  // 3) If the first argument is a command alias, expand it
+
+  args[0] = COMMAND_ALIASES[args[0]] || args[0];
+
+  // 4) If the first argument is a shorthand, expand it
+
+  const shorthand = SHORTHANDS[args[0]];
+
+  if (shorthand) {
+    args.splice.apply(args, [0, 1].concat(shorthand));
+  }
+
+  // 5) Return the normalised arguments
+
+  return args;
+};
+
+module.exports.command = ({ name, nodeEnv, options, usage, hasSubcommands }, fn) => {
   name = name || DEFAULTS.name;
-  options = merge(options || {}, DEFAULTS.options);
-  usage = usage || MESSAGES.usageFallback;
+  options = merge(DEFAULTS.options, options);
+  usage = usage || DEFAULTS.usage;
 
-  return packs(async (args = [], ...misc) => {
+  return packs(async (args = [], isEntryCommand) => {
     const argv = minimist(args, options);
-    const fnArgs = [argv, ...misc];
-    let err;
-    let config;
 
-    if (argv.help) {
-      return log(typeof usage === 'function' ? usage(name) : usage);
+    if (!hasSubcommands) {
+      if (argv.help) {
+        return log(typeof usage === 'function' ? usage(name) : usage);
+      }
+
+      if (isEntryCommand) {
+        log(createCommandLogo(name, argv.dry));
+      }
     }
 
-    if (!isEntryCommand) {
-      isEntryCommand = true;
-      log(createCommandLogo(name));
+    if (!process.env.NODE_ENV && nodeEnv) {
+      process.env.NODE_ENV = nodeEnv;
     }
 
-    argv.$ = args;
-
-    if (isProjectConfigRequired) {
-      config = getProjectConfig(argv);
-      fnArgs.splice(1, 0, config);
-    }
-
-    if (!err) {
-      [err] = await pack(fn(...fnArgs));
-    }
+    let [err] = await pack(fn(argv));
 
     if (err) {
       throw err;

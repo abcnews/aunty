@@ -1,6 +1,6 @@
 // Ours
 const { blue, cyan, dim, green, hvy, magenta, red, yellow } = require('./color');
-const { zipTemplateLiterals } = require('./strings');
+const { zipTemplateLiterals } = require('./text');
 
 const COLORS = [blue, cyan, green, magenta, yellow];
 
@@ -13,12 +13,12 @@ const createLogo = (module.exports.createLogo = color =>
 ⣾${dim('⢷')}⡾⢷${dim('⡾')}⣷ 
 ⢿⡾${dim('⢷⡾')}⢷⡿ `));
 
-module.exports.createCommandLogo = commandName =>
+module.exports.createCommandLogo = (commandName, isDry) =>
   zipTemplateLiterals([
     createLogo(),
     `
 ${dim('aunty')}
-${hvy(commandName)}`
+${hvy(commandName)}${isDry ? ` ${cyan('[dry]')}` : ''}`
   ]);
 
 module.exports.createErrorLogo = () =>

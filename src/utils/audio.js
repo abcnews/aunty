@@ -1,12 +1,12 @@
 // Native
-const childProcess = require('child_process');
-const path = require('path');
+const { execSync, spawn } = require('child_process');
+const { join } = require('path');
 
-const ANNOUNCEMENT_FILENAME = path.join(__dirname, '../../assets/done.mp3');
+const ANNOUNCEMENT_FILENAME = join(__dirname, '../../assets/done.mp3');
 
 function has(cmd) {
   try {
-    childProcess.execSync('which ' + cmd + ' 2>/dev/null 2>/dev/null');
+    execSync('which ' + cmd + ' 2>/dev/null 2>/dev/null');
     return true;
   } catch (err) {
     return false;
@@ -26,5 +26,5 @@ module.exports.announce = () => {
     args.unshift('-really-quiet');
   }
 
-  childProcess.spawn(bin, args);
+  spawn(bin, args);
 };

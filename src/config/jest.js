@@ -1,28 +1,17 @@
-// External
-const merge = require('webpack-merge');
+// Ours
+const { merge } = require('../utils/structures');
+const { getProjectConfig } = require('./project');
 
-const PROJECT_TYPES_DEFAULT_CONFIG = {
-  // nothing projectType specific for now
-};
+module.exports.getJestConfig = () => {
+  const { jest: projectJestConfig, root } = getProjectConfig();
 
-module.exports.createConfig = config => {
-  config = config || {};
-
-  let jestConfig = merge(
+  return merge(
     {
-      rootDir: config.root,
+      rootDir: root,
       transform: {
         '.*': require.resolve('../utils/jest')
       }
     },
-    (config.type && PROJECT_TYPES_DEFAULT_CONFIG[config.type]) || {}
+    projectJestConfig
   );
-
-  if (typeof config.jest === 'function') {
-    jestConfig = config.jest(jestConfig);
-  } else if (typeof config.jest === 'object') {
-    jestConfig = merge(jestConfig, config.jest);
-  }
-
-  return jestConfig;
 };

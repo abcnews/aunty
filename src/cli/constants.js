@@ -1,63 +1,46 @@
 // Ours
 const { createLogo } = require('../utils/branding');
-const { cmd, hvy, opt, req, sec } = require('../utils/color');
+const { cmd, dim, hvy, opt, req, sec } = require('../utils/color');
+const { combine, setOfValues } = require('../utils/structures');
 
-module.exports.OPTIONS = {
-  boolean: ['help', 'version'],
-  alias: {
-    help: 'h',
-    version: 'v'
-  }
-};
-
-const ALIASES = (module.exports.ALIASES = {
+const COMMAND_ALIASES = (module.exports.COMMAND_ALIASES = {
   b: 'build',
   c: 'clean',
   d: 'deploy',
-  h: 'help',
+  g: 'generate',
   r: 'release',
   s: 'serve',
   t: 'test'
 });
 
-const YEOMAN_ALIASES = {
-  f: 'fragment',
-  g: 'generate',
-  i: 'init',
-  n: 'new'
-};
-
-module.exports.COMMANDS = new Set(
-  [].concat(Object.keys(ALIASES).map(key => ALIASES[key])).concat(Object.keys(ALIASES))
-);
-
-module.exports.YEOMAN_COMMANDS = new Set(
-  [].concat(Object.keys(YEOMAN_ALIASES).map(key => YEOMAN_ALIASES[key])).concat(Object.keys(YEOMAN_ALIASES))
-);
+module.exports.COMMANDS = setOfValues(COMMAND_ALIASES);
 
 module.exports.DEFAULTS = {
   name: '__command__',
   options: {
-    boolean: ['dry', 'force', 'help', 'modules'],
-    string: ['id', 'target'],
+    '--': true,
+    boolean: ['dry', 'force', 'help', 'quiet'],
+    string: [],
     alias: {
       dry: 'd',
-      id: 'i',
       force: 'f',
       help: 'h',
-      target: 't'
-    },
-    default: {
-      modules: true
+      quiet: 'q'
     }
-  }
+  },
+  usage: name => `Usage: ${cmd('aunty')} ${cmd(name)} ${opt('[options]')}
+`
 };
+
+module.exports.DRY_VARIATIONS = ['--dry', '-d'];
+module.exports.HELP_VARIATIONS = ['--help', '-h', 'h', 'help'];
+module.exports.VERSION_VARIATIONS = ['--version', '-v'];
 
 module.exports.MESSAGES = {
   version: versionNumber => `
 ${cmd('aunty')} v${versionNumber}`,
   unrecognised: commandName => `Unrecognised command: ${req(commandName)}`,
-  usage: () => `${createLogo()}
+  usage: isProject => `${createLogo()}
 
 Usage: ${cmd('aunty')} ${req('<command>')} ${opt('[options]')} ${opt('[command_options]')}
 
@@ -67,43 +50,62 @@ ${sec('Options')}
 
 ${sec('Project creation commands')}
 
-  ${cmd('aunty new')} ${req('<directory_name>')} ${opt('[options]')}
+  ${
+    !isProject
+      ? `${cmd('aunty new')} ${req('<project_name>')}
     Create a project in a new directory
 
-  ${cmd('aunty init')} ${opt('[options]')}
-    Create a project in the current directory
+  ${cmd('aunty init')}
+    Create a project in the current directory`
+      : dim(`[available outside project directory]`)
+  }
 
 ${sec('Development commands')}
 
-  ${cmd('aunty generate component')}
-    Generate a new component (and tests)
+  ${
+    isProject
+      ? `${cmd('aunty generate')} ${req('<generator>')}
+    Generate code for your project or Core Media 
 
   ${cmd('aunty clean')}
     Delete the current project's build output directories.
 
-  ${cmd('aunty build')} ${opt('[options]')}
+  ${cmd('aunty build')}
     Clean & build the current project.
 
-  ${cmd('aunty serve')} ${opt('[options]')}
+  ${cmd('aunty serve')}
     Build & serve the current project, re-building as files change
 
-  ${cmd('aunty test')} ${opt('[options]')}
-    Run any tests in the current project.
+  ${cmd('aunty test')}
+    Run any tests in the current project.`
+      : dim(`[available inside project directory]`)
+  }
 
 ${sec('Deployment commands')}
 
-  ${cmd('aunty deploy')} ${opt('[options]')}
+  ${
+    isProject
+      ? `${cmd('aunty deploy')}
     Deploy the current project.
 
-  ${cmd('aunty release')} ${opt('[options] [build_options] [deploy_options]')}
-    Build, \`${hvy('git tag <package.json:version>')}\`, then deploy the current project.
+  ${cmd('aunty release')}
+    Build, version bump, then deploy the current project.`
+      : dim(`[available inside project directory]`)
+  }
 
 ${sec('Helper commands')}
 
   ${cmd('aunty help')} ${req('<command>')}
     Display complete help for this ${req('command')}.
-`,
-  usageFallback: name => `
-Usage: ${cmd('aunty')} ${cmd(name)} ${opt('[options]')}
 `
+};
+
+const NEW_SHORTHAND_EXPANSION = ['generate', 'project'];
+const INIT_SHORTHAND_EXPANSION = NEW_SHORTHAND_EXPANSION.concat(['--', '--here']);
+
+module.exports.SHORTHANDS = {
+  i: INIT_SHORTHAND_EXPANSION,
+  init: INIT_SHORTHAND_EXPANSION,
+  n: NEW_SHORTHAND_EXPANSION,
+  new: NEW_SHORTHAND_EXPANSION
 };

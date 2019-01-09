@@ -1,5 +1,5 @@
-const { createWebpackConfig } = require('../config/webpack');
+const pkg = require('../../package');
 
 module.exports = {
-  getDefaultWebpackConfig: createWebpackConfig
+  version: pkg.version
 };

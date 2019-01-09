@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+  <head>
+    <title>An example article</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="initial-scale=1.0" />
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="ABC.ContentType" content="CMArticle" />
+    <meta name="ContentId" content="123456789" />
+    <meta name="replacement-title" content="An example article" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://www.abc.net.au/res/bundles/2.4.0/styles/abc.bundle.2.4.0.min.css"
+      media="screen, projection"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://www.abc.net.au/res/sites/news-projects/news-core/1.19.1/mobile.css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://www.abc.net.au/res/sites/news-projects/news-core/1.19.1/masthead.css"
+      media=""
+    />
+    <script>
+      window.dataLayer = [
+        {
+          debug: {
+            schemaVersion: '20180315'
+          },
+          document: {
+            language: 'en',
+            canonicalUrl: '/',
+            contentType: 'article',
+            uri: 'coremedia://article/123456789',
+            contentSource: 'coremedia',
+            id: '123456789',
+            pageTitle: 'An example article',
+            title: {
+              title: 'An example article',
+              teaser: 'An example article',
+              short: 'An example article'
+            },
+            productionUnit: 'Story Lab',
+            siteRoot: {
+              segment: 'news',
+              title: 'ABC News'
+            },
+            lastModified: '<%= dateString %>'
+          }
+        },
+        {
+          application: {
+            generatorName: 'WCMS JSP',
+            generatorVersion: '18.10.8.8.0',
+            environment: 'production',
+            wcmsTheme: 'phase1-mobile'
+          }
+        }
+      ];
+    </script>
+  </head>
+
+  <body class="platform-mobile">
+    <header>
+      <nav id="abcHeader" class="global"></nav>
+      <nav class="site">
+        <a href="https://www.abc.net.au/news/" class="home">ABC News</a>
+        <div class="menu">
+          <ul>
+            <li><a href="https://www.abc.net.au/news/">Home</a></li>
+            <li><a href="https://www.abc.net.au/news/justin/">Just In</a></li>
+            <li><a href="https://www.abc.net.au/news/australia/">Australia</a></li>
+            <li><a href="https://www.abc.net.au/news/world/">World</a></li>
+            <li><a href="https://www.abc.net.au/news/analysis-and-opinion/">Analysis &amp; Opinion</a></li>
+            <li><a href="https://www.abc.net.au/news/business/">Business</a></li>
+            <li><a href="https://www.abc.net.au/news/sport/">Sport</a></li>
+            <li><a href="https://www.abc.net.au/news/science/">Science</a></li>
+            <li><a href="https://www.abc.net.au/news/arts-culture/">Arts</a></li>
+            <li><a href="https://www.abc.net.au/news/">Live Streams</a></li>
+            <li><a href="https://www.abc.net.au/news/video/">Video</a></li>
+            <li><a href="https://www.abc.net.au/news/photos/">Photos</a></li>
+            <li><a href="https://www.abc.net.au/news/entertainment/">Entertainment</a></li>
+            <li><a href="https://www.abc.net.au/news/upload/">Upload</a></li>
+            <li><a href="https://www.abc.net.au/news/alerts/subscribe/">Subscribe</a></li>
+            <li><a href="https://www.abc.net.au/news/rural/">Rural</a></li>
+            <li><a href="https://www.abc.net.au/news/more/">More &gt;</a></li>
+          </ul>
+          <a href="https://www.abc.net.au/" class="platform-standard switch">Change to standard view</a>
+        </div>
+      </nav>
+      <div class="section">
+        <p><a href="https://www.abc.net.au/news/">News Home</a></p>
+      </div>
+    </header>
+    <div class="content">
+      <article>
+        <header>
+          <h1>An example article</h1>
+          <span class="program">Story Lab</span>
+          <span class="attribution richtext"> By <a href="" target="_self" title=""> <%= authorName %> </a> </span>
+          <time class="updated" datetime="<%= dateISOString %>"> <small>Updated</small> <%= dateString %> </time>
+        </header>
+
+        <div class="story richtext">
+          <a name="header"> </a> <a name="endheader"> </a>
+
+          <!-- put your story content here -->
+          <p>This is the article content.</p>
+          <!-- and that's it -->
+
+          <% if (odysseyVersion) { %>
+          <div class="embed-fragment" data-cmid="8268602">
+            <div
+              class="init-interactive"
+              data-no-support-msg="true"
+              data-scripts="https://www.abc.net.au/res/sites/news-projects/odyssey/<%= odysseyVersion %>/index.js"
+            ></div>
+            <style>
+              html[veiled] {
+                overflow: hidden;
+                max-height: 100%;
+              }
+
+              html:not([veiled]) > body {
+                will-change: opacity;
+                transition: opacity cubic-bezier(0.25, 0.46, 0.45, 0.94) 1s;
+              }
+
+              html[veiled] > body {
+                opacity: 0;
+                pointer-events: none;
+              }
+            </style>
+            <script>
+              (function() {
+                var html = document.documentElement;
+                var timeout;
+                window.unveil = function() {
+                  clearTimeout(timeout);
+                  html.removeAttribute('veiled');
+                };
+                html.setAttribute('veiled', '');
+                timeout = setTimeout(window.unveil, 2000);
+                window.addEventListener('odyssey:api', unveil);
+              })();
+            </script>
+          </div>
+          <% } if (parallaxVersion) { %>
+          <div class="embed-fragment" data-cmid="">
+            <div
+              class="init-interactive"
+              data-no-support-msg="true"
+              data-scripts="https://www.abc.net.au/res/sites/news-projects/odyssey-parallax/<%= parallaxVersion %>/index.js"
+            ></div>
+          </div>
+          <% } if (scrollytellerVersion) { %>
+          <div class="embed-fragment" data-cmid="">
+            <div
+              class="init-interactive"
+              data-no-support-msg="true"
+              data-scripts="https://www.abc.net.au/res/sites/news-projects/odyssey-scrollyteller/<%= scrollytellerVersion %>/index.js"
+            ></div>
+          </div>
+          <% } %>
+          <div class="embed-fragment" data-cmid=""><%- mobileFragment %></div>
+        </div>
+        <footer>
+          <time class="original" datetime="<%= dateISOString %>"> <small>Posted</small> <%= dateString %> </time>
+        </footer>
+      </article>
+    </div>
+
+    <footer>
+      <nav class="site"><a href="desktop.html" class="platform-standard switch">Change to standard view</a></nav>
+    </footer>
+    <script src="https://mobile.abc.net.au/res/libraries/jquery/jquery-2.1.4.min.js"></script>
+    <script src="https://www.abc.net.au/res/libraries/location/abc.location-1.latest.min.js"></script>
+    <script src="https://mobile.abc.net.au/res/bundles/mobile/abc.bundle.mobile-1.0.1.min.js"></script>
+    <script src="https://mobile.abc.net.au/res/bundles/mobile/abc.bundle.mobile.media-1.0.min.js"></script>
+    <script src="https://www.abc.net.au/res/sites/news-projects/news-core/1.19.1/mobile.js"></script>
+    <script
+      type="text/javascript"
+      src="https://www.abc.net.au/cm/code/8724582/abc.news.config-2018-07-11.js"
+      async
+    ></script>
+    <script type="text/javascript" src="https://www.abc.net.au/cm/code/10425228/dls.masthead.replacement.js"></script>
+    <nav id="abcFooter" class="global"></nav>
+  </body>
+</html>

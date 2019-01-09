@@ -2,10 +2,10 @@
 const path = require('path');
 
 // External
-const guessRootPath = require('guess-root-path');
 const execa = require('execa');
 
 // Ours
+const { getProjectConfig } = require('../config/project');
 const { SPINNER_FRAMES } = require('./branding');
 const { bgRed, cmd, ok } = require('./color');
 const { log: _log, spin } = require('./logging');
@@ -19,10 +19,10 @@ const NPM_INSTALL_SPINNER_FRAMES = SPINNER_FRAMES.map(x => `      ${cmd(x)}`);
  */
 const onlyNewDependencies = (dependencies, isDev) => {
   try {
-    const config = require(path.join(guessRootPath(), 'package.json'));
-    const deps = Object.keys(config[isDev ? 'devDependencies' : 'dependencies...']);
+    const { pkg } = getProjectConfig();
+    const existingDependencies = Object.keys(pkg[isDev ? 'devDependencies' : 'dependencies...']);
 
-    return dependencies.filter(dep => !deps.includes(dep) && dep !== null);
+    return dependencies.filter(dep => !existingDependencies.includes(dep) && dep !== null);
   } catch (ex) {
     // nothing
   }
