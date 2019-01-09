@@ -5,13 +5,10 @@ const { hostname } = require('os');
 const { probe } = require('tcp-ping-sync');
 
 // Ours
-const { timer } = require('../utils/logging');
 const { combine } = require('../utils/structures');
 const { getProjectConfig } = require('./project');
 
 const INTERNAL_SUFFIX = '.aus.aunty.abc.net.au';
-// TODO: Find a faster way of determining DEFAULT_HOST. It currently takes anywhere from ~300ms to a few seconds
-const __DEBUG__stopProbeTimer = timer(`tcp-ping-sync#probe(nucwed${INTERNAL_SUFFIX})`);
 const DEFAULT_HOST = probe(`nucwed${INTERNAL_SUFFIX}`)
   ? `${
       hostname()
@@ -19,9 +16,6 @@ const DEFAULT_HOST = probe(`nucwed${INTERNAL_SUFFIX}`)
         .split('.')[0]
     }${INTERNAL_SUFFIX}` // hostname _may_ include INTERNAL_SUFFIX
   : 'localhost';
-if (process.env.AUNTY_DEBUG) {
-  __DEBUG__stopProbeTimer();
-}
 const DEFAULT_PORT = 8000;
 
 module.exports.getServeConfig = () => {
