@@ -10,7 +10,7 @@ module.exports.OPTIONS = {
 };
 
 const GENERATOR_ALIASES = (module.exports.GENERATOR_ALIASES = {
-  a: 'article',
+  a: 'articles',
   c: 'component',
   f: 'fragment',
   p: 'project',
