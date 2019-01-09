@@ -25,7 +25,7 @@ module.exports = class extends Generator {
       const deployConfig = loadJsonFile.sync(join(root, DEPLOY_FILE_NAME));
       id = deployConfig.id;
     } catch (err) {
-      warn('No deployment configuration file was found. Assuming id is package.json:version');
+      warn('No deploy configuration file was found. Assuming id is package.json:version');
     }
 
     info(`Volume setting for thumbnail:

@@ -29,9 +29,9 @@ module.exports.MESSAGES = {
 
 ${sec('Options')}
 
-  ${opt('-d')}, ${opt('--dry')}           Output the generated webpack (& deployment) configuration, then exit
-  ${opt('-l')}, ${opt('--local')}         Only build for local purposes; don't output deployment configuration
-  ${opt('-i NAME')}, ${opt('--id=NAME')}  Id for this build (can be used in deployment path) ${opt(
+  ${opt('-d')}, ${opt('--dry')}           Output the generated webpack (& deploy) configuration, then exit
+  ${opt('-l')}, ${opt('--local')}         Only build for local purposes; don't output deploy configuration
+  ${opt('-i NAME')}, ${opt('--id=NAME')}  Id for this build (can be used in deploy 'to' path) ${opt(
     `[default: ${cmd('git branch')}]`
   )}
 

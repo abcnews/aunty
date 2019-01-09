@@ -8,6 +8,7 @@ const loadJsonFile = importLazy('load-json-file');
 
 // Ours
 const { command } = require('../');
+const { addProfileProperties } = require('../../config/deploy');
 const { getProjectConfig } = require('../../config/project');
 const { DEPLOY_FILE_NAME } = require('../../constants');
 const { packs, throws, unpack } = require('../../utils/async');
@@ -25,52 +26,61 @@ module.exports = command(
     const { root } = getProjectConfig();
     let deployConfig;
 
-    // 1) Load the deployment configuration (created by the build process)
+    // 1) Load the deploy configuration (created by the build process)
 
     try {
       deployConfig = loadJsonFile.sync(join(root, DEPLOY_FILE_NAME));
     } catch (err) {
-      throw new Error(MESSAGES.noDescriptor);
+      throw new Error(MESSAGES.noDeployConfigFile);
     }
 
-    const { id, targets } = deployConfig;
+    let { id, targets } = deployConfig;
 
     if (!Array.isArray(targets)) {
-      throw new Error(MESSAGES.noDescriptor);
+      throw new Error(MESSAGES.noDeployConfigFile);
     }
 
-    // 2) Validate the deployment configuration
+    // 2) Add profile properties (type, host, port, username, password) to each target
+
+    targets = targets.map(addProfileProperties);
+
+    // 3) Validate the deploy configuration
 
     for (let target of targets) {
       const { from, type } = target;
 
-      // 2.1) Check profile's 'type' is valid
+      // 3.1) Check profile's 'type' is valid
       if (!VALID_TYPES.has(type)) {
         throw MESSAGES.unrecognisedType(type);
       }
 
-      // 2.2) Check all required properties are present
+      // 3.2) Check all required properties are present
       VALID_TYPES.get(type).REQUIRED_PROPERTIES.forEach(prop => {
         if (target[prop] == null) {
           throw MESSAGES.missingProperty(prop);
         }
       });
 
-      // 2.3) Check 'from' directory exists
+      // 3.3) Check 'from' directory exists
       if (!existsSync(from) || !statSync(from).isDirectory()) {
         throw MESSAGES.noFromDirectory(from);
       }
+
+      // 3.4) For SSH targets, give the `to` directory a trailing slash
+      if (target.type === 'ssh') {
+        target.to = target.to.replace(/\/?$/, '/');
+      }
     }
 
-    // 3a) Log config
+    // 4a) Log config
 
     if (argv.dry) {
       return dry({
-        'Deploy config': deployConfig
+        'Deploy config': { id, targets }
       });
     }
 
-    // 3b) Deploy
+    // 4b) Deploy
 
     for (let target of targets) {
       const { publicPath, type } = target;

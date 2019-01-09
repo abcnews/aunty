@@ -28,7 +28,7 @@ module.exports = class extends Generator {
     try {
       deployConfig = loadJsonFile.sync(join(root, DEPLOY_FILE_NAME));
     } catch (err) {
-      throw new Error(DEPLOY_MESSAGES.noDescriptor);
+      throw new Error(DEPLOY_MESSAGES.noDeployConfigFile);
     }
 
     const { publicPath } = deployConfig.targets[0];
@@ -49,7 +49,7 @@ const getFragmentMarkup = (module.exports.getFragmentMarkup = ({
   const { addModernJS, extractCSS } = getBuildConfig();
   const { name } = pkg;
 
-  const asset = url => (publicPath ? [publicPath] : []).concat([url]).join('/');
+  const asset = url => `${publicPath}${url}`;
 
   return `
 <${tag('div')}

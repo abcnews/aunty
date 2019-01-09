@@ -22,12 +22,12 @@ module.exports.MESSAGES = {
   deployed: publicPath => `Deployed at ${sec(publicPath)}`,
   deploying: 'Deploying',
   missingProperty: prop => `Missing required property: '${hvy(prop)}'`,
-  noDescriptor:
-    'No deployment configuration file was found, or its format was unrecognisable. Please re-build the project.',
+  noDeployConfigFile:
+    'No deploy configuration file was found, or its format was unrecognisable. Please re-build the project.',
   noFromDirectory: from => `Directory specified by 'from' property does not exist: ${hvy(from)}`,
   publicURL: url => `Public URL: ${hvy(url)}`,
   unrecognisedType: type =>
-    `${type ? 'Unrecognised' : 'No'} deployment type${type ? `: ${hvy(type)}` : ''}. Acceptable types are: ${Array.from(
+    `${type ? 'Unrecognised' : 'No'} deploy type${type ? `: ${hvy(type)}` : ''}. Acceptable types are: ${Array.from(
       VALID_TYPES.keys()
     )
       .map(x => hvy(x))
@@ -38,8 +38,6 @@ module.exports.MESSAGES = {
 
 ${sec('Options')}
 
-  ${opt('-d')}, ${opt(
-    '--dry'
-  )}  Output the configuration in the deployment configuration file (${DEPLOY_FILE_NAME}), then exit
+  ${opt('-d')}, ${opt('--dry')}  Output the deploy configuration, then exit
 `
 };

@@ -45,10 +45,10 @@ module.exports = command(
             'Webpack config': webpackConfig
           },
           deployConfig
-            ? {}
-            : {
+            ? {
                 'Deploy config': deployConfig
               }
+            : {}
         )
       );
     }
@@ -80,9 +80,9 @@ module.exports = command(
     }
 
     if (deployConfig) {
-      spinner = spin('Creating deployment configuration');
+      spinner = spin('Creating deploy configuration');
       writeJsonFile.sync(join(root, DEPLOY_FILE_NAME), deployConfig);
-      spinner.succeed('Created deployment configuration');
+      spinner.succeed('Created deploy configuration');
     }
   }
 );
