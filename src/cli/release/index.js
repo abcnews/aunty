@@ -75,7 +75,7 @@ module.exports = command(
 
     if (!argv.force && !isPrerelease && !bump) {
       log(MESSAGES.changes(pkgVersion, await getSemverTags(), await getChangelog(pkgVersion)));
-      log(MESSAGES.bumpQuestion(dry));
+      log(MESSAGES.bumpQuestion(argv.dry));
 
       const bumpSelection = (await cliSelect({
         defaultValue: 0,
