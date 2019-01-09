@@ -7,6 +7,7 @@ const Generator = require('yeoman-generator');
 
 // Ours
 const { getProjectConfig } = require('../../config/project');
+const { DEPLOY_FILE_NAME } = require('../../constants');
 const { cmd, dim, hvy, opt, red: key, green: val } = require('../../utils/color');
 const { info, warn } = require('../../utils/logging');
 

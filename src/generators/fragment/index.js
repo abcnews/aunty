@@ -6,10 +6,10 @@ const loadJsonFile = require('load-json-file');
 const Generator = require('yeoman-generator');
 
 // Ours
-const { DEPLOY_FILE_NAME } = require('../../constants');
 const { MESSAGES: DEPLOY_MESSAGES } = require('../../cli/deploy/constants');
 const { getBuildConfig } = require('../../config/build');
 const { getProjectConfig } = require('../../config/project');
+const { DEPLOY_FILE_NAME } = require('../../constants');
 const { cmd, hvy, opt, sec, red: tag, yellow: key, green: val } = require('../../utils/color');
 const { info } = require('../../utils/logging');
 const { indented } = require('../../utils/text');
