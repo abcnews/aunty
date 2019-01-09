@@ -7,7 +7,7 @@ const Generator = require('yeoman-generator');
 
 // Ours
 const { getProjectConfig } = require('../../config/project');
-const { dim, hvy, red: key, green: val } = require('../../utils/color');
+const { cmd, dim, hvy, opt, red: key, green: val } = require('../../utils/color');
 const { info, warn } = require('../../utils/logging');
 
 module.exports = class extends Generator {
