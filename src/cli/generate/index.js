@@ -29,13 +29,11 @@ module.exports = command(
     // the generate command's usage message (in which case, print it, then exit).
 
     if (!GENERATORS.has(generatorName)) {
-      if (argv.help) {
+      if (!generatorName || generatorName.indexOf('-') === 0 || argv.help) {
         return log(MESSAGES.usage);
       }
 
-      throw generatorName.indexOf('-') === 0
-        ? MESSAGES.generatorNameMissing
-        : MESSAGES.generatorDoesNotExist(generatorName);
+      throw MESSAGES.generatorDoesNotExist(generatorName);
     }
 
     log(createCommandLogo(`generate ${generatorName}`));

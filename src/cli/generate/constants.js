@@ -22,7 +22,6 @@ module.exports.GENERATORS = setOfValues(GENERATOR_ALIASES);
 
 module.exports.MESSAGES = {
   generatorDoesNotExist: name => `The generator '${name}' does not exist.`,
-  generatorNameMissing: 'Generator name missing',
   noDryRuns: `Generators don't have dry runs (yet). Please run without the ${opt('--dry')} flag.`,
   usage: `Usage: ${cmd('aunty generate')} ${req('<generator>')} ${opt('[options]')} -- ${opt('[generator_options]')}
 
