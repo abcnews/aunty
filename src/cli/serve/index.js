@@ -2,6 +2,7 @@
 const importLazy = require('import-lazy')(require);
 const webpack = importLazy('webpack');
 const WebpackDevServer = importLazy('webpack-dev-server');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 // Ours
 const { getServeConfig } = require('../../config/serve');
@@ -33,6 +34,14 @@ module.exports = command(
         config.entry = upgradeEntryToHot(config.entry, config.output.publicPath);
         config.plugins.push(new webpack.HotModuleReplacementPlugin());
       }
+      
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          openAnalyzer: false,
+          logLevel: 'warn'
+        })
+      );
+      
     });
 
     if (argv.dry) {
