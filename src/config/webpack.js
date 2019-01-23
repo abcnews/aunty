@@ -9,6 +9,7 @@ const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const UglifyJSPlugin = importLazy('uglifyjs-webpack-plugin');
 const { VueLoaderPlugin } = importLazy('vue-loader');
 const EnvironmentPlugin = importLazy('webpack/lib/EnvironmentPlugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 // Ours
 const { combine, merge } = require('../utils/structures');
@@ -188,7 +189,11 @@ function createWebpackConfig({ isModernJS } = {}) {
           {
             from: `${root}/public`
           }
-        ])
+        ]),
+        new BundleAnalyzerPlugin({
+          openAnalyzer: false,
+          logLevel: 'warn'
+        })
       ].filter(x => x),
       optimization: {
         namedModules: !isProd

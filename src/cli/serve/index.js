@@ -24,6 +24,7 @@ module.exports = command(
     const webpackConfig = getWebpackConfig();
     const webpackDevServerConfig = getWebpackDevServerConfig();
     const { hot, publicPath } = webpackDevServerConfig;
+    const bundleAnalysis = 'http://127.0.0.1:8888';
 
     webpackConfig.forEach(config => {
       config.output.publicPath = publicPath;
@@ -43,7 +44,7 @@ module.exports = command(
 
     throws(await cleanCommand(['--quiet']));
 
-    info(MESSAGES.serve({ hot, publicPath }));
+    info(MESSAGES.serve({ hot, publicPath, bundleAnalysis }));
 
     const spinner = spin('Server running');
     const compiler = webpack(webpackConfig);
