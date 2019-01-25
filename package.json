@@ -10,6 +10,10 @@
     "Simon Elvery <elvery.simon@abc.net.au>",
     "Joshua Byrd <byrd.joshua@abc.net.au>"
   ],
+  "files": [
+    "assets",
+    "src"
+  ],
   "bin": {
     "aunty": "./src/bin/aunty.js",
     "nt": "./src/bin/aunty.js"
