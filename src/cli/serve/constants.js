@@ -2,8 +2,9 @@
 const { cmd, hvy, opt, sec } = require('../../utils/color');
 
 module.exports.MESSAGES = {
-  serve: ({ hot, publicPath }) => `Serve (${hvy(process.env.NODE_ENV)}):
+  serve: ({ hot, publicPath, bundleAnalysis }) => `Serve (${hvy(process.env.NODE_ENV)}):
   ┣ ${hvy('hot')}: ${cmd(hot ? 'yes' : 'no')}
+  ┣ ${hvy('bundle analysis')}: ${bundleAnalysis}
   ┗ ${hvy('publicPath')}: ${publicPath}`,
   // TODO: Add aunty config section to usage
   usage: name => `Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}

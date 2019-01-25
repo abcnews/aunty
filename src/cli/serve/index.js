@@ -2,6 +2,7 @@
 const importLazy = require('import-lazy')(require);
 const webpack = importLazy('webpack');
 const WebpackDevServer = importLazy('webpack-dev-server');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 // Ours
 const { getServeConfig } = require('../../config/serve');
@@ -24,6 +25,7 @@ module.exports = command(
     const webpackConfig = getWebpackConfig();
     const webpackDevServerConfig = getWebpackDevServerConfig();
     const { hot, publicPath } = webpackDevServerConfig;
+    const bundleAnalysis = 'http://127.0.0.1:8888';
 
     webpackConfig.forEach(config => {
       config.output.publicPath = publicPath;
@@ -32,6 +34,14 @@ module.exports = command(
         config.entry = upgradeEntryToHot(config.entry, config.output.publicPath);
         config.plugins.push(new webpack.HotModuleReplacementPlugin());
       }
+      
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          openAnalyzer: false,
+          logLevel: 'warn'
+        })
+      );
+      
     });
 
     if (argv.dry) {
@@ -43,7 +53,7 @@ module.exports = command(
 
     throws(await cleanCommand(['--quiet']));
 
-    info(MESSAGES.serve({ hot, publicPath }));
+    info(MESSAGES.serve({ hot, publicPath, bundleAnalysis }));
 
     const spinner = spin('Server running');
     const compiler = webpack(webpackConfig);
