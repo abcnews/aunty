@@ -73,7 +73,7 @@
     "vue-jest": "^2.6.0",
     "vue-loader": "^15.4.2",
     "vue-template-compiler": "^2.5.17",
-    "webpack": "^4.17.2",
+    "webpack": "~4.28.4",
     "webpack-bundle-analyzer": "^3.0.3",
     "webpack-dev-server": "^3.1.14",
     "write-json-file": "^3.0.2",
