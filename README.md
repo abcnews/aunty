@@ -1,8 +1,6 @@
-# aunty
+# @abcnews/aunty
 
 A toolkit for working with ABC News projects
-
-<img alt="The aunty logo" style="max-width:100%" src="https://rawgit.com/abcnews/aunty/master/assets/logo.svg">
 
 ## Installation
 
