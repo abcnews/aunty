@@ -202,7 +202,12 @@ function createWebpackConfig({ isModernJS } = {}) {
     // Add environment config
     config.plugins.push(
       new UglifyJSPlugin({
-        parallel: true
+        parallel: true,
+        uglifyOptions: {
+          output: {
+            comments: false
+          }
+        }
       })
     );
   }
