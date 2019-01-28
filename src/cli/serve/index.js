@@ -11,9 +11,10 @@ const { getWebpackDevServerConfig } = require('../../config/webpackDevServer');
 const { throws } = require('../../utils/async');
 const { cmd } = require('../../utils/color');
 const { dry, info, spin } = require('../../utils/logging');
+const { combine } = require('../../utils/structures');
 const { command } = require('../');
 const cleanCommand = require('../clean');
-const { MESSAGES } = require('./constants');
+const { BUNDLE_ANALYSER_CONFIG, MESSAGES } = require('./constants');
 
 module.exports = command(
   {
@@ -27,21 +28,21 @@ module.exports = command(
     const { hot, publicPath } = webpackDevServerConfig;
     const bundleAnalysis = 'http://127.0.0.1:8888';
 
-    webpackConfig.forEach(config => {
+    webpackConfig.forEach((config, index) => {
       config.output.publicPath = publicPath;
 
       if (hot) {
         config.entry = upgradeEntryToHot(config.entry, config.output.publicPath);
         config.plugins.push(new webpack.HotModuleReplacementPlugin());
       }
-      
+
       config.plugins.push(
-        new BundleAnalyzerPlugin({
-          openAnalyzer: false,
-          logLevel: 'warn'
-        })
+        new BundleAnalyzerPlugin(
+          combine(BUNDLE_ANALYSER_CONFIG, {
+            analyzerPort: BUNDLE_ANALYSER_CONFIG.analyzerPort + index
+          })
+        )
       );
-      
     });
 
     if (argv.dry) {
@@ -53,7 +54,7 @@ module.exports = command(
 
     throws(await cleanCommand(['--quiet']));
 
-    info(MESSAGES.serve({ hot, publicPath, bundleAnalysis }));
+    info(MESSAGES.serve({ hot, publicPath }));
 
     const spinner = spin('Server running');
     const compiler = webpack(webpackConfig);

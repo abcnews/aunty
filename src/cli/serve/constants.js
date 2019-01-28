@@ -1,10 +1,17 @@
 // Ours
 const { cmd, hvy, opt, sec } = require('../../utils/color');
 
+const BUNDLE_ANALYSER_CONFIG = (module.exports.BUNDLE_ANALYSER_CONFIG = {
+  analyzerHost: '127.0.0.1',
+  analyzerPort: 8888,
+  logLevel: 'warn',
+  openAnalyzer: false
+});
+
 module.exports.MESSAGES = {
-  serve: ({ hot, publicPath, bundleAnalysis }) => `Serve (${hvy(process.env.NODE_ENV)}):
+  serve: ({ hot, publicPath }) => `Serve (${hvy(process.env.NODE_ENV)}):
   ┣ ${hvy('hot')}: ${cmd(hot ? 'yes' : 'no')}
-  ┣ ${hvy('bundle analysis')}: ${bundleAnalysis}
+  ┣ ${hvy('bundle analysis')}: http://${BUNDLE_ANALYSER_CONFIG.analyzerHost}:${BUNDLE_ANALYSER_CONFIG.analyzerPort}
   ┗ ${hvy('publicPath')}: ${publicPath}`,
   // TODO: Add aunty config section to usage
   usage: name => `Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
