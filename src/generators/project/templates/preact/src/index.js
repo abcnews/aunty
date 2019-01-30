@@ -11,14 +11,12 @@ function init() {
 init();
 
 if (module.hot) {
-  module.hot.accept('./components/App', () => {
+  module.hot.accept('./components/App', async () => {
     try {
       init();
     } catch (err) {
-      import('./components/ErrorBox').then(exports => {
-        const ErrorBox = exports.default;
-        render(<ErrorBox error={err} />, root, root.firstChild);
-      });
+      const ErrorBox = (await import('./components/ErrorBox')).default;
+      render(<ErrorBox error={err} />, root, root.firstChild);
     }
   });
 }

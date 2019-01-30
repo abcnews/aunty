@@ -35,6 +35,7 @@ module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
                 ? ['Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15']
                 : ['> 1% in au', '> 5%', 'Firefox ESR']
             },
+            exclude: ['transform-regenerator'],
             useBuiltIns: 'entry',
             modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false
           }
@@ -43,7 +44,8 @@ module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
       plugins: [
         require.resolve('@babel/plugin-proposal-object-rest-spread'),
         require.resolve('@babel/plugin-syntax-dynamic-import'),
-        require.resolve('@babel/plugin-proposal-class-properties')
+        require.resolve('@babel/plugin-proposal-class-properties'),
+        require.resolve('babel-plugin-transform-async-to-promises')
       ]
     },
     PROJECT_TYPES_CONFIG[type],

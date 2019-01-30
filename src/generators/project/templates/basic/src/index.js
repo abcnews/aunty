@@ -10,16 +10,14 @@ function init() {
 init();
 
 if (module.hot) {
-  module.hot.accept('./components/App', () => {
+  module.hot.accept('./components/App', async () => {
     root.removeChild(root.firstChild);
 
     try {
       init();
     } catch (err) {
-      import('./components/ErrorBox').then(exports => {
-        const ErrorBox = exports.default;
-        root.appendChild(new ErrorBox({ error: err }).el);
-      });
+      const ErrorBox = (await import('./components/ErrorBox')).default;
+      root.appendChild(new ErrorBox({ error: err }).el);
     }
   });
 }
