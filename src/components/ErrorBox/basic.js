@@ -1,9 +1,13 @@
-import styles from './styles.css';
+import styles from './styles';
 
 export default function ErrorBox({ error }) {
   const el = (this.el = document.createElement('pre'));
 
-  el.className = styles.root;
+  console.log(styles);
+
+  Object.keys(styles).forEach(attr => {
+    el.style[attr] = styles[attr];
+  });
   el.textContent = `${String(error)}\n\n${error.stack}`;
 
   (function logOnMount() {

@@ -18,12 +18,27 @@ const { getProjectConfig } = require('./project');
 
 const URL_LOADER_LIMIT = 10000;
 const PROJECT_TYPES_CONFIG = {
+  basic: {
+    resolve: {
+      alias: {
+        'aunty-error-box': '@abcnews/aunty/src/components/ErrorBox/basic'
+      }
+    }
+  },
   preact: {
     resolve: {
       alias: {
         react: 'preact-compat',
         'react-dom': 'preact-compat',
-        'create-react-class': 'preact-compat/lib/create-react-class'
+        'create-react-class': 'preact-compat/lib/create-react-class',
+        'aunty-error-box': '@abcnews/aunty/src/components/ErrorBox/react'
+      }
+    }
+  },
+  react: {
+    resolve: {
+      alias: {
+        'aunty-error-box': '@abcnews/aunty/src/components/ErrorBox/react'
       }
     }
   },

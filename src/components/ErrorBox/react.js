@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './styles.css';
+import styles from './styles';
 
 export default class ErrorBox extends React.Component {
   componentDidMount() {
@@ -7,6 +7,6 @@ export default class ErrorBox extends React.Component {
   }
 
   render() {
-    return <pre className={styles.root}>{`${String(this.props.error)}\n\n${this.props.error.stack}`}</pre>;
+    return <pre style={styles}>{`${String(this.props.error)}\n\n${this.props.error.stack}`}</pre>;
   }
 }

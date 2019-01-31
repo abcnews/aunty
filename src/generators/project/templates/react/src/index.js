@@ -16,7 +16,7 @@ if (module.hot) {
     try {
       init();
     } catch (err) {
-      const ErrorBox = (await import('./components/ErrorBox')).default;
+      const ErrorBox = (await import('aunty-error-box')).default;
       render(<ErrorBox error={err} />, root);
     }
   });
