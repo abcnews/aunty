@@ -3,8 +3,6 @@ import styles from './styles';
 export default function ErrorBox({ error }) {
   const el = (this.el = document.createElement('pre'));
 
-  console.log(styles);
-
   Object.keys(styles).forEach(attr => {
     el.style[attr] = styles[attr];
   });
