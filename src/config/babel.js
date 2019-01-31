@@ -22,7 +22,7 @@ const PROJECT_TYPES_CONFIG = {
 };
 
 module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
-  const { babel: projectBabelConfig, type } = getProjectConfig();
+  const { babel: projectBabelConfig, pkg, type } = getProjectConfig();
 
   return merge(
     {
@@ -33,7 +33,7 @@ module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
             targets: {
               browsers: isModernJS
                 ? ['Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15']
-                : ['> 1% in au', '> 5%', 'Firefox ESR']
+                : pkg.browserslist || ['> 1% in au', '> 5%', 'Firefox ESR']
             },
             exclude: ['transform-regenerator'],
             useBuiltIns: 'entry',
