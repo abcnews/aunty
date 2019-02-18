@@ -88,7 +88,7 @@ module.exports = class extends Generator {
       this.options = combine(this.options, answers);
     }
 
-    this.options.name = Inflect.classify(this.options.name.replace(' ', '_'));
+    this.options.name = Inflect.camelize(this.options.name.replace(' ', '_'));
     this.config.set('template', this.options.template);
   }
 
