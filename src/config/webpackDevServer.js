@@ -4,7 +4,7 @@ const { getProjectConfig } = require('./project');
 const { getServeConfig } = require('./serve');
 
 module.exports.getWebpackDevServerConfig = () => {
-  const { webpackDevServer: projectWebpackDevServerConfig } = getProjectConfig();
+  const { devServer } = getProjectConfig();
   const { host, hot, https, port } = getServeConfig();
 
   return combine(
@@ -23,6 +23,6 @@ module.exports.getWebpackDevServerConfig = () => {
         ignored: /node_modules/
       }
     },
-    projectWebpackDevServerConfig
+    devServer
   );
 };
