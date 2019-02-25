@@ -21,26 +21,40 @@ const PROJECT_TYPES_CONFIG = {
   basic: {
     resolve: {
       alias: {
-        'aunty-error-box': '@abcnews/aunty/src/components/ErrorBox/basic'
+        'aunty-error-box': '@abcnews/aunty/src/components/ErrorBox/basic',
+        'aunty-worm': '@abcnews/aunty/src/components/Worm/basic'
       }
     }
   },
-  preact: {
-    resolve: {
+  preact: config => {
+    const { root } = getProjectConfig();
+
+    config.resolve = {
       alias: {
+        'aunty-error-box': '@abcnews/aunty/src/components/ErrorBox/preact',
+        'aunty-worm': '@abcnews/aunty/src/components/Worm/preact',
+        preact: resolve(root, 'node_modules/preact'),
         react: 'preact-compat',
         'react-dom': 'preact-compat',
-        'create-react-class': 'preact-compat/lib/create-react-class',
-        'aunty-error-box': '@abcnews/aunty/src/components/ErrorBox/react'
+        'create-react-class': 'preact-compat/lib/create-react-class'
       }
-    }
+    };
+
+    return config;
   },
-  react: {
-    resolve: {
+  react: config => {
+    const { root } = getProjectConfig();
+
+    config.resolve = {
       alias: {
-        'aunty-error-box': '@abcnews/aunty/src/components/ErrorBox/react'
+        react: resolve(root, 'node_modules/react'),
+        'react-dom': resolve(root, 'node_modules/react-dom'),
+        'aunty-error-box': '@abcnews/aunty/src/components/ErrorBox/react',
+        'aunty-worm': '@abcnews/aunty/src/components/Worm/react'
       }
-    }
+    };
+
+    return config;
   },
   vue: config => {
     config.module.rules.forEach(({ __hint__, use }) => {
@@ -53,6 +67,11 @@ const PROJECT_TYPES_CONFIG = {
       loader: require.resolve('vue-loader')
     });
     config.plugins.push(new VueLoaderPlugin());
+    config.resolve = {
+      alias: {
+        'aunty-worm': '@abcnews/aunty/src/components/Worm/vue.vue'
+      }
+    };
 
     return config;
   }
@@ -122,7 +141,7 @@ function createWebpackConfig({ isModernJS } = {}) {
           {
             __hint__: 'scripts',
             test: /\.js$/,
-            include: [resolve(root, from)],
+            include: [resolve(root, from), resolve(__dirname, '../components')],
             loader: require.resolve('babel-loader'),
             options: getBabelConfig({ isModernJS })
           },

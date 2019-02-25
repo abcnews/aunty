@@ -1,7 +1,7 @@
-import React from 'react';
+import { h, Component } from 'preact';
 import style from './style';
 
-export default class ErrorBox extends React.Component {
+export default class ErrorBox extends Component {
   componentDidMount() {
     console.error(this.props.error);
   }

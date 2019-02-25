@@ -1,11 +1,11 @@
+import Worm from 'aunty-worm';
 import styles from './styles.scss';
-import worm from './worm.svg';
 
 export default function App({ projectName }) {
+  this.titleEl = document.createElement('h1');
+  this.titleEl.textContent = projectName;
   this.el = document.createElement('div');
   this.el.className = styles.root;
-  this.el.innerHTML = `
-    <img class="${styles.worm}" src="${worm}" />
-    <h1>${projectName}</h1>
-  `;
+  this.el.appendChild(new Worm().el);
+  this.el.appendChild(this.titleEl);
 }

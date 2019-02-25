@@ -1,25 +1,24 @@
 <template>
   <div :class="$style.root">
-    <img :class="$style.worm" :src="worm" />
+    <worm></worm>
     <h1>{{ projectName }}</h1>
     <!-- <new-component></new-component> -->
   </div>
 </template>
 
 <script>
-import worm from './worm.svg';
+import Worm from 'aunty-worm';
 // import NewComponent from "../NewComponent/NewComponent.vue";
 
 export default {
   name: 'App',
   props: ['projectName'],
-  // components: {
-  //   "new-component": NewComponent
-  // },
+  components: {
+    worm: Worm
+    // "new-component": NewComponent
+  },
   data() {
-    return {
-      worm: worm
-    };
+    return {};
   }
 };
 </script>
@@ -45,10 +44,5 @@ export default {
     line-height: normal !important;
     letter-spacing: normal !important;
   }
-}
-
-.worm {
-  width: 240px;
-  height: auto;
 }
 </style>
