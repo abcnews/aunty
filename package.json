@@ -53,6 +53,7 @@
     "jsonfile-updater": "^3.1.0",
     "load-json-file": "^2.0.0",
     "log-symbols": "^2.2.0",
+    "make-dir": "^3.0.0",
     "mem": "^4.0.0",
     "mini-css-extract-plugin": "^0.5.0",
     "minimist": "^1.2.0",

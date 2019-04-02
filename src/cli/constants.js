@@ -10,6 +10,7 @@ const COMMAND_ALIASES = (module.exports.COMMAND_ALIASES = {
   g: 'generate',
   r: 'release',
   s: 'serve',
+  sc: 'sign-cert',
   t: 'test'
 });
 
@@ -97,6 +98,9 @@ ${sec('Helper commands')}
 
   ${cmd('aunty help')} ${req('<command>')}
     Display complete help for this ${req('command')}.
+  
+  ${cmd('aunty sign-cert')} # Mac OS only (for now)
+    Create a consistent SSL certificate for the dev server
 `
 };
 
