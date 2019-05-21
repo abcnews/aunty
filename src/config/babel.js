@@ -36,6 +36,7 @@ module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
                 : pkg.browserslist || ['> 1% in au', '> 5%', 'Firefox ESR']
             },
             useBuiltIns: 'entry',
+            corejs: 3,
             modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false
           }
         ]
