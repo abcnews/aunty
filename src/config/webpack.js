@@ -126,9 +126,8 @@ function createWebpackConfig({ isModernJS } = {}) {
                   camelCase: true,
                   context: __dirname, // https://github.com/webpack-contrib/css-loader/issues/413#issuecomment-299578180
                   localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[hash:base64:6]`,
-                  minimize: isProd,
                   modules: useCSSModules,
-                  sourcemaps: !isProd
+                  sourceMap: !isProd
                 }
               },
               {
