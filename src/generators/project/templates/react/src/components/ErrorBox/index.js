@@ -1,12 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './styles.css';
 
-export default class ErrorBox extends React.Component {
-  componentDidMount() {
-    console.error(this.props.error);
-  }
+export default props => {
+  useEffect(() => console.log(props.error), []);
 
-  render() {
-    return <pre className={styles.root}>{`${String(this.props.error)}\n\n${this.props.error.stack}`}</pre>;
-  }
-}
+  return <pre className={styles.root}>{`${String(props.error)}\n\n${props.error.stack}`}</pre>;
+};
