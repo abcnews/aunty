@@ -37,7 +37,7 @@ export default props => {
     const onResize = () => updateChart(props);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, [window.innerWidth, window.innerHeight]);
+  }, []);
 
   function updateChart(props) {
     // TODO: update the SVG
