@@ -103,6 +103,18 @@ If you don't need to override any of the project defaults, your entire aunty con
 
 Aunty comes with a few basic generators. Run `aunty generate --help` for the full list, or `aunty generate <generator> --help` for further details.
 
+### Async/await
+
+One way to add `async`/`await` and generators/`yield` to your project is with the [`regenerator-runtime`](https://www.npmjs.com/package/regenerator-runtime) package.
+
+`npm install regenerator-runtime` and then:
+
+```js
+import 'regenerator-runtime/runtime';
+```
+
+Note: You may also need a `Promise` polyfill for IE11.
+
 ## Authors
 
 - Colin Gourlay ([gourlay.colin@abc.net.au](mailto:gourlay.colin@abc.net.au))
