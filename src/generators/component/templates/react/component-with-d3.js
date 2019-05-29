@@ -1,57 +1,24 @@
-import React from 'react';
+import React, { useRef, useLayoutEffect, useEffect } from 'react';
 import { select } from 'd3-selection';
-
 import styles from './styles.scss';
 
-export default class <%= className %> extends React.Component {
-  constructor(props) {
-    super(props);
+let svg;
+let group;
+let rect;
 
-    this.rootRef = React.createRef();
+export default props => {
+  const root = useRef();
 
-    this.initGraph = this.initGraph.bind(this);
-    this.updateGraph = this.updateGraph.bind(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // TODO: Add any conditions that mitigate updating the graph
-    this.updateGraph(nextProps);
-  }
-
-  shouldComponentUpdate() {
-    // Stop React from managing the DOM itself
-    return false;
-  }
-
-  componentDidMount() {
-    this.initGraph(this.props);
-
-    // TODO: add any listeners here
-    // ...
-  }
-
-  componentWillUnmount() {
-    // TODO: remove any listeners here
-    // ...
-  }
-
-  /**
-   * Initialize the graph
-   * @param {object} props The latest props that were given to this component
-   */
-  initGraph(props) {
-    if (!this.rootRef.current) {
-      return;
-    }
-
-    this.svg = select(this.rootRef.current)
+  useLayoutEffect(() => {
+    // Initialise the SVG
+    svg = select(root.current)
       .append('svg')
       .attr('width', 400)
       .attr('height', 300);
 
-    this.g = this.svg.append('g').attr('fill', 'black');
+    group = svg.append('g').attr('fill', 'black');
 
-    this.rect = this.g
+    rect = group
       .append('rect')
       .attr('x', 0)
       .attr('y', 0)
@@ -59,19 +26,22 @@ export default class <%= className %> extends React.Component {
       .attr('ry', 3)
       .attr('width', 400)
       .attr('height', 300);
+  }, []);
+
+  useEffect(() => {
+    updateChart(props);
+  }, [props]); // TODO: be more specific with your change checkers
+
+  // Example effect to update chart on window resize
+  useEffect(() => {
+    const onResize = () => updateChart(props);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [window.innerWidth, window.innerHeight]);
+
+  function updateChart(props) {
+    // TODO: update the SVG
   }
 
-  /**
-   * Update the graph. It is important to only update this component through normal D3 methods.
-   * @param {object} props The latest props given to this component
-   */
-  updateGraph(props) {
-    if (!this.rootRef.current) return;
-
-    // TODO: Use D3 to update the graph
-  }
-
-  render() {
-    return <div className={styles.root} ref={this.rootRef} />;
-  }
-}
+  return <div className={styles.root} ref={root} />;
+};
