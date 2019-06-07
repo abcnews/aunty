@@ -14,7 +14,7 @@ const { dry, info, spin } = require('../../utils/logging');
 const { combine } = require('../../utils/structures');
 const { command } = require('../');
 const cleanCommand = require('../clean');
-const { BUNDLE_ANALYSER_CONFIG, MESSAGES } = require('./constants');
+const { BUNDLE_ANALYZER_CONFIG, MESSAGES } = require('./constants');
 
 module.exports = command(
   {
@@ -23,10 +23,13 @@ module.exports = command(
     usage: MESSAGES.usage
   },
   async argv => {
+    const { port } = getServeConfig();
     const webpackConfig = getWebpackConfig();
     const webpackDevServerConfig = getWebpackDevServerConfig();
     const { hot, publicPath } = webpackDevServerConfig;
-    const bundleAnalysis = 'http://127.0.0.1:8888';
+    const bundleAnalyzerConfig = combine(BUNDLE_ANALYZER_CONFIG, {
+      analyzerPort: +port + Math.floor(port / 1000) * 100 // e.g. 8000 -> 8800
+    });
 
     webpackConfig.forEach((config, index) => {
       config.output.publicPath = publicPath;
@@ -38,8 +41,8 @@ module.exports = command(
 
       config.plugins.push(
         new BundleAnalyzerPlugin(
-          combine(BUNDLE_ANALYSER_CONFIG, {
-            analyzerPort: BUNDLE_ANALYSER_CONFIG.analyzerPort + index
+          combine(bundleAnalyzerConfig, {
+            analyzerPort: bundleAnalyzerConfig.analyzerPort + index * 10 // e.g. 8800, 8810...
           })
         )
       );
@@ -48,21 +51,20 @@ module.exports = command(
     if (argv.dry) {
       return dry({
         'Webpack config': webpackConfig,
-        'WebpackDevServer config': webpackDevServerConfig
+        'WebpackDevServer config': webpackDevServerConfig,
+        'BundleAnalyzerPlugin config': bundleAnalyzerConfig
       });
     }
 
     throws(await cleanCommand(['--quiet']));
 
-    info(MESSAGES.serve({ hot, publicPath }));
+    info(MESSAGES.serve({ hot, publicPath, bundleAnalysisPath: MESSAGES.analysis(bundleAnalyzerConfig) }));
 
     const spinner = spin('Server running');
     const compiler = webpack(webpackConfig);
     const server = new WebpackDevServer(compiler, webpackDevServerConfig);
 
     return new Promise((resolve, reject) => {
-      const { port } = getServeConfig();
-
       server.listen(port, '0.0.0.0', err => {
         if (err) {
           spinner.fail('Server error');
