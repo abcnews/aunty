@@ -42,6 +42,12 @@ npm run release -- minor
 npm run release -- major
 ```
 
+If you're ever unsure about what will happen, you can perform a dry run (which logs to the console) by running:
+
+```
+npm run release -- --dry-run
+```
+
 View the [`release-it` docs](https://www.npmjs.com/package/release-it) for full usage examples, including pre-release and npm tag management.
 
 ## Style
