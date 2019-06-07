@@ -10,10 +10,16 @@
     "Simon Elvery <elvery.simon@abc.net.au>",
     "Joshua Byrd <byrd.joshua@abc.net.au>"
   ],
+  "scripts": {
+    "release": "release-it --ci"
+  },
   "files": [
     "assets",
     "src"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "aunty": "./src/bin/aunty.js",
     "nt": "./src/bin/aunty.js"
@@ -85,6 +91,7 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "eslint": "^4.19.1",
-    "eslint-config-prettier": "2.6.0"
+    "eslint-config-prettier": "2.6.0",
+    "release-it": "^12.3.0"
   }
 }
