@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import App from './components/App/App.vue';
 
-const PROJECT_NAME = '<%= projectSlug %>';
+const PROJECT_NAME = __aunty_project_name__;
 const ROOT_SELECTOR = `[data-${PROJECT_NAME}-root]`;
 
 document.querySelector(ROOT_SELECTOR).appendChild(document.createElement('div'));

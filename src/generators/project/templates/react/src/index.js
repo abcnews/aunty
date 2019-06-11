@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import App from './components/App';
 
-const PROJECT_NAME = '<%= projectSlug %>';
+const PROJECT_NAME = __aunty_project_name__;
 const root = document.querySelector(`[data-${PROJECT_NAME}-root]`);
 
 function init() {

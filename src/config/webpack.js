@@ -8,6 +8,7 @@ const CopyPlugin = importLazy('copy-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const UglifyJSPlugin = importLazy('uglifyjs-webpack-plugin');
 const { VueLoaderPlugin } = importLazy('vue-loader');
+const DefinePlugin = importLazy('webpack/lib/DefinePlugin');
 const EnvironmentPlugin = importLazy('webpack/lib/EnvironmentPlugin');
 
 // Ours
@@ -81,7 +82,7 @@ module.exports.getWebpackConfig = () => {
 };
 
 function createWebpackConfig({ isModernJS } = {}) {
-  const { root, type, webpack: projectWebpackConfig } = getProjectConfig();
+  const { pkg, root, type, webpack: projectWebpackConfig } = getProjectConfig();
   const { entry, from, to, extractCSS, useCSSModules } = getBuildConfig();
   const isProd = process.env.NODE_ENV === 'production';
 
@@ -177,6 +178,10 @@ function createWebpackConfig({ isModernJS } = {}) {
         ]
       },
       plugins: [
+        new DefinePlugin({
+          __aunty_is_modern_js__: isModernJS,
+          __aunty_project_name__: pkg.name
+        }),
         new EnvironmentPlugin(Object.keys(process.env)),
         extractCSS
           ? new MiniCssExtractPlugin({
