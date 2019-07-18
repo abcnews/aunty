@@ -9,6 +9,7 @@ const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const UglifyJSPlugin = importLazy('uglifyjs-webpack-plugin');
 const { VueLoaderPlugin } = importLazy('vue-loader');
 const EnvironmentPlugin = importLazy('webpack/lib/EnvironmentPlugin');
+const WasmPackPlugin = importLazy("@wasm-tool/wasm-pack-plugin");
 
 // Ours
 const { combine, merge } = require('../utils/structures');
@@ -210,7 +211,18 @@ function createWebpackConfig({ isModernJS } = {}) {
       })
     );
   }
+  
+  const isRust = type === "rust";
 
+  if (isRust) {
+    config.plugins.push(
+      new WasmPackPlugin({
+        crateDirectory: `${root}`,
+        watchDirectories: [`${root}/rs`]
+      })
+    );
+  }
+  
   // Cleanup hints
   config.module.rules.forEach(rule => {
     if (rule.__hint__) {

@@ -92,6 +92,7 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "2.6.0",
-    "release-it": "^12.3.0"
+    "release-it": "^12.3.0",
+    "@wasm-tool/wasm-pack-plugin": "^1.0.0"
   }
 }
