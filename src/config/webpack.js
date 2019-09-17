@@ -6,6 +6,7 @@ const { join, resolve } = require('path');
 const importLazy = require('import-lazy')(require);
 const CopyPlugin = importLazy('copy-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
+const OptimizeCssAssetsPlugin = importLazy('optimize-css-assets-webpack-plugin');
 const UglifyJSPlugin = importLazy('uglifyjs-webpack-plugin');
 const { VueLoaderPlugin } = importLazy('vue-loader');
 const EnvironmentPlugin = importLazy('webpack/lib/EnvironmentPlugin');
@@ -181,6 +182,17 @@ function createWebpackConfig({ isModernJS } = {}) {
         extractCSS
           ? new MiniCssExtractPlugin({
               filename: `[name].css`
+            })
+          : null,
+        extractCSS
+          ? new OptimizeCssAssetsPlugin({
+              assetNameRegExp: /\.css$/,
+              cssProcessorOptions: {
+                safe: true,
+                discardComments: { removeAll: isProd },
+                normalizeUrl: { stripWWW: false },
+                canPrint: false
+              }
             })
           : null,
         new CopyPlugin([
