@@ -66,6 +66,7 @@
     "minimist": "^1.2.0",
     "node-fetch": "^2.3.0",
     "node-sass": "^4.9.3",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
     "ora": "^1.4.0",
     "pify": "^3.0.0",
     "requireg": "^0.1.8",
