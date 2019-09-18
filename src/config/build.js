@@ -14,6 +14,7 @@ module.exports.getBuildConfig = mem(() => {
       entry: 'index.js',
       from: 'src',
       to: BUILD_DIRECTORY_NAME,
+      staticDir: 'public',
       addModernJS: false,
       extractCSS: false,
       useCSSModules: true,
