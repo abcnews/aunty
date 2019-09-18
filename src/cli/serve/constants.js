@@ -9,10 +9,9 @@ const BUNDLE_ANALYZER_CONFIG = (module.exports.BUNDLE_ANALYZER_CONFIG = {
 
 module.exports.MESSAGES = {
   analysis: ({ analyzerHost, analyzerPort }) => `http://${analyzerHost}:${analyzerPort}`,
-  serve: ({ hot, publicPath, bundleAnalysisPath }) => `Serve (${hvy(process.env.NODE_ENV)}):
+  serve: ({ hot, bundleAnalysisPath }) => `Serve (${hvy(process.env.NODE_ENV)}):
   ┣ ${hvy('hot')}: ${cmd(hot ? 'yes' : 'no')}
-  ┣ ${hvy('bundle analysis')}: ${bundleAnalysisPath}
-  ┗ ${hvy('publicPath')}: ${publicPath}`,
+  ┗ ${hvy('bundle analysis')}: ${bundleAnalysisPath}`,
   // TODO: Add aunty config section to usage
   usage: name => `Usage: ${cmd(`aunty ${name}`)} ${opt('[options]')}
 

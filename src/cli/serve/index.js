@@ -58,23 +58,28 @@ module.exports = command(
 
     throws(await cleanCommand(['--quiet']));
 
-    info(MESSAGES.serve({ hot, publicPath, bundleAnalysisPath: MESSAGES.analysis(bundleAnalyzerConfig) }));
+    info(MESSAGES.serve({ hot, bundleAnalysisPath: MESSAGES.analysis(bundleAnalyzerConfig) }));
 
-    const spinner = spin('Server running');
     const compiler = webpack(webpackConfig);
     const server = new WebpackDevServer(compiler, webpackDevServerConfig);
 
     return new Promise((resolve, reject) => {
+      let spinner;
+
       server.listen(port, '0.0.0.0', err => {
         if (err) {
-          spinner.fail('Server error');
-          reject(err);
+          return reject(err);
         }
+
+        spinner = spin('Server running');
       });
 
       process.on('SIGINT', function() {
         server.close(function() {
-          spinner.succeed('Server closed');
+          if (spinner) {
+            spinner.succeed('Server closed');
+          }
+
           resolve();
         });
       });

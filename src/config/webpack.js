@@ -83,7 +83,7 @@ module.exports.getWebpackConfig = () => {
 
 function createWebpackConfig({ isModernJS } = {}) {
   const { root, type, webpack: projectWebpackConfig } = getProjectConfig();
-  const { entry, from, to, extractCSS, useCSSModules } = getBuildConfig();
+  const { entry, extractCSS, from, staticDir, to, useCSSModules } = getBuildConfig();
   const isProd = process.env.NODE_ENV === 'production';
 
   const config = merge(
@@ -124,10 +124,12 @@ function createWebpackConfig({ isModernJS } = {}) {
               {
                 loader: require.resolve('css-loader'),
                 options: {
-                  camelCase: true,
-                  context: __dirname, // https://github.com/webpack-contrib/css-loader/issues/413#issuecomment-299578180
-                  localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[hash:base64:6]`,
-                  modules: useCSSModules,
+                  localsConvention: 'camelCase',
+                  modules: useCSSModules && {
+                    context: __dirname,
+                    //  ^^^ https://github.com/webpack-contrib/css-loader/issues/413#issuecomment-299578180
+                    localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[hash:base64:6]`
+                  },
                   sourceMap: !isProd
                 }
               },
@@ -197,7 +199,7 @@ function createWebpackConfig({ isModernJS } = {}) {
           : null,
         new CopyPlugin([
           {
-            from: `${root}/public`
+            from: join(root, staticDir)
           }
         ])
       ].filter(x => x),
