@@ -82,7 +82,7 @@ module.exports.getWebpackConfig = () => {
 };
 
 function createWebpackConfig({ isModernJS } = {}) {
-  const { root, type, webpack: projectWebpackConfig } = getProjectConfig();
+  const { pkg, root, type, webpack: projectWebpackConfig } = getProjectConfig();
   const { entry, extractCSS, from, staticDir, to, useCSSModules } = getBuildConfig();
   const isProd = process.env.NODE_ENV === 'production';
 
@@ -97,6 +97,7 @@ function createWebpackConfig({ isModernJS } = {}) {
         path: join(root, to),
         publicPath: '/',
         filename: isModernJS ? '[name]_modern.js' : '[name].js',
+        jsonpFunction: `webpackJsonp__${pkg.name.replace(/[^a-z]/g, '_')}`,
         // The update file hash was causing 404s and full page reloads.
         // This will make the file name more predictable.
         // See https://github.com/webpack/webpack-dev-server/issues/79#issuecomment-244596129
