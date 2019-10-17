@@ -73,6 +73,7 @@
     "semver": "^6.3.0",
     "style-loader": "^1.0.0",
     "tcp-ping-sync": "^1.0.0",
+    "terser": "^4.3.9",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "update-notifier": "^3.0.1",
     "url-loader": "^2.1.0",

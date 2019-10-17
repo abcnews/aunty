@@ -205,6 +205,7 @@ function createWebpackConfig({ isModernJS } = {}) {
         ])
       ].filter(x => x),
       optimization: {
+        minimizer: [],
         namedModules: !isProd
       }
     },
@@ -213,16 +214,35 @@ function createWebpackConfig({ isModernJS } = {}) {
   );
 
   if (isProd) {
-    // Add environment config
-    config.plugins.push(
-      new UglifyJSPlugin({
-        parallel: true,
-        uglifyOptions: {
-          output: {
-            comments: false
-          }
-        }
-      })
+    config.optimization.minimizer.push(
+      new UglifyJSPlugin(
+        Object.assign(
+          {
+            parallel: true
+          },
+          !isModernJS
+            ? {
+                uglifyOptions: {
+                  output: {
+                    comments: false
+                  }
+                }
+              }
+            : {
+                /*
+                  The custom minify function is run in separate parallel processes,
+                  so cannot reference anything outside its own scope. This is why the
+                  uglify options are duplicated here, and Terser is requred here.
+                */
+                minify: file =>
+                  require('terser').minify(file, {
+                    output: {
+                      comments: false
+                    }
+                  })
+              }
+        )
+      )
     );
   }
 
