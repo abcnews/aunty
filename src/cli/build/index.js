@@ -68,8 +68,15 @@ module.exports = command(
     const stats = unpack(await packs(pify(compiler.run.bind(compiler)))());
 
     if (stats.hasErrors()) {
+      const errors = stats.toJson({}, true).errors;
+
       spinner.fail();
-      throw stats.toJson({}, true).errors[0];
+      
+      if (errors.length > 1) {
+        throw MESSAGES.multipleErrors(errors);
+      }
+
+      throw errors[0];
     }
 
     if (stats.hasWarnings()) {

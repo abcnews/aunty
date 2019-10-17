@@ -38,5 +38,9 @@ ${sec('Options')}
 ${sec('Environment variables')}
 
   • Builds will assume you have set ${cmd('NODE_ENV=production')}, unless you specify otherwise.
+`,
+  multipleErrors: errors => `Multiple build errors:
+
+${errors.join('\n\n')}
 `
 };
