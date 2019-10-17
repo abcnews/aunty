@@ -32,7 +32,7 @@ module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
           {
             targets: {
               browsers: isModernJS
-                ? ['Chrome >= 60', 'Safari >= 10.1', 'iOS >= 10.3', 'Firefox >= 54', 'Edge >= 15']
+                ? ['Chrome >= 76', 'Safari >= 12.1', 'iOS >= 12.3', 'Firefox >= 69', 'Edge >= 18']
                 : pkg.browserslist || ['> 1% in au', '> 5%', 'Firefox ESR']
             },
             useBuiltIns: 'entry',
