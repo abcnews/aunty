@@ -48,7 +48,6 @@ const WEBPACK_CONFIG_FILE = 'webpack.config.js';
 module.exports.getWebpackConfig = () => {
   const { root } = getProjectConfig();
   const { addModernJS, showDeprecations } = getBuildConfig();
-  const isProd = process.env.NODE_ENV === 'production';
   const customWebpackConfigFilePath = join(root, WEBPACK_CONFIG_FILE);
 
   if (showDeprecations) {
