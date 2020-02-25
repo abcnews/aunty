@@ -108,7 +108,7 @@ function createWebpackConfig({ isModernJS } = {}) {
         rules: [
           {
             __hint__: 'scripts',
-            test: /\.js$/,
+            test: /\.m?js$/,
             include: [resolve(root, from)],
             loader: require.resolve('babel-loader'),
             options: getBabelConfig({ isModernJS })
