@@ -2,7 +2,8 @@
 const path = require('path');
 
 // External
-const babelJest = require('babel-jest');
+const importLazy = require('import-lazy')(require);
+const babelJest = importLazy('babel-jest');
 
 // Ours
 const { getBabelConfig } = require('../config/babel');
