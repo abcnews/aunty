@@ -7,7 +7,7 @@ const importLazy = require('import-lazy')(require);
 const CopyPlugin = importLazy('copy-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = importLazy('optimize-css-assets-webpack-plugin');
-const UglifyJSPlugin = importLazy('uglifyjs-webpack-plugin');
+const TerserPlugin = importLazy('terser-webpack-plugin');
 const { VueLoaderPlugin } = importLazy('vue-loader');
 const EnvironmentPlugin = importLazy('webpack/lib/EnvironmentPlugin');
 
@@ -214,35 +214,16 @@ function createWebpackConfig({ isModernJS } = {}) {
   );
 
   if (isProd) {
+    config.optimization.minimize = true;
     config.optimization.minimizer.push(
-      new UglifyJSPlugin(
-        Object.assign(
-          {
-            parallel: true
-          },
-          !isModernJS
-            ? {
-                uglifyOptions: {
-                  output: {
-                    comments: false
-                  }
-                }
-              }
-            : {
-                /*
-                  The custom minify function is run in separate parallel processes,
-                  so cannot reference anything outside its own scope. This is why the
-                  uglify options are duplicated here, and Terser is requred here.
-                */
-                minify: file =>
-                  require('terser').minify(file, {
-                    output: {
-                      comments: false
-                    }
-                  })
-              }
-        )
-      )
+      new TerserPlugin({
+        extractComments: false,
+        terserOptions: {
+          output: {
+            comments: /@license/i
+          }
+        }
+      })
     );
   }
 
