@@ -28,16 +28,15 @@ const PROJECT_TYPES_CONFIG = {
       }
     }
   },
-  vue: config => {
-    config.module.rules.forEach(({ __hint__, use }) => {
-      if (__hint__ === 'styles') {
-        use[0] = { loader: require.resolve('vue-style-loader') };
-      }
     });
+  vue: config => {
+    getHintedRule(config, 'styles').use[0] = { loader: require.resolve('vue-style-loader') };
+
     config.module.rules.push({
       test: /\.vue$/,
       loader: require.resolve('vue-loader')
     });
+
     config.plugins.push(new VueLoaderPlugin());
 
     return config;
@@ -234,4 +233,8 @@ function createWebpackConfig({ isModernJS } = {}) {
   });
 
   return config;
+}
+
+function getHintedRule(config, hint) {
+  return config.module.rules.find(rule => rule.__hint__ === hint);
 }
