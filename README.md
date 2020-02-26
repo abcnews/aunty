@@ -83,7 +83,7 @@ module.exports = {
 }
 ```
 
-Supported project `type`s (currently: `basic`, `preact`, `react` & `vue`) have their own default build configuration, but you can override it by extending your project configuration.
+Supported project `type`s (currently: `basic`, `preact`, `react`, `svelte` & `vue`) have their own default build configuration, but you can override it by extending your project configuration.
 
 The `build`, `serve` and `deploy` properties allow you to override the default settings for those respective commands.
 
