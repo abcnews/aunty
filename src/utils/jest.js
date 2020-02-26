@@ -43,16 +43,15 @@ module.exports = {
 };
 
 function processSvelte(src, filename) {
-  const srcWithoutStyles = src.replace(SVELTE_STYLES_PATTERN, '');
-
-  const { js, css, ast, warnings, vars, stats } = svelte.compile(srcWithoutStyles, {
+  const {
+    js: { code, map }
+  } = svelte.compile(src.replace(SVELTE_STYLES_PATTERN, ''), {
     filename,
     css: false,
     accessors: true,
     dev: true,
     format: 'cjs'
   });
-  const { code, map } = js;
 
   return {
     code,
