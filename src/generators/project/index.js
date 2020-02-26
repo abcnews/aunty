@@ -62,6 +62,7 @@ Shorthand examples (assuming xyz is your project name):
           { name: 'Basic', value: 'basic' },
           { name: 'Preact', value: 'preact' },
           { name: 'React', value: 'react' },
+          { name: 'Svelte', value: 'svelte' },
           { name: 'Vue', value: 'vue' }
         ]
       });
@@ -109,8 +110,12 @@ Shorthand examples (assuming xyz is your project name):
     const paths = getAllPaths(commonPath, typePath);
 
     paths.forEach(file => {
-      // Ignore CSS files for Vue
-      if (this.options.template === 'vue' && (file.includes('.css') || file.includes('.scss'))) return;
+      // Ignore CSS files for Svelte & Vue
+      if (
+        (this.options.template === 'svelte' || this.options.template === 'vue') &&
+        (file.includes('.css') || file.includes('.scss'))
+      )
+        return;
 
       this.fs.copyTpl(
         file,
@@ -145,6 +150,10 @@ Shorthand examples (assuming xyz is your project name):
       case 'react':
         devDependencies.push('react-test-renderer');
         dependencies.push('react', 'react-dom');
+        break;
+      case 'svelte':
+        devDependencies.push('@testing-library/svelte');
+        dependencies.push('svelte');
         break;
       case 'vue':
         devDependencies.push('@vue/test-utils');
