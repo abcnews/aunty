@@ -7,6 +7,9 @@ const { combine } = require('../utils/structures');
 const { getProjectConfig } = require('./project');
 
 const PROJECT_TYPES_CONFIG = {
+  svelte: {
+    useCSSModules: false
+  }
 };
 
 module.exports.getBuildConfig = mem(() => {

@@ -73,6 +73,8 @@
     "semver": "^6.3.0",
     "style-loader": "^1.0.0",
     "svelte": "^3.19.1",
+    "svelte-loader": "^2.13.6",
+    "svelte-preprocess": "^3.4.0",
     "tcp-ping-sync": "^1.0.0",
     "terser-webpack-plugin": "^2.3.5",
     "update-notifier": "^3.0.1",
