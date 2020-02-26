@@ -7,7 +7,8 @@ const importLazy = require('import-lazy')(require);
 const CopyPlugin = importLazy('copy-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = importLazy('optimize-css-assets-webpack-plugin');
-const UglifyJSPlugin = importLazy('uglifyjs-webpack-plugin');
+const sveltePreprocess = importLazy('svelte-preprocess');
+const TerserPlugin = importLazy('terser-webpack-plugin');
 const { VueLoaderPlugin } = importLazy('vue-loader');
 const EnvironmentPlugin = importLazy('webpack/lib/EnvironmentPlugin');
 
@@ -28,16 +29,40 @@ const PROJECT_TYPES_CONFIG = {
       }
     }
   },
-  vue: config => {
-    config.module.rules.forEach(({ __hint__, use }) => {
-      if (__hint__ === 'styles') {
-        use[0] = { loader: require.resolve('vue-style-loader') };
-      }
+  svelte: config => {
+    const { include, loader, options } = getHintedRule(config, 'scripts');
+
+    include.push(/(node_modules\/svelte)/);
+
+    config.module.rules.push({
+      test: /\.svelte$/,
+      include,
+      use: [
+        {
+          loader,
+          options
+        },
+        {
+          loader: require.resolve('svelte-loader'),
+          options: {
+            dev: config.mode === 'development',
+            emitCss: getHintedRule(config, 'styles').use[0] === MiniCssExtractPlugin.loader,
+            preprocess: sveltePreprocess()
+          }
+        }
+      ]
     });
+
+    return config;
+  },
+  vue: config => {
+    getHintedRule(config, 'styles').use[0] = { loader: require.resolve('vue-style-loader') };
+
     config.module.rules.push({
       test: /\.vue$/,
       loader: require.resolve('vue-loader')
     });
+
     config.plugins.push(new VueLoaderPlugin());
 
     return config;
@@ -48,7 +73,6 @@ const WEBPACK_CONFIG_FILE = 'webpack.config.js';
 module.exports.getWebpackConfig = () => {
   const { root } = getProjectConfig();
   const { addModernJS, showDeprecations } = getBuildConfig();
-  const isProd = process.env.NODE_ENV === 'production';
   const customWebpackConfigFilePath = join(root, WEBPACK_CONFIG_FILE);
 
   if (showDeprecations) {
@@ -108,7 +132,7 @@ function createWebpackConfig({ isModernJS } = {}) {
         rules: [
           {
             __hint__: 'scripts',
-            test: /\.js$/,
+            test: /\.m?js$/,
             include: [resolve(root, from)],
             loader: require.resolve('babel-loader'),
             options: getBabelConfig({ isModernJS })
@@ -214,35 +238,16 @@ function createWebpackConfig({ isModernJS } = {}) {
   );
 
   if (isProd) {
+    config.optimization.minimize = true;
     config.optimization.minimizer.push(
-      new UglifyJSPlugin(
-        Object.assign(
-          {
-            parallel: true
-          },
-          !isModernJS
-            ? {
-                uglifyOptions: {
-                  output: {
-                    comments: false
-                  }
-                }
-              }
-            : {
-                /*
-                  The custom minify function is run in separate parallel processes,
-                  so cannot reference anything outside its own scope. This is why the
-                  uglify options are duplicated here, and Terser is requred here.
-                */
-                minify: file =>
-                  require('terser').minify(file, {
-                    output: {
-                      comments: false
-                    }
-                  })
-              }
-        )
-      )
+      new TerserPlugin({
+        extractComments: false,
+        terserOptions: {
+          output: {
+            comments: /@license/i
+          }
+        }
+      })
     );
   }
 
@@ -254,4 +259,8 @@ function createWebpackConfig({ isModernJS } = {}) {
   });
 
   return config;
+}
+
+function getHintedRule(config, hint) {
+  return config.module.rules.find(rule => rule.__hint__ === hint);
 }

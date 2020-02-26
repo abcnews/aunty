@@ -60,6 +60,7 @@ module.exports = class extends Generator {
           { name: 'Preact', value: 'preact' },
           { name: 'Basic', value: 'basic' },
           { name: 'React', value: 'react' },
+          { name: 'Svelte', value: 'svelte' },
           { name: 'Vue', value: 'vue' }
         ]
       });
@@ -104,10 +105,10 @@ module.exports = class extends Generator {
       this.dependencies.push('d3-selection');
     }
 
-    if (this.options.template === 'vue') {
+    if (this.options.template === 'svelte' || this.options.template === 'vue') {
       this.fs.copyTpl(
-        this.templatePath(this.options.template, `${component}.vue`),
-        this.destinationPath(`src/components/${this.options.name}/${this.options.name}.vue`),
+        this.templatePath(this.options.template, `${component}.${this.options.template}`),
+        this.destinationPath(`src/components/${this.options.name}/${this.options.name}.${this.options.template}`),
         context
       );
     } else {
@@ -141,6 +142,10 @@ module.exports = class extends Generator {
       case 'react':
         this.devDependencies.push('react-test-renderer');
         this.dependencies.push('react', 'react-dom');
+        break;
+      case 'svelte':
+        this.devDependencies.push('@testing-library/svelte');
+        this.dependencies.push('svelte');
         break;
       case 'vue':
         this.devDependencies.push('@vue/test-utils');
