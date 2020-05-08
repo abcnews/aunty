@@ -117,6 +117,7 @@ function createWebpackConfig({ isModernJS } = {}) {
       entry: {
         index: [join(root, from, entry)]
       },
+      devtool: "source-map",
       output: {
         path: join(root, to),
         publicPath: '/',
