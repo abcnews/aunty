@@ -153,7 +153,8 @@ function createWebpackConfig({ isModernJS } = {}) {
                   modules: useCSSModules && {
                     context: __dirname,
                     //  ^^^ https://github.com/webpack-contrib/css-loader/issues/413#issuecomment-299578180
-                    localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[hash:base64:6]`
+                    localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[hash:base64:6]`,
+                    hashPrefix: `${pkg.name}@${pkg.version}`
                   },
                   sourceMap: !isProd
                 }
