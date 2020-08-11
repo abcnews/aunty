@@ -77,7 +77,7 @@
     "svelte-preprocess": "^3.4.0",
     "tcp-ping-sync": "^1.0.0",
     "terser-webpack-plugin": "^2.3.5",
-    "update-notifier": "^3.0.1",
+    "update-notifier": "^4.1.0",
     "url-loader": "^2.1.0",
     "vue": "^2.6.10",
     "vue-jest": "^3.0.5",
