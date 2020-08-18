@@ -1,7 +1,7 @@
 {
   "extends": ["prettier"],
   "parserOptions": {
-    "ecmaVersion": 8,
+    "ecmaVersion": 2019,
     "ecmaFeatures": {
       "jsx": true
     }
