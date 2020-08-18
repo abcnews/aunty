@@ -1,3 +1,7 @@
+// Global
+const { existsSync } = require('fs');
+const { join } = require('path');
+
 // External
 const mem = require('mem');
 
@@ -11,16 +15,21 @@ const PROJECT_TYPES_CONFIG = {
     useCSSModules: false
   }
 };
+const DEFAULT_ENTRY_FILE_NAME = 'index';
+const DEFAULT_SOURCE_DIRECTORY_NAME = 'src';
+const DEFAULT_STATIC_DIRECTORY_NAME = 'public';
 
 module.exports.getBuildConfig = mem(() => {
-  const { build: projectBuildConfig, type } = getProjectConfig();
+  const { build: projectBuildConfig, root, type } = getProjectConfig();
+  const hasTS = existsSync(join(root, 'tsconfig.json'));
 
   return combine(
     {
-      entry: 'index.js',
-      from: 'src',
+      entry: DEFAULT_ENTRY_FILE_NAME,
+      from: DEFAULT_SOURCE_DIRECTORY_NAME,
       to: BUILD_DIRECTORY_NAME,
-      staticDir: 'public',
+      staticDir: DEFAULT_STATIC_DIRECTORY_NAME,
+      hasTS,
       addModernJS: false,
       extractCSS: false,
       useCSSModules: true,
