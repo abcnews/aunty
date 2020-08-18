@@ -91,9 +91,9 @@
     "yeoman-generator": "^4.0.2"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.3",
-    "eslint": "^4.19.1",
-    "eslint-config-prettier": "^6.3.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^6.11.0",
     "release-it": "^13.6.5"
   }
 }
