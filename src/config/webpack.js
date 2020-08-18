@@ -142,7 +142,12 @@ function createWebpackConfig({ isModernJS } = {}) {
             test: /\.(css|scss)$/,
             use: [
               extractCSS
-                ? MiniCssExtractPlugin.loader
+                ? {
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                      hmr: !isProd
+                    }
+                  }
                 : {
                     loader: require.resolve('style-loader')
                   },
