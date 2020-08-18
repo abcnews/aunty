@@ -137,7 +137,7 @@ module.exports = class extends Generator {
     switch (this.options.template) {
       case 'preact':
         this.devDependencies.push('html-looks-like', 'preact-render-to-string');
-        this.dependencies.push('preact', 'preact-compat');
+        this.dependencies.push('preact');
         break;
       case 'react':
         this.devDependencies.push('react-test-renderer');

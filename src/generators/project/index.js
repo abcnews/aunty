@@ -145,7 +145,7 @@ Shorthand examples (assuming xyz is your project name):
     switch (this.options.template) {
       case 'preact':
         devDependencies.push('html-looks-like', 'preact-render-to-string');
-        dependencies.push('preact', 'preact-compat');
+        dependencies.push('preact');
         break;
       case 'react':
         devDependencies.push('react-test-renderer');
