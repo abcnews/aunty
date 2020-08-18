@@ -5,6 +5,7 @@ const { join, resolve } = require('path');
 // External
 const importLazy = require('import-lazy')(require);
 const CopyPlugin = importLazy('copy-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = importLazy('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = importLazy('optimize-css-assets-webpack-plugin');
 const sveltePreprocess = importLazy('svelte-preprocess');
@@ -19,16 +20,28 @@ const { getBuildConfig } = require('./build');
 const { getProjectConfig } = require('./project');
 
 const URL_LOADER_LIMIT = 10000;
+const JSX_RESOLVE_EXTENSIONS = ['.jsx', '.tsx'];
 const PROJECT_TYPES_CONFIG = {
   preact: {
     resolve: {
       alias: {
-      }
         react: 'preact',
         'react-dom': 'preact/compat'
+      },
+
+      extensions: JSX_RESOLVE_EXTENSIONS
+    }
+  },
+  react: {
+    resolve: {
+      extensions: JSX_RESOLVE_EXTENSIONS
     }
   },
   svelte: config => {
+    config.resolve.extensions.push('.svelte');
+
+    const projectRoot = config.entry.index[0].split('src/')[0];
+    const hasTS = existsSync(join(projectRoot, 'tsconfig.json'));
     const { include, loader, options } = getHintedRule(config, 'scripts');
 
     include.push(/(node_modules\/svelte)/);
@@ -46,7 +59,10 @@ const PROJECT_TYPES_CONFIG = {
           options: {
             dev: config.mode === 'development',
             emitCss: getHintedRule(config, 'styles').use[0] === MiniCssExtractPlugin.loader,
-            preprocess: sveltePreprocess()
+            preprocess: sveltePreprocess({
+              scss: true,
+              typescript: hasTS
+            })
           }
         }
       ]
@@ -106,7 +122,7 @@ module.exports.getWebpackConfig = () => {
 
 function createWebpackConfig({ isModernJS } = {}) {
   const { pkg, root, type, webpack: projectWebpackConfig } = getProjectConfig();
-  const { entry, extractCSS, from, staticDir, to, useCSSModules } = getBuildConfig();
+  const { entry, extractCSS, from, hasTS, staticDir, to, useCSSModules } = getBuildConfig();
   const isProd = process.env.NODE_ENV === 'production';
 
   const config = merge(
@@ -128,11 +144,14 @@ function createWebpackConfig({ isModernJS } = {}) {
         hotUpdateChunkFilename: 'hot/hot-update.js',
         hotUpdateMainFilename: 'hot/hot-update.json'
       },
+      resolve: {
+        extensions: ['.js', '.json', '.mjs', '.ts']
+      },
       module: {
         rules: [
           {
             __hint__: 'scripts',
-            test: /\.m?js$/,
+            test: hasTS ? /\.m?[jt]sx?$/ : /\.m?jsx?$/,
             include: [resolve(root, from)],
             loader: require.resolve('babel-loader'),
             options: getBabelConfig({ isModernJS })
@@ -212,6 +231,17 @@ function createWebpackConfig({ isModernJS } = {}) {
       },
       plugins: [
         new EnvironmentPlugin(Object.keys(process.env)),
+        hasTS
+          ? new ForkTsCheckerWebpackPlugin({
+              logger: { infrastructure: 'silent', issues: 'silent' },
+              typescript: {
+                diagnosticOptions: {
+                  semantic: true,
+                  syntactic: true
+                }
+              }
+            })
+          : null,
         extractCSS
           ? new MiniCssExtractPlugin({
               filename: `[name].css`

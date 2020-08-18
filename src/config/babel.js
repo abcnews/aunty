@@ -18,6 +18,11 @@ const PROJECT_TYPES_CONFIG = {
   },
   react: {
     presets: [require.resolve('@babel/preset-react')]
+  },
+  vue: config => {
+    config.presets[1][0] = require.resolve('babel-preset-typescript-vue');
+
+    return config;
   }
 };
 
@@ -38,6 +43,12 @@ module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
             useBuiltIns: 'entry',
             corejs: 3,
             modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false
+          }
+        ],
+        [
+          require.resolve('@babel/preset-typescript'),
+          {
+            onlyRemoveTypeImports: true
           }
         ]
       ],
