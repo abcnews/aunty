@@ -116,7 +116,7 @@ function createWebpackConfig({ isModernJS } = {}) {
       entry: {
         index: [join(root, from, entry)]
       },
-      devtool: "source-map",
+      devtool: 'source-map',
       output: {
         path: join(root, to),
         publicPath: '/',
@@ -223,11 +223,13 @@ function createWebpackConfig({ isModernJS } = {}) {
               }
             })
           : null,
-        new CopyPlugin([
-          {
-            from: join(root, staticDir)
-          }
-        ])
+        new CopyPlugin({
+          patterns: [
+            {
+              from: join(root, staticDir)
+            }
+          ]
+        })
       ].filter(x => x),
       optimization: {
         minimizer: [],
