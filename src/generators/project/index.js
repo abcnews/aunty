@@ -146,7 +146,9 @@ Shorthand examples (assuming xyz is your project name):
       // Nothing
     }
 
-    const devDependencies = [`@abcnews/aunty${auntyVersion ? `@${auntyVersion}` : ''}`, '@types/webpack-env'];
+    const devDependencies = [`@abcnews/aunty${auntyVersion ? `@${auntyVersion}` : ''}`].concat(
+      this.options.typescript ? ['@types/webpack-env'] : []
+    );
     const dependencies = [];
 
     switch (this.options.template) {
@@ -155,7 +157,10 @@ Shorthand examples (assuming xyz is your project name):
         dependencies.push('preact');
         break;
       case 'react':
-        devDependencies.push('@types/react', '@types/react-dom', 'react-test-renderer');
+        devDependencies.push(
+          'react-test-renderer',
+          ...(this.options.typescript ? ['@types/react', '@types/react-dom'] : [])
+        );
         dependencies.push('react', 'react-dom');
         break;
       case 'svelte':
