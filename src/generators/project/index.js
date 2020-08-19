@@ -147,7 +147,7 @@ Shorthand examples (assuming xyz is your project name):
     }
 
     const devDependencies = [`@abcnews/aunty${auntyVersion ? `@${auntyVersion}` : ''}`].concat(
-      this.options.typescript ? ['@types/webpack-env'] : []
+      this.options.typescript ? ['@types/jest', '@types/webpack-env'] : []
     );
     const dependencies = [];
 
@@ -159,7 +159,7 @@ Shorthand examples (assuming xyz is your project name):
       case 'react':
         devDependencies.push(
           'react-test-renderer',
-          ...(this.options.typescript ? ['@types/react', '@types/react-dom'] : [])
+          ...(this.options.typescript ? ['@types/react', '@types/react-dom', '@types/react-test-renderer'] : [])
         );
         dependencies.push('react', 'react-dom');
         break;
