@@ -16,14 +16,17 @@ const { combine } = require('../../utils/structures');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
-    super(args, opts);
+    super(args, {
+      ...opts,
+      localConfigOnly: true
+    });
 
     this.argument('name', {
       description: `Project name. Create this directory if ${opt('--here')} is not specified`,
       required: false
     });
     this.option('here', { description: `Assume ${opt('<name>')} is current working directory` });
-    this.option('template', { description: 'Type of project (eg. basic, preact, react)' });
+    this.option('template', { description: 'Type of project [basic|preact|react|svelte|vue]' });
   }
 
   usage() {
@@ -91,7 +94,6 @@ Shorthand examples (assuming xyz is your project name):
     await fs.ensureDir(directory);
     process.chdir(directory);
     this.destinationRoot(directory);
-    this.config.set('template', this.options.template);
   }
 
   writing() {

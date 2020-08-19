@@ -14,7 +14,10 @@ const { combine } = require('../../utils/structures');
  */
 module.exports = class extends Generator {
   constructor(args, opts) {
-    super(args, opts);
+    super(args, {
+      ...opts,
+      localConfigOnly: true
+    });
 
     this.argument('name', { required: false });
 
@@ -32,25 +35,18 @@ module.exports = class extends Generator {
   }
 
   initializing() {
-    if (!this.config.get('template')) {
+    try {
       const { root, type } = getProjectConfig();
 
       process.chdir(root);
       this.destinationRoot(root);
-      this.config.save();
-
-      try {
-        this.config.set('template', type);
-      } catch (ex) {
-        // Couldn't detect a thing
-      }
-    }
+      this.options.template = type;
+    } catch (err) {}
   }
 
   async prompting() {
     let prompts = [];
 
-    this.options.template = this.config.get('template');
     if (!this.options.template) {
       prompts.push({
         type: 'list',
@@ -90,7 +86,6 @@ module.exports = class extends Generator {
     }
 
     this.options.name = Inflect.camelize(this.options.name.replace(' ', '_'));
-    this.config.set('template', this.options.template);
   }
 
   writing() {
