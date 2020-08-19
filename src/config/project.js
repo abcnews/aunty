@@ -1,3 +1,7 @@
+// Global
+const { existsSync } = require('fs');
+const { join } = require('path');
+
 // External
 const importLazy = require('import-lazy')(require);
 const guessRootPath = importLazy('guess-root-path');
@@ -39,10 +43,13 @@ module.exports.getProjectConfig = mem(() => {
     }
   }
 
+  const hasTS = existsSync(join(root, 'tsconfig.json'));
+
   return combine(
     {
       root,
-      pkg
+      pkg,
+      hasTS
     },
     ensureProjectConfigShape(pkg.aunty),
     ensureProjectConfigShape(projectConfigModule)

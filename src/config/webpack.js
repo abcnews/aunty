@@ -41,7 +41,6 @@ const PROJECT_TYPES_CONFIG = {
     config.resolve.extensions.push('.svelte');
 
     const projectRoot = config.entry.index[0].split('src/')[0];
-    const hasTS = existsSync(join(projectRoot, 'tsconfig.json'));
     const { include, loader, options } = getHintedRule(config, 'scripts');
 
     include.push(/(node_modules\/svelte)/);
@@ -59,10 +58,7 @@ const PROJECT_TYPES_CONFIG = {
           options: {
             dev: config.mode === 'development',
             emitCss: getHintedRule(config, 'styles').use[0] === MiniCssExtractPlugin.loader,
-            preprocess: sveltePreprocess({
-              scss: true,
-              typescript: hasTS
-            })
+            preprocess: sveltePreprocess()
           }
         }
       ]
@@ -121,8 +117,8 @@ module.exports.getWebpackConfig = () => {
 };
 
 function createWebpackConfig({ isModernJS } = {}) {
-  const { pkg, root, type, webpack: projectWebpackConfig } = getProjectConfig();
-  const { entry, extractCSS, from, hasTS, staticDir, to, useCSSModules } = getBuildConfig();
+  const { pkg, root, hasTS, type, webpack: projectWebpackConfig } = getProjectConfig();
+  const { entry, extractCSS, from, staticDir, to, useCSSModules } = getBuildConfig();
   const isProd = process.env.NODE_ENV === 'production';
 
   const config = merge(

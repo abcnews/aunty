@@ -1,7 +1,3 @@
-// Global
-const { existsSync } = require('fs');
-const { join } = require('path');
-
 // External
 const mem = require('mem');
 
@@ -20,8 +16,7 @@ const DEFAULT_SOURCE_DIRECTORY_NAME = 'src';
 const DEFAULT_STATIC_DIRECTORY_NAME = 'public';
 
 module.exports.getBuildConfig = mem(() => {
-  const { build: projectBuildConfig, root, type } = getProjectConfig();
-  const hasTS = existsSync(join(root, 'tsconfig.json'));
+  const { build: projectBuildConfig, type } = getProjectConfig();
 
   return combine(
     {
@@ -29,7 +24,6 @@ module.exports.getBuildConfig = mem(() => {
       from: DEFAULT_SOURCE_DIRECTORY_NAME,
       to: BUILD_DIRECTORY_NAME,
       staticDir: DEFAULT_STATIC_DIRECTORY_NAME,
-      hasTS,
       addModernJS: false,
       extractCSS: false,
       useCSSModules: true,

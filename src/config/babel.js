@@ -27,7 +27,7 @@ const PROJECT_TYPES_CONFIG = {
 };
 
 module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
-  const { babel: projectBabelConfig, pkg, type } = getProjectConfig();
+  const { babel: projectBabelConfig, pkg, hasTS, type } = getProjectConfig();
 
   return merge(
     {
@@ -44,14 +44,19 @@ module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
             corejs: 3,
             modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false
           }
-        ],
-        [
-          require.resolve('@babel/preset-typescript'),
-          {
-            onlyRemoveTypeImports: true
-          }
         ]
-      ],
+      ].concat(
+        hasTS
+          ? [
+              [
+                require.resolve('@babel/preset-typescript'),
+                {
+                  onlyRemoveTypeImports: true
+                }
+              ]
+            ]
+          : []
+      ),
       plugins: [
         require.resolve('@babel/plugin-proposal-object-rest-spread'),
         require.resolve('@babel/plugin-syntax-dynamic-import'),
