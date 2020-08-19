@@ -15,7 +15,8 @@
   },
   "files": [
     "assets",
-    "src"
+    "src",
+    "ts"
   ],
   "publishConfig": {
     "access": "public"
