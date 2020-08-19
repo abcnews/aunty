@@ -26,7 +26,7 @@
   });
 </script>
 
-<style>
+<style lang="scss">
   div {
     border: 1px solid rgb(255, 115, 0);
     padding: 20px;
