@@ -1,6 +1,6 @@
 import App from './components/App/App.svelte';
 
-const PROJECT_NAME = '<%= projectSlug %>';
+const PROJECT_NAME<% if (isTS) { %>: string<% } %> = '<%= projectSlug %>';
 const ROOT_SELECTOR = `[data-${PROJECT_NAME}-root]`;
 
 new App({

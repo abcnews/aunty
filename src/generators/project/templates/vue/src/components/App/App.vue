@@ -1,27 +1,16 @@
-<template>
-  <div :class="$style.root">
-    <img :class="$style.worm" :src="worm" />
-    <h1>{{ projectName }}</h1>
-    <!-- <new-component></new-component> -->
-  </div>
-</template>
+<script<% if (isTS) { %> lang="ts"<% } %>>
+import Vue from 'vue';
+import Worm from '../Worm/Worm.vue';
 
-<script>
-import worm from './worm.svg';
-// import NewComponent from "../NewComponent/NewComponent.vue";
-
-export default {
+export default Vue.extend({
   name: 'App',
-  props: ['projectName'],
-  // components: {
-  //   "new-component": NewComponent
-  // },
-  data() {
-    return {
-      worm: worm
-    };
-  }
-};
+  props: {
+    projectName: String,
+  },
+  components: {
+    'worm-component': Worm,
+  },
+});
 </script>
 
 <style lang="scss" module>
@@ -33,8 +22,8 @@ export default {
   width: 100%;
   height: 100%;
   min-height: 320px;
-  background-color: #ffc100;
-  color: #fff;
+  background-color: #<% if (isTS) { %>3178c7<% } else { %>f0db4e<% } %>;
+  color: #<% if (isTS) { %>fff<% } else { %>000<% } %>;
   text-align: center;
 
   h1 {
@@ -46,9 +35,11 @@ export default {
     letter-spacing: normal !important;
   }
 }
-
-.worm {
-  width: 240px;
-  height: auto;
-}
 </style>
+
+<template>
+  <div :class="$style.root">
+    <worm-component />
+    <h1>{{ projectName }}</h1>
+  </div>
+</template>

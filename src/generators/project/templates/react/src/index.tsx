@@ -1,7 +1,8 @@
-import { h, render } from 'preact';
+import React from 'react';
+import { render } from 'react-dom';
 import App from './components/App';
 
-const PROJECT_NAME = '<%= projectSlug %>';
+const PROJECT_NAME<% if (isTS) { %>: string<% } %> = '<%= projectSlug %>';
 const root = document.querySelector(`[data-${PROJECT_NAME}-root]`);
 
 function init() {
@@ -15,8 +16,7 @@ if (module.hot) {
     try {
       init();
     } catch (err) {
-      import('./components/ErrorBox').then(exports => {
-        const ErrorBox = exports.default;
+      import('./components/ErrorBox').then(({ default: ErrorBox }) => {
         render(<ErrorBox error={err} />, root);
       });
     }
@@ -24,6 +24,5 @@ if (module.hot) {
 }
 
 if (process.env.NODE_ENV === 'development') {
-  require('preact/debug');
   console.debug(`[${PROJECT_NAME}] public path: ${__webpack_public_path__}`);
 }

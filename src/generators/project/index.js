@@ -71,10 +71,16 @@ Shorthand examples (assuming xyz is your project name):
       });
     }
 
-    if (prompts.length > 0) {
-      const answers = await this.prompt(prompts);
-      this.options = combine(this.options, answers);
-    }
+    prompts.push({
+      type: 'confirm',
+      name: 'typescript',
+      message: 'Will you be authoring your project in TypeScript?',
+      default: false
+    });
+
+    const answers = await this.prompt(prompts);
+
+    this.options = combine(this.options, answers);
 
     this.options.projectSlug = this.options.name
       .toLowerCase()
@@ -103,29 +109,28 @@ Shorthand examples (assuming xyz is your project name):
       projectName: this.options.name,
       projectSlug: this.options.projectSlug,
       projectType: this.options.template,
+      isTS: this.options.typescript,
       authorName: this.user.git.name(),
       authorEmail: this.user.git.email()
     };
 
-    const commonPath = this.templatePath(`_common`);
-    const typePath = this.templatePath(`${this.options.template}`);
-    const paths = getAllPaths(commonPath, typePath);
+    const hasSFCs = this.options.template === 'svelte' || this.options.template === 'vue';
+    const templateDirs = [this.options.template, '_common'].concat(hasSFCs ? [] : ['_styles']);
+    const templateDirPaths = templateDirs.map(dir => this.templatePath(dir));
+    const pathExclusions = [].concat(this.options.typescript ? [] : ['tsconfig.json']);
+    const pathReplacements = templateDirPaths
+      .map(dirPath => [`${dirPath}/`, ''])
+      .concat(this.options.typescript ? [] : [[/\.tsx?/, '.js']], [['_.', '.']]);
 
-    paths.forEach(file => {
-      // Ignore CSS files for Svelte & Vue
-      if (
-        (this.options.template === 'svelte' || this.options.template === 'vue') &&
-        (file.includes('.css') || file.includes('.scss'))
-      )
+    getAllPaths(...templateDirPaths).forEach(filePath => {
+      if (pathExclusions.some(exclusion => filePath.includes(exclusion))) {
         return;
+      }
 
       this.fs.copyTpl(
-        file,
+        filePath,
         this.destinationPath(
-          file
-            .replace(`${commonPath}/`, '')
-            .replace(`${typePath}/`, '')
-            .replace('_.', '.')
+          pathReplacements.reduce((filePath, replacement) => filePath.replace(...replacement), filePath)
         ),
         context
       );
@@ -141,7 +146,7 @@ Shorthand examples (assuming xyz is your project name):
       // Nothing
     }
 
-    const devDependencies = [`@abcnews/aunty${auntyVersion ? `@${auntyVersion}` : ''}`];
+    const devDependencies = [`@abcnews/aunty${auntyVersion ? `@${auntyVersion}` : ''}`, '@types/webpack-env'];
     const dependencies = [];
 
     switch (this.options.template) {
@@ -150,7 +155,7 @@ Shorthand examples (assuming xyz is your project name):
         dependencies.push('preact');
         break;
       case 'react':
-        devDependencies.push('react-test-renderer');
+        devDependencies.push('@types/react', '@types/react-dom', 'react-test-renderer');
         dependencies.push('react', 'react-dom');
         break;
       case 'svelte':

@@ -1,4 +1,4 @@
-import { h }  from 'preact';
+import { h } from 'preact';
 import render from 'preact-render-to-string';
 import htmlLooksLike from 'html-looks-like';
 
