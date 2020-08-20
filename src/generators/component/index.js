@@ -36,11 +36,12 @@ module.exports = class extends Generator {
 
   initializing() {
     try {
-      const { root, type } = getProjectConfig();
+      const { root, type, hasTS } = getProjectConfig();
 
       process.chdir(root);
       this.destinationRoot(root);
       this.options.template = type;
+      this.options.typescript = hasTS;
     } catch (err) {}
   }
 
@@ -89,53 +90,69 @@ module.exports = class extends Generator {
   }
 
   writing() {
+    const isSFC = this.options.template === 'svelte' || this.options.template === 'vue';
+    const isJSX = this.options.template === 'preact' || this.options.template === 'react';
+    const sourceName = `component${this.options.d3 ? '-with-d3' : ''}`;
+    const sourceScriptExt = isJSX ? 'tsx' : 'ts';
+    const destinationScriptExt = this.options.typescript ? sourceScriptExt : 'js';
     const context = {
-      className: this.options.name
+      className: this.options.name,
+      isTS: this.options.typescript
     };
 
-    let component = 'component';
-
-    if (this.options.d3) {
-      component = 'component-with-d3';
-      this.dependencies.push('d3-selection');
-    }
-
-    if (this.options.template === 'svelte' || this.options.template === 'vue') {
+    if (isSFC) {
       this.fs.copyTpl(
-        this.templatePath(this.options.template, `${component}.${this.options.template}`),
+        this.templatePath(this.options.template, `${sourceName}.${this.options.template}`),
         this.destinationPath(`src/components/${this.options.name}/${this.options.name}.${this.options.template}`),
         context
       );
     } else {
       this.fs.copyTpl(
-        this.templatePath(this.options.template, `${component}.js`),
-        this.destinationPath(`src/components/${this.options.name}/index.js`),
+        this.templatePath(this.options.template, `${sourceName}.${sourceScriptExt}`),
+        this.destinationPath(`src/components/${this.options.name}/index.${destinationScriptExt}`),
         context,
         { globOptions: { noext: true } }
       );
       this.fs.copy(
-        this.templatePath(this.options.template, `component.scss`),
+        this.templatePath(`_styles/styles.scss`),
         this.destinationPath(`src/components/${this.options.name}/styles.scss`),
         context
       );
     }
 
     this.fs.copyTpl(
-      this.templatePath(this.options.template, `${component}.test.js`),
-      this.destinationPath(`src/components/${this.options.name}/index.test.js`),
+      this.templatePath(this.options.template, `${sourceName}.test.${sourceScriptExt}`),
+      this.destinationPath(
+        `src/components/${this.options.name}/${isSFC ? this.options.name : 'index'}.test.${destinationScriptExt}`
+      ),
       context,
       { globOptions: { noext: true } }
     );
   }
 
   async install() {
+    if (this.options.typescript) {
+      this.devDependencies.push('@types/jest', '@types/webpack-env');
+    }
+
+    if (this.options.d3) {
+      this.dependencies.push('d3-selection');
+
+      if (this.options.typescript) {
+        this.devDependencies.push('@types/d3-selection');
+      }
+    }
+
     switch (this.options.template) {
       case 'preact':
         this.devDependencies.push('html-looks-like', 'preact-render-to-string');
         this.dependencies.push('preact');
         break;
       case 'react':
-        this.devDependencies.push('react-test-renderer');
+        this.devDependencies.push(
+          'react-test-renderer',
+          ...(this.options.typescript ? ['@types/react', '@types/react-dom', '@types/react-test-renderer'] : [])
+        );
         this.dependencies.push('react', 'react-dom');
         break;
       case 'svelte':

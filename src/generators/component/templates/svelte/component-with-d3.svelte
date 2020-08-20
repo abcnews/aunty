@@ -1,21 +1,24 @@
-<script>
-  import { select } from 'd3-selection';
-  import { onMount } from 'svelte';
+<script<% if (isTS) { %> lang="ts"<% } %>>
+  export let color<% if (isTS) { %>: string<% } %> = 'black';
 
-  let rootEl;
-  let svgEl;
-  let gEl;
-  let rectEl;
+  import { select } from 'd3-selection';<% if (isTS) { %>
+  import type { Selection } from 'd3-selection';<% } %>
+  import { afterUpdate, onMount } from 'svelte';
+
+  let root<% if (isTS) { %>: HTMLDivElement<% } %>;
+  let svg<% if (isTS) { %>: Selection<SVGSVGElement, unknown, null, undefined><% } %>;
+  let g<% if (isTS) { %>: Selection<SVGGElement, unknown, null, undefined><% } %>;
+  let rect<% if (isTS) { %>: Selection<SVGRectElement, unknown, null, undefined><% } %>;
 
   onMount(() => {
-    svgEl = select(rootEl)
+    svg = select(root)
       .append('svg')
       .attr('width', 400)
       .attr('height', 300);
 
-    gEl = svgEl.append('g').attr('fill', 'black');
+    g = svg.append('g').attr('fill', color);
 
-    rectEl = gEl
+    rect = g
       .append('rect')
       .attr('x', 0)
       .attr('y', 0)
@@ -23,6 +26,10 @@
       .attr('ry', 3)
       .attr('width', 400)
       .attr('height', 300);
+  });
+
+  afterUpdate(() => {
+    g.attr('fill', color);
   });
 </script>
 
@@ -35,4 +42,4 @@
   }
 </style>
 
-<div bind:this={rootEl} />
+<div bind:this={root} />

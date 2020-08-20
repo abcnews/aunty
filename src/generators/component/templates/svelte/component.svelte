@@ -1,4 +1,4 @@
-<script>
+<script<% if (isTS) { %> lang="ts"<% } %>>
 
 </script>
 
@@ -13,5 +13,5 @@
 
 <div>
   Find me in
-  <strong>src/components/<%= className %>/<%= className %>.svelte</strong>
+  <strong>src/components/<%= className %></strong>
 </div>
