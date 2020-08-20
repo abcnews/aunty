@@ -141,7 +141,7 @@ function createWebpackConfig({ isModernJS } = {}) {
         hotUpdateMainFilename: 'hot/hot-update.json'
       },
       resolve: {
-        extensions: ['.js', '.json', '.mjs', '.ts']
+        extensions: ['.mjs', '.js', '.json', '.ts']
       },
       module: {
         rules: [
