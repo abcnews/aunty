@@ -16,7 +16,7 @@ export default Vue.extend({
       default: 'black'
     }
   },
-  data()<% if (isTS) { %>: ThingD3Data<% } %> {
+  data()<% if (isTS) { %>: <%= className %>Data<% } %> {
     return {
       svg: null,
       g: null,
