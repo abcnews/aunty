@@ -1,14 +1,15 @@
 <script<% if (isTS) { %> lang="ts"<% } %>>
+import Vue from 'vue';
 import worm from './worm.svg';
 
-export default {
+export default Vue.extend({
   name: 'Worm',
   data() {
     return {
-      worm,
+      worm
     };
-  },
-};
+  }
+});
 </script>
 
 <style lang="scss" module>

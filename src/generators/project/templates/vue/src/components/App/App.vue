@@ -5,11 +5,11 @@ import Worm from '../Worm/Worm.vue';
 export default Vue.extend({
   name: 'App',
   props: {
-    projectName: String,
+    projectName: String
   },
   components: {
-    'worm-component': Worm,
-  },
+    'worm-component': Worm
+  }
 });
 </script>
 
