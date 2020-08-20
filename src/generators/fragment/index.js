@@ -17,6 +17,13 @@ const { indented } = require('../../utils/text');
 const identity = x => x;
 
 module.exports = class extends Generator {
+  constructor(args, opts) {
+    super(args, {
+      ...opts,
+      localConfigOnly: true
+    });
+  }
+
   usage() {
     return `${cmd('aunty generate fragment')} -- ${opt('[options]')}`;
   }

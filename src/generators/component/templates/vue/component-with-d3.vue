@@ -1,22 +1,27 @@
-<template>
-  <div :class="$style.root"></div>
-</template>
-
-<script>
-const { select } = require('d3-selection');
-
-export default {
-  name: '<%= className %>',
+<script<% if (isTS) { %> lang="ts"<% } %>>
+import Vue from 'vue';
+import { select<% if (isTS) { %>, Selection<% } %> } from 'd3-selection';
+<% if (isTS) { %>
+interface <%= className %>Data {
+  svg: Selection<SVGSVGElement, unknown, null, undefined> | null;
+  g: Selection<SVGGElement, unknown, null, undefined> | null;
+  rect: Selection<SVGRectElement, unknown, null, undefined> | null;
+}
+<% } %>
+export default Vue.extend({
+  name: '<%= className %>'<% if (isTS) { %> as string<% } %>,
   props: {
-    data: {
+    color: {<% if (isTS) { %>
+      type: String,<% } %>
       default: 'black'
     }
   },
-  watch: {
-    data(newVal, oldVal) {
-      // TODO: Use D3 to update the graphic like this:
-      this.g.attr('fill', newVal);
-    }
+  data()<% if (isTS) { %>: <%= className %>Data<% } %> {
+    return {
+      svg: null,
+      g: null,
+      rect: null
+    };
   },
   mounted() {
     this.svg = select(this.$el)
@@ -24,7 +29,7 @@ export default {
       .attr('width', 400)
       .attr('height', 300);
 
-    this.g = this.svg.append('g').attr('fill', this.data);
+    this.g = this.svg.append('g').attr('fill', this.color);
 
     this.rect = this.g
       .append('rect')
@@ -32,13 +37,19 @@ export default {
       .attr('y', 0)
       .attr('rx', 3)
       .attr('ry', 3)
-      .attr('width', 400)
-      .attr('height', 300);
+      .attr('width', '100%')
+      .attr('height', '100%');
   },
-  data() {
-    return {};
+  watch: {
+    color(value, lastValue) {
+      if (!this.g) {
+        return;
+      }
+
+      this.g.attr('fill', value);
+    }
   }
-};
+});
 </script>
 
 <style lang="scss" module>
@@ -49,3 +60,7 @@ export default {
   color: black;
 }
 </style>
+
+<template>
+  <div :class="$style.root"></div>
+</template>

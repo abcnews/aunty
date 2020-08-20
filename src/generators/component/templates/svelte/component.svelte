@@ -1,8 +1,8 @@
-<script>
+<script<% if (isTS) { %> lang="ts"<% } %>>
 
 </script>
 
-<style>
+<style lang="scss">
   div {
     border: 1px solid rgb(255, 115, 0);
     padding: 20px;
@@ -13,5 +13,5 @@
 
 <div>
   Find me in
-  <strong>src/components/<%= className %>/<%= className %>.svelte</strong>
+  <strong>src/components/<%= className %></strong>
 </div>

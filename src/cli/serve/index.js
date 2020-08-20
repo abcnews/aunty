@@ -63,15 +63,25 @@ module.exports = command(
     const compiler = webpack(webpackConfig);
     const server = new WebpackDevServer(compiler, webpackDevServerConfig);
 
-    return new Promise((resolve, reject) => {
-      let spinner;
+    // Grab reference to native info logger
+    const _info = console.info;
+    let spinner;
 
+    return new Promise((resolve, reject) => {
       server.listen(port, '0.0.0.0', err => {
         if (err) {
           return reject(err);
         }
 
+        // Start spinner
         spinner = spin('Server running');
+
+        // Gracefully interrupt spinner to log info
+        console.info = msg => {
+          spinner.clear();
+          _info(msg);
+          spinner.start();
+        };
       });
 
       process.on('SIGINT', function() {
@@ -83,12 +93,18 @@ module.exports = command(
           resolve();
         });
       });
+    }).finally(() => {
+      // Always restore native info logger
+      console.info = _info;
     });
   }
 );
 
 function upgradeEntryToHot(entry, publicPath) {
-  const heat = [`webpack-dev-server/client?${publicPath}`, 'webpack/hot/dev-server'];
+  const heat = [
+    `${require.resolve('webpack-dev-server/client')}?${publicPath}`,
+    require.resolve('webpack/hot/dev-server')
+  ];
 
   if (Array.isArray(entry) || typeof entry === 'string') {
     return heat.concat(Array.isArray(entry) ? entry : [entry]);

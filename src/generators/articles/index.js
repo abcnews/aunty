@@ -10,7 +10,10 @@ const { getFragmentMarkup } = require('../fragment');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
-    super(args, opts);
+    super(args, {
+      ...opts,
+      localConfigOnly: true
+    });
 
     this.option('plugin-odyssey', { description: 'Include Odyssey in the template' });
     this.option('plugin-scrollyteller', { description: 'Include Scrollyteller in the template' });

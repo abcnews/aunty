@@ -12,6 +12,13 @@ const { cmd, dim, hvy, opt, red: key, green: val } = require('../../utils/color'
 const { info, warn } = require('../../utils/logging');
 
 module.exports = class extends Generator {
+  constructor(args, opts) {
+    super(args, {
+      ...opts,
+      localConfigOnly: true
+    });
+  }
+
   usage() {
     return `${cmd('aunty generate volume')} ${opt('[options]')}`;
   }

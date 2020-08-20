@@ -10,7 +10,10 @@ const { success } = require('../../utils/logging');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
-    super(args, opts);
+    super(args, {
+      ...opts,
+      localConfigOnly: true
+    });
   }
 
   usage() {

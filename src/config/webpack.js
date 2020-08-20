@@ -5,6 +5,7 @@ const { join, resolve } = require('path');
 // External
 const importLazy = require('import-lazy')(require);
 const CopyPlugin = importLazy('copy-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = importLazy('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = importLazy('optimize-css-assets-webpack-plugin');
 const sveltePreprocess = importLazy('svelte-preprocess');
@@ -19,17 +20,27 @@ const { getBuildConfig } = require('./build');
 const { getProjectConfig } = require('./project');
 
 const URL_LOADER_LIMIT = 10000;
+const JSX_RESOLVE_EXTENSIONS = ['.jsx', '.tsx'];
 const PROJECT_TYPES_CONFIG = {
   preact: {
     resolve: {
       alias: {
-        react: 'preact-compat',
-        'react-dom': 'preact-compat',
-        'create-react-class': 'preact-compat/lib/create-react-class'
-      }
+        react: 'preact',
+        'react-dom': 'preact/compat'
+      },
+
+      extensions: JSX_RESOLVE_EXTENSIONS
+    }
+  },
+  react: {
+    resolve: {
+      extensions: JSX_RESOLVE_EXTENSIONS
     }
   },
   svelte: config => {
+    config.resolve.extensions.push('.svelte');
+
+    const projectRoot = config.entry.index[0].split('src/')[0];
     const { include, loader, options } = getHintedRule(config, 'scripts');
 
     include.push(/(node_modules\/svelte)/);
@@ -106,7 +117,7 @@ module.exports.getWebpackConfig = () => {
 };
 
 function createWebpackConfig({ isModernJS } = {}) {
-  const { pkg, root, type, webpack: projectWebpackConfig } = getProjectConfig();
+  const { pkg, root, hasTS, type, webpack: projectWebpackConfig } = getProjectConfig();
   const { entry, extractCSS, from, staticDir, to, useCSSModules } = getBuildConfig();
   const isProd = process.env.NODE_ENV === 'production';
 
@@ -117,7 +128,7 @@ function createWebpackConfig({ isModernJS } = {}) {
       entry: {
         index: [join(root, from, entry)]
       },
-      devtool: "source-map",
+      devtool: 'source-map',
       output: {
         path: join(root, to),
         publicPath: '/',
@@ -129,11 +140,14 @@ function createWebpackConfig({ isModernJS } = {}) {
         hotUpdateChunkFilename: 'hot/hot-update.js',
         hotUpdateMainFilename: 'hot/hot-update.json'
       },
+      resolve: {
+        extensions: ['.mjs', '.js', '.json', '.ts']
+      },
       module: {
         rules: [
           {
             __hint__: 'scripts',
-            test: /\.m?js$/,
+            test: hasTS ? /\.m?[jt]sx?$/ : /\.m?jsx?$/,
             include: [resolve(root, from)],
             loader: require.resolve('babel-loader'),
             options: getBabelConfig({ isModernJS })
@@ -143,7 +157,12 @@ function createWebpackConfig({ isModernJS } = {}) {
             test: /\.(css|scss)$/,
             use: [
               extractCSS
-                ? MiniCssExtractPlugin.loader
+                ? {
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                      hmr: !isProd
+                    }
+                  }
                 : {
                     loader: require.resolve('style-loader')
                   },
@@ -208,6 +227,17 @@ function createWebpackConfig({ isModernJS } = {}) {
       },
       plugins: [
         new EnvironmentPlugin(Object.keys(process.env)),
+        hasTS
+          ? new ForkTsCheckerWebpackPlugin({
+              logger: { infrastructure: 'silent', issues: 'silent' },
+              typescript: {
+                diagnosticOptions: {
+                  semantic: true,
+                  syntactic: true
+                }
+              }
+            })
+          : null,
         extractCSS
           ? new MiniCssExtractPlugin({
               filename: `[name].css`
@@ -224,11 +254,13 @@ function createWebpackConfig({ isModernJS } = {}) {
               }
             })
           : null,
-        new CopyPlugin([
-          {
-            from: join(root, staticDir)
-          }
-        ])
+        new CopyPlugin({
+          patterns: [
+            {
+              from: join(root, staticDir)
+            }
+          ]
+        })
       ].filter(x => x),
       optimization: {
         minimizer: [],

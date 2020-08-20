@@ -18,11 +18,20 @@ const PROJECT_TYPES_CONFIG = {
   },
   react: {
     presets: [require.resolve('@babel/preset-react')]
+  },
+  vue: config => {
+    const presetTypescript = config.presets[1];
+
+    if (Array.isArray(presetTypescript)) {
+      presetTypescript[0] = require.resolve('babel-preset-typescript-vue');
+    }
+
+    return config;
   }
 };
 
 module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
-  const { babel: projectBabelConfig, pkg, type } = getProjectConfig();
+  const { babel: projectBabelConfig, pkg, hasTS, type } = getProjectConfig();
 
   return merge(
     {
@@ -40,7 +49,18 @@ module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
             modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false
           }
         ]
-      ],
+      ].concat(
+        hasTS
+          ? [
+              [
+                require.resolve('@babel/preset-typescript'),
+                {
+                  onlyRemoveTypeImports: true
+                }
+              ]
+            ]
+          : []
+      ),
       plugins: [
         require.resolve('@babel/plugin-proposal-object-rest-spread'),
         require.resolve('@babel/plugin-syntax-dynamic-import'),

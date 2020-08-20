@@ -1,16 +1,9 @@
-<template>
-  <div :class="$style.root">
-    Find me in <strong>src/components/<%= className %>/<%= className %>.vue</strong>
-  </div>
-</template>
+<script<% if (isTS) { %> lang="ts"<% } %>>
+import Vue from 'vue';
 
-<script>
-export default {
-  name: '<%= className %>',
-  data() {
-    return {};
-  }
-};
+export default Vue.extend({
+  name: '<%= className %>'
+});
 </script>
 
 <style lang="scss" module>
@@ -21,3 +14,10 @@ export default {
   color: black;
 }
 </style>
+
+<template>
+  <div :class="$style.root">
+    Find me in
+    <strong>src/components/<%= className %></strong>
+  </div>
+</template>
