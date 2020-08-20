@@ -24,8 +24,8 @@
       .attr('y', 0)
       .attr('rx', 3)
       .attr('ry', 3)
-      .attr('width', 400)
-      .attr('height', 300);
+      .attr('width', '100%')
+      .attr('height', '100%');
   });
 
   afterUpdate(() => {
