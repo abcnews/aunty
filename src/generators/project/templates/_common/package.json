@@ -13,5 +13,11 @@
   "scripts": {
     "start": "aunty serve",
     "test": "aunty test"
+  },
+  "abc": {
+    "css": {
+      "libraryDir": "./node_modules/@abcaustralia/nucleus/css",
+      "logVariables": "false"
+    }
   }
 }

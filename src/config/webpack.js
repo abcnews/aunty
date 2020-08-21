@@ -4,6 +4,7 @@ const { join, resolve } = require('path');
 
 // External
 const importLazy = require('import-lazy')(require);
+const getContext = importLazy('@abcaustralia/postcss-config/getContext');
 const CopyPlugin = importLazy('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = importLazy('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
@@ -122,6 +123,17 @@ function createWebpackConfig({ isModernJS } = {}) {
   const { entry, extractCSS, from, staticDir, to, useCSSModules } = getBuildConfig();
   const isProd = process.env.NODE_ENV === 'production';
 
+  const stylesDestination = extractCSS
+    ? {
+        loader: MiniCssExtractPlugin.loader,
+        options: {
+          hmr: !isProd
+        }
+      }
+    : {
+        loader: require.resolve('style-loader')
+      };
+
   const config = merge(
     {
       mode: isProd ? 'production' : 'development',
@@ -154,19 +166,38 @@ function createWebpackConfig({ isModernJS } = {}) {
             options: getBabelConfig({ isModernJS })
           },
           {
-            __hint__: 'styles',
+            __hint__: 'styles/@abcaustralia',
+            include: /(node_modules\/@abcaustralia\/*)/,
+            test: /\.css$/,
+            use: [
+              stylesDestination,
+              {
+                loader: 'css-loader',
+                options: {
+                  importLoaders: 1,
+                  modules: {
+                    exportLocalsConvention: 'camelCase',
+                    localIdentName: `${isProd ? '' : '[name]__[local]--'}[hash:base64:5]`
+                  },
+                  url: false
+                }
+              },
+              {
+                loader: 'postcss-loader',
+                options: {
+                  config: {
+                    path: require.resolve('@abcaustralia/postcss-config'),
+                    ctx: getContext(!isProd)
+                  }
+                }
+              }
+            ]
+          },
+          {
+            __hint__: 'styles', // non-@abcaustralia
             test: /\.(css|scss)$/,
             use: [
-              extractCSS
-                ? {
-                    loader: MiniCssExtractPlugin.loader,
-                    options: {
-                      hmr: !isProd
-                    }
-                  }
-                : {
-                    loader: require.resolve('style-loader')
-                  },
+              stylesDestination,
               {
                 loader: require.resolve('css-loader'),
                 options: {
