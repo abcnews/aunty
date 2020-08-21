@@ -1,5 +1,4 @@
 // External
-const fs = require('fs-extra');
 const getAllPaths = require('get-all-paths');
 const Generator = require('yeoman-generator');
 

@@ -30,44 +30,47 @@ const PROJECT_TYPES_CONFIG = {
   }
 };
 
-module.exports.getBabelConfig = mem(({ isModernJS } = {}) => {
-  const { babel: projectBabelConfig, pkg, hasTS, type } = getProjectConfig();
+module.exports.getBabelConfig = mem(
+  ({ isModernJS } = {}) => {
+    const { babel: projectBabelConfig, pkg, hasTS, type } = getProjectConfig();
 
-  return merge(
-    {
-      presets: [
-        [
-          require.resolve('@babel/preset-env'),
-          {
-            targets: {
-              browsers: isModernJS
-                ? ['Chrome >= 80', 'Safari >= 12.1', 'iOS >= 12.3', 'Firefox >= 72', 'Edge >= 18']
-                : pkg.browserslist || ['> 1% in AU', 'Firefox ESR', 'IE 11']
-            },
-            useBuiltIns: 'entry',
-            corejs: 3,
-            modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false
-          }
-        ]
-      ].concat(
-        hasTS
-          ? [
-              [
-                require.resolve('@babel/preset-typescript'),
-                {
-                  onlyRemoveTypeImports: true
-                }
+    return merge(
+      {
+        presets: [
+          [
+            require.resolve('@babel/preset-env'),
+            {
+              targets: {
+                browsers: isModernJS
+                  ? ['Chrome >= 80', 'Safari >= 12.1', 'iOS >= 12.3', 'Firefox >= 72', 'Edge >= 18']
+                  : pkg.browserslist || ['> 1% in AU', 'Firefox ESR', 'IE 11']
+              },
+              useBuiltIns: 'entry',
+              corejs: 3,
+              modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false
+            }
+          ]
+        ].concat(
+          hasTS
+            ? [
+                [
+                  require.resolve('@babel/preset-typescript'),
+                  {
+                    onlyRemoveTypeImports: true
+                  }
+                ]
               ]
-            ]
-          : []
-      ),
-      plugins: [
-        require.resolve('@babel/plugin-proposal-object-rest-spread'),
-        require.resolve('@babel/plugin-syntax-dynamic-import'),
-        require.resolve('@babel/plugin-proposal-class-properties')
-      ]
-    },
-    PROJECT_TYPES_CONFIG[type],
-    projectBabelConfig
-  );
-});
+            : []
+        ),
+        plugins: [
+          require.resolve('@babel/plugin-proposal-object-rest-spread'),
+          require.resolve('@babel/plugin-syntax-dynamic-import'),
+          require.resolve('@babel/plugin-proposal-class-properties')
+        ]
+      },
+      PROJECT_TYPES_CONFIG[type],
+      projectBabelConfig
+    );
+  },
+  { cacheKey: ({ isModernJS }) => isModernJS }
+);

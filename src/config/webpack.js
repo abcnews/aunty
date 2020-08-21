@@ -67,6 +67,7 @@ const PROJECT_TYPES_CONFIG = {
     return config;
   },
   vue: config => {
+    // vue-style-loader is an internal dependency of vue-loader, and is a fork of style-loader
     getHintedRule(config, 'styles').use[0] = { loader: require.resolve('vue-style-loader') };
 
     config.module.rules.push({
@@ -169,12 +170,12 @@ function createWebpackConfig({ isModernJS } = {}) {
               {
                 loader: require.resolve('css-loader'),
                 options: {
-                  localsConvention: 'camelCase',
                   modules: useCSSModules && {
-                    context: __dirname,
+                    exportLocalsConvention: 'camelCase',
+                    localIdentContext: __dirname,
                     //  ^^^ https://github.com/webpack-contrib/css-loader/issues/413#issuecomment-299578180
                     localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[hash:base64:6]`,
-                    hashPrefix: `${pkg.name}@${pkg.version}`
+                    localIdentHashPrefix: `${pkg.name}@${pkg.version}`
                   },
                   sourceMap: !isProd
                 }

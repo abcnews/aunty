@@ -2,8 +2,8 @@
 const path = require('path');
 
 // External
-const fs = require('fs-extra');
 const getAllPaths = require('get-all-paths');
+const makeDir = require('make-dir');
 const requireg = require('requireg');
 const Generator = require('yeoman-generator');
 
@@ -97,7 +97,7 @@ Shorthand examples (assuming xyz is your project name):
   async configuring() {
     const directory = this.options.path;
 
-    await fs.ensureDir(directory);
+    await makeDir(directory);
     process.chdir(directory);
     this.destinationRoot(directory);
   }
