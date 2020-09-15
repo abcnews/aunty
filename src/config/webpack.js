@@ -187,6 +187,16 @@ function createWebpackConfig({ isModernJS } = {}) {
             ]
           },
           {
+            __hint__: 'data',
+            test: /\.[tc]sv$/,
+            loader: 'csv-loader',
+            options: {
+              dynamicTyping: true,
+              header: true,
+              skipEmptyLines: true
+            }
+          },
+          {
             test: /\.(jpg|png|gif|mp4|m4v|flv|mp3|wav|m4a)$/,
             loader: require.resolve('file-loader'),
             options: {
