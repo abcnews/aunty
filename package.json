@@ -47,6 +47,7 @@
     "cli-select": "^1.1.0",
     "copy-webpack-plugin": "^6.0.3",
     "css-loader": "^4.2.1",
+    "csv-loader": "^3.0.3",
     "deepmerge": "^4.0.0",
     "del": "^5.1.0",
     "execa": "^4.0.3",
