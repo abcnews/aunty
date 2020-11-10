@@ -72,7 +72,7 @@ module.exports.createRepo = async cwd => {
 };
 
 /**
- * Look up the current master version of a thing
+ * Look up the current package.json version of a repo's default branch
  */
 module.exports.getGithubVersion = async (repo, defaultBranch) => {
   const spinner = spin(`Fetching latest version of ${repo}`);
@@ -81,6 +81,10 @@ module.exports.getGithubVersion = async (repo, defaultBranch) => {
   spinner.stop();
 
   return p.version;
+};
+
+module.exports.getDefaultBranch = async () => {
+  return 'master';
 };
 
 module.exports.getSemverTags = async () => (await git('tag')).stdout.split('\n').filter(valid).sort(compare);
