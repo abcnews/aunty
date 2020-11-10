@@ -50,7 +50,7 @@ module.exports = command(
     const remotes = await getRemotes();
     const remote = argv['git-remote'];
 
-    // 2) Ensure the defaullt branch is checked out (skippable)
+    // 2) Ensure the default branch is checked out (skippable)
 
     const label = await getCurrentLabel();
     const defaultBranch = await getDefaultBranch(remote);
