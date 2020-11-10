@@ -65,11 +65,13 @@ module.exports = class extends Generator {
       dateString: date.toString(),
       dateISOString: date.toISOString(),
       authorName: this.user.git.name(),
-      odysseyVersion: this.plugins.includes('odyssey') ? await getGithubVersion('abcnews/odyssey') : false,
+      odysseyVersion: this.plugins.includes('odyssey') ? await getGithubVersion('abcnews/odyssey', 'master') : false,
       scrollytellerVersion: this.plugins.includes('scrollyteller')
-        ? await getGithubVersion('abcnews/odyssey-scrollyteller')
+        ? await getGithubVersion('abcnews/odyssey-scrollyteller', 'master')
         : false,
-      parallaxVersion: this.plugins.includes('parallax') ? await getGithubVersion('abcnews/odyssey-parallax') : false,
+      parallaxVersion: this.plugins.includes('parallax')
+        ? await getGithubVersion('abcnews/odyssey-parallax', 'master')
+        : false,
       desktopFragment: indented(fragment, 16),
       mobileFragment: indented(fragment, 12)
     };

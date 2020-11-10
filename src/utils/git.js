@@ -74,20 +74,16 @@ module.exports.createRepo = async cwd => {
 /**
  * Look up the current master version of a thing
  */
-module.exports.getGithubVersion = async repo => {
+module.exports.getGithubVersion = async (repo, defaultBranch) => {
   const spinner = spin(`Fetching latest version of ${repo}`);
-  const p = await fetch(`https://raw.githubusercontent.com/${repo}/master/package.json`).then(r => r.json());
+  const p = await fetch(`https://raw.githubusercontent.com/${repo}/${defaultBranch}/package.json`).then(r => r.json());
 
   spinner.stop();
 
   return p.version;
 };
 
-module.exports.getSemverTags = async () =>
-  (await git('tag')).stdout
-    .split('\n')
-    .filter(valid)
-    .sort(compare);
+module.exports.getSemverTags = async () => (await git('tag')).stdout.split('\n').filter(valid).sort(compare);
 
 const hasTag = async tag => !(await pack(git(`show-ref --tags --verify refs/tags/${tag}`)))[0];
 
