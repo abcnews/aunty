@@ -30,7 +30,6 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "@abcaustralia/postcss-config": "^3.5.0",
     "@babel/core": "^7.11.4",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
@@ -97,6 +96,9 @@
     "write-json-file": "^4.2.0",
     "yeoman-environment": "^2.4.0",
     "yeoman-generator": "^4.0.2"
+  },
+  "optionalDependencies": {
+    "@abcaustralia/postcss-config": "^3.5.0"
   },
   "devDependencies": {
     "eslint": "^7.7.0",

@@ -4,7 +4,7 @@ const { join, resolve } = require('path');
 
 // External
 const importLazy = require('import-lazy')(require);
-const getContext = importLazy('@abcaustralia/postcss-config/getContext');
+const getContext = importLazy('@abcaustralia/postcss-config/getContext'); // optional dependency
 const CopyPlugin = importLazy('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = importLazy('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
