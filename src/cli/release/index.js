@@ -53,7 +53,7 @@ module.exports = command(
     // 2) Ensure the defaullt branch is checked out (skippable)
 
     const label = await getCurrentLabel();
-    const defaultBranch = await getDefaultBranch();
+    const defaultBranch = await getDefaultBranch(remote);
 
     if (!argv.force && label !== defaultBranch) {
       throw MESSAGES.notDefaultBranch(label, defaultBranch);
