@@ -92,7 +92,7 @@ module.exports.getDefaultBranch = async remote => {
   let localDefaultBranch;
 
   if (remotes.has(remote)) {
-    // If we have a valid remote, find out which local branch confured to pull from the remote default branch
+    // If we have a valid remote, find out which local branch is configured to pull from the remote default branch
     try {
       const remoteShowStdout = (await git(`remote show ${remote}`)).stdout;
       const remoteDefaultBranch = (remoteShowStdout.match(PATTERNS.REMOTE_HEAD_BRANCH) || [])[1];
