@@ -31,7 +31,8 @@ ${changelog.join('\n')}
     }! ${FORCE_REMINDER}`,
   invalidBump: bump =>
     `You supplied an invalid bump value ${hvy(bump)}. It can be: ${hvy(Array.from(VALID_BUMPS).join('|'))}`,
-  invalidHead: label => `You are trying to release from ${hvy(label)}. You should only release from ${hvy('master')}`,
+  notDefaultBranch: (label, defaultBranch) =>
+    `You are trying to release from ${hvy(label)}. You should only release from ${hvy(defaultBranch)}`,
   notRepo: `You can't tag a release or deploy using a tag name becase this project isn't a git repo.`,
   pushCommit: remote => `Push version bump to remote ${hvy(remote)}`,
   pushTag: (tag, remote) => `Push tag ${hvy(tag)} to remote ${hvy(remote)}`,

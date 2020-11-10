@@ -22,7 +22,7 @@ npm unlink
 
 ## Releasing new versions of `@abcnews/aunty`
 
-Releases are managed by `release-it`. To release a new version of aunty from `master`, run:
+Releases are managed by `release-it`. To release a new version of aunty from the default branch, run:
 
 ```
 npm run release

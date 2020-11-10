@@ -17,6 +17,7 @@ const {
   createTag,
   getChangelog,
   getCurrentLabel,
+  getDefaultBranch,
   getRemotes,
   getSemverTags,
   hasChanges,
@@ -49,12 +50,13 @@ module.exports = command(
     const remotes = await getRemotes();
     const remote = argv['git-remote'];
 
-    // 2) Ensure the master branch is checked out (skippable)
+    // 2) Ensure the default branch is checked out (skippable)
 
     const label = await getCurrentLabel();
+    const defaultBranch = await getDefaultBranch(remote);
 
-    if (!argv.force && label !== 'master') {
-      throw MESSAGES.invalidHead(label);
+    if (!argv.force && label !== defaultBranch) {
+      throw MESSAGES.notDefaultBranch(label, defaultBranch);
     }
 
     // 3) Ensure the project no un-committed changes (skippable)
@@ -77,16 +79,18 @@ module.exports = command(
       log(MESSAGES.changes(pkgVersion, await getSemverTags(), await getChangelog(pkgVersion)));
       log(MESSAGES.bumpQuestion(argv.dry));
 
-      const bumpSelection = (await cliSelect({
-        defaultValue: 0,
-        selected: opt('❯'),
-        unselected: ' ',
-        values: [...VALID_BUMPS].reverse().map(bump => ({
-          bump,
-          label: `${bump.replace(/^\w/, c => c.toUpperCase())} (${semver.inc(pkgVersion, bump)})`
-        })),
-        valueRenderer: ({ label }, selected) => (selected ? opt(label) : label)
-      })).value;
+      const bumpSelection = (
+        await cliSelect({
+          defaultValue: 0,
+          selected: opt('❯'),
+          unselected: ' ',
+          values: [...VALID_BUMPS].reverse().map(bump => ({
+            bump,
+            label: `${bump.replace(/^\w/, c => c.toUpperCase())} (${semver.inc(pkgVersion, bump)})`
+          })),
+          valueRenderer: ({ label }, selected) => (selected ? opt(label) : label)
+        })
+      ).value;
       bump = bumpSelection.bump;
       log(`${dim(bumpSelection.label)}\n`);
     }
