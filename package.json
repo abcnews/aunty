@@ -1,6 +1,6 @@
 {
   "name": "@abcnews/aunty",
-  "version": "11.2.0",
+  "version": "11.2.1",
   "description": "A toolkit for working with ABC News projects",
   "repository": "abcnews/aunty",
   "license": "MIT",
@@ -22,8 +22,8 @@
     "access": "public"
   },
   "bin": {
-    "aunty": "./src/bin/aunty.js",
-    "nt": "./src/bin/aunty.js"
+    "aunty": "src/bin/aunty.js",
+    "nt": "src/bin/aunty.js"
   },
   "main": "src/api",
   "engines": {
@@ -95,7 +95,8 @@
     "webpack-dev-server": "^3.11.0",
     "write-json-file": "^4.2.0",
     "yeoman-environment": "^2.4.0",
-    "yeoman-generator": "^4.0.2"
+    "yeoman-generator": "^4.0.2",
+    "@abcaustralia/postcss-config": "^4.0.0"
   },
   "optionalDependencies": {
     "@abcaustralia/postcss-config": "^4.0.0"
