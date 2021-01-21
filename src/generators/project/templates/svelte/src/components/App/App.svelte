@@ -1,8 +1,16 @@
 <script<% if (isTS) { %> lang="ts"<% } %>>
-  export let projectName<% if (isTS) { %>: string<% } %>;
-
   import Worm from '../Worm/Worm.svelte';
+
+  export let x<% if (isTS) { %>: number<% } %>;
+  export let y<% if (isTS) { %>: string<% } %>;
+  export let z<% if (isTS) { %>: boolean<% } %>;
 </script>
+
+<div>
+  <Worm />
+  <pre>{JSON.stringify({ x, y, z })}</pre>
+  <h1><%= projectName %></h1>
+</div>
 
 <style lang="scss">
   div {
@@ -19,7 +27,7 @@
   }
 
   h1 {
-    margin-bottom: 0;
+    margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
     font-size: 24px !important;
     font-weight: normal !important;
@@ -27,8 +35,3 @@
     letter-spacing: normal !important;
   }
 </style>
-
-<div>
-  <Worm />
-  <h1>{projectName}</h1>
-</div>

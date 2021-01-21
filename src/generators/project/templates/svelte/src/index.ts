@@ -1,19 +1,24 @@
+import * as acto from '@abcnews/alternating-case-to-object';
+import { <% if (isOdyssey) { %>whenOdysseyLoaded<% } else { %>whenDOMReady<% } %> } from '@abcnews/env-utils';
+import { getMountValue, selectMounts } from '@abcnews/mount-utils';<% if (isTS) { %>
+import type { Mount } from '@abcnews/mount-utils';<% } %>
 import App from './components/App/App.svelte';
 
-const PROJECT_NAME<% if (isTS) { %>: string<% } %> = '<%= projectSlug %>';
-const ROOT_SELECTOR = `[data-${PROJECT_NAME}-root]`;
+let appMountEl<% if (isTS) { %>: Mount<% } %>;
+let appProps;
 
-const root = document.querySelector(ROOT_SELECTOR);
+<% if (isOdyssey) { %>whenOdysseyLoaded<% } else { %>whenDOMReady<% } %>.then(() => {
+  [appMountEl] = selectMounts('<%= projectNameFlat %>');
 
-if (root) {
-  new App({
-    target: root,
-    props: {
-      projectName: PROJECT_NAME
-    }
-  });
-}
+  if (appMountEl) {
+    appProps = acto(getMountValue(appMountEl));
+    new App({
+      target: appMountEl,
+      props: appProps
+    });
+  }
+});
 
 if (process.env.NODE_ENV === 'development') {
-  console.debug(`[${PROJECT_NAME}] public path: ${__webpack_public_path__}`);
+  console.debug(`[<%= projectName %>] public path: ${__webpack_public_path__}`);
 }
