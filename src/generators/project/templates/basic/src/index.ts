@@ -1,28 +1,40 @@
-import App from './components/App';
+import * as acto from '@abcnews/alternating-case-to-object';
+import { <% if (isOdyssey) { %>whenOdysseyLoaded<% } else { %>whenDOMReady<% } %> } from '@abcnews/env-utils';
+import { getMountValue, selectMounts } from '@abcnews/mount-utils';<% if (isTS) { %>
+import type { Mount } from '@abcnews/mount-utils';<% } %>
+import App from './components/App';<% if (isTS) { %>
+import type { AppProps } from './components/App';<% } %>
 
-const PROJECT_NAME<% if (isTS) { %>: string<% } %> = '<%= projectSlug %>';
-const root = document.querySelector(`[data-${PROJECT_NAME}-root]`);
+let appMountEl<% if (isTS) { %>: Mount<% } %>;
+let appProps<% if (isTS) { %>: AppProps<% } %>;
 
-function init() {
-  render(new App({ projectName: PROJECT_NAME }).el, root);
+function renderApp() {
+  render(new App(appProps).el, appMountEl);
 }
 
-init();
+<% if (isOdyssey) { %>whenOdysseyLoaded<% } else { %>whenDOMReady<% } %>.then(() => {
+  [appMountEl] = selectMounts('<%= projectNameFlat %>');
+
+  if (appMountEl) {
+    appProps = acto(getMountValue(appMountEl));
+    renderApp();
+  }
+});
 
 if (module.hot) {
   module.hot.accept('./components/App', () => {
     try {
-      init();
+      renderApp();
     } catch (err) {
       import('./components/ErrorBox').then(({ default: ErrorBox }) => {
-        render(new ErrorBox({ error: err }).el, root);
+        render(new ErrorBox({ error: err }).el, appMountEl);
       });
     }
   });
 }
 
 if (process.env.NODE_ENV === 'development') {
-  console.debug(`[${PROJECT_NAME}] public path: ${__webpack_public_path__}`);
+  console.debug(`[<%= projectName %>] public path: ${__webpack_public_path__}`);
 }
 
 function render(el<% if (isTS) { %>: Element<% } %>, parentEl<% if (isTS) { %>: Element | null<% } %>) {
