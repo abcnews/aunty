@@ -11,7 +11,7 @@ const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = importLazy('optimize-css-assets-webpack-plugin');
 const sveltePreprocess = importLazy('svelte-preprocess');
 const TerserPlugin = importLazy('terser-webpack-plugin');
-const { VueLoaderPlugin } = importLazy('vue-loader');
+const VueLoaderPlugin = importLazy('vue-loader/lib/plugin');
 const EnvironmentPlugin = importLazy('webpack/lib/EnvironmentPlugin');
 
 // Ours
@@ -41,8 +41,8 @@ const PROJECT_TYPES_CONFIG = {
   svelte: config => {
     config.resolve.extensions.push('.svelte');
 
-    const projectRoot = config.entry.index[0].split('src/')[0];
     const { include, loader, options } = getHintedRule(config, 'scripts');
+    const extractCSS = getHintedRule(config, 'styles').use[0].loader === MiniCssExtractPlugin.loader;
 
     include.push(/(node_modules\/svelte)/);
 
@@ -58,7 +58,7 @@ const PROJECT_TYPES_CONFIG = {
           loader: require.resolve('svelte-loader'),
           options: {
             dev: config.mode === 'development',
-            emitCss: getHintedRule(config, 'styles').use[0] === MiniCssExtractPlugin.loader,
+            emitCss: extractCSS,
             preprocess: sveltePreprocess()
           }
         }
@@ -68,9 +68,6 @@ const PROJECT_TYPES_CONFIG = {
     return config;
   },
   vue: config => {
-    // vue-style-loader is an internal dependency of vue-loader, and is a fork of style-loader
-    getHintedRule(config, 'styles').use[0] = { loader: require.resolve('vue-style-loader') };
-
     config.module.rules.push({
       test: /\.vue$/,
       loader: require.resolve('vue-loader')
