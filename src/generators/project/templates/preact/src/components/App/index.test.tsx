@@ -1,16 +1,18 @@
 import { h } from 'preact';
 import render from 'preact-render-to-string';
 import htmlLooksLike from 'html-looks-like';
-
-import App from '.';
+import App from '.';<% if (isTS) { %>
+import type { AppProps } from '.';<% } %>
 
 describe('App', () => {
   test('It renders', () => {
-    const actual = render(<App projectName="test-project" />);
+    const props<% if (isTS) { %>: AppProps<% } %> = { x: 42, y: 'text', z: true };
+    const actual = render(<App {...props} />);
     const expected = `
       <div>
         {{ ... }}
-        <h1>test-project</h1>
+        <pre>${JSON.stringify(props)}</pre>
+        <h1><%= projectName %></h1>
       </div>
     `;
 

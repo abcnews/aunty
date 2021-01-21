@@ -1,25 +1,35 @@
+import * as acto from '@abcnews/alternating-case-to-object';
+import { <% if (isOdyssey) { %>whenOdysseyLoaded<% } else { %>whenDOMReady<% } %> } from '@abcnews/env-utils';
+import { getMountValue, selectMounts } from '@abcnews/mount-utils';<% if (isTS) { %>
+import type { Mount } from '@abcnews/mount-utils';<% } %>
 import { h, render } from 'preact';
-import App from './components/App';
+import App from './components/App';<% if (isTS) { %>
+import type { AppProps } from './components/App';<% } %>
 
-const PROJECT_NAME<% if (isTS) { %>: string<% } %> = '<%= projectSlug %>';
-const root = document.querySelector(`[data-${PROJECT_NAME}-root]`);
+let appMountEl<% if (isTS) { %>: Mount<% } %>;
+let appProps<% if (isTS) { %>: AppProps<% } %>;
 
-function init() {
-  if (root) {
-    render(<App projectName={PROJECT_NAME} />, root);
-  }
+function renderApp() {
+  render(<App {...appProps} />, appMountEl);
 }
 
-init();
+<% if (isOdyssey) { %>whenOdysseyLoaded<% } else { %>whenDOMReady<% } %>.then(() => {
+  [appMountEl] = selectMounts('<%= projectNameFlat %>');
+
+  if (appMountEl) {
+    appProps = acto(getMountValue(appMountEl));
+    renderApp();
+  }
+});
 
 if (module.hot) {
   module.hot.accept('./components/App', () => {
     try {
-      init();
+      renderApp();
     } catch (err) {
       import('./components/ErrorBox').then(({ default: ErrorBox }) => {
-        if (root) {
-          render(<ErrorBox error={err} />, root);
+        if (appMountEl) {
+          render(<ErrorBox error={err} />, appMountEl);
         }
       });
     }
@@ -28,5 +38,5 @@ if (module.hot) {
 
 if (process.env.NODE_ENV === 'development') {
   require('preact/debug');
-  console.debug(`[${PROJECT_NAME}] public path: ${__webpack_public_path__}`);
+  console.debug(`[<%= projectName %>] public path: ${__webpack_public_path__}`);
 }

@@ -2,15 +2,18 @@ import { h<% if (isTS) { %>, FunctionalComponent<% } %> } from 'preact';
 import Worm from '../Worm';
 import styles from './styles.scss';
 <% if (isTS) { %>
-interface AppProps {
-  projectName: string;
+export interface AppProps {
+  x: number;
+  y: string;
+  z: boolean;
 }
 <% } %>
-const App<% if (isTS) { %>: FunctionalComponent<AppProps><% } %> = ({ projectName }) => {
+const App<% if (isTS) { %>: FunctionalComponent<AppProps><% } %> = ({ x, y, z }) => {
   return (
     <div className={styles.root}>
       <Worm />
-      <h1>{projectName}</h1>
+      <pre>{JSON.stringify({ x, y, z })}</pre>
+      <h1><%= projectName %></h1>
     </div>
   );
 };
