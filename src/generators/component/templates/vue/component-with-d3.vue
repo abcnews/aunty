@@ -1,3 +1,7 @@
+<template>
+  <div :class="$style.root"></div>
+</template>
+
 <script<% if (isTS) { %> lang="ts"<% } %>>
 import Vue from 'vue';
 import { select<% if (isTS) { %>, Selection<% } %> } from 'd3-selection';
@@ -60,7 +64,3 @@ export default Vue.extend({
   color: black;
 }
 </style>
-
-<template>
-  <div :class="$style.root"></div>
-</template>

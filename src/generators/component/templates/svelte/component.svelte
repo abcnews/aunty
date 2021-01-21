@@ -2,6 +2,11 @@
 
 </script>
 
+<div>
+  Find me in
+  <strong>src/components/<%= className %></strong>
+</div>
+
 <style lang="scss">
   div {
     border: 1px solid rgb(255, 115, 0);
@@ -10,8 +15,3 @@
     color: black;
   }
 </style>
-
-<div>
-  Find me in
-  <strong>src/components/<%= className %></strong>
-</div>

@@ -46,13 +46,13 @@ Shorthand examples (assuming xyz is your project name):
     let prompts = [];
 
     if (this.options.here) {
-      this.options.name = path.basename(process.cwd());
+      this.options.projectName = path.basename(process.cwd());
     } else {
       prompts.push({
         type: 'input',
-        name: 'name',
+        name: 'projectName',
         message: 'What is your project called?',
-        default: this.options.name || 'New Project'
+        default: this.options.projectName || 'New Project'
       });
     }
 
@@ -78,19 +78,30 @@ Shorthand examples (assuming xyz is your project name):
       default: false
     });
 
+    prompts.push({
+      type: 'confirm',
+      name: 'odyssey',
+      message: 'Will this project render components inside an Odyssey?',
+      default: false
+    });
+
     const answers = await this.prompt(prompts);
 
     this.options = combine(this.options, answers);
 
-    this.options.projectSlug = this.options.name
+    this.options.projectName = this.options.projectName.replace(/[^\w\-\_\s]/g, '');
+
+    this.options.projectNameSlug = this.options.projectName
       .toLowerCase()
       .replace(/\s/g, '-')
       .replace(/[^0-9a-z\-\_]/g, '');
 
+    this.options.projectNameFlat = this.options.projectNameSlug.replace(/-/g, '');
+
     if (this.options.here) {
       this.options.path = process.cwd();
     } else {
-      this.options.path = process.cwd() + '/' + this.options.projectSlug;
+      this.options.path = process.cwd() + '/' + this.options.projectNameSlug;
     }
   }
 
@@ -106,10 +117,12 @@ Shorthand examples (assuming xyz is your project name):
     const context = {
       BUILD_DIRECTORY_NAME,
       DEPLOY_FILE_NAME,
-      projectName: this.options.name,
-      projectSlug: this.options.projectSlug,
+      projectName: this.options.projectName,
+      projectNameSlug: this.options.projectNameSlug,
+      projectNameFlat: this.options.projectNameFlat,
       projectType: this.options.template,
       isTS: this.options.typescript,
+      isOdyssey: this.options.odyssey,
       authorName: this.user.git.name(),
       authorEmail: this.user.git.email()
     };
@@ -149,7 +162,7 @@ Shorthand examples (assuming xyz is your project name):
     const devDependencies = [`@abcnews/aunty${auntyVersion ? `@${auntyVersion}` : ''}`].concat(
       this.options.typescript ? ['@types/jest', '@types/webpack-env'] : []
     );
-    const dependencies = [];
+    const dependencies = ['@abcnews/alternating-case-to-object', '@abcnews/env-utils', '@abcnews/mount-utils'];
 
     switch (this.options.template) {
       case 'preact':
@@ -189,8 +202,8 @@ Shorthand examples (assuming xyz is your project name):
   }
 
   end() {
-    const where = this.options.here ? 'the current directory' : `./${this.options.projectSlug}`;
+    const where = this.options.here ? 'the current directory' : `./${this.options.projectNameSlug}`;
 
-    success(`Created ${hvy(this.options.name)} project in ${hvy(where)}`);
+    success(`Created ${hvy(this.options.projectName)} project in ${hvy(where)}`);
   }
 };

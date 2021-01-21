@@ -1,3 +1,10 @@
+<template>
+  <div :class="$style.root">
+    Find me in
+    <strong>src/components/<%= className %></strong>
+  </div>
+</template>
+
 <script<% if (isTS) { %> lang="ts"<% } %>>
 import Vue from 'vue';
 
@@ -14,10 +21,3 @@ export default Vue.extend({
   color: black;
 }
 </style>
-
-<template>
-  <div :class="$style.root">
-    Find me in
-    <strong>src/components/<%= className %></strong>
-  </div>
-</template>

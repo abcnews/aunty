@@ -1,3 +1,7 @@
+<template>
+  <img :class="$style.root" :src="worm" />
+</template>
+
 <script<% if (isTS) { %> lang="ts"<% } %>>
 import Vue from 'vue';
 import worm from './worm.svg';
@@ -18,7 +22,3 @@ export default Vue.extend({
   height: auto;
 }
 </style>
-
-<template>
-  <img :class="$style.root" :src="worm" />
-</template>

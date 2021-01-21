@@ -1,5 +1,5 @@
 {
-  "name": "<%= projectSlug %>",
+  "name": "<%= projectNameSlug %>",
   "version": "1.0.0-pre",
   "description": "A project generated from aunty's <%= projectType %> project template.",
   "license": "MIT",
