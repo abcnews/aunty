@@ -33,6 +33,8 @@
   });
 </script>
 
+<div bind:this={root} />
+
 <style lang="scss">
   div {
     border: 1px solid rgb(255, 115, 0);
@@ -42,4 +44,3 @@
   }
 </style>
 
-<div bind:this={root} />
