@@ -1,3 +1,11 @@
+<template>
+  <div :class="$style.root">
+    <worm-component />
+    <pre>{{ JSON.stringify({ x, y, z }) }}</pre>
+    <h1><%= projectName %></h1>
+  </div>
+</template>
+
 <script<% if (isTS) { %> lang="ts"<% } %>>
 import Vue from 'vue';
 import Worm from '../Worm/Worm.vue';
@@ -5,7 +13,9 @@ import Worm from '../Worm/Worm.vue';
 export default Vue.extend({
   name: 'App',
   props: {
-    projectName: String
+    x: Number,
+    y: String,
+    z: Boolean
   },
   components: {
     'worm-component': Worm
@@ -27,7 +37,7 @@ export default Vue.extend({
   text-align: center;
 
   h1 {
-    margin-bottom: 0;
+    margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
     font-size: 24px !important;
     font-weight: normal !important;
@@ -36,10 +46,3 @@ export default Vue.extend({
   }
 }
 </style>
-
-<template>
-  <div :class="$style.root">
-    <worm-component />
-    <h1>{{ projectName }}</h1>
-  </div>
-</template>
