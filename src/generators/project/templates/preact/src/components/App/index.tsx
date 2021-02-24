@@ -2,7 +2,7 @@ import { h<% if (isTS) { %>, FunctionalComponent<% } %> } from 'preact';
 import Worm from '../Worm';
 import styles from './styles.scss';
 <% if (isTS) { %>
-export interface AppProps {
+export type AppProps = {
   x: number;
   y: string;
   z: boolean;

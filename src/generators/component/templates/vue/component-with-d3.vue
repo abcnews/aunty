@@ -6,7 +6,7 @@
 import Vue from 'vue';
 import { select<% if (isTS) { %>, Selection<% } %> } from 'd3-selection';
 <% if (isTS) { %>
-interface <%= className %>Data {
+type <%= className %>Data = {
   svg: Selection<SVGSVGElement, unknown, null, undefined> | null;
   g: Selection<SVGGElement, unknown, null, undefined> | null;
   rect: Selection<SVGRectElement, unknown, null, undefined> | null;

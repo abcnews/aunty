@@ -2,8 +2,8 @@ import { select<% if (isTS) { %>, Selection<% } %> } from 'd3-selection';
 import React, { useEffect, useRef } from 'react';
 import styles from './styles.scss';
 <% if (isTS) { %>
-interface <%= className %>Props {
-  color?: string; 
+type <%= className %>Props = {
+  color?: string;
 }
 <% } %>
 const <%= className %><% if (isTS) { %>: React.FC<<%= className %>Props><% } %> = ({ color = 'black' }) => {
@@ -11,7 +11,7 @@ const <%= className %><% if (isTS) { %>: React.FC<<%= className %>Props><% } %> 
   const svg = useRef<% if (isTS) { %><Selection<SVGSVGElement, unknown, null, undefined> | null><% } %>(null);
   const g = useRef<% if (isTS) { %><Selection<SVGGElement, unknown, null, undefined> | null><% } %>(null);
   const rect = useRef<% if (isTS) { %><Selection<SVGRectElement, unknown, null, undefined> | null><% } %>(null);
-  
+
   useEffect(() => {
     svg.current = select(root.current)
       .append('svg')

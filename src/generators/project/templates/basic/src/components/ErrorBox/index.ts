@@ -1,6 +1,6 @@
 import styles from './styles.scss';
 <% if (isTS) { %>
-interface ErrorBoxProps {
+type ErrorBoxProps = {
   error: Error;
 }
 <% } %>
