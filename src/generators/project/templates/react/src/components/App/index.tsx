@@ -2,7 +2,7 @@ import React from 'react';
 import Worm from '../Worm';
 import styles from './styles.scss';
 <% if (isTS) { %>
-export type AppProps {
+export type AppProps = {
   x: number;
   y: string;
   z: boolean;

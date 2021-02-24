@@ -3,7 +3,7 @@ import { h<% if (isTS) { %>, FunctionalComponent<% } %> } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import styles from './styles.scss';
 <% if (isTS) { %>
-type <%= className %>Props {
+type <%= className %>Props = {
   color?: string;
 }
 <% } %>

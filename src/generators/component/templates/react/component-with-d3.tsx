@@ -2,7 +2,7 @@ import { select<% if (isTS) { %>, Selection<% } %> } from 'd3-selection';
 import React, { useEffect, useRef } from 'react';
 import styles from './styles.scss';
 <% if (isTS) { %>
-type <%= className %>Props {
+type <%= className %>Props = {
   color?: string;
 }
 <% } %>

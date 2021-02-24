@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import styles from './styles.scss';
 <% if (isTS) { %>
-type ErrorBoxProps {
+type ErrorBoxProps = {
   error: Error;
 }
 <% } %>

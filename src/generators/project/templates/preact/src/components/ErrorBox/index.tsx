@@ -2,7 +2,7 @@ import { h<% if (isTS) { %>, FunctionalComponent<% } %> } from 'preact';
 import { useEffect } from 'preact/hooks';
 import styles from './styles.scss';
 <% if (isTS) { %>
-type ErrorBoxProps {
+type ErrorBoxProps = {
   error: Error;
 }
 <% } %>
