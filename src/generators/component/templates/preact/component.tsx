@@ -1,7 +1,7 @@
 import { h<% if (isTS) { %>, FunctionalComponent<% } %> } from 'preact';
 import styles from './styles.scss';
 <% if (isTS) { %>
-interface <%= className %>Props {}
+type <%= className %>Props {}
 <% } %>
 const <%= className %><% if (isTS) { %>: FunctionalComponent<<%= className %>Props><% } %> = () => {
   return (

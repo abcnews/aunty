@@ -3,8 +3,8 @@ import { h<% if (isTS) { %>, FunctionalComponent<% } %> } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import styles from './styles.scss';
 <% if (isTS) { %>
-interface <%= className %>Props {
-  color?: string; 
+type <%= className %>Props {
+  color?: string;
 }
 <% } %>
 const <%= className %><% if (isTS) { %>: FunctionalComponent<<%= className %>Props><% } %> = ({ color = 'black' }) => {
@@ -12,7 +12,7 @@ const <%= className %><% if (isTS) { %>: FunctionalComponent<<%= className %>Pro
   const svg = useRef<% if (isTS) { %><Selection<SVGSVGElement, unknown, null, undefined> | null><% } %>(null);
   const g = useRef<% if (isTS) { %><Selection<SVGGElement, unknown, null, undefined> | null><% } %>(null);
   const rect = useRef<% if (isTS) { %><Selection<SVGRectElement, unknown, null, undefined> | null><% } %>(null);
-  
+
   useEffect(() => {
     svg.current = select(root.current)
       .append('svg')
