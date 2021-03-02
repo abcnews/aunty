@@ -368,9 +368,9 @@ function conditionallyEnableABCAustraliaStyles(config) {
       {
         loader: require.resolve('postcss-loader'),
         options: {
-          config: {
-            path: require.resolve('@abcaustralia/postcss-config'),
-            ctx: getABCAustraliaPostCSSContext(!isProd)
+          postcssOptions: {
+            config: require.resolve('@abcaustralia/postcss-config'),
+            ...getABCAustraliaPostCSSContext(!isProd)
           }
         }
       }
