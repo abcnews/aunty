@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles.scss';
 <% if (isTS) { %>
-interface <%= className %>Props {}
+type <%= className %>Props = {}
 <% } %>
 const <%= className %><% if (isTS) { %>: React.FC<<%= className %>Props><% } %> = () => {
   return (
