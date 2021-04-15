@@ -10,12 +10,8 @@ module.exports.OPTIONS = {
 };
 
 const GENERATOR_ALIASES = (module.exports.GENERATOR_ALIASES = {
-  a: 'articles',
   c: 'component',
-  f: 'fragment',
-  p: 'project',
-  t: 'thumbnail',
-  v: 'volume'
+  p: 'project'
 });
 
 module.exports.GENERATORS = setOfValues(GENERATOR_ALIASES);
@@ -37,14 +33,7 @@ ${sec('Generators')}
 
   ${hvy('Project additions')}
 
-  ${req('articles')}    Add mock desktop & mobile article pages to ${req('public/')} for local development.
   ${req('component')}   Add a component (and tests) to ${req('src/components/')} for your project type.
-  ${req('thumbnail')}   Add an interactive homepage thumbnail to ${req('public/')} (uses fragment content)}).
-
-  ${hvy('Core Media content')}
-
-  ${req('fragment')}    Output the HTMLFragment init-interactive markup for your latest release.
-  ${req('volume')}      Output the uberlist volume setting for your project's interactive homepage thumbnail.
 
   Run ${cmd('aunty generate')} ${req('<generator>')} ${opt('--help')} for details of each generator's options/arguments.
 `
