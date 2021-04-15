@@ -115,6 +115,12 @@ module.exports.getWebpackConfig = () => {
   return config;
 };
 
+const createEntriesDictionary = (root, from, entry) =>
+  (Array.isArray(entry) ? entry : [entry]).reduce(
+    (memo, _entry) => ({ ...memo, [_entry]: [join(root, from, _entry)] }),
+    {}
+  );
+
 const resolveIncludedDependencies = (includedDependencies, root) => {
   if (!Array.isArray(includedDependencies)) {
     return [];
@@ -142,9 +148,7 @@ function createWebpackConfig({ isModernJS } = {}) {
     {
       mode: isProd ? 'production' : 'development',
       cache: true,
-      entry: {
-        index: [join(root, from, entry)]
-      },
+      entry: createEntriesDictionary(root, from, entry),
       devtool: 'source-map',
       output: {
         path: join(root, to),
