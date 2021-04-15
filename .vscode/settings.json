@@ -2,5 +2,6 @@
   "eslint.enable": true,
   "files.associations": {
     "**/templates/**/*": "plaintext"
-  }
+  },
+  "git.ignoreLimitWarning": true
 }

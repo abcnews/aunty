@@ -18,15 +18,6 @@ const PROJECT_TYPES_CONFIG = {
   },
   react: {
     presets: [require.resolve('@babel/preset-react')]
-  },
-  vue: config => {
-    const presetTypescript = config.presets[1];
-
-    if (Array.isArray(presetTypescript)) {
-      presetTypescript[0] = require.resolve('babel-preset-typescript-vue');
-    }
-
-    return config;
   }
 };
 

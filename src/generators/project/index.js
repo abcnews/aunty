@@ -26,7 +26,7 @@ module.exports = class extends Generator {
       required: false
     });
     this.option('here', { description: `Assume ${opt('<name>')} is current working directory` });
-    this.option('template', { description: 'Type of project [basic|preact|react|svelte|vue]' });
+    this.option('template', { description: 'Type of project [basic|preact|react|svelte]' });
   }
 
   usage() {
@@ -65,8 +65,7 @@ Shorthand examples (assuming xyz is your project name):
           { name: 'Basic', value: 'basic' },
           { name: 'Preact', value: 'preact' },
           { name: 'React', value: 'react' },
-          { name: 'Svelte', value: 'svelte' },
-          { name: 'Vue', value: 'vue' }
+          { name: 'Svelte', value: 'svelte' }
         ]
       });
     }
@@ -127,8 +126,8 @@ Shorthand examples (assuming xyz is your project name):
       authorEmail: this.user.git.email()
     };
 
-    const hasSFCs = this.options.template === 'svelte' || this.options.template === 'vue';
-    const templateDirs = [this.options.template, '_common'].concat(hasSFCs ? [] : ['_styles']);
+    const hasSFCs = this.options.template === 'svelte';
+    const templateDirs = [this.options.template, '_common'].concat(hasSFCs ? [] : ['_non_sfc']);
     const templateDirPaths = templateDirs.map(dir => this.templatePath(dir));
     const pathExclusions = [].concat(this.options.typescript ? [] : ['tsconfig.json']);
     const pathReplacements = templateDirPaths
@@ -179,10 +178,6 @@ Shorthand examples (assuming xyz is your project name):
       case 'svelte':
         devDependencies.push('@testing-library/svelte');
         dependencies.push('svelte');
-        break;
-      case 'vue':
-        devDependencies.push('@vue/test-utils');
-        dependencies.push('vue');
         break;
       default:
         break;
