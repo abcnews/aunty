@@ -1,4 +1,4 @@
-import * as acto from '@abcnews/alternating-case-to-object';
+import acto from '@abcnews/alternating-case-to-object';
 import { <% if (isOdyssey) { %>whenOdysseyLoaded<% } else { %>whenDOMReady<% } %> } from '@abcnews/env-utils';
 import { getMountValue, selectMounts } from '@abcnews/mount-utils';<% if (isTS) { %>
 import type { Mount } from '@abcnews/mount-utils';<% } %>
