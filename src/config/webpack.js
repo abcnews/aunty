@@ -11,7 +11,6 @@ const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = importLazy('optimize-css-assets-webpack-plugin');
 const sveltePreprocess = importLazy('svelte-preprocess');
 const TerserPlugin = importLazy('terser-webpack-plugin');
-const VueLoaderPlugin = importLazy('vue-loader/lib/plugin');
 const EnvironmentPlugin = importLazy('webpack/lib/EnvironmentPlugin');
 
 // Ours
@@ -64,16 +63,6 @@ const PROJECT_TYPES_CONFIG = {
         }
       ]
     });
-
-    return config;
-  },
-  vue: config => {
-    config.module.rules.push({
-      test: /\.vue$/,
-      loader: require.resolve('vue-loader')
-    });
-
-    config.plugins.push(new VueLoaderPlugin());
 
     return config;
   }

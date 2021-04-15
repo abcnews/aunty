@@ -10,17 +10,8 @@ module.exports.getJestConfig = () => {
     {
       rootDir: root,
       verbose: true,
-      globals: {
-        'vue-jest': {
-          transform: {
-            js: defaultTransformerPath
-          },
-          experimentalCSSCompile: false
-        }
-      },
       transform: {
         '^.+\\.svelte$': require.resolve('./transformer-svelte'),
-        '^.*\\.vue$': require.resolve('vue-jest'),
         '.*': defaultTransformerPath
       }
     },

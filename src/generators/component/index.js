@@ -22,7 +22,7 @@ module.exports = class extends Generator {
     this.argument('name', { required: false });
 
     this.option('template', {
-      description: 'Type of project (eg. basic, preact, react, vue)'
+      description: 'Type of project [basic|preact|react|svelte]'
     });
     this.option('d3', { description: 'This component will use D3' });
 
@@ -57,8 +57,7 @@ module.exports = class extends Generator {
           { name: 'Preact', value: 'preact' },
           { name: 'Basic', value: 'basic' },
           { name: 'React', value: 'react' },
-          { name: 'Svelte', value: 'svelte' },
-          { name: 'Vue', value: 'vue' }
+          { name: 'Svelte', value: 'svelte' }
         ]
       });
     }
@@ -90,7 +89,7 @@ module.exports = class extends Generator {
   }
 
   writing() {
-    const isSFC = this.options.template === 'svelte' || this.options.template === 'vue';
+    const isSFC = this.options.template === 'svelte';
     const isJSX = this.options.template === 'preact' || this.options.template === 'react';
     const sourceName = `component${this.options.d3 ? '-with-d3' : ''}`;
     const sourceScriptExt = isJSX ? 'tsx' : 'ts';
@@ -114,7 +113,7 @@ module.exports = class extends Generator {
         { globOptions: { noext: true } }
       );
       this.fs.copy(
-        this.templatePath(`_styles/styles.scss`),
+        this.templatePath(`_non_sfc/styles.scss`),
         this.destinationPath(`src/components/${this.options.name}/styles.scss`),
         context
       );
@@ -158,10 +157,6 @@ module.exports = class extends Generator {
       case 'svelte':
         this.devDependencies.push('@testing-library/svelte');
         this.dependencies.push('svelte');
-        break;
-      case 'vue':
-        this.devDependencies.push('@vue/test-utils');
-        this.dependencies.push('vue');
         break;
       default:
         break;

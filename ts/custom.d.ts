@@ -13,11 +13,6 @@ declare module '*.svelte' {
   export default component;
 }
 
-declare module '*.vue' {
-  const component: any;
-  export default component;
-}
-
 type CSSModule = {
   [className: string]: string;
 };
