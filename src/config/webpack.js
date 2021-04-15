@@ -121,9 +121,27 @@ const createEntriesDictionary = (root, from, entry) =>
     {}
   );
 
+const resolveIncludedDependencies = (includedDependencies, root) => {
+  if (!Array.isArray(includedDependencies)) {
+    return [];
+  }
+
+  return includedDependencies.map(packageNameOrPattern => {
+    if (typeof packageNameOrPattern === 'string') {
+      return resolve(root, 'node_modules', packageNameOrPattern);
+    }
+
+    if (packageNameOrPattern instanceof RegExp) {
+      return new RegExp(join('node_modules', packageNameOrPattern.source), packageNameOrPattern.flags);
+    }
+
+    return null;
+  });
+};
+
 function createWebpackConfig({ isModernJS } = {}) {
   const { pkg, root, hasTS, type, webpack: projectWebpackConfig } = getProjectConfig();
-  const { entry, extractCSS, from, staticDir, to, useCSSModules } = getBuildConfig();
+  const { entry, extractCSS, from, includedDependencies, staticDir, to, useCSSModules } = getBuildConfig();
   const isProd = process.env.NODE_ENV === 'production';
 
   const config = merge(
@@ -151,7 +169,7 @@ function createWebpackConfig({ isModernJS } = {}) {
           {
             __hint__: 'scripts',
             test: hasTS ? /\.m?[jt]sx?$/ : /\.m?jsx?$/,
-            include: [resolve(root, from)],
+            include: [resolve(root, from)].concat(resolveIncludedDependencies(includedDependencies, root)),
             loader: require.resolve('babel-loader'),
             options: getBabelConfig({ isModernJS })
           },

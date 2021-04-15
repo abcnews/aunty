@@ -25,6 +25,7 @@ module.exports.getBuildConfig = mem(() => {
       to: BUILD_DIRECTORY_NAME,
       staticDir: DEFAULT_STATIC_DIRECTORY_NAME,
       addModernJS: false,
+      includedDependencies: [],
       extractCSS: false,
       useCSSModules: true,
       showDeprecations: false
