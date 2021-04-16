@@ -8,7 +8,6 @@ const getContext = importLazy('@abcaustralia/postcss-config/getContext'); // opt
 const CopyPlugin = importLazy('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = importLazy('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = importLazy('optimize-css-assets-webpack-plugin');
 const sveltePreprocess = importLazy('svelte-preprocess');
 const TerserPlugin = importLazy('terser-webpack-plugin');
 const EnvironmentPlugin = importLazy('webpack/lib/EnvironmentPlugin');
@@ -38,7 +37,17 @@ const PROJECT_TYPES_CONFIG = {
     }
   },
   svelte: config => {
-    config.resolve.extensions.push('.svelte');
+    config.resolve = {
+      // Make sure that only one copy of the Svelte runtime is bundled in the app
+      alias: {
+        svelte: resolve('node_modules', 'svelte')
+      },
+      // Recognise .svelte files
+      extensions: [...config.resolve.extensions, '.svelte'],
+      // When using Svelte components installed from npm, use the original component
+      // source code, rather than consuming the already-compiled version
+      mainFields: ['svelte', 'browser', 'module', 'main']
+    };
 
     const { include, loader, options } = getHintedRule(config, 'scripts');
     const extractCSS = getHintedRule(config, 'styles').use[0].loader === MiniCssExtractPlugin.loader;
@@ -62,6 +71,13 @@ const PROJECT_TYPES_CONFIG = {
           }
         }
       ]
+    });
+    // Required to prevent errors from Svelte on Webpack 5+
+    config.module.rules.push({
+      test: /node_modules\/svelte\/.*\.mjs$/,
+      resolve: {
+        fullySpecified: false
+      }
     });
 
     return config;
@@ -136,6 +152,7 @@ function createWebpackConfig({ isModernJS } = {}) {
   const config = merge(
     {
       mode: isProd ? 'production' : 'development',
+      target: isModernJS ? 'web' : ['web', 'es5'],
       cache: true,
       entry: createEntriesDictionary(root, from, entry),
       devtool: 'source-map',
@@ -143,7 +160,6 @@ function createWebpackConfig({ isModernJS } = {}) {
         path: join(root, to),
         publicPath: '/',
         filename: isModernJS ? '[name]_modern.js' : '[name].js',
-        jsonpFunction: `webpackJsonp__${pkg.name.replace(/[^a-z]/g, '_')}`,
         // The update file hash was causing 404s and full page reloads.
         // This will make the file name more predictable.
         // See https://github.com/webpack/webpack-dev-server/issues/79#issuecomment-244596129
@@ -183,7 +199,7 @@ function createWebpackConfig({ isModernJS } = {}) {
                     exportLocalsConvention: 'camelCase',
                     localIdentContext: __dirname,
                     //  ^^^ https://github.com/webpack-contrib/css-loader/issues/413#issuecomment-299578180
-                    localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[hash:base64:6]`,
+                    localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[contenthash:base64:6]`,
                     localIdentHashPrefix: `${pkg.name}@${pkg.version}`
                   },
                   sourceMap: !isProd
@@ -208,7 +224,7 @@ function createWebpackConfig({ isModernJS } = {}) {
             test: /\.(jpg|png|gif|mp4|m4v|flv|mp3|wav|m4a)$/,
             loader: require.resolve('file-loader'),
             options: {
-              name: '[name]-[hash].[ext]'
+              name: '[name]-[contenthash].[ext]'
             }
           },
           {
@@ -263,17 +279,6 @@ function createWebpackConfig({ isModernJS } = {}) {
               filename: `[name].css`
             })
           : null,
-        extractCSS
-          ? new OptimizeCssAssetsPlugin({
-              assetNameRegExp: /\.css$/,
-              cssProcessorOptions: {
-                safe: true,
-                discardComments: { removeAll: isProd },
-                normalizeUrl: { stripWWW: false },
-                canPrint: false
-              }
-            })
-          : null,
         new CopyPlugin({
           patterns: [
             {
@@ -283,8 +288,7 @@ function createWebpackConfig({ isModernJS } = {}) {
         })
       ].filter(x => x),
       optimization: {
-        minimizer: [],
-        namedModules: !isProd
+        moduleIds: isProd ? false : 'named'
       }
     },
     conditionallyEnableABCAustraliaStyles,
@@ -294,16 +298,6 @@ function createWebpackConfig({ isModernJS } = {}) {
 
   if (isProd) {
     config.optimization.minimize = true;
-    config.optimization.minimizer.push(
-      new TerserPlugin({
-        extractComments: false,
-        terserOptions: {
-          output: {
-            comments: /@license/i
-          }
-        }
-      })
-    );
   }
 
   // Cleanup hints
@@ -371,7 +365,7 @@ function conditionallyEnableABCAustraliaStyles(config) {
           importLoaders: 1,
           modules: {
             exportLocalsConvention: 'camelCase',
-            localIdentName: `${isProd ? '' : '[name]__[local]--'}[hash:base64:5]`
+            localIdentName: `${isProd ? '' : '[name]__[local]--'}[contenthash:base64:5]`
           },
           url: false
         }

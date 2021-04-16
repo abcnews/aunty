@@ -1,6 +1,5 @@
 // External
 const importLazy = require('import-lazy')(require);
-const pify = importLazy('pify');
 const yeoman = importLazy('yeoman-environment');
 
 // Ours
@@ -53,7 +52,7 @@ module.exports = command(
       .concat(argv.help ? ['--help'] : [])
       .join(' ');
 
-    const [err] = await pack(pify(env.run.bind(env))(runArgs));
+    const [err] = await pack(env.run(runArgs));
 
     if (err) {
       throw err;
