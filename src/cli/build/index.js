@@ -73,7 +73,7 @@ module.exports = command(
       spinner.fail();
       
       if (errors.length > 1) {
-        throw MESSAGES.multipleErrors(errors);
+        throw MESSAGES.multipleErrors(errors.map(error => error.message));
       }
 
       throw errors[0];
@@ -81,7 +81,7 @@ module.exports = command(
 
     if (stats.hasWarnings()) {
       spinner.warn();
-      stats.toJson({}, true).warnings.forEach(warn);
+      stats.toJson({}, true).warnings.forEach(warning => warn(warning.message));
     } else {
       spinner.succeed(`Built in ${((Date.now() - startTime) / 1000).toFixed(2)}s`);
     }

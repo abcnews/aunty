@@ -288,7 +288,7 @@ function createWebpackConfig({ isModernJS } = {}) {
         })
       ].filter(x => x),
       optimization: {
-        moduleIds: isProd ? false : 'named'
+        moduleIds: isProd ? 'deterministic' : 'named'
       }
     },
     conditionallyEnableABCAustraliaStyles,
