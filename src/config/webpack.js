@@ -159,12 +159,7 @@ function createWebpackConfig({ isModernJS } = {}) {
       output: {
         path: join(root, to),
         publicPath: '/',
-        filename: isModernJS ? '[name]_modern.js' : '[name].js',
-        // The update file hash was causing 404s and full page reloads.
-        // This will make the file name more predictable.
-        // See https://github.com/webpack/webpack-dev-server/issues/79#issuecomment-244596129
-        hotUpdateChunkFilename: 'hot/hot-update.js',
-        hotUpdateMainFilename: 'hot/hot-update.json'
+        filename: isModernJS ? '[name]_modern.js' : '[name].js'
       },
       resolve: {
         extensions: ['.mjs', '.js', '.json', '.ts']
