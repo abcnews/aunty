@@ -117,7 +117,7 @@ Note: You may also need a `Promise` polyfill for IE11.
 
 ### Multiple entry points
 
-By default Aunty looks for `index.js` in `src`. Enable multiple entry points by adding a `build::entry` config to `aunty.config.js`.
+By default Aunty looks for `index.js` in `src/`. Enable multiple entry points by adding a `build::entry` config to `aunty.config.js`.
 
 #### Replace 'index' with 'story'
 
