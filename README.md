@@ -115,6 +115,40 @@ import 'regenerator-runtime/runtime';
 
 Note: You may also need a `Promise` polyfill for IE11.
 
+### Multiple entry points
+
+By default Aunty looks for `index.js` in `src/`. Enable multiple entry points by adding a `build::entry` config to `aunty.config.js`.
+
+#### Replace 'index' with 'story'
+
+```js
+module.exports = {
+  build: {
+    entry: 'story' // will now also support `['story']`
+  }
+};
+```
+
+#### Replace 'index' with 'story', 'editor', 'graphic' & 'polyfills'
+
+```js
+module.exports = {
+  build: {
+    entry: ['story', 'editor', 'graphic', 'polyfills']
+  }
+};
+```
+
+#### Retain 'index'; add 'editor', 'graphic' & 'polyfills'
+
+```js
+module.exports = {
+  build: {
+    entry: ['index', 'editor', 'graphic', 'polyfills']
+  }
+};
+```
+
 ## Authors
 
 - Colin Gourlay ([gourlay.colin@abc.net.au](mailto:gourlay.colin@abc.net.au))
