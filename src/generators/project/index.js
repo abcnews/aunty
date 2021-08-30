@@ -74,7 +74,7 @@ Shorthand examples (assuming xyz is your project name):
       type: 'confirm',
       name: 'typescript',
       message: 'Will you be authoring your project in TypeScript?',
-      default: false
+      default: true
     });
 
     prompts.push({
