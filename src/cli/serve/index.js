@@ -23,69 +23,74 @@ module.exports = command(
     usage: MESSAGES.usage
   },
   async argv => {
-    const { port } = getServeConfig();
+    const { hasBundleAnalysis, port } = getServeConfig();
     const webpackConfig = getWebpackConfig();
     const webpackDevServerConfig = getWebpackDevServerConfig();
-    const { hot, publicPath } = webpackDevServerConfig;
-    const bundleAnalyzerConfig = combine(BUNDLE_ANALYZER_CONFIG, {
-      analyzerPort: +port + Math.floor(port / 1000) * 100 // e.g. 8000 -> 8800
-    });
+    const { hot, devMiddleware } = webpackDevServerConfig;
+    const { publicPath } = devMiddleware;
+    const bundleAnalyzerConfig = hasBundleAnalysis
+      ? combine(BUNDLE_ANALYZER_CONFIG, {
+          analyzerPort: +port + Math.floor(port / 1000) * 100 // e.g. 8000 -> 8800
+        })
+      : null;
 
     webpackConfig.forEach((config, index) => {
       config.output.publicPath = publicPath;
 
-      if (hot) {
-        config.entry = upgradeEntryToHot(config.entry, config.output.publicPath);
-        config.plugins.push(new webpack.HotModuleReplacementPlugin());
-      }
+      config.infrastructureLogging = {
+        level: 'warn'
+      };
 
-      config.plugins.push(
-        new BundleAnalyzerPlugin(
-          combine(bundleAnalyzerConfig, {
-            analyzerPort: bundleAnalyzerConfig.analyzerPort + index * 10 // e.g. 8800, 8810...
-          })
-        )
-      );
+      if (bundleAnalyzerConfig) {
+        config.plugins.push(
+          new BundleAnalyzerPlugin(
+            combine(bundleAnalyzerConfig, {
+              analyzerPort: bundleAnalyzerConfig.analyzerPort + index * 10 // e.g. 8800, 8810...
+            })
+          )
+        );
+      }
     });
 
     if (argv.dry) {
       return dry({
         'Webpack config': webpackConfig,
         'WebpackDevServer config': webpackDevServerConfig,
-        'BundleAnalyzerPlugin config': bundleAnalyzerConfig
+        ...(bundleAnalyzerConfig
+          ? {
+              'BundleAnalyzerPlugin config': bundleAnalyzerConfig
+            }
+          : {})
       });
     }
 
     throws(await cleanCommand(['--quiet']));
 
-    info(MESSAGES.serve({ hot, bundleAnalysisPath: MESSAGES.analysis(bundleAnalyzerConfig) }));
+    info(
+      MESSAGES.serve({
+        bundleAnalysisPath: bundleAnalyzerConfig ? MESSAGES.analysis(bundleAnalyzerConfig) : null,
+        hot,
+        publicPath
+      })
+    );
 
     const compiler = webpack(webpackConfig);
-    const server = new WebpackDevServer(compiler, webpackDevServerConfig);
-
-    // Grab reference to native info logger
-    const _info = console.info;
-    let spinner;
+    const server = new WebpackDevServer(webpackDevServerConfig, compiler);
+    const [gracefullyInterrupt, restore] = gracefullyHandleLogging();
 
     return new Promise((resolve, reject) => {
-      server.listen(port, '0.0.0.0', err => {
+      server.startCallback(err => {
         if (err) {
           return reject(err);
         }
 
-        // Start spinner
         spinner = spin('Server running');
-
-        // Gracefully interrupt spinner to log info
-        console.info = msg => {
-          spinner.clear();
-          _info(msg);
-          spinner.start();
-        };
+        gracefullyInterrupt(spinner);
       });
 
-      process.on('SIGINT', function() {
-        server.close(function() {
+      process.on('SIGINT', () => {
+        spinner.clear();
+        server.stopCallback(() => {
           if (spinner) {
             spinner.succeed('Server closed');
           }
@@ -93,28 +98,32 @@ module.exports = command(
           resolve();
         });
       });
-    }).finally(() => {
-      // Always restore native info logger
-      console.info = _info;
-    });
+    }).finally(() => restore());
   }
 );
 
-function upgradeEntryToHot(entry, publicPath) {
-  const heat = [
-    `${require.resolve('webpack-dev-server/client')}?${publicPath}`,
-    require.resolve('webpack/hot/dev-server')
-  ];
+const gracefullyHandleLogging = () => {
+  const METHODS = ['debug', 'error', 'info', 'log', 'warn'];
+  const reference = {};
 
-  if (Array.isArray(entry) || typeof entry === 'string') {
-    return heat.concat(Array.isArray(entry) ? entry : [entry]);
+  for (let method of METHODS) {
+    reference[method] = console[method];
   }
 
-  return Object.keys(entry).reduce((memo, key) => {
-    const value = entry[key];
-
-    memo[key] = heat.concat(Array.isArray(value) ? value : [value]);
-
-    return memo;
-  }, {});
-}
+  return [
+    spinner => {
+      for (let method of METHODS) {
+        console[method] = (...args) => {
+          spinner.clear();
+          reference[method](...args);
+          spinner.start();
+        };
+      }
+    },
+    () => {
+      for (let method of METHODS) {
+        console[method] = reference[method];
+      }
+    }
+  ];
+};

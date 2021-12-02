@@ -14,20 +14,28 @@ module.exports.getWebpackDevServerConfig = () => {
 
   return combine(
     {
-      contentBase: join(root, staticDir),
-      disableHostCheck: true,
+      allowedHosts: 'all',
+      client: {
+        logging: 'warn',
+        overlay: true
+      },
+      devMiddleware: {
+        publicPath: `http${https ? 's' : ''}://${host}:${port}/`
+      },
       headers: {
         'Access-Control-Allow-Origin': '*'
       },
-      host,
+      host: '0.0.0.0',
       hot,
-      https,
-      noInfo: true,
-      overlay: true,
-      publicPath: `http${https ? 's' : ''}://${host}:${port}/`,
-      quiet: true,
-      watchOptions: {
-        ignored: /node_modules/
+      port,
+      server: https
+        ? {
+            type: 'https',
+            options: typeof https === 'object' ? https : null
+          }
+        : 'http',
+      static: {
+        directory: join(root, staticDir)
       }
     },
     projectWebpackDevServerConfig
