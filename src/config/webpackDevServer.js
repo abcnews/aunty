@@ -29,10 +29,12 @@ module.exports.getWebpackDevServerConfig = () => {
       hot,
       port,
       server: https
-        ? {
-            type: 'https',
-            options: typeof https === 'object' ? https : null
-          }
+        ? typeof https === 'object'
+          ? {
+              type: 'https',
+              options: https
+            }
+          : 'https'
         : 'http',
       static: {
         directory: join(root, staticDir)
