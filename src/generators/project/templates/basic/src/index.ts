@@ -27,7 +27,7 @@ if (module.hot) {
       renderApp();
     } catch (err) {
       import('./components/ErrorBox').then(({ default: ErrorBox }) => {
-        render(new ErrorBox({ error: err }).el, appMountEl);
+        render(new ErrorBox({ error: err<% if (isTS) { %> as Error<% } %> }).el, appMountEl);
       });
     }
   });
