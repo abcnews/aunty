@@ -7,10 +7,10 @@ const { getBuildConfig } = require('./build');
 const { getProjectConfig } = require('./project');
 const { getServeConfig } = require('./serve');
 
-module.exports.getWebpackDevServerConfig = () => {
+module.exports.getWebpackDevServerConfig = async () => {
   const { root, webpackDevServer: projectWebpackDevServerConfig } = getProjectConfig();
   const { staticDir } = getBuildConfig();
-  const { host, hot, https, port } = getServeConfig();
+  const { host, hot, https, port } = await getServeConfig();
 
   return combine(
     {

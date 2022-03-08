@@ -23,9 +23,9 @@ module.exports = command(
     usage: MESSAGES.usage
   },
   async argv => {
-    const { hasBundleAnalysis, port } = getServeConfig();
+    const { hasBundleAnalysis, port } = await getServeConfig();
     const webpackConfig = getWebpackConfig();
-    const webpackDevServerConfig = getWebpackDevServerConfig();
+    const webpackDevServerConfig = await getWebpackDevServerConfig();
     const { hot, devMiddleware } = webpackDevServerConfig;
     const { publicPath } = devMiddleware;
     const bundleAnalyzerConfig = hasBundleAnalysis
