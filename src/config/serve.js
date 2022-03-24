@@ -2,6 +2,7 @@
 const { homedir, hostname } = require('os');
 const { readFileSync } = require('fs');
 const { join } = require('path');
+const { Socket } = require('net');
 
 // External
 const { probe } = require('tcp-ping-sync');
@@ -9,6 +10,8 @@ const { probe } = require('tcp-ping-sync');
 // Ours
 const { combine } = require('../utils/structures');
 const { getProjectConfig } = require('./project');
+const { info } = require('../utils/logging');
+const { MESSAGES } = require('../cli/serve/constants');
 
 const HOME_DIR = homedir();
 const SSL_DIR = '.aunty/ssl';
@@ -20,10 +23,14 @@ const DEFAULT_HOST = (module.exports.DEFAULT_HOST = probe(`nucwed${INTERNAL_SUFF
   : 'localhost');
 const DEFAULT_PORT = 8000;
 
-module.exports.getServeConfig = () => {
+const serveConfigPromise = getServeConfigPromise();
+
+module.exports.getServeConfig = () => serveConfigPromise;
+
+async function getServeConfigPromise() {
   const { serve } = getProjectConfig();
 
-  return combine(
+  const config = combine(
     {
       hasBundleAnalysis: false,
       host: DEFAULT_HOST,
@@ -35,9 +42,13 @@ module.exports.getServeConfig = () => {
     addEnvironmentVariables,
     addUserSSLConfig
   );
-};
+  const port = await findPort(config.port, config.port + 100, config.host);
+  config.port = port;
 
-const addEnvironmentVariables = config => {
+  return config;
+}
+
+function addEnvironmentVariables(config) {
   if (process.env.AUNTY_HOST) {
     config.host = process.env.AUNTY_HOST;
   }
@@ -47,12 +58,12 @@ const addEnvironmentVariables = config => {
   }
 
   return config;
-};
+}
 
 const getSSLPath = (module.exports.getSSLPath = (host, name) => join(HOME_DIR, SSL_DIR, host, name || '.'));
 
 /*
-Set config.https to cert & key generated with `aunty sign-cert` (if they both exist)  
+Set config.https to cert & key generated with `aunty sign-cert` (if they both exist)
 We expect them to be in: ~/.aunty/ssl/<host>/server.{cert|key}
 */
 function addUserSSLConfig(config) {
@@ -66,4 +77,42 @@ function addUserSSLConfig(config) {
   }
 
   return config;
+}
+
+async function findPort(port, max = port + 100, host = '0.0.0.0') {
+  return new Promise((resolve, reject) => {
+    const socket = new Socket();
+
+    const next = () => {
+      socket.destroy();
+      info(MESSAGES.port(port));
+      if (port <= max) resolve(findPort(port + 1, max, host));
+      else reject(new Error('Could not find an available port'));
+    };
+
+    const found = () => {
+      socket.destroy();
+      resolve(port);
+    };
+
+    // Port is taken if connection can be made
+    socket.once('connect', next);
+
+    // Port is open if connection attempt times out
+    socket.setTimeout(500);
+    socket.once('timeout', found);
+
+    // If an error occurs, it's assumed the port is available.
+    socket.once('error', e => {
+      // If the connection is refused, it's assumed nothing is listening and the port is available.
+      if (e.code === 'ECONNREFUSED') {
+        found();
+      } else {
+        // Not sure what to do with other errors, so keep seeking a free port.
+        next();
+      }
+    });
+
+    socket.connect(port, host);
+  });
 }
