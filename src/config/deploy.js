@@ -95,9 +95,11 @@ const addKnownProfileProperties = config => {
 function resolveProperties(config) {
   const { pkg, root } = getProjectConfig();
   const { name } = pkg;
+  // Package name may be in `@scope/name` format
+  const unscopedName = name.split('/').reverse()[0];
 
   config.from = join(root, config.from);
-  config.to = config.to.replace('<name>', name).replace('<id>', config.id);
+  config.to = config.to.replace('<name>', unscopedName).replace('<id>', config.id);
   config.publicPath = typeof config.resolvePublicPath === 'function' ? config.resolvePublicPath(config) : '/';
 
   return config;
