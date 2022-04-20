@@ -1,23 +1,23 @@
 import acto from '@abcnews/alternating-case-to-object';
 import { <% if (isOdyssey) { %>whenOdysseyLoaded<% } else { %>whenDOMReady<% } %> } from '@abcnews/env-utils';
-import { getMountValue, selectMounts } from '@abcnews/mount-utils';<% if (isTS) { %>
-import type { Mount } from '@abcnews/mount-utils';<% } %>
+import { getMountValue, selectMounts } from '@abcnews/mount-utils';
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot<% if (isTS) { %>, Root<% } %> } from 'react-dom/client';
 import App from './components/App';<% if (isTS) { %>
 import type { AppProps } from './components/App';<% } %>
 
-let appMountEl<% if (isTS) { %>: Mount<% } %>;
+let root<% if (isTS) { %>: Root<% } %>;
 let appProps<% if (isTS) { %>: AppProps<% } %>;
 
 function renderApp() {
-  render(<App {...appProps} />, appMountEl);
+  root.render(<App {...appProps} />);
 }
 
 <% if (isOdyssey) { %>whenOdysseyLoaded<% } else { %>whenDOMReady<% } %>.then(() => {
-  [appMountEl] = selectMounts('<%= projectNameFlat %>');
+  const [appMountEl] = selectMounts('<%= projectNameFlat %>');
 
   if (appMountEl) {
+    root = createRoot(appMountEl);
     appProps = acto(getMountValue(appMountEl))<% if (isTS) { %> as AppProps<% } %>;
     renderApp();
   }
@@ -29,7 +29,7 @@ if (module.hot) {
       renderApp();
     } catch (err) {
       import('./components/ErrorBox').then(({ default: ErrorBox }) => {
-        render(<ErrorBox error={err} />, appMountEl);
+        root.render(<ErrorBox error={err} />);
       });
     }
   });
