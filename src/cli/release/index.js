@@ -1,4 +1,5 @@
 // Native
+const { existsSync } = require('fs');
 const { join } = require('path');
 
 // External
@@ -154,4 +155,8 @@ module.exports = command(
   }
 );
 
-const updateJsonFile = (path, source) => writeJsonFile.sync(path, combine(loadJsonFile.sync(path), source));
+const updateJsonFile = (path, source) => {
+  if (existsSync(path)) {
+    writeJsonFile.sync(path, combine(loadJsonFile.sync(path), source));
+  }
+};

@@ -30,7 +30,7 @@ npm run release
 
 By default this will do the following:
 
-1. Bump the `patch` version in `package.json` and `package-lock.json`
+1. Bump the `patch` version in `package.json` (and `package-lock.json` if it exists)
 2. Commit and tag that version.
 3. Push the tag & commit to GitHub
 4. Publish to npm
