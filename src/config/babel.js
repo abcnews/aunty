@@ -1,4 +1,5 @@
 // External
+const importLazy = require('import-lazy')(require);
 const mem = require('mem');
 const semver = importLazy('semver');
 
