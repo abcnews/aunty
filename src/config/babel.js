@@ -1,5 +1,6 @@
 // External
 const mem = require('mem');
+const semver = importLazy('semver');
 
 // Ours
 const { merge } = require('../utils/structures');
@@ -25,6 +26,16 @@ module.exports.getBabelConfig = mem(
   ({ isModernJS } = {}) => {
     const { babel: projectBabelConfig, pkg, hasTS, type } = getProjectConfig();
 
+    let corejs = '3';
+
+    // Minor version should be specified, if possible
+    // https://babeljs.io/docs/en/babel-preset-env#corejs
+    if (pkg.dependencies && pkg.dependencies['core-js']) {
+      const corejsSemVer = semver.coerce(pkg.dependencies['core-js']);
+
+      corejs = `${corejsSemVer.major}.${corejsSemVer.minor}`;
+    }
+
     return merge(
       {
         presets: [
@@ -37,7 +48,7 @@ module.exports.getBabelConfig = mem(
                   : pkg.browserslist || ['> 1% in AU', 'Firefox ESR', 'IE 11']
               },
               useBuiltIns: 'entry',
-              corejs: 3,
+              corejs,
               modules: process.env.NODE_ENV === 'test' ? 'commonjs' : false
             }
           ]
