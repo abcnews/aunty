@@ -3,9 +3,8 @@ const importLazy = require('import-lazy')(require);
 const del = importLazy('del');
 
 // Ours
-const { getBuildConfig } = require('../../config/build');
 const { getProjectConfig } = require('../../config/project');
-const { DEPLOY_FILE_NAME } = require('../../constants');
+const { OUTPUT_DIRECTORY_NAME } = require('../../constants');
 const { hvy } = require('../../utils/color');
 const { dry, info, spin } = require('../../utils/logging');
 const { inlineList } = require('../../utils/text');
@@ -19,8 +18,7 @@ module.exports = command(
   },
   async argv => {
     const { root } = getProjectConfig();
-    const { to } = getBuildConfig();
-    const globs = [to, DEPLOY_FILE_NAME];
+    const globs = [OUTPUT_DIRECTORY_NAME];
 
     if (argv.dry) {
       return dry({

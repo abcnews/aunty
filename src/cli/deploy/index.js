@@ -10,7 +10,7 @@ const loadJsonFile = importLazy('load-json-file');
 const { command } = require('../');
 const { addProfileProperties } = require('../../config/deploy');
 const { getProjectConfig } = require('../../config/project');
-const { DEPLOY_FILE_NAME } = require('../../constants');
+const { DEPLOY_FILE_NAME, OUTPUT_DIRECTORY_NAME } = require('../../constants');
 const { packs, throws, unpack } = require('../../utils/async');
 const { dry, info, spin, warn } = require('../../utils/logging');
 const { ftp, rsync } = require('../../utils/remote');
@@ -29,7 +29,7 @@ module.exports = command(
     // 1) Load the deploy configuration (created by the build process)
 
     try {
-      deployConfig = loadJsonFile.sync(join(root, DEPLOY_FILE_NAME));
+      deployConfig = loadJsonFile.sync(join(root, OUTPUT_DIRECTORY_NAME, DEPLOY_FILE_NAME));
     } catch (err) {
       throw new Error(MESSAGES.noDeployConfigFile);
     }

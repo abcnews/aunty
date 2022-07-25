@@ -1,5 +1,6 @@
 module.exports = {
-  BUILD_DIRECTORY_NAME: '.build',
-  DEPLOY_FILE_NAME: '.deploy',
+  OUTPUT_DIRECTORY_NAME: '.aunty',
+  BUILD_DIRECTORY_NAME: 'build',
+  DEPLOY_FILE_NAME: 'deploy.json',
   PROJECT_CONFIG_FILE_NAME: 'aunty.config.js'
 };

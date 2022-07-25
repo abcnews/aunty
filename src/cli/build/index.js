@@ -11,7 +11,7 @@ const writeJsonFile = importLazy('write-json-file');
 const { getDeployConfig } = require('../../config/deploy');
 const { getProjectConfig } = require('../../config/project');
 const { getWebpackConfig } = require('../../config/webpack');
-const { DEPLOY_FILE_NAME } = require('../../constants');
+const { DEPLOY_FILE_NAME, OUTPUT_DIRECTORY_NAME } = require('../../constants');
 const { packs, throws, unpack } = require('../../utils/async');
 const { dry, info, spin, warn } = require('../../utils/logging');
 const { combine } = require('../../utils/structures');
@@ -71,7 +71,7 @@ module.exports = command(
       const errors = stats.toJson({}, true).errors;
 
       spinner.fail();
-      
+
       if (errors.length > 1) {
         throw MESSAGES.multipleErrors(errors.map(error => error.message));
       }
@@ -88,7 +88,7 @@ module.exports = command(
 
     if (deployConfig) {
       spinner = spin('Creating deploy configuration');
-      writeJsonFile.sync(join(root, DEPLOY_FILE_NAME), deployConfig);
+      writeJsonFile.sync(join(root, OUTPUT_DIRECTORY_NAME, DEPLOY_FILE_NAME), deployConfig);
       spinner.succeed('Created deploy configuration');
     }
   }

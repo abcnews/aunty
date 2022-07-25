@@ -2,8 +2,7 @@
 /node_modules
 
 # output
-/<%= BUILD_DIRECTORY_NAME %>
-/<%= DEPLOY_FILE_NAME %>
+/<%= OUTPUT_DIRECTORY_NAME %>
 
 # misc
 .DS_Store
