@@ -80,7 +80,7 @@
     "svelte-preprocess": "^4.1.1",
     "tcp-ping-sync": "^1.0.0",
     "typescript": "^4.0.2",
-    "update-notifier": "^5.1.0",
+    "update-notifier": "^6.0.2",
     "url-loader": "^4.1.1",
     "webpack": "^5.33.2",
     "webpack-bundle-analyzer": "^4.5.0",
