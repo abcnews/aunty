@@ -4,7 +4,6 @@ const { resolve } = require('path');
 // External
 const importLazy = require('import-lazy')(require);
 const minimist = importLazy('minimist');
-const updateNotifier = importLazy('update-notifier');
 
 // Ours
 const pkg = require('../../package');
@@ -26,6 +25,8 @@ const {
 
 module.exports.cli = packs(async args => {
   const __DEBUG__stopTimer = timer('CLI');
+
+  const updateNotifier = (await import('update-notifier')).default;
 
   updateNotifier({ pkg, updateCheckInterval: 36e5 }).notify();
 
