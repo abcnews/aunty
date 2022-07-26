@@ -8,7 +8,7 @@ const requireg = require('requireg');
 const Generator = require('yeoman-generator');
 
 // Ours
-const { BUILD_DIRECTORY_NAME, DEPLOY_FILE_NAME } = require('../../constants');
+const { OUTPUT_DIRECTORY_NAME } = require('../../constants');
 const { cmd, hvy, opt, sec } = require('../../utils/color');
 const { success } = require('../../utils/logging');
 const { installDependencies } = require('../../utils/npm');
@@ -114,8 +114,7 @@ Shorthand examples (assuming xyz is your project name):
 
   writing() {
     const context = {
-      BUILD_DIRECTORY_NAME,
-      DEPLOY_FILE_NAME,
+      OUTPUT_DIRECTORY_NAME,
       projectName: this.options.projectName,
       projectNameSlug: this.options.projectNameSlug,
       projectNameFlat: this.options.projectNameFlat,

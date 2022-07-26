@@ -1,8 +1,11 @@
+// Native
+const { join } = require('path');
+
 // External
 const mem = require('mem');
 
 // Ours
-const { BUILD_DIRECTORY_NAME } = require('../constants');
+const { BUILD_DIRECTORY_NAME, OUTPUT_DIRECTORY_NAME } = require('../constants');
 const { combine } = require('../utils/structures');
 const { getProjectConfig } = require('./project');
 
@@ -22,7 +25,7 @@ module.exports.getBuildConfig = mem(() => {
     {
       entry: DEFAULT_ENTRY_FILE_NAME,
       from: DEFAULT_SOURCE_DIRECTORY_NAME,
-      to: BUILD_DIRECTORY_NAME,
+      to: join(OUTPUT_DIRECTORY_NAME, BUILD_DIRECTORY_NAME),
       staticDir: DEFAULT_STATIC_DIRECTORY_NAME,
       addModernJS: false,
       includedDependencies: [],

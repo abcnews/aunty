@@ -11,10 +11,12 @@
     "Joshua Byrd <byrd.joshua@abc.net.au>"
   ],
   "scripts": {
+    "postinstall": "node scripts/postinstall.js",
     "release": "release-it"
   },
   "files": [
     "assets",
+    "scripts",
     "src",
     "ts"
   ],
