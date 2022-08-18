@@ -92,7 +92,7 @@ const findPort = async (port, max = port + 100, host = '0.0.0.0') => {
   });
 };
 
-const getServeConfigPromise = async () => {
+const _getServeConfig = async () => {
   const { serve } = getProjectConfig();
 
   const config = combine(
@@ -113,6 +113,18 @@ const getServeConfigPromise = async () => {
   return config;
 };
 
-const serveConfigPromise = getServeConfigPromise();
+let _serveConfigPromiseSingleton;
 
-module.exports.getServeConfig = () => serveConfigPromise;
+// getServeConfig is called twice during server startup, because the `serve`
+// command calls it directly, then indirectly, via getWebpackDevServerConfig.
+// Because it won't change during a single `serve` command, and because we
+// don't want to waste time doing port lookups with `findPort` multiple times
+// we just cache the promise created on the first run, and return that later.
+
+module.exports.getServeConfig = async () => {
+  if (!_serveConfigPromiseSingleton) {
+    _serveConfigPromiseSingleton = _getServeConfig();
+  }
+
+  return _serveConfigPromiseSingleton;
+};
