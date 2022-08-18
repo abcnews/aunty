@@ -23,32 +23,7 @@ const DEFAULT_HOST = (module.exports.DEFAULT_HOST = probe(`nucwed${INTERNAL_SUFF
   : 'localhost');
 const DEFAULT_PORT = 8000;
 
-const serveConfigPromise = getServeConfigPromise();
-
-module.exports.getServeConfig = () => serveConfigPromise;
-
-async function getServeConfigPromise() {
-  const { serve } = getProjectConfig();
-
-  const config = combine(
-    {
-      hasBundleAnalysis: false,
-      host: DEFAULT_HOST,
-      hot: process.env.NODE_ENV === 'development',
-      https: true,
-      port: DEFAULT_PORT
-    },
-    serve,
-    addEnvironmentVariables,
-    addUserSSLConfig
-  );
-  const port = await findPort(config.port, config.port + 100, config.host);
-  config.port = port;
-
-  return config;
-}
-
-function addEnvironmentVariables(config) {
+const addEnvironmentVariables = config => {
   if (process.env.AUNTY_HOST) {
     config.host = process.env.AUNTY_HOST;
   }
@@ -58,7 +33,7 @@ function addEnvironmentVariables(config) {
   }
 
   return config;
-}
+};
 
 const getSSLPath = (module.exports.getSSLPath = (host, name) => join(HOME_DIR, SSL_DIR, host, name || '.'));
 
@@ -66,7 +41,7 @@ const getSSLPath = (module.exports.getSSLPath = (host, name) => join(HOME_DIR, S
 Set config.https to cert & key generated with `aunty sign-cert` (if they both exist)
 We expect them to be in: ~/.aunty/ssl/<host>/server.{cert|key}
 */
-function addUserSSLConfig(config) {
+const addUserSSLConfig = config => {
   if (config.https === true) {
     try {
       config.https = {
@@ -77,9 +52,9 @@ function addUserSSLConfig(config) {
   }
 
   return config;
-}
+};
 
-async function findPort(port, max = port + 100, host = '0.0.0.0') {
+const findPort = async (port, max = port + 100, host = '0.0.0.0') => {
   return new Promise((resolve, reject) => {
     const socket = new Socket();
 
@@ -115,4 +90,29 @@ async function findPort(port, max = port + 100, host = '0.0.0.0') {
 
     socket.connect(port, host);
   });
-}
+};
+
+const getServeConfigPromise = async () => {
+  const { serve } = getProjectConfig();
+
+  const config = combine(
+    {
+      hasBundleAnalysis: false,
+      host: DEFAULT_HOST,
+      hot: process.env.NODE_ENV === 'development',
+      https: true,
+      port: DEFAULT_PORT
+    },
+    serve,
+    addEnvironmentVariables,
+    addUserSSLConfig
+  );
+  const port = await findPort(config.port, config.port + 100, config.host);
+  config.port = port;
+
+  return config;
+};
+
+const serveConfigPromise = getServeConfigPromise();
+
+module.exports.getServeConfig = () => serveConfigPromise;
