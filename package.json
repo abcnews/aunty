@@ -44,7 +44,7 @@
     "chalk": "^4.1.2",
     "cli-select": "^1.1.0",
     "copy-webpack-plugin": "^8.1.1",
-    "css-loader": "^5.2.1",
+    "css-loader": "^5.2.7",
     "csv-loader": "^3.0.3",
     "deepmerge": "^4.0.0",
     "del": "^6.0.0",
