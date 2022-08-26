@@ -191,8 +191,8 @@ function createWebpackConfig({ isModernJS } = {}) {
                     exportLocalsConvention: 'camelCase',
                     localIdentContext: __dirname,
                     //  ^^^ https://github.com/webpack-contrib/css-loader/issues/413#issuecomment-299578180
-                    localIdentName: `${isProd ? '' : '[folder]-[name]__[local]-'}[contenthash:base64:6]`,
-                    localIdentHashPrefix: `${pkg.name}@${pkg.version}`
+                    localIdentHashSalt: `${pkg.name}@${pkg.version}`,
+                    localIdentName: `${isProd ? '' : '[folder]-[name]__[local]--'}[hash:base64:6]`
                   },
                   sourceMap: !isProd
                 }
