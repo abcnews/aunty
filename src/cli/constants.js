@@ -10,6 +10,7 @@ const COMMAND_ALIASES = (module.exports.COMMAND_ALIASES = {
   g: 'generate',
   r: 'release',
   s: 'serve',
+  sv: 'serve-vite',
   sc: 'sign-cert',
   t: 'test'
 });
@@ -66,7 +67,7 @@ ${sec('Development commands')}
   ${
     isProject
       ? `${cmd('aunty generate')} ${req('<generator>')}
-    Generate code for your project or Core Media 
+    Generate code for your project or Core Media
 
   ${cmd('aunty clean')}
     Delete the current project's build output directories.
@@ -98,7 +99,7 @@ ${sec('Helper commands')}
 
   ${cmd('aunty help')} ${req('<command>')}
     Display complete help for this ${req('command')}.
-  
+
   ${cmd('aunty sign-cert')} # Mac OS only (for now)
     Create a consistent SSL certificate for the dev server
 `

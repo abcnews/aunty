@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 // JSX intrinsic elements support (for preact)
 
 declare namespace JSX {
@@ -7,46 +9,11 @@ declare namespace JSX {
 }
 
 // Webpack loaders module declarations
+// TODO: Many of these could be removed because they're included in vite/client. Do we still need the others?
 
 declare module '*.svelte' {
   const component: any;
   export default component;
-}
-
-type CSSModule = {
-  [className: string]: string;
-};
-
-type OptionalCSSModule = void | CSSModule;
-
-declare module '*.css' {
-  const optionalCSSModule: CSSModule;
-  export default optionalCSSModule;
-}
-
-declare module '*.scss' {
-  const optionalCSSModule: CSSModule;
-  export default optionalCSSModule;
-}
-
-declare module '*.jpg' {
-  const url: string;
-  export default url;
-}
-
-declare module '*.png' {
-  const url: string;
-  export default url;
-}
-
-declare module '*.gif' {
-  const url: string;
-  export default url;
-}
-
-declare module '*.mp4' {
-  const url: string;
-  export default url;
 }
 
 declare module '*.m4v' {
@@ -59,42 +26,7 @@ declare module '*.flv' {
   export default url;
 }
 
-declare module '*.mp3' {
-  const url: string;
-  export default url;
-}
-
-declare module '*.wav' {
-  const url: string;
-  export default url;
-}
-
 declare module '*.m4a' {
-  const url: string;
-  export default url;
-}
-
-declare module '*.woff' {
-  const url: string;
-  export default url;
-}
-
-declare module '*.woff2' {
-  const url: string;
-  export default url;
-}
-
-declare module '*.ttf' {
-  const url: string;
-  export default url;
-}
-
-declare module '*.eot' {
-  const url: string;
-  export default url;
-}
-
-declare module '*.svg' {
   const url: string;
   export default url;
 }
