@@ -1,0 +1,32 @@
+$css--font-face: false;
+$css--helpers: true;
+$css--body: true;
+$css--use-layer: true;
+$css--reset: false;
+$css--default-type: true;
+$css--plex: false;
+
+//
+// Uncomment these to apply the styles to carbon components:
+//
+// @import 'carbon-components/scss/globals/scss/_css--helpers.scss';
+// @import 'carbon-components/scss/globals/scss/_css--body.scss';
+// @import 'carbon-components/scss/globals/grid/_grid.scss';
+// @import 'carbon-components/scss/components/accordion/accordion';
+// @import 'carbon-components/scss/components/button/button';
+// @import 'carbon-components/scss/components/code-snippet/code-snippet';
+// @import 'carbon-components/scss/components/copy-button/copy-button';
+// @import 'carbon-components/scss/components/notification/inline-notification';
+// @import 'carbon-components/scss/components/number-input/number-input';
+// @import 'carbon-components/scss/components/radio-button/radio-button';
+// @import 'carbon-components/scss/components/popover/popover';
+// @import 'carbon-components/scss/components/tabs/tabs';
+// @import 'carbon-components/scss/components/text-input/text-input';
+// @import 'carbon-components/scss/components/tile/tile';
+// @import 'carbon-components/scss/components/select/select';
+// @import 'carbon-components/scss/components/toggle/toggle';
+
+:root {
+  --primary: #0f62fe;
+  --tint: #f4f4f4;
+}

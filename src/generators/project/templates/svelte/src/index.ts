@@ -4,6 +4,8 @@ import { getMountValue, selectMounts } from '@abcnews/mount-utils';<% if (isTS) 
 import type { Mount } from '@abcnews/mount-utils';<% } %>
 import App from './components/App/App.svelte';
 
+import './global.scss';
+
 let appMountEl<% if (isTS) { %>: Mount<% } %>;
 let appProps;
 
