@@ -118,9 +118,7 @@ function createViteConfig() {
           }
         }
       },
-      plugins: [
-        // todo: Support DSV imports
-      ]
+      plugins: [dsv()]
     },
     conditionallyEnableABCAustraliaStyles,
     PROJECT_TYPES_CONFIG[type],
