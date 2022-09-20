@@ -9,7 +9,7 @@ const dsv = require('@rollup/plugin-dsv');
 
 // Plugins go here
 const sveltePreprocess = importLazy('svelte-preprocess');
-const svelte = importLazy('rollup-plugin-svelte');
+const { svelte } = importLazy('@sveltejs/vite-plugin-svelte');
 
 // Ours
 const { combine, merge } = require('../utils/structures');
@@ -38,7 +38,7 @@ const PROJECT_TYPES_CONFIG = {
     plugins: [
       svelte({
         preprocess: sveltePreprocess({
-          /* options */
+          sourceMap: true
         })
       })
     ]
