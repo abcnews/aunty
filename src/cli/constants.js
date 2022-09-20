@@ -11,7 +11,8 @@ const COMMAND_ALIASES = (module.exports.COMMAND_ALIASES = {
   r: 'release',
   s: 'serve',
   sc: 'sign-cert',
-  t: 'test'
+  t: 'test',
+  p: "package"
 });
 
 module.exports.COMMANDS = setOfValues(COMMAND_ALIASES);

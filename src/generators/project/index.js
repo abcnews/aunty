@@ -65,7 +65,8 @@ Shorthand examples (assuming xyz is your project name):
           { name: 'Basic', value: 'basic' },
           { name: 'Preact', value: 'preact' },
           { name: 'React', value: 'react' },
-          { name: 'Svelte', value: 'svelte' }
+          { name: 'Svelte', value: 'svelte' },
+          { name: 'Library', value: 'library' }
         ]
       });
     }
