@@ -12,6 +12,7 @@
   },
   "scripts": {
     "start": "aunty serve",
+    "dev": "aunty serve",
     "test": "aunty test"
   }<% if (projectType === "react") { %>,
   "abc": {
