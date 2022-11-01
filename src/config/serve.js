@@ -10,7 +10,7 @@ const { probe } = require('tcp-ping-sync');
 // Ours
 const { combine } = require('../utils/structures');
 const { getProjectConfig } = require('./project');
-const { info } = require('../utils/logging');
+const { info, warn } = require('../utils/logging');
 const { MESSAGES } = require('../cli/serve/constants');
 
 const HOME_DIR = homedir();
@@ -48,12 +48,15 @@ const addUserSSLConfig = config => {
         cert: readFileSync(getSSLPath(config.host, SERVER_CERT_FILENAME)),
         key: readFileSync(getSSLPath(config.host, SERVER_KEY_FILENAME))
       };
-    } catch (e) {}
+    } catch (e) {
+      warn('Could not access SSL certificates at path ' + join(HOME_DIR, SSL_DIR, config.host) + '/');
+    }
   }
 
   return config;
 };
 
+// TODO: this can probably be removed if we switch fully to vite, it does this automatically https://vitejs.dev/config/server-options.html#server-strictport
 const findPort = async (port, max = port + 100, host = '0.0.0.0') => {
   return new Promise((resolve, reject) => {
     const socket = new Socket();
