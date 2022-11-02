@@ -95,6 +95,7 @@
     "@abcaustralia/postcss-config": "^11.2.5"
   },
   "devDependencies": {
+    "babel-eslint": "^10.1.0",
     "eslint": "^7.7.0",
     "eslint-config-prettier": "^8.2.0",
     "release-it": "^15.1.4"

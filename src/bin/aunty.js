@@ -1,5 +1,15 @@
 #!/usr/bin/env node
 
+const fetch = require('node-fetch');
+
+const test = async () => {
+  const response = await fetch(
+    'https://www.abc.net.au/res/sites/news-projects/interactive-ssm-survey-results-map/main/l'
+  );
+
+  console.log("Response:", response.ok);
+};
+
 if (!require('import-local')(__filename)) {
   (async () => {
     const importLazy = require('import-lazy')(require);
@@ -21,6 +31,8 @@ if (!require('import-local')(__filename)) {
     process.on('unhandledRejection', exit);
 
     const [err] = await cli(process.argv.slice(2));
+
+    await test();
 
     exit(err);
   })();
