@@ -148,8 +148,6 @@ module.exports.getCredentials = () => {
     profiles = loadJsonFile.sync(profilesFilePath);
   } catch (err) {
     warn(MESSAGES.noProfilesFile(profilesFilePath));
-
-    return {};
   }
 
   return profiles;

@@ -24,9 +24,8 @@ const DEPLOY_DIRECTORY = '/www/res/sites/news-projects/';
  * @returns boolean
  */
 const existsExternally = async projectNameSlug => {
-  console.log('Checking for existing:', projectNameSlug);
   const credentials = getCredentials();
-  console.log(credentials);
+  if (!credentials) return false;
 
   const { contentftp } = credentials;
   const { host, username: user, password } = contentftp;
@@ -44,11 +43,10 @@ const existsExternally = async projectNameSlug => {
     const list = await client.list();
 
     for (const item of list) {
-      console.log(item);
       if (projectNameSlug === item.name) return true;
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 
   client.close();
@@ -106,7 +104,18 @@ Shorthand examples (assuming xyz is your project name):
         type: 'input',
         name: 'projectName',
         message: 'What is your project called?',
-        default: this.options.projectName || 'New Project'
+        default: this.options.projectName || 'New Project',
+        validate: async input => {
+          const probablyExists = await existsExternally(sluggify(input));
+
+          if (probablyExists)
+            return (
+              'Warning: Project seems to aleady exist on the FTP server. ' +
+              'Danger of being overwritten. Try a different name.'
+            );
+
+          return true;
+        }
       });
     }
 
@@ -141,10 +150,6 @@ Shorthand examples (assuming xyz is your project name):
     const answers = await this.prompt(prompts);
 
     this.options = combine(this.options, answers);
-
-    console.log(this.options.projectName);
-    console.log(sluggify(this.options.projectName));
-    console.log('Probably there already?', await existsExternally(sluggify(this.options.projectName)));
 
     this.options.projectName = this.options.projectName.replace(/[^\w\-\_\s]/g, '');
 
