@@ -99,6 +99,8 @@ Shorthand examples (assuming xyz is your project name):
 
     if (this.options.here) {
       this.options.projectName = path.basename(process.cwd());
+      // NOTE: Need to do an FTP check here too for `aunty init` which uses
+      // local directory name as projectName
     } else {
       prompts.push({
         type: 'input',
