@@ -41,6 +41,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^26.1.0",
     "babel-loader": "^8.2.2",
+    "basic-ftp": "^5.0.2",
     "chalk": "^4.1.2",
     "cli-select": "^1.1.0",
     "copy-webpack-plugin": "^8.1.1",

@@ -139,3 +139,18 @@ module.exports.addProfileProperties = config => {
 
   return combine(config, profileProps);
 };
+
+module.exports.getCredentials = () => {
+  const profilesFilePath = DEFAULT_PROFILES_FILE_PATH;
+
+  let profiles;
+  try {
+    profiles = loadJsonFile.sync(profilesFilePath);
+  } catch (err) {
+    warn(MESSAGES.noProfilesFile(profilesFilePath));
+
+    return {};
+  }
+
+  return profiles;
+};

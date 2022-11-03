@@ -6,6 +6,7 @@ const getAllPaths = require('get-all-paths');
 const makeDir = require('make-dir');
 const requireg = require('requireg');
 const Generator = require('yeoman-generator');
+const ftp = require('basic-ftp');
 
 // Ours
 const { OUTPUT_DIRECTORY_NAME } = require('../../constants');
@@ -13,6 +14,59 @@ const { cmd, hvy, opt, sec } = require('../../utils/color');
 const { success } = require('../../utils/logging');
 const { installDependencies } = require('../../utils/npm');
 const { combine } = require('../../utils/structures');
+const { getCredentials } = require('../../config/deploy');
+
+const DEPLOY_DIRECTORY = '/www/res/sites/news-projects/';
+
+/**
+ * Check if a project exists on FTP
+ * @param {string} projectNameSlug
+ * @returns boolean
+ */
+const existsExternally = async projectNameSlug => {
+  console.log('Checking for existing:', projectNameSlug);
+  const credentials = getCredentials();
+  console.log(credentials);
+
+  const { contentftp } = credentials;
+  const { host, username: user, password } = contentftp;
+
+  const client = new ftp.Client();
+
+  try {
+    await client.access({
+      host,
+      user,
+      password,
+      secure: false
+    });
+    await client.cd(DEPLOY_DIRECTORY);
+    const list = await client.list();
+
+    for (const item of list) {
+      console.log(item);
+      if (projectNameSlug === item.name) return true;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+
+  client.close();
+
+  return false;
+};
+
+/**
+ * Return a sluggified version of the string
+ *
+ * @param {string} input - The string to convert
+ * @returns {string}
+ */
+const sluggify = input =>
+  input
+    .toLowerCase()
+    .replace(/\s/g, '-')
+    .replace(/[^0-9a-z\-\_]/g, '');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -88,12 +142,13 @@ Shorthand examples (assuming xyz is your project name):
 
     this.options = combine(this.options, answers);
 
+    console.log(this.options.projectName);
+    console.log(sluggify(this.options.projectName));
+    console.log('Probably there already?', await existsExternally(sluggify(this.options.projectName)));
+
     this.options.projectName = this.options.projectName.replace(/[^\w\-\_\s]/g, '');
 
-    this.options.projectNameSlug = this.options.projectName
-      .toLowerCase()
-      .replace(/\s/g, '-')
-      .replace(/[^0-9a-z\-\_]/g, '');
+    this.options.projectNameSlug = sluggify(this.options.projectName);
 
     this.options.projectNameFlat = this.options.projectNameSlug.replace(/-/g, '');
 
