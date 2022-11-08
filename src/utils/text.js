@@ -50,3 +50,15 @@ module.exports.styleLastSegment = (str, style = identity, separator = SLASH) => 
     })
     .join(separator);
 };
+
+/**
+ * Return a sluggified version of the string
+ *
+ * @param {string} input - The string to convert
+ * @returns {string}
+ */
+module.exports.sluggify = input =>
+  input
+    .toLowerCase()
+    .replace(/\s/g, '-')
+    .replace(/[^0-9a-z\-\_]/g, '');

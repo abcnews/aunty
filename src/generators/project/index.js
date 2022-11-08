@@ -6,7 +6,6 @@ const getAllPaths = require('get-all-paths');
 const makeDir = require('make-dir');
 const requireg = require('requireg');
 const Generator = require('yeoman-generator');
-const ftp = require('basic-ftp');
 
 // Ours
 const { OUTPUT_DIRECTORY_NAME } = require('../../constants');
@@ -14,57 +13,8 @@ const { cmd, hvy, opt, sec } = require('../../utils/color');
 const { success } = require('../../utils/logging');
 const { installDependencies } = require('../../utils/npm');
 const { combine } = require('../../utils/structures');
-const { getCredentials } = require('../../config/deploy');
-
-const DEPLOY_DIRECTORY = '/www/res/sites/news-projects/';
-
-/**
- * Check if a project exists on FTP
- * @param {string} projectNameSlug
- * @returns boolean
- */
-const existsExternally = async projectNameSlug => {
-  const credentials = getCredentials();
-  if (!credentials) return false;
-
-  const { contentftp } = credentials;
-  const { host, username: user, password } = contentftp;
-
-  const client = new ftp.Client();
-
-  try {
-    await client.access({
-      host,
-      user,
-      password,
-      secure: false
-    });
-    await client.cd(DEPLOY_DIRECTORY);
-    const list = await client.list();
-
-    for (const item of list) {
-      if (projectNameSlug === item.name) return true;
-    }
-  } catch (err) {
-    console.error(err);
-  }
-
-  client.close();
-
-  return false;
-};
-
-/**
- * Return a sluggified version of the string
- *
- * @param {string} input - The string to convert
- * @returns {string}
- */
-const sluggify = input =>
-  input
-    .toLowerCase()
-    .replace(/\s/g, '-')
-    .replace(/[^0-9a-z\-\_]/g, '');
+const { sluggify } = require('../../utils/text');
+const { existsExternally } = require('../../utils/ftp');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -112,8 +62,8 @@ Shorthand examples (assuming xyz is your project name):
 
           if (probablyExists)
             return (
-              'Warning: Project seems to aleady exist on the FTP server. ' +
-              'Danger of being overwritten. Try a different name.'
+              'Error: Project seems to aleady exist on the FTP server and is in ' +
+              'danger of being overwritten. Please try a different name.'
             );
 
           return true;
