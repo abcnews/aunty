@@ -1,5 +1,7 @@
 // @ts-check
+
 const ftp = require('basic-ftp');
+
 const { getCredentials } = require('../config/deploy');
 
 const DEPLOY_DIRECTORY = '/www/res/sites/news-projects/';
@@ -32,7 +34,7 @@ const existsExternally = async projectNameSlug => {
       if (projectNameSlug === item.name) return true;
     }
   } catch (err) {
-    console.error(err);
+    throw err;
   }
 
   client.close();

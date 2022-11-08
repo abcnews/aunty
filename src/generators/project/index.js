@@ -6,6 +6,7 @@ const getAllPaths = require('get-all-paths');
 const makeDir = require('make-dir');
 const requireg = require('requireg');
 const Generator = require('yeoman-generator');
+const { to } = require('await-to-js');
 
 // Ours
 const { OUTPUT_DIRECTORY_NAME } = require('../../constants');
@@ -58,13 +59,21 @@ Shorthand examples (assuming xyz is your project name):
         message: 'What is your project called?',
         default: this.options.projectName || 'New Project',
         validate: async input => {
-          const probablyExists = await existsExternally(sluggify(input));
+          const [error, probablyExists] = await to(existsExternally(sluggify(input)));
 
           if (probablyExists)
             return (
               'Error: Project seems to aleady exist on the FTP server and is in ' +
               'danger of being overwritten. Please try a different name.'
             );
+
+          if (error) {
+            console.error('\n\n', error, '\n');
+            console.error(
+              'Warning: Unable to check if project name already exists, most likely ' +
+                'due to a connection or credentials error. Please check manually before deploying.\n'
+            );
+          }
 
           return true;
         }
