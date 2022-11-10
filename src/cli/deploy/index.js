@@ -89,38 +89,40 @@ module.exports = command(
 
     for (let target of targets) {
       const { publicPath, type, to } = target;
-
-      const [checkErr] = await awaitTo(deploymentExists(to));
-
       let shouldOverwrite = false;
 
-      if (checkErr) {
-        if (checkErr.code === 550) {
-          // Directory doesn't exist. This is actually good though. OK to write.
-          shouldOverwrite = true;
-        } else {
-          error('An FTP error ocurred');
-        }
-      } else {
-        warn('Destination directory exists? OK to overwrite?');
+      // If not ftp don't worry about checking external directory
+      if (type === 'ftp') {
+        const [checkErr] = await awaitTo(deploymentExists(to));
 
-        const overwriteSelection = (
-          await cliSelect({
-            defaultValue: 0,
-            selected: opt('❯'),
-            unselected: ' ',
-            values: [
-              { label: 'Yes', choice: true },
-              { label: 'No', choice: false }
-            ],
-            valueRenderer: ({ label }, selected) => (selected ? opt(label) : label)
-          })
-        ).value;
-        shouldOverwrite = overwriteSelection.choice;
-        log(`${dim(`Destination overwrite: ${shouldOverwrite}`)}\n`);
+        if (checkErr) {
+          if (checkErr.code === 550) {
+            // Directory doesn't exist. This is actually good though. OK to write.
+            shouldOverwrite = true;
+          } else {
+            error('An FTP error ocurred');
+          }
+        } else {
+          warn('Destination directory exists? OK to overwrite?');
+
+          const overwriteSelection = (
+            await cliSelect({
+              defaultValue: 0,
+              selected: opt('❯'),
+              unselected: ' ',
+              values: [
+                { label: 'Yes', choice: true },
+                { label: 'No', choice: false }
+              ],
+              valueRenderer: ({ label }, selected) => (selected ? opt(label) : label)
+            })
+          ).value;
+          shouldOverwrite = overwriteSelection.choice;
+          log(`${dim(`Destination overwrite: ${shouldOverwrite}`)}\n`);
+        }
       }
 
-      if (shouldOverwrite) {
+      if (shouldOverwrite || type === 'ssh') {
         info(MESSAGES.deploy(target));
 
         const spinner = spin('Deploying');
@@ -139,7 +141,7 @@ module.exports = command(
 
         spinner.succeed(MESSAGES.deployed(publicPath));
       } else {
-        log("Exiting")
+        log('Exiting');
       }
     }
   }
