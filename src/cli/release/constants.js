@@ -2,7 +2,7 @@
 const { cmd, hvy, ok, opt, sec } = require('../../utils/color');
 
 const FORCE_REMINDER = `Use the ${opt('--force')} option to ignore warnings or release without tagging.`;
-const VALID_BUMPS = (module.exports.VALID_BUMPS = new Set(['major', 'minor', 'patch','prerelease']));
+const VALID_BUMPS = (module.exports.VALID_BUMPS = new Set(['major', 'minor', 'patch', 'prerelease']));
 
 const OPTIONS = (module.exports.OPTIONS = {
   string: ['bump', 'git-remote'],

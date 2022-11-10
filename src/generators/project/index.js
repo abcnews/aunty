@@ -16,8 +16,8 @@ const { success } = require('../../utils/logging');
 const { installDependencies } = require('../../utils/npm');
 const { combine } = require('../../utils/structures');
 const { sluggify } = require('../../utils/text');
-const { existsExternally } = require('../../utils/ftp');
-const { warn, log, info, error } = importLazy('../../utils/logging');
+const { projectExists } = require('../../utils/ftp');
+const { warn, info, error } = importLazy('../../utils/logging');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -55,15 +55,14 @@ Shorthand examples (assuming xyz is your project name):
 
       info(`Info: Using currect directory name as project name:`, currentDirectory, '\n');
 
-      const [err, exists] = await to(existsExternally(sluggify(currentDirectory)));
+      const [err, exists] = await to(projectExists(sluggify(currentDirectory)));
 
-      if (exists) {
+      if (exists)
         error(
           'Error: Project with the same name detected externally. ' +
             'Danger of data loss if you continue. ' +
             'Press ctrl+c to exit and rename project directory.'
         );
-      } // TODO: Maybe consider auto-renaming project
 
       if (err) {
         console.error('\n\n', err, '\n');
@@ -81,7 +80,7 @@ Shorthand examples (assuming xyz is your project name):
         message: 'What is your project called?',
         default: this.options.projectName || 'New Project',
         validate: async input => {
-          const [err, exists] = await to(existsExternally(sluggify(input)));
+          const [err, exists] = await to(projectExists(sluggify(input)));
 
           if (exists)
             return (
