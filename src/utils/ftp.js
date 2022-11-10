@@ -10,7 +10,7 @@ const BASE_FTP_DIRECTORY = '/www/res/sites/news-projects/';
 /**
  * Check if a project exists on FTP
  * @param {string} projectNameSlug
- * @returns boolean
+ * @returns {Promise<boolean>}
  */
 const projectExists = async projectNameSlug => {
   const credentials = getCredentials();
@@ -45,6 +45,7 @@ const projectExists = async projectNameSlug => {
 /**
  * Quick FTP check if deployment dir exists
  * @param {string} deployToDir - Remote dir to check
+ * @returns {Promise<boolean>}
  */
 const deploymentExists = async deployToDir => {
   const credentials = getCredentials();
