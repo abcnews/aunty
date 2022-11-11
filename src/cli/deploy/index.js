@@ -6,7 +6,7 @@ const { join } = require('path');
 const importLazy = require('import-lazy')(require);
 const loadJsonFile = importLazy('load-json-file');
 const { deploymentExists } = require('../../utils/ftp');
-const { to: awaitTo } = require('await-to-js');
+const { to: wrap } = require('await-to-js');
 const cliSelect = importLazy('cli-select');
 
 // Ours
@@ -93,7 +93,7 @@ module.exports = command(
 
       // If not ftp don't worry about checking external directory
       if (type === 'ftp') {
-        const [checkErr] = await awaitTo(deploymentExists(to));
+        const [checkErr] = await wrap(deploymentExists(to));
 
         if (checkErr) {
           if (checkErr.code === 550) {

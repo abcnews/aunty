@@ -6,7 +6,7 @@ const getAllPaths = require('get-all-paths');
 const makeDir = require('make-dir');
 const requireg = require('requireg');
 const Generator = require('yeoman-generator');
-const { to } = require('await-to-js');
+const { to: wrap } = require('await-to-js');
 const importLazy = require('import-lazy')(require);
 
 // Ours
@@ -55,17 +55,16 @@ Shorthand examples (assuming xyz is your project name):
 
       info(`Info: Using currect directory name as project name:`, currentDirectory, '\n');
 
-      const [err, exists] = await to(projectExists(sluggify(currentDirectory)));
+      const [err, exists] = await wrap(projectExists(sluggify(currentDirectory)));
 
       if (exists)
-        error(
-          'Error: Project with the same name detected externally. ' +
+        warn(
+          'Warning: Project with the same name detected externally. ' +
             'Danger of data loss if you continue. ' +
             'Press ctrl+c to exit and rename project directory.'
         );
 
       if (err) {
-        console.error('\n\n', err, '\n');
         warn(
           'Warning: Unable to check if project name already exists, most likely ' +
             'due to a connection or credentials error. Please check manually before deploying.\n'
@@ -80,7 +79,7 @@ Shorthand examples (assuming xyz is your project name):
         message: 'What is your project called?',
         default: this.options.projectName || 'New Project',
         validate: async input => {
-          const [err, exists] = await to(projectExists(sluggify(input)));
+          const [err, exists] = await wrap(projectExists(sluggify(input)));
 
           if (exists)
             return (

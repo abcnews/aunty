@@ -1,9 +1,9 @@
 // @ts-check
 
 const ftp = require('basic-ftp');
-const { to } = require('await-to-js');
+const { to: wrap } = require('await-to-js');
 
-const { getCredentials } = require('../config/deploy');
+const { getCredentials, getDeployConfig } = require('../config/deploy');
 
 const BASE_FTP_DIRECTORY = '/www/res/sites/news-projects/';
 
@@ -13,6 +13,8 @@ const BASE_FTP_DIRECTORY = '/www/res/sites/news-projects/';
  * @returns {Promise<boolean>}
  */
 const projectExists = async projectNameSlug => {
+  const config = getDeployConfig();
+  console.log(config);
   const credentials = getCredentials();
 
   const { contentftp } = credentials;
@@ -55,7 +57,7 @@ const deploymentExists = async deployToDir => {
 
   const client = new ftp.Client();
 
-  const [accessErr] = await to(
+  const [accessErr] = await wrap(
     client.access({
       host,
       user,
@@ -65,7 +67,7 @@ const deploymentExists = async deployToDir => {
   );
   if (accessErr) throw accessErr;
 
-  const [cdError] = await to(client.cd(deployToDir));
+  const [cdError] = await wrap(client.cd(deployToDir));
   if (cdError) {
     throw cdError;
   }
