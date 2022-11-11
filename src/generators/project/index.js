@@ -88,7 +88,6 @@ Shorthand examples (assuming xyz is your project name):
             );
 
           if (err) {
-            console.error('\n\n', err, '\n');
             warn(
               'Warning: Unable to check if project name already exists, most likely ' +
                 'due to a connection or credentials error. Please check manually before deploying.\n'

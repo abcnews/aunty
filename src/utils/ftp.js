@@ -3,9 +3,7 @@
 const ftp = require('basic-ftp');
 const { to: wrap } = require('await-to-js');
 
-const { getCredentials, getDeployConfig } = require('../config/deploy');
-
-const BASE_FTP_DIRECTORY = '/www/res/sites/news-projects/';
+const { addProfileProperties, addKnownProfileProperties } = require('../config/deploy');
 
 /**
  * Check if a project exists on FTP
@@ -13,12 +11,11 @@ const BASE_FTP_DIRECTORY = '/www/res/sites/news-projects/';
  * @returns {Promise<boolean>}
  */
 const projectExists = async projectNameSlug => {
-  const config = getDeployConfig();
-  console.log(config);
-  const credentials = getCredentials();
+  const config = addProfileProperties(addKnownProfileProperties({}));
+  const { host, username: user, password, to } = config;
+  const [baseDir] = to.split('<name>');
 
-  const { contentftp } = credentials;
-  const { host, username: user, password } = contentftp;
+  if (!host || !user || !password) throw new Error('Missing FTP credentials');
 
   const client = new ftp.Client();
 
@@ -29,7 +26,7 @@ const projectExists = async projectNameSlug => {
       password,
       secure: false
     });
-    await client.cd(BASE_FTP_DIRECTORY);
+    await client.cd(baseDir);
     const list = await client.list();
 
     for (const item of list) {
@@ -50,10 +47,8 @@ const projectExists = async projectNameSlug => {
  * @returns {Promise<boolean>}
  */
 const deploymentExists = async deployToDir => {
-  const credentials = getCredentials();
-
-  const { contentftp } = credentials;
-  const { host, username: user, password } = contentftp;
+  const config = addProfileProperties(addKnownProfileProperties({}));
+  const { host, username: user, password, to } = config;
 
   const client = new ftp.Client();
 
