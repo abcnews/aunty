@@ -107,7 +107,7 @@ module.exports = command(
 
           const overwriteSelection = (
             await cliSelect({
-              defaultValue: 0,
+              defaultValue: 1,
               selected: opt('❯'),
               unselected: ' ',
               values: [
