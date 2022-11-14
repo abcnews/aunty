@@ -38,11 +38,13 @@
     "@babel/preset-env": "^7.6.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.10.4",
+    "await-to-js": "^3.0.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^26.1.0",
     "babel-loader": "^8.2.2",
+    "basic-ftp": "^5.0.2",
     "chalk": "^4.1.2",
-    "cli-select": "^1.1.0",
+    "cli-select": "^1.1.2",
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^6.7.1",
     "csv-loader": "^3.0.3",
@@ -95,6 +97,7 @@
     "@abcaustralia/postcss-config": "^11.2.5"
   },
   "devDependencies": {
+    "babel-eslint": "^10.1.0",
     "eslint": "^7.7.0",
     "eslint-config-prettier": "^8.2.0",
     "release-it": "^15.1.4"

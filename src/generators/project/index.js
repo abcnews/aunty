@@ -6,6 +6,8 @@ const getAllPaths = require('get-all-paths');
 const makeDir = require('make-dir');
 const requireg = require('requireg');
 const Generator = require('yeoman-generator');
+const { to: wrap } = require('await-to-js');
+const importLazy = require('import-lazy')(require);
 
 // Ours
 const { OUTPUT_DIRECTORY_NAME } = require('../../constants');
@@ -13,6 +15,9 @@ const { cmd, hvy, opt, sec } = require('../../utils/color');
 const { success } = require('../../utils/logging');
 const { installDependencies } = require('../../utils/npm');
 const { combine } = require('../../utils/structures');
+const { sluggify } = require('../../utils/text');
+const { projectExists } = require('../../utils/ftp');
+const { warn, info, error } = importLazy('../../utils/logging');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -46,13 +51,51 @@ Shorthand examples (assuming xyz is your project name):
     let prompts = [];
 
     if (this.options.here) {
-      this.options.projectName = path.basename(process.cwd());
+      const currentDirectory = path.basename(process.cwd());
+
+      info(`Info: Using currect directory name as project name:`, currentDirectory, '\n');
+
+      const [err, exists] = await wrap(projectExists(sluggify(currentDirectory)));
+
+      if (exists)
+        warn(
+          'Warning: Project with the same name detected externally. ' +
+            'Danger of data loss if you continue. ' +
+            'Press ctrl+c to exit and rename project directory.'
+        );
+
+      if (err) {
+        warn(
+          'Warning: Unable to check if project name already exists, most likely ' +
+            'due to a connection or credentials error. Please check manually before deploying.\n'
+        );
+      }
+
+      this.options.projectName = currentDirectory;
     } else {
       prompts.push({
         type: 'input',
         name: 'projectName',
         message: 'What is your project called?',
-        default: this.options.projectName || 'New Project'
+        default: this.options.projectName || 'New Project',
+        validate: async input => {
+          const [err, exists] = await wrap(projectExists(sluggify(input)));
+
+          if (exists)
+            return (
+              'Error: Project seems to aleady exist on the FTP server and is in ' +
+              'danger of being overwritten. Please try a different name.'
+            );
+
+          if (err) {
+            warn(
+              'Warning: Unable to check if project name already exists, most likely ' +
+                'due to a connection or credentials error. Please check manually before deploying.\n'
+            );
+          }
+
+          return true;
+        }
       });
     }
 
@@ -90,10 +133,7 @@ Shorthand examples (assuming xyz is your project name):
 
     this.options.projectName = this.options.projectName.replace(/[^\w\-\_\s]/g, '');
 
-    this.options.projectNameSlug = this.options.projectName
-      .toLowerCase()
-      .replace(/\s/g, '-')
-      .replace(/[^0-9a-z\-\_]/g, '');
+    this.options.projectNameSlug = sluggify(this.options.projectName);
 
     this.options.projectNameFlat = this.options.projectNameSlug.replace(/-/g, '');
 
