@@ -9,7 +9,6 @@ const CopyPlugin = importLazy('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = importLazy('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const sveltePreprocess = importLazy('svelte-preprocess');
-const TerserPlugin = importLazy('terser-webpack-plugin');
 const EnvironmentPlugin = importLazy('webpack/lib/EnvironmentPlugin');
 
 // Ours
@@ -18,7 +17,6 @@ const { getBabelConfig } = require('./babel');
 const { getBuildConfig } = require('./build');
 const { getProjectConfig } = require('./project');
 
-const URL_LOADER_LIMIT = 10000;
 const JSX_RESOLVE_EXTENSIONS = ['.jsx', '.tsx'];
 const PROJECT_TYPES_CONFIG = {
   preact: {
@@ -213,43 +211,21 @@ function createWebpackConfig({ isModernJS } = {}) {
             }
           },
           {
-            test: /\.(jpg|png|gif|mp4|m4v|flv|mp3|wav|m4a)$/,
-            loader: require.resolve('file-loader'),
-            options: {
-              name: '[name]-[contenthash].[ext]'
-            }
+            test: /\.(jpg|png|gif|mp4|m4v|flv|mp3|wav|m4a|eot|ttf|woff|woff2)$/,
+            type: 'asset'
           },
           {
-            test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('url-loader'),
-            options: {
-              limit: URL_LOADER_LIMIT,
-              mimetype: 'application/font-woff'
-            }
+            test: /\.svg$/,
+            resourceQuery: { not: [/raw/] },
+            type: 'asset'
           },
           {
-            test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('url-loader'),
-            options: {
-              limit: URL_LOADER_LIMIT,
-              mimetype: 'application/octet-stream'
-            }
-          },
-          {
-            test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('file-loader')
-          },
-          {
-            test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('url-loader'),
-            options: {
-              limit: URL_LOADER_LIMIT,
-              mimetype: 'image/svg+xml'
-            }
+            resourceQuery: /raw/,
+            type: 'asset/source'
           },
           {
             test: /\.html$/,
-            loader: require.resolve('html-loader')
+            type: 'asset/source'
           }
         ]
       },
