@@ -149,6 +149,26 @@ module.exports = {
 };
 ```
 
+### Including dependencies
+
+Sometimes you will want webpack to build specific dependencies along side your project code, for example, when a dependency is distributed with non-javascript modules like Typescript or Svelte components.
+
+To instruct webpack to include those dependencies during build add the dependency's name to the `build::includeDependencies` array in your aunty config. For example:
+
+```
+// package.json
+...
+  "aunty": {
+    "type": "svelte",
+    "build": {
+      "includedDependencies": [
+        "layercake"
+      ]
+    }
+  }
+...
+```
+
 ## Authors
 
 - Colin Gourlay ([gourlay.colin@abc.net.au](mailto:gourlay.colin@abc.net.au))
