@@ -19,8 +19,7 @@ const { dry, info, spin, warn, log, error } = require('../../utils/logging');
 const { ftp, rsync } = require('../../utils/remote');
 const { combine } = require('../../utils/structures');
 const { DEFAULTS, MESSAGES, VALID_TYPES } = require('./constants');
-const { dim, opt } = require('../../utils/color');
-const { check } = require('prettier');
+const { dim, opt, hvy, req } = require('../../utils/color');
 
 module.exports = command(
   {
@@ -103,7 +102,8 @@ module.exports = command(
             error('An FTP error ocurred');
           }
         } else {
-          warn('Destination directory exists? OK to overwrite?');
+          warn('Destination directory exists. OK to overwrite?');
+          log(`  ┗ ${hvy('dir')}: ${req(to)}`);
 
           const overwriteSelection = (
             await cliSelect({
