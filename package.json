@@ -50,6 +50,7 @@
     "csv-loader": "^3.0.3",
     "deepmerge": "^4.0.0",
     "del": "^6.0.0",
+    "dotenv": "^16.0.3",
     "dotenv-webpack": "^8.0.1",
     "execa": "^5.0.0",
     "fork-ts-checker-webpack-plugin": "^6.2.1",
