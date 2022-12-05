@@ -90,8 +90,9 @@ module.exports = command(
       const { publicPath, type, to } = target;
       let shouldOverwrite = false;
 
-      // If not ftp don't worry about checking external directory
-      if (type === 'ftp') {
+      // Check if the deployment already exists
+      if (argv.force) shouldOverwrite = true;
+      else if (type === 'ftp') {
         const [checkErr] = await wrap(deploymentExists(to));
 
         if (checkErr) {
@@ -122,7 +123,10 @@ module.exports = command(
         }
       }
 
-      if (shouldOverwrite || type === 'ssh') {
+      // Overwrite by default if ssh for now
+      if (type === 'ssh') shouldOverwrite = true;
+
+      if (shouldOverwrite) {
         info(MESSAGES.deploy(target));
 
         const spinner = spin('Deploying');
