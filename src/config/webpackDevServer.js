@@ -36,9 +36,9 @@ module.exports.getWebpackDevServerConfig = async () => {
             }
           : 'https'
         : 'http',
-      static: {
-        directory: join(root, staticDir)
-      }
+      static: (Array.isArray(staticDir) ? staticDir : [staticDir]).map(dirName => ({
+        directory: join(root, dirName)
+      }))
     },
     projectWebpackDevServerConfig
   );

@@ -248,11 +248,9 @@ function createWebpackConfig({ isModernJS } = {}) {
             })
           : null,
         new CopyPlugin({
-          patterns: [
-            {
-              from: join(root, staticDir)
-            }
-          ]
+          patterns: (Array.isArray(staticDir) ? staticDir : [staticDir]).map(dirName => ({
+            from: join(root, dirName)
+          }))
         })
       ].filter(x => x),
       optimization: {
