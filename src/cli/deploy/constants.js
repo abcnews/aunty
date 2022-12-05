@@ -38,6 +38,7 @@ module.exports.MESSAGES = {
 
 ${sec('Options')}
 
-  ${opt('-d')}, ${opt('--dry')}  Output the deploy configuration, then exit
+  ${opt('-d')}, ${opt('--dry')}    Output the deploy configuration, then exit
+  ${opt('-f')}, ${opt('--force')}  Do not prompt to overwrite ftp deploy directory ${opt('[default: false]')}
 `
 };
