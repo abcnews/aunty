@@ -6,6 +6,7 @@ const { join, resolve } = require('path');
 const importLazy = require('import-lazy')(require);
 const getContext = importLazy('@abcaustralia/postcss-config/getContext'); // optional dependency
 const CopyPlugin = importLazy('copy-webpack-plugin');
+const Dotenv = importLazy('dotenv-webpack');
 const ForkTsCheckerWebpackPlugin = importLazy('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const sveltePreprocess = importLazy('svelte-preprocess');
@@ -231,6 +232,7 @@ function createWebpackConfig({ isModernJS } = {}) {
       },
       plugins: [
         new EnvironmentPlugin(Object.keys(process.env)),
+        new Dotenv(),
         hasTS
           ? new ForkTsCheckerWebpackPlugin({
               logger: { infrastructure: 'silent', issues: 'silent' },
