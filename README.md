@@ -59,7 +59,7 @@ module.exports = {
   // aunty command configuration
   build: {…},
   serve: {…},
-  deploy: {…},
+  deploy: [{…}],
   // internal tools configuration
   babel: {…},
   jest: {…},
@@ -75,7 +75,7 @@ module.exports = {
   "type": "<project_type>",
   "build": {…},
   "serve": {…},
-  "deploy": {…},
+  "deploy": [{…}],
   "babel": {…},
   "jest": {…},
   "webpack": {…},
@@ -85,7 +85,7 @@ module.exports = {
 
 Supported project `type`s (currently: `basic`, `preact`, `react` & `svelte`) have their own default build configuration, but you can override it by extending your project configuration.
 
-The `build`, `serve` and `deploy` properties allow you to override the default settings for those respective commands.
+The `build`, `serve` and `deploy` properties allow you to override the default settings for those respective commands. Their respective properties (and default values) are documented below.
 
 Aunty uses some tools internally, which you can also provide custom configuration for. If you supply an object for the `babel`, `jest`, `webpack`, and/or `webpackDevServer` properties, that object will be merged into the default configuration. Optionally, you can supply a function (for any property), which will be passed the default configuration for you to manually modify and return.
 
@@ -112,6 +112,31 @@ If you don't need to override any of the project defaults, your entire aunty con
 | `extractCSS`           | `false`          | Setting this to true will create a separate `{name}.css` output for each input, rather than bundling it with the JS (for dynamic `<style>` insertion).                          |
 | `useCSSModules`        | `true`           | Setting this to false will turn off CSS module compilation. All styles written will be 'global', and importing CSS files will not give you an object of `className` references. |
 | `showDeprecations`     | `false`          | Setting this to true will allow NodeJS to output stack traces of deprecation warnings.                                                                                          |
+
+#### `serve` config properties
+
+| property            | default       | description                                                                                                                                                                                                                                    |
+| ------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hasBundleAnalysis` | `false`       | Setting this to true will spin up a second server on another port, allowing you to inspect your bundle. The address will be logged to the console when the dev server starts.                                                                  |
+| `host`              | `"localhost"` | The hostname of your dev server. If you're on the ABC internal network, the default will change to your machine's hostname (`ws<number>.aus.aunty.abc.net.au`). The `AUNTY_HOST` environment variable, if present, will override this setting. |
+| `hot`               | `true`        | Should the dev server enable hot reloading. If `NODE_ENV !== "development"`, the default will change to `false`.                                                                                                                               |
+| `https`             | `true`        | Should the dev server use SSL (with a self-signed certificate matching the `host`). You can alternatively supply your own `{cert: string, key: string` object if you've generated your certificate some other way.                             |
+| `port`              | `8000`        | The port number of your dev server. If the port specified is unavailable, **aunty** will try incrementing the port number until it finds an available one. The `AUNTY_PORT` environment variable, if present, will override this setting.      |
+
+#### `deploy` config properties
+
+`deploy` should be an array of config objects, one for each deployment target (e.g. ContentFTP)
+
+| property            | default                 | description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `from`              | build config `to` value | The directory to deploy files from (if you haven't overridden the build `to` value, it should be ".aunty/build")                                                                                                                                                                                                                                                                                                                                                                                        |
+| `files`             | `"**"`                  | A glob matching the files under your `from` directory to deploy                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `profile`           | `"contentftp"`          | This should be the name of a key in your `~/.abc-credentials` file, which will be consulted to populate login credentials. If this is `"contentftp"` it will also populate the config's `to` and `resolvePublicPath` properties.                                                                                                                                                                                                                                                                        |
+| `publicPath`        | `"/"`                   | If `resolvePublicPath` is defined, `publicPath` will be overwritten by the return value of that function.                                                                                                                                                                                                                                                                                                                                                                                               |
+| `resolvePublicPath` | `undefined`             | A function which takes the initial config as an object, and returns an updated `publicPath`. If `profile="contentftp"`, this will be a function that knows how ContentFTP directories map onto ABC URLs.                                                                                                                                                                                                                                                                                                |
+| `to`                | `undefined`             | The directory on your target to deploy files to. If `profile="contentftp"` , this will be a versioned directory where we deploy News projects to. If you set this to a string, the patterns `<name>` and `<id>` will be replaced by the project name, and the current deployment ID, respectively. During releases, `id` is the current version; during development, it's the current git branch name. You can also specify a custom deployment ID by using the `--id` flag when running `aunty build`. |
+
+You _could_ also specify `type` (`"ftp"`/`"ssh"`), `host`, `port`, `username` & `password`, but these are best left inside your `.abc-credentials` file.
 
 ### Generators
 
