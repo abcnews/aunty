@@ -99,6 +99,20 @@ Overrides should be used sparingly, as the advantages of using a single-dependen
 
 If you don't need to override any of the project defaults, your entire aunty configuration can be a string containing the project type, as a shorthand for `{type: "<project_type>"}`. `type` is the only required property in your aunty configuration.
 
+#### `build` config properties
+
+| property               | default          | description                                                                                                                                                                     |
+| ---------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entry`                | `"index"`        | The entry file for your project (extension should be unspecified). You can optionally supply an array for multiple entry points, which will result in multiple outputs.         |
+| `from`                 | `"src"`          | The source directory that aunty will look for your entry file(s) in.                                                                                                            |
+| `to`                   | `".aunty/build"` | The destination directory for your compiled and static assets.                                                                                                                  |
+| `staticDir`            | `"public"`       | The directory you store static assets in. You can optionally supply an array of directories, which will be merged at build time.                                                |
+| `addModernJS`          | `false`          | Setting this to true will enable a 2nd output file for each entry file named `{name}.modern.js`, which is skips browserlist-based feature polyfilling                           |
+| `includedDependencies` | `[]`             | Any packages (defined by name string or name-matching `RegExp`s) you add to this array will be transpiled in the same manner as the project source.                             |
+| `extractCSS`           | `false`          | Setting this to true will create a separate `{name}.css` output for each input, rather than bundling it with the JS (for dynamic `<style>` insertion).                          |
+| `useCSSModules`        | `true`           | Setting this to false will turn off CSS module compilation. All styles written will be 'global', and importing CSS files will not give you an object of `className` references. |
+| `showDeprecations`     | `false`          | Setting this to true will allow NodeJS to output stack traces of deprecation warnings.                                                                                          |
+
 ### Generators
 
 Aunty comes with a few basic generators. Run `aunty generate --help` for the full list, or `aunty generate <generator> --help` for further details.
@@ -114,40 +128,6 @@ import 'regenerator-runtime/runtime';
 ```
 
 Note: You may also need a `Promise` polyfill for IE11.
-
-### Multiple entry points
-
-By default Aunty looks for `index.js` in `src/`. Enable multiple entry points by adding a `build::entry` config to `aunty.config.js`.
-
-#### Replace 'index' with 'story'
-
-```js
-module.exports = {
-  build: {
-    entry: 'story' // will now also support `['story']`
-  }
-};
-```
-
-#### Replace 'index' with 'story', 'editor', 'graphic' & 'polyfills'
-
-```js
-module.exports = {
-  build: {
-    entry: ['story', 'editor', 'graphic', 'polyfills']
-  }
-};
-```
-
-#### Retain 'index'; add 'editor', 'graphic' & 'polyfills'
-
-```js
-module.exports = {
-  build: {
-    entry: ['index', 'editor', 'graphic', 'polyfills']
-  }
-};
-```
 
 ## Authors
 
