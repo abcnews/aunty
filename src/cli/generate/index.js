@@ -22,7 +22,6 @@ module.exports = command(
     }
 
     const generatorName = GENERATOR_ALIASES[argv._[0]] || argv._[0];
-    const generatorArgs = argv['--'];
 
     // If we didn't supply a known generator name, blow up, unless we wanted
     // the generate command's usage message (in which case, print it, then exit).

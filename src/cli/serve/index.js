@@ -9,7 +9,6 @@ const { getServeConfig } = require('../../config/serve');
 const { getWebpackConfig } = require('../../config/webpack');
 const { getWebpackDevServerConfig } = require('../../config/webpackDevServer');
 const { throws } = require('../../utils/async');
-const { cmd } = require('../../utils/color');
 const { dry, info, spin } = require('../../utils/logging');
 const { combine } = require('../../utils/structures');
 const { command } = require('../');

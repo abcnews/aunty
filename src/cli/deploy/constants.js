@@ -1,8 +1,4 @@
-// Native
-const { join } = require('path');
-
 // Ours
-const { DEPLOY_FILE_NAME } = require('../../constants');
 const { cmd, hvy, opt, req, sec } = require('../../utils/color');
 const { styleLastSegment } = require('../../utils/text');
 

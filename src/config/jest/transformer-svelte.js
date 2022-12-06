@@ -5,7 +5,6 @@ const { basename } = require('path');
 // External
 const importLazy = require('import-lazy')(require);
 const svelte = importLazy('svelte/compiler');
-const sveltePreprocess = importLazy('svelte-preprocess');
 
 module.exports = {
   process(src, filename) {

@@ -1,6 +1,6 @@
 // Ours
 const { cmd, hvy, opt, req, sec } = require('../../utils/color');
-const { combine, setOfValues } = require('../../utils/structures');
+const { setOfValues } = require('../../utils/structures');
 
 module.exports.OPTIONS = {
   boolean: ['announce'],

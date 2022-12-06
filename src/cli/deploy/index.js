@@ -14,11 +14,10 @@ const { command } = require('../');
 const { addProfileProperties } = require('../../config/deploy');
 const { getProjectConfig } = require('../../config/project');
 const { DEPLOY_FILE_NAME, OUTPUT_DIRECTORY_NAME } = require('../../constants');
-const { packs, throws, unpack } = require('../../utils/async');
+const { throws } = require('../../utils/async');
 const { dry, info, spin, warn, log, error } = require('../../utils/logging');
 const { ftp, rsync } = require('../../utils/remote');
-const { combine } = require('../../utils/structures');
-const { DEFAULTS, MESSAGES, VALID_TYPES } = require('./constants');
+const { MESSAGES, VALID_TYPES } = require('./constants');
 const { dim, opt, hvy, req } = require('../../utils/color');
 
 module.exports = command(

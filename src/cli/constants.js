@@ -1,7 +1,7 @@
 // Ours
 const { createLogo } = require('../utils/branding');
 const { cmd, dim, hvy, opt, req, sec } = require('../utils/color');
-const { combine, setOfValues } = require('../utils/structures');
+const { setOfValues } = require('../utils/structures');
 
 const COMMAND_ALIASES = (module.exports.COMMAND_ALIASES = {
   b: 'build',
@@ -66,7 +66,7 @@ ${sec('Development commands')}
   ${
     isProject
       ? `${cmd('aunty generate')} ${req('<generator>')}
-    Generate code for your project or Core Media 
+    Generate code for your project or Core Media
 
   ${cmd('aunty clean')}
     Delete the current project's build output directories.
@@ -98,7 +98,7 @@ ${sec('Helper commands')}
 
   ${cmd('aunty help')} ${req('<command>')}
     Display complete help for this ${req('command')}.
-  
+
   ${cmd('aunty sign-cert')} # Mac OS only (for now)
     Create a consistent SSL certificate for the dev server
 `
