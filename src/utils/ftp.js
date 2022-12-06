@@ -4,7 +4,7 @@ const { to: wrap } = require('await-to-js');
 const { probe } = require('tcp-ping-sync');
 
 const { addProfileProperties, addKnownProfileProperties } = require('../config/deploy');
-const {INTERNAL_TEST_HOST} = require('../constants')
+const { INTERNAL_TEST_HOST } = require('../constants');
 
 /**
  * Check if a project exists on FTP
