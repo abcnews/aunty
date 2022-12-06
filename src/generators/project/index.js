@@ -17,7 +17,7 @@ const { installDependencies } = require('../../utils/npm');
 const { combine } = require('../../utils/structures');
 const { sluggify } = require('../../utils/text');
 const { projectExists } = require('../../utils/ftp');
-const { warn, info, error } = importLazy('../../utils/logging');
+const { log, warn, info, spin } = importLazy('../../utils/logging');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -30,8 +30,8 @@ module.exports = class extends Generator {
       description: `Project name. Create this directory if ${opt('--here')} is not specified`,
       required: false
     });
-    this.option('here', { description: `Assume ${opt('<name>')} is current working directory` });
-    this.option('template', { description: 'Type of project [basic|preact|react|svelte]' });
+    this.option('here', { description: `Assume ${opt('<name>')} is current working directory`, type: Boolean });
+    this.option('template', { description: 'Type of project [basic|preact|react|svelte]', type: String });
   }
 
   usage() {
@@ -53,7 +53,8 @@ Shorthand examples (assuming xyz is your project name):
     if (this.options.here) {
       const currentDirectory = path.basename(process.cwd());
 
-      info(`Info: Using currect directory name as project name:`, currentDirectory, '\n');
+      info(`Info: Using currect directory name as project name:`, currentDirectory);
+      log('Checking project name. This may take a few seconds...');
 
       const [err, exists] = await wrap(projectExists(sluggify(currentDirectory)));
 
@@ -64,12 +65,11 @@ Shorthand examples (assuming xyz is your project name):
             'Press ctrl+c to exit and rename project directory.'
         );
 
-      if (err) {
+      if (err)
         warn(
           'Warning: Unable to check if project name already exists, most likely ' +
             'due to a connection or credentials error. Please check manually before deploying.\n'
         );
-      }
 
       this.options.projectName = currentDirectory;
     } else {
@@ -79,6 +79,8 @@ Shorthand examples (assuming xyz is your project name):
         message: 'What is your project called?',
         default: this.options.projectName || 'New Project',
         validate: async input => {
+          log('\nChecking project name. This may take a few seconds...');
+
           const [err, exists] = await wrap(projectExists(sluggify(input)));
 
           if (exists)
@@ -87,12 +89,11 @@ Shorthand examples (assuming xyz is your project name):
               'danger of being overwritten. Please try a different name.'
             );
 
-          if (err) {
+          if (err)
             warn(
               'Warning: Unable to check if project name already exists, most likely ' +
                 'due to a connection or credentials error. Please check manually before deploying.\n'
             );
-          }
 
           return true;
         }
