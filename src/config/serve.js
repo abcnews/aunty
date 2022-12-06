@@ -12,13 +12,14 @@ const { combine } = require('../utils/structures');
 const { getProjectConfig } = require('./project');
 const { info } = require('../utils/logging');
 const { MESSAGES } = require('../cli/serve/constants');
+const {INTERNAL_TEST_HOST} = require('../constants')
 
 const HOME_DIR = homedir();
 const SSL_DIR = '.aunty/ssl';
 const SERVER_CERT_FILENAME = (module.exports.SERVER_CERT_FILENAME = 'server.crt');
 const SERVER_KEY_FILENAME = (module.exports.SERVER_KEY_FILENAME = 'server.key');
 const INTERNAL_SUFFIX = '.aus.aunty.abc.net.au';
-const DEFAULT_HOST = (module.exports.DEFAULT_HOST = probe(`nucwed${INTERNAL_SUFFIX}`)
+const DEFAULT_HOST = (module.exports.DEFAULT_HOST = probe(INTERNAL_TEST_HOST)
   ? `${hostname().toLowerCase().split('.')[0]}${INTERNAL_SUFFIX}` // hostname _may_ include INTERNAL_SUFFIX
   : 'localhost');
 const DEFAULT_PORT = 8000;

@@ -1,9 +1,10 @@
-// @ts-check
-
+// External
 const ftp = require('basic-ftp');
 const { to: wrap } = require('await-to-js');
+const { probe } = require('tcp-ping-sync');
 
 const { addProfileProperties, addKnownProfileProperties } = require('../config/deploy');
+const { INTERNAL_TEST_HOST } = require('../constants');
 
 /**
  * Check if a project exists on FTP
@@ -11,6 +12,10 @@ const { addProfileProperties, addKnownProfileProperties } = require('../config/d
  * @returns {Promise<boolean>}
  */
 const projectExists = async projectNameSlug => {
+  // If not on internal network FTP won't connect, so bail out
+  const isOnInternalNetwork = probe(INTERNAL_TEST_HOST);
+  if (!isOnInternalNetwork) throw new Error('Not on internal network');
+
   const config = addProfileProperties(addKnownProfileProperties({}));
   const { host, username: user, password, to } = config;
   const [baseDir] = to.split('<name>');
