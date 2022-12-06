@@ -11,13 +11,13 @@ const importLazy = require('import-lazy')(require);
 
 // Ours
 const { OUTPUT_DIRECTORY_NAME } = require('../../constants');
-const { cmd, hvy, opt, sec } = require('../../utils/color');
+const { cmd, hvy, opt } = require('../../utils/color');
 const { success } = require('../../utils/logging');
 const { installDependencies } = require('../../utils/npm');
 const { combine } = require('../../utils/structures');
 const { sluggify } = require('../../utils/text');
 const { projectExists } = require('../../utils/ftp');
-const { log, warn, info, spin } = importLazy('../../utils/logging');
+const { log, warn, info } = importLazy('../../utils/logging');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
