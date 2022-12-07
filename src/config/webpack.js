@@ -232,7 +232,9 @@ function createWebpackConfig({ isModernJS } = {}) {
       },
       plugins: [
         new EnvironmentPlugin(Object.keys(process.env)),
-        new Dotenv(),
+        new Dotenv({
+          safe: true
+        }),
         hasTS
           ? new ForkTsCheckerWebpackPlugin({
               logger: { infrastructure: 'silent', issues: 'silent' },
