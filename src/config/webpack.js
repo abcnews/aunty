@@ -147,6 +147,8 @@ function createWebpackConfig({ isModernJS } = {}) {
   const { pkg, root, hasTS, type, webpack: projectWebpackConfig } = getProjectConfig();
   const { entry, extractCSS, from, includedDependencies, staticDir, to, useCSSModules } = getBuildConfig();
   const isProd = process.env.NODE_ENV === 'production';
+  const hasEnvFile = existsSync(join(root, '.env'));
+  const hasEnvExampleFile = existsSync(join(root, '.env.example'));
 
   const config = merge(
     {
@@ -232,9 +234,11 @@ function createWebpackConfig({ isModernJS } = {}) {
       },
       plugins: [
         new EnvironmentPlugin(Object.keys(process.env)),
-        new Dotenv({
-          safe: true
-        }),
+        hasEnvFile || hasEnvExampleFile
+          ? new Dotenv({
+              safe: hasEnvExampleFile
+            })
+          : null,
         hasTS
           ? new ForkTsCheckerWebpackPlugin({
               logger: { infrastructure: 'silent', issues: 'silent' },
