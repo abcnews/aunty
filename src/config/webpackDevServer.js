@@ -18,7 +18,7 @@ module.exports.getWebpackDevServerConfig = async () => {
       client: {
         logging: 'warn',
         overlay: true,
-        webSocketURL: `wss://${host}:${port}/ws`
+        webSocketURL: `ws${https ? 's' : ''}://${host}:${port}/ws`
       },
       devMiddleware: {
         publicPath: `http${https ? 's' : ''}://${host}:${port}/`
