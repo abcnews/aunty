@@ -27,7 +27,7 @@ if (module.hot) {
   module.hot.accept('./components/App', () => {
     try {
       renderApp();
-    } catch (err) {
+    } catch (err: any) {
       import('./components/ErrorBox').then(({ default: ErrorBox }) => {
         root.render(<ErrorBox error={err} />);
       });
