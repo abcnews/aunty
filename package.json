@@ -70,8 +70,6 @@
     "node-fetch": "^2.6.0",
     "ora": "^5.0.0",
     "pify": "^5.0.0",
-    "postcss": "^8.3.6",
-    "postcss-loader": "^6.1.1",
     "prettier": "^2.0.5",
     "requireg": "^0.2.2",
     "rsyncwrapper": "^3.0.1",
@@ -91,9 +89,6 @@
     "write-json-file": "^4.2.0",
     "yeoman-environment": "^3.2.0",
     "yeoman-generator": "^5.2.0"
-  },
-  "optionalDependencies": {
-    "@abcaustralia/postcss-config": "^11.2.5"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",

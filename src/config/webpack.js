@@ -4,7 +4,6 @@ const { join, resolve } = require('path');
 
 // External
 const importLazy = require('import-lazy')(require);
-const getContext = importLazy('@abcaustralia/postcss-config/getContext'); // optional dependency
 const CopyPlugin = importLazy('copy-webpack-plugin');
 const Dotenv = importLazy('dotenv-webpack');
 const ForkTsCheckerWebpackPlugin = importLazy('fork-ts-checker-webpack-plugin');
@@ -265,7 +264,6 @@ function createWebpackConfig({ isModernJS } = {}) {
         moduleIds: isProd ? 'deterministic' : 'named'
       }
     },
-    conditionallyEnableABCAustraliaStyles,
     PROJECT_TYPES_CONFIG[type],
     projectWebpackConfig
   );
@@ -286,75 +284,4 @@ function createWebpackConfig({ isModernJS } = {}) {
 
 function getHintedRule(config, hint) {
   return config.module.rules.find(rule => rule.__hint__ === hint);
-}
-
-const ABC_POSTCSS_CONTEXT_SUGGESTION = `
-
-To compile @abcaustralia/* styles, you need to add the following to your package.json:
-
-"abc": {
-  "css": {
-    "libraryDir": "./node_modules/@abcaustralia/nucleus/css",
-    "logVariables": "false"
-  }
-}
-`;
-
-function getABCAustraliaPostCSSContext(isDev) {
-  try {
-    return getContext(isDev);
-  } catch (err) {
-    if (err.message.indexOf('css') > -1) {
-      err.message += ABC_POSTCSS_CONTEXT_SUGGESTION;
-    }
-
-    throw err;
-  }
-}
-
-const ABC_PACKAGE_PATTERN = /(node_modules\/@abcaustralia\/*)/;
-
-function conditionallyEnableABCAustraliaStyles(config) {
-  const { pkg } = getProjectConfig();
-
-  // Only enable if we have an @abcaustralia/* dependency
-  if (!Object.keys(pkg.dependencies || {}).find(x => x.indexOf('@abcaustralia/') === 0)) {
-    return config;
-  }
-
-  const isProd = config.mode === 'production';
-  const stylesRule = getHintedRule(config, 'styles');
-
-  stylesRule.exclude = ABC_PACKAGE_PATTERN;
-
-  config.module.rules.push({
-    __hint__: 'styles/@abcaustralia',
-    test: /\.css$/,
-    include: ABC_PACKAGE_PATTERN,
-    use: [
-      stylesRule.use[0],
-      {
-        loader: require.resolve('css-loader'),
-        options: {
-          importLoaders: 1,
-          modules: {
-            exportLocalsConvention: 'camelCase',
-            localIdentName: `${isProd ? '' : '[name]__[local]--'}[contenthash:base64:5]`
-          },
-          url: false
-        }
-      },
-      {
-        loader: require.resolve('postcss-loader'),
-        options: {
-          postcssOptions: {
-            config: require.resolve('@abcaustralia/postcss-config'),
-            ...getABCAustraliaPostCSSContext(!isProd)
-          }
-        }
-      }
-    ]
-  });
-
-  return config;
 }
