@@ -53,7 +53,7 @@
     "dotenv": "^16.0.3",
     "dotenv-webpack": "^8.0.1",
     "execa": "^5.0.0",
-    "fork-ts-checker-webpack-plugin": "^6.2.1",
+    "fork-ts-checker-webpack-plugin": "^8.0.0",
     "ftp-deploy": "^2.3.8",
     "get-all-paths": "^1.0.1",
     "guess-root-path": "^1.0.0",
