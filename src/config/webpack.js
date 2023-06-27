@@ -38,7 +38,7 @@ const PROJECT_TYPES_CONFIG = {
     config.resolve = {
       // Make sure that only one copy of the Svelte runtime is bundled in the app
       alias: {
-        svelte: resolve('node_modules', 'svelte')
+        svelte: resolve('node_modules', 'svelte/src/runtime')
       },
       // Recognise .svelte files
       extensions: [...config.resolve.extensions, '.svelte'],
