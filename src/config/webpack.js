@@ -44,7 +44,8 @@ const PROJECT_TYPES_CONFIG = {
       extensions: [...config.resolve.extensions, '.svelte'],
       // When using Svelte components installed from npm, use the original component
       // source code, rather than consuming the already-compiled version
-      mainFields: ['svelte', 'browser', 'module', 'main']
+      mainFields: ['svelte', 'browser', 'module', 'main'],
+      conditionNames: ['svelte', 'browser', 'import']
     };
 
     const { include, loader, options } = getHintedRule(config, 'scripts');
