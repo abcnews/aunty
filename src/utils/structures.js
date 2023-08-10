@@ -31,5 +31,3 @@ module.exports.combine = (...sources) => sources.reduce(combine, {});
  * @see combine
  */
 module.exports.merge = (...sources) => sources.reduce(combineDeep, {});
-
-module.exports.setOfValues = source => new Set(Object.keys(source).map(key => source[key]));
