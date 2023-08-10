@@ -1,7 +1,6 @@
 // Ours
 const { createLogo } = require('../utils/branding');
 const { cmd, dim, hvy, opt, req, sec } = require('../utils/color');
-const { setOfValues } = require('../utils/structures');
 
 const COMMAND_ALIASES = (module.exports.COMMAND_ALIASES = {
   b: 'build',
@@ -14,7 +13,7 @@ const COMMAND_ALIASES = (module.exports.COMMAND_ALIASES = {
   t: 'test'
 });
 
-module.exports.COMMANDS = setOfValues(COMMAND_ALIASES);
+module.exports.COMMANDS = new Set(Object.values(COMMAND_ALIASES));
 
 module.exports.DEFAULTS = {
   name: '__command__',
