@@ -156,7 +156,7 @@ Note: You may also need a `Promise` polyfill for IE11.
 
 ## Authors
 
-- Colin Gourlay ([gourlay.colin@abc.net.au](mailto:gourlay.colin@abc.net.au))
+- Colin Gourlay
 - Simon Elvery ([elvery.simon@abc.net.au](mailto:elvery.simon@abc.net.au))
 - Joshua Byrd ([byrd.joshua@abc.net.au](mailto:byrd.joshua@abc.net.au))
 - Nathan Hoad

@@ -12,7 +12,7 @@ const { combine } = require('../utils/structures');
 const { getProjectConfig } = require('./project');
 const { info } = require('../utils/logging');
 const { MESSAGES } = require('../cli/serve/constants');
-const {INTERNAL_TEST_HOST} = require('../constants')
+const { INTERNAL_TEST_HOST } = require('../constants');
 
 const HOME_DIR = homedir();
 const SSL_DIR = '.aunty/ssl';
@@ -38,10 +38,10 @@ const addEnvironmentVariables = config => {
 
 const getSSLPath = (module.exports.getSSLPath = (host, name) => join(HOME_DIR, SSL_DIR, host, name || '.'));
 
-/*
-Set config.https to cert & key generated with `aunty sign-cert` (if they both exist)
-We expect them to be in: ~/.aunty/ssl/<host>/server.{cert|key}
-*/
+/**
+ * Set config.https to cert & key generated with `aunty sign-cert` (if they both exist)
+ * We expect them to be in: ~/.aunty/ssl/<host>/server.{cert|key}
+ */
 const addUserSSLConfig = config => {
   if (config.https === true) {
     try {
@@ -55,13 +55,16 @@ const addUserSSLConfig = config => {
   return config;
 };
 
+/**
+ * Find an open port, or keep incrementing until we get one
+ */
 const findPort = async (port, max = port + 100, host = '0.0.0.0') => {
   return new Promise((resolve, reject) => {
     const socket = new Socket();
 
-    const next = () => {
+    const next = errorType => {
       socket.destroy();
-      info(MESSAGES.port(port));
+      info(MESSAGES.port({ port, errorType }));
       if (port <= max) resolve(findPort(port + 1, max, host));
       else reject(new Error('Could not find an available port'));
     };
@@ -72,7 +75,7 @@ const findPort = async (port, max = port + 100, host = '0.0.0.0') => {
     };
 
     // Port is taken if connection can be made
-    socket.once('connect', next);
+    socket.once('connect', () => next('in use'));
 
     // Port is open if connection attempt times out
     socket.setTimeout(500);
@@ -84,8 +87,8 @@ const findPort = async (port, max = port + 100, host = '0.0.0.0') => {
       if (e.code === 'ECONNREFUSED') {
         found();
       } else {
-        // Not sure what to do with other errors, so keep seeking a free port.
-        next();
+        // Not sure what to do with other errors. Log the code & keep seeking a free port.
+        next(`error code ${e.code}`);
       }
     });
 
