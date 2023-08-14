@@ -25,10 +25,16 @@ const argv = {
   '--': []
 };
 
+/** The .jest-test-projects folder in the aunty project root where all our test projects will be generated/built */
+const tempRoot = path.resolve(__dirname, '../.jest-test-projects/');
+
 /**
  * same as rm -rf, supressing errors if the file doesn't exist
  */
 async function rmRecursive(rootPath) {
+  if (rootPath.slice(0, tempRoot.length) !== tempRoot) {
+    throw new Error('Root path must be a child of the tests root folder');
+  }
   try {
     await fs.rm(rootPath, { recursive: true });
   } catch (e) {
@@ -38,20 +44,18 @@ async function rmRecursive(rootPath) {
   }
 }
 
-const examplesRoot = path.resolve(__dirname, './example-projects/');
-
 // clean and create working directory
 beforeAll(async () => {
   jest.setTimeout(5 * 60 * 1000);
-  await rmRecursive(examplesRoot);
-  await fs.mkdir(examplesRoot);
+  await rmRecursive(tempRoot);
+  await fs.mkdir(tempRoot);
 });
 
 // Reset mocks
 const oldEnv = process.env.NODE_ENV;
 afterAll(async () => {
   process.env.NODE_ENV = oldEnv;
-  await rmRecursive(examplesRoot);
+  await rmRecursive(tempRoot);
 });
 
 ['basic', 'react', 'preact', 'svelte'].forEach(template => {
@@ -66,7 +70,9 @@ afterAll(async () => {
               hasTypescript ? 'typescript' : 'js',
               hasOdyssey ? 'odyssey' : 'standalone'
             ].join('-');
-            const generatedProjectRoot = path.join(examplesRoot, projectName);
+
+            /** The path of the generated project inside the tempRoot folder */
+            const generatedProjectRoot = path.join(tempRoot, projectName);
 
             beforeEach(() => {
               // Generate is largely limited by npm & network speed.
@@ -89,14 +95,19 @@ afterAll(async () => {
 
               global.auntyYeomanAnswers = answers;
               await rmRecursive(generatedProjectRoot);
-              process.chdir(examplesRoot);
+              process.chdir(tempRoot);
+
+              // Generate the new project. If this fails, this promise will throw.
               await _testGenerate(argv);
               delete global.auntyYeomanAnswers;
             });
 
             it('should build the generated project', async () => {
               process.chdir(generatedProjectRoot);
+
+              // If the build fails for any reason this will throw.
               await _testBuild(argv);
+
               const fileList = await fs.readdir(path.join(generatedProjectRoot, '.aunty/build'));
 
               // Other files may exist in the fileList but this should be enough of a smoke test
