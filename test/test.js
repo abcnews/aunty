@@ -46,7 +46,11 @@ async function rmRecursive(rootPath) {
 
 // clean and create working directory
 beforeAll(async () => {
+  // Generate is largely limited by npm & network speed.
+  // Sometimes it's only a few seconds, sometimes it's minutes.
   jest.setTimeout(5 * 60 * 1000);
+
+  // Clean everything up
   await rmRecursive(tempRoot);
   await fs.mkdir(tempRoot);
 });
@@ -54,6 +58,7 @@ beforeAll(async () => {
 // Reset mocks
 const oldEnv = process.env.NODE_ENV;
 afterAll(async () => {
+  // Clean everything up
   process.env.NODE_ENV = oldEnv;
   await rmRecursive(tempRoot);
 });
@@ -75,8 +80,7 @@ afterAll(async () => {
             const generatedProjectRoot = path.join(tempRoot, projectName);
 
             beforeEach(() => {
-              // Generate is largely limited by npm & network speed.
-              // Sometimes it's only a few seconds, sometimes it's minutes.
+              // We must be in development mode to install devDependencies
               process.env.NODE_ENV = 'development';
 
               // Clear memoised functions between runs, otherwise weird things happen
