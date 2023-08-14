@@ -31,12 +31,12 @@ const tempRoot = path.resolve(__dirname, '../.jest-test-projects/');
 /**
  * same as rm -rf, supressing errors if the file doesn't exist
  */
-async function rmRecursive(rootPath) {
-  if (rootPath.slice(0, tempRoot.length) !== tempRoot) {
+async function rmRecursive(pathToDelete) {
+  if (!pathToDelete.startsWith(tempRoot)) {
     throw new Error('Root path must be a child of the tests root folder');
   }
   try {
-    await fs.rm(rootPath, { recursive: true });
+    await fs.rm(pathToDelete, { recursive: true });
   } catch (e) {
     if (!e.message.includes('ENOENT')) {
       throw e;
