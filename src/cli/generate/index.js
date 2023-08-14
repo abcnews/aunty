@@ -33,7 +33,7 @@ const generate = async argv => {
   // If we're in a test environment, insert the auto adapter with the provided answers
   const env = global.auntyYeomanAnswers
     ? yeoman.createEnv([], {}, new (require('yeoman-automation-adapter').AutoAdapter)(global.auntyYeomanAnswers, true))
-    : yeoman.createEnv;
+    : yeoman.createEnv();
 
   // Register the generator
 

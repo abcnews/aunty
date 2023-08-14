@@ -4,7 +4,6 @@ const { join } = require('path');
 
 // External
 const importLazy = require('import-lazy')(require);
-const guessRootPath = importLazy('guess-root-path');
 const mem = require('mem');
 
 // Ours
@@ -12,6 +11,7 @@ const { hvy } = require('../utils/color');
 const { pretty } = require('../utils/logging');
 const { combine } = require('../utils/structures');
 const { PROJECT_CONFIG_FILE_NAME } = require('../constants');
+const guessRootPath = importLazy('../utils/guessRootPath');
 
 function ensureProjectConfigShape(x) {
   return typeof x === 'object' ? x : typeof x === 'string' ? { type: x } : {};

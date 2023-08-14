@@ -7,6 +7,9 @@ const { getBuildConfig } = require('../src/config/build');
 const { getBabelConfig } = require('../src/config/babel');
 const { getProjectConfig } = require('../src/config/project');
 
+/**
+ * Magic argv. You can get this by console.logging from the running app
+ */
 const argv = {
   _: ['project'],
   dry: false,
@@ -21,17 +24,6 @@ const argv = {
   a: false,
   '--': []
 };
-
-let oldCwd = process.cwd;
-let oldEnv = process.env.NODE_ENV;
-/**
- * Mocks the working directory. Same as `cd newCwd`
- */
-function mockCwd(newCwd) {
-  process.cwd = function () {
-    return newCwd;
-  };
-}
 
 /**
  * same as rm -rf, supressing errors if the file doesn't exist
@@ -50,19 +42,21 @@ const examplesRoot = path.resolve(__dirname, './example-projects/');
 
 // clean and create working directory
 beforeAll(async () => {
+  jest.setTimeout(5 * 60 * 1000);
   await rmRecursive(examplesRoot);
   await fs.mkdir(examplesRoot);
 });
 
 // Reset mocks
+const oldEnv = process.env.NODE_ENV;
 afterAll(async () => {
-  process.cwd = oldCwd;
   process.env.NODE_ENV = oldEnv;
   await rmRecursive(examplesRoot);
 });
+
 ['basic', 'react', 'preact', 'svelte'].forEach(template => {
   describe(`${template} project`, () => {
-    [(true, false)].forEach(hasTypescript => {
+    [true, false].forEach(hasTypescript => {
       describe(hasTypescript ? 'with typescript' : 'without typescript', () => {
         [false, true].forEach(hasOdyssey => {
           describe(hasOdyssey ? 'with odyssey' : 'without odyssey', () => {
@@ -74,13 +68,12 @@ afterAll(async () => {
             ].join('-');
             const generatedProjectRoot = path.join(examplesRoot, projectName);
 
-            beforeAll(async () => {
-              jest.setTimeout(60 * 1000);
-              process.env.NODE_ENV = 'production';
-            });
-
-            // Clear memoised functions between runs, otherwise weird things happen
             beforeEach(() => {
+              // Generate is largely limited by npm & network speed.
+              // Sometimes it's only a few seconds, sometimes it's minutes.
+              process.env.NODE_ENV = 'development';
+
+              // Clear memoised functions between runs, otherwise weird things happen
               mem.clear(getBuildConfig);
               mem.clear(getBabelConfig);
               mem.clear(getProjectConfig);
@@ -96,21 +89,20 @@ afterAll(async () => {
 
               global.auntyYeomanAnswers = answers;
               await rmRecursive(generatedProjectRoot);
-              mockCwd(examplesRoot);
+              process.chdir(examplesRoot);
               await _testGenerate(argv);
               delete global.auntyYeomanAnswers;
             });
 
             it('should build the generated project', async () => {
-              mockCwd(generatedProjectRoot);
+              process.chdir(generatedProjectRoot);
               await _testBuild(argv);
               const fileList = await fs.readdir(path.join(generatedProjectRoot, '.aunty/build'));
 
+              // Other files may exist in the fileList but this should be enough of a smoke test
               expect(fileList.includes('index.html'));
               expect(fileList.includes('index.js'));
               expect(fileList.includes('index.js.map'));
-
-              // Other files may exist in the fileList but this should be enough of a smoke test
             });
           });
         });
