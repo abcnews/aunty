@@ -6,3 +6,6 @@ npm-debug.log
 
 # misc
 .DS_Store
+
+# jest temporary folder
+.jest-test-projects
