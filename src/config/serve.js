@@ -86,6 +86,16 @@ const findPort = async (port, max = port + 100, host = '0.0.0.0') => {
       // If the connection is refused, it's assumed nothing is listening and the port is available.
       if (e.code === 'ECONNREFUSED') {
         found();
+      } else if (e.code === 'ENOTFOUND' && e.syscall === 'getaddrinfo' && e.hostname?.includes(INTERNAL_SUFFIX)) {
+        console.error(
+          [
+            'Could not resolve hostname ' + e.hostname,
+            'You appear to be on the ABC network without a hostname attached to your computer.',
+            "Aunty can't continue. Consider reconnecting, or add your hostname to your hosts file.",
+            ''
+          ].join('\n')
+        );
+        process.exit(1);
       } else {
         // Not sure what to do with other errors. Log the code & keep seeking a free port.
         next(`error code ${e.code}`);
