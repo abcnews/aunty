@@ -217,7 +217,7 @@ Shorthand examples (assuming xyz is your project name):
         break;
       case 'svelte':
         devDependencies.push('@testing-library/svelte');
-        dependencies.push('svelte');
+        dependencies.push('svelte@4');
         break;
       default:
         break;
