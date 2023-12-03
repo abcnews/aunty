@@ -1,6 +1,5 @@
 // Ours
 const { cmd, hvy, opt, req, sec } = require('../../utils/color');
-const { setOfValues } = require('../../utils/structures');
 
 module.exports.OPTIONS = {
   boolean: ['announce'],
@@ -14,7 +13,7 @@ const GENERATOR_ALIASES = (module.exports.GENERATOR_ALIASES = {
   p: 'project'
 });
 
-module.exports.GENERATORS = setOfValues(GENERATOR_ALIASES);
+module.exports.GENERATORS = new Set(Object.values(GENERATOR_ALIASES));
 
 module.exports.MESSAGES = {
   generatorDoesNotExist: name => `The generator '${name}' does not exist.`,

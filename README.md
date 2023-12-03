@@ -120,7 +120,7 @@ If you don't need to override any of the project defaults, your entire aunty con
 | `hasBundleAnalysis` | `false`       | Setting this to true will spin up a second server on another port, allowing you to inspect your bundle. The address will be logged to the console when the dev server starts.                                                                  |
 | `host`              | `"localhost"` | The hostname of your dev server. If you're on the ABC internal network, the default will change to your machine's hostname (`ws<number>.aus.aunty.abc.net.au`). The `AUNTY_HOST` environment variable, if present, will override this setting. |
 | `hot`               | `true`        | Should the dev server enable hot reloading. If `NODE_ENV !== "development"`, the default will change to `false`.                                                                                                                               |
-| `https`             | `true`        | Should the dev server use SSL (with a self-signed certificate matching the `host`). You can alternatively supply your own `{cert: string, key: string}` object if you've generated your certificate some other way.                             |
+| `https`             | `true`        | Should the dev server use SSL (with a self-signed certificate matching the `host`). You can alternatively supply your own `{cert: string, key: string}` object if you've generated your certificate some other way.                            |
 | `port`              | `8000`        | The port number of your dev server. If the port specified is unavailable, **aunty** will try incrementing the port number until it finds an available one. The `AUNTY_PORT` environment variable, if present, will override this setting.      |
 
 #### `deploy` config properties
@@ -142,21 +142,9 @@ You _could_ also specify `type` (`"ftp"`/`"ssh"`), `host`, `port`, `username` & 
 
 Aunty comes with a few basic generators. Run `aunty generate --help` for the full list, or `aunty generate <generator> --help` for further details.
 
-### Async/await
-
-One way to add `async`/`await` and generators/`yield` to your project is with the [`regenerator-runtime`](https://www.npmjs.com/package/regenerator-runtime) package.
-
-`npm install regenerator-runtime` and then:
-
-```js
-import 'regenerator-runtime/runtime';
-```
-
-Note: You may also need a `Promise` polyfill for IE11.
-
 ## Authors
 
-- Colin Gourlay ([gourlay.colin@abc.net.au](mailto:gourlay.colin@abc.net.au))
+- Colin Gourlay
 - Simon Elvery ([elvery.simon@abc.net.au](mailto:elvery.simon@abc.net.au))
 - Joshua Byrd ([byrd.joshua@abc.net.au](mailto:byrd.joshua@abc.net.au))
 - Nathan Hoad

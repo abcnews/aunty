@@ -1,6 +1,6 @@
 {
   "name": "@abcnews/aunty",
-  "version": "14.0.0",
+  "version": "14.0.2",
   "description": "A toolkit for working with ABC News projects",
   "repository": "abcnews/aunty",
   "license": "MIT",
@@ -12,7 +12,8 @@
   ],
   "scripts": {
     "postinstall": "node scripts/postinstall.js",
-    "release": "release-it"
+    "release": "release-it",
+    "test": "jest test/test.js"
   },
   "files": [
     "assets",
@@ -94,6 +95,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^7.7.0",
     "eslint-config-prettier": "^8.2.0",
-    "release-it": "^15.1.4"
+    "release-it": "^15.1.4",
+    "yeoman-automation-adapter": "^2.0.0"
   }
 }
