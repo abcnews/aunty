@@ -54,6 +54,7 @@ beforeAll(async () => {
   await rmRecursive(tempRoot);
   await fs.mkdir(tempRoot);
 
+  // Link local aunty to global
   const linkOutput = execSync('npm link');
   console.log('Running: npm link', linkOutput.toString());
 });
@@ -111,6 +112,8 @@ afterAll(async () => {
 
             it('should build the generated project', async () => {
               process.chdir(generatedProjectRoot);
+
+              // execSync will throw on non-zero exit code
 
               {
                 const output = execSync('npm link @abcnews/aunty');
