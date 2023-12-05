@@ -10,7 +10,7 @@ jobs:
       - name: Test using Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '20'
+          node-version: '16'
       - run: npm install
       - run: npm test
 
