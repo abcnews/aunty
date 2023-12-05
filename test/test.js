@@ -109,12 +109,9 @@ afterAll(async () => {
             it('should build the generated project', async () => {
               process.chdir(generatedProjectRoot);
 
-              try {
-                let output = execSync('npx aunty build');
-                console.log(output.toString());
-              } catch (error) {
-                console.error(error.stdout.toString());
-              }
+              // Should throw an error on non-zero exit code
+              let output = execSync('npx aunty build');
+              console.log(output.toString());
 
               const fileList = await fs.readdir(path.join(generatedProjectRoot, '.aunty/build'));
 
