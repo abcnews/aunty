@@ -53,6 +53,9 @@ beforeAll(async () => {
   // Clean everything up
   await rmRecursive(tempRoot);
   await fs.mkdir(tempRoot);
+
+  const linkOutput = execSync('npm link');
+  console.log('Running: npm link', linkOutput.toString());
 });
 
 // Reset mocks
@@ -109,9 +112,15 @@ afterAll(async () => {
             it('should build the generated project', async () => {
               process.chdir(generatedProjectRoot);
 
-              // Should throw an error on non-zero exit code
-              let output = execSync('npx aunty build');
-              console.log(output.toString());
+              {
+                const output = execSync('npm link @abcnews/aunty');
+                console.log('Running: npm link @abcnews/aunty', output.toString());
+              }
+
+              {
+                const output = execSync('npx aunty build');
+                console.log('Running: npx aunty build', output.toString());
+              }
 
               const fileList = await fs.readdir(path.join(generatedProjectRoot, '.aunty/build'));
 
