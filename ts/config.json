@@ -14,7 +14,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "strictNullChecks": true
