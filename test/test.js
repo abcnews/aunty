@@ -63,22 +63,11 @@ afterAll(async () => {
   await rmRecursive(tempRoot);
 });
 
-[
-  'basic'
-  // 'react',
-  // 'preact',
-  // 'svelte'
-].forEach(template => {
+['basic', 'react', 'preact', 'svelte'].forEach(template => {
   describe(`${template} project`, () => {
-    [
-      true
-      //  false
-    ].forEach(hasTypescript => {
+    [true, false].forEach(hasTypescript => {
       describe(hasTypescript ? 'with typescript' : 'without typescript', () => {
-        [
-          false
-          // true
-        ].forEach(hasOdyssey => {
+        [false, true].forEach(hasOdyssey => {
           describe(hasOdyssey ? 'with odyssey' : 'without odyssey', () => {
             const projectName = [
               'project',
