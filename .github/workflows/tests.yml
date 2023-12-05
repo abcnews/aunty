@@ -10,7 +10,7 @@ jobs:
       - name: Test using Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts'
+          node-version: '18'
       - run: npm install
       - run: npm test
 
