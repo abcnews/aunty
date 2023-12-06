@@ -1,8 +1,8 @@
-const { _testBuild } = require('../src/cli/build');
 const { _testGenerate } = require('../src/cli/generate');
 const path = require('path');
 const fs = require('fs/promises');
 const mem = require('mem');
+const { execSync } = require('child_process');
 const { getBuildConfig } = require('../src/config/build');
 const { getBabelConfig } = require('../src/config/babel');
 const { getProjectConfig } = require('../src/config/project');
@@ -53,6 +53,10 @@ beforeAll(async () => {
   // Clean everything up
   await rmRecursive(tempRoot);
   await fs.mkdir(tempRoot);
+
+  // Link local aunty to global
+  const linkOutput = execSync('npm link');
+  console.log('Running: npm link', linkOutput.toString());
 });
 
 // Reset mocks
@@ -109,8 +113,17 @@ afterAll(async () => {
             it('should build the generated project', async () => {
               process.chdir(generatedProjectRoot);
 
-              // If the build fails for any reason this will throw.
-              await _testBuild(argv);
+              // execSync will throw on non-zero exit code
+
+              {
+                const output = execSync('npm link @abcnews/aunty');
+                console.log('Running: npm link @abcnews/aunty', output.toString());
+              }
+
+              {
+                const output = execSync('npx aunty build');
+                console.log('Running: npx aunty build', output.toString());
+              }
 
               const fileList = await fs.readdir(path.join(generatedProjectRoot, '.aunty/build'));
 

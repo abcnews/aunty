@@ -6,9 +6,10 @@
   "license": "MIT",
   "contributors": [
     "Colin Gourlay <gourlay.colin@abc.net.au>",
-    "Nathan Hoad <hoad.nathan@abc.net.au>",
     "Simon Elvery <elvery.simon@abc.net.au>",
-    "Joshua Byrd <byrd.joshua@abc.net.au>"
+    "Joshua Byrd <byrd.joshua@abc.net.au>",
+    "Ash Kyd <kyd.ashley@abc.net.au>",
+    "Nathan Hoad"
   ],
   "scripts": {
     "postinstall": "node scripts/postinstall.js",
@@ -92,6 +93,7 @@
     "yeoman-generator": "^5.2.0"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.10",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.7.0",
     "eslint-config-prettier": "^8.2.0",
