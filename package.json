@@ -6,9 +6,10 @@
   "license": "MIT",
   "contributors": [
     "Colin Gourlay <gourlay.colin@abc.net.au>",
-    "Nathan Hoad <hoad.nathan@abc.net.au>",
     "Simon Elvery <elvery.simon@abc.net.au>",
-    "Joshua Byrd <byrd.joshua@abc.net.au>"
+    "Joshua Byrd <byrd.joshua@abc.net.au>",
+    "Ash Kyd <kyd.ashley@abc.net.au>",
+    "Nathan Hoad"
   ],
   "scripts": {
     "postinstall": "node scripts/postinstall.js",
