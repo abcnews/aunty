@@ -227,7 +227,7 @@ function createWebpackConfig({ isModernJS } = {}) {
             }
           },
           {
-            test: /\.(jpg|png|gif|mp4|m4v|flv|mp3|wav|m4a|eot|ttf|woff|woff2)$/,
+            test: /\.(jpg|png|gif|mp4|m4v|flv|mp3|wav|m4a|eot|ttf|woff|woff2|mp4|webm|webp|avif)$/,
             type: 'asset'
           },
           {
