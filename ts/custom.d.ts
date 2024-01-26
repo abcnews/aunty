@@ -103,3 +103,18 @@ declare module '*.html' {
   const html: string;
   export default html;
 }
+
+declare module '*.webp' {
+  const webp: string;
+  export default webp;
+}
+
+declare module '*.webm' {
+  const webm: string;
+  export default webm;
+}
+
+declare module '*.avif' {
+  const avif: string;
+  export default avif;
+}
