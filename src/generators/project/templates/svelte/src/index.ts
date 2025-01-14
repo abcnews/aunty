@@ -3,6 +3,7 @@ import { <% if (isOdyssey) { %>whenOdysseyLoaded<% } else { %>whenDOMReady<% } %
 import { getMountValue, selectMounts } from '@abcnews/mount-utils';<% if (isTS) { %>
 import type { Mount } from '@abcnews/mount-utils';<% } %>
 import App from './components/App/App.svelte';
+import { mount } from 'svelte';
 
 let appMountEl<% if (isTS) { %>: Mount<% } %>;
 let appProps;
@@ -12,7 +13,8 @@ let appProps;
 
   if (appMountEl) {
     appProps = acto(getMountValue(appMountEl));
-    new App({
+    
+    mount(App, {
       target: appMountEl,
       props: appProps
     });

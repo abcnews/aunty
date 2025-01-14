@@ -45,14 +45,7 @@ const PROJECT_TYPES_CONFIG = {
    */
   svelte: config => {
     config.resolve = {
-      // Make sure that only one copy of the Svelte runtime is bundled in the app
-      alias: {
-        svelte: resolve('node_modules', 'svelte/src/runtime')
-      },
-      // Recognise .svelte files
       extensions: [...config.resolve.extensions, '.svelte'],
-      // When using Svelte components installed from npm, use the original component
-      // source code, rather than consuming the already-compiled version
       mainFields: ['svelte', 'browser', 'module', 'main'],
       conditionNames: ['svelte', 'browser', 'import']
     };
@@ -62,31 +55,62 @@ const PROJECT_TYPES_CONFIG = {
 
     include.push(/(node_modules\/svelte)/);
 
-    config.module.rules.push({
-      test: /\.svelte$/,
-      include,
-      use: [
+    // options from https://github.com/sveltejs/svelte-loader
+    config.module.rules.push(
+      ...[
         {
-          loader,
-          options
+          test: /\.svelte\.ts$/,
+          use: [
+            {
+              loader,
+              options
+            },
+            { loader: require.resolve('ts-loader'), options: { transpileOnly: true } },
+            {
+              loader: require.resolve('svelte-loader'),
+              options: {
+                dev: config.mode === 'development',
+                emitCss: extractCSS,
+                preprocess: sveltePreprocess()
+              }
+            }
+          ]
         },
         {
-          loader: require.resolve('svelte-loader'),
+          test: /(?<!\.svelte)\.ts$/,
+          loader: require.resolve('ts-loader'),
           options: {
-            dev: config.mode === 'development',
-            emitCss: extractCSS,
-            preprocess: sveltePreprocess()
+            transpileOnly: true // you should use svelte-check for type checking
+          }
+        },
+        {
+          // Svelte 5+:
+          test: /\.(svelte|svelte\.js)$/,
+          include,
+          use: [
+            {
+              loader,
+              options
+            },
+            {
+              loader: require.resolve('svelte-loader'),
+              options: {
+                dev: config.mode === 'development',
+                emitCss: extractCSS,
+                preprocess: sveltePreprocess()
+              }
+            }
+          ]
+        },
+        {
+          // required to prevent errors from Svelte on Webpack 5+, omit on Webpack 4
+          test: /node_modules\/svelte\/.*\.mjs$/,
+          resolve: {
+            fullySpecified: false
           }
         }
       ]
-    });
-    // Required to prevent errors from Svelte on Webpack 5+
-    config.module.rules.push({
-      test: /node_modules\/svelte\/.*\.mjs$/,
-      resolve: {
-        fullySpecified: false
-      }
-    });
+    );
 
     return config;
   }
