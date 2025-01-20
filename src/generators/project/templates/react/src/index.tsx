@@ -2,7 +2,7 @@ import acto from '@abcnews/alternating-case-to-object';
 import { <% if (isOdyssey) { %>whenOdysseyLoaded<% } else { %>whenDOMReady<% } %> } from '@abcnews/env-utils';
 import { getMountValue, selectMounts } from '@abcnews/mount-utils';
 import React from 'react';
-import { createRoot<% if (isTS) { %>, Root<% } %> } from 'react-dom/client';
+import { createRoot<% if (isTS) { %>, type Root<% } %> } from 'react-dom/client';
 import App from './components/App';<% if (isTS) { %>
 import type { AppProps } from './components/App';<% } %>
 
