@@ -1,4 +1,4 @@
-import { h<% if (isTS) { %>, FunctionalComponent<% } %> } from 'preact';
+import { h<% if (isTS) { %>, type FunctionalComponent<% } %> } from 'preact';
 import Worm from '../Worm';
 import styles from './styles.scss';
 <% if (isTS) { %>
