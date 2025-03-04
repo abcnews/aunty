@@ -5,6 +5,8 @@ import type { Mount } from '@abcnews/mount-utils';<% } %>
 import App from './components/App/App.svelte';
 import { mount } from 'svelte';
 
+import './global.scss';
+
 let appMountEl<% if (isTS) { %>: Mount<% } %>;
 let appProps;
 
