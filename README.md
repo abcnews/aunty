@@ -83,6 +83,16 @@ module.exports = {
 }
 ```
 
+For example to include a package that needs to be pre-processed, include in `aunty.config.js`
+
+```js
+module.exports = {
+  build: {
+    includedDependencies: ["runed"],
+  },
+};
+```
+
 Supported project `type`s (currently: `basic`, `preact`, `react` & `svelte`) have their own default build configuration, but you can override it by extending your project configuration.
 
 The `build`, `serve` and `deploy` properties allow you to override the default settings for those respective commands. Their respective properties (and default values) are documented below.
