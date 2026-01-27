@@ -3,7 +3,10 @@
   "version": "17.0.0-next.0",
   "type": "module",
   "description": "ABC News Digital developer toolkit",
-  "repository": "abcnews/aunty",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abcnews/aunty.git"
+  },
   "license": "MIT",
   "contributors": [
     "Colin Gourlay <gourlay.colin@abc.net.au>",
@@ -26,8 +29,8 @@
     "access": "public"
   },
   "bin": {
-    "aunty": "./dist/bin/aunty.js",
-    "nt": "./dist/bin/aunty.js"
+    "aunty": "dist/bin/aunty.js",
+    "nt": "dist/bin/aunty.js"
   },
   "engines": {
     "node": ">=20"
