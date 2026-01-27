@@ -1,6 +1,7 @@
 {
   "name": "@abcnews/aunty",
   "version": "17.0.0-next.0",
+  "type": "module",
   "description": "ABC News Digital developer toolkit",
   "repository": "abcnews/aunty",
   "license": "MIT",
@@ -21,10 +22,9 @@
     "access": "public"
   },
   "bin": {
-    "aunty": "./dist/aunty.js",
-    "nt": "./dist/aunty.js"
+    "aunty": "./dist/bin/aunty.js",
+    "nt": "./dist/bin/aunty.js"
   },
-  "main": "src/api",
   "engines": {
     "node": ">=20"
   },

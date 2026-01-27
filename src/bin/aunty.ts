@@ -1,3 +1,5 @@
 #!/usr/bin/env node
 
-console.log('Hello world!');
+import * as constants from "~/lib/constants.js";
+
+console.log("Hello world!");
