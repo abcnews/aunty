@@ -13,7 +13,9 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Put your tests here\" && exit 1"
+    "dev": "tsx src/bin/aunty.ts",
+    "test": "echo \"Put your tests here\" && exit 1",
+    "lint": "eslint src"
   },
   "files": [
     "dist"
@@ -29,8 +31,11 @@
     "node": ">=20"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@types/node": "^25.0.10",
     "eslint": "^9.39.2",
-    "typescript": "^5.9.3"
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.54.0"
   }
 }
