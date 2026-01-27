@@ -2,4 +2,4 @@
 
 import * as constants from "~/lib/constants.js";
 
-console.log("Hello world!");
+console.log('Hello from Aunty Next! 🎉');
