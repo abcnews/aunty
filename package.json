@@ -20,7 +20,8 @@
     "test": "echo \"Put your tests here\" && exit 1",
     "lint": "eslint src",
     "clean": "rimraf dist",
-    "prebuild": "npm run clean"
+    "prebuild": "npm run clean",
+    "postinstall": "node dist/scripts/postinstall.js"
   },
   "files": [
     "dist"
@@ -29,19 +30,23 @@
     "access": "public"
   },
   "bin": {
-    "aunty": "dist/bin/aunty.js",
-    "nt": "dist/bin/aunty.js"
+    "aunty": "dist/src/bin/aunty.js",
+    "nt": "dist/src/bin/aunty.js"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.0.10",
     "eslint": "^9.39.2",
     "rimraf": "^6.1.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0"
+  },
+  "dependencies": {
+    "zx": "^8.8.5"
   }
 }
