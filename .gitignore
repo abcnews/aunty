@@ -1,11 +1,8 @@
-# dependencies
+# Dependencies
 node_modules
 
-# logs
-npm-debug.log
-
-# misc
+# Operating system
 .DS_Store
 
-# jest temporary folder
-.jest-test-projects
+# Build output
+dist

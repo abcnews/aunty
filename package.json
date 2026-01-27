@@ -1,104 +1,36 @@
 {
   "name": "@abcnews/aunty",
-  "version": "17.0.0-next.1",
-  "description": "A toolkit for working with ABC News projects",
+  "version": "17.0.0-next.0",
+  "description": "ABC News Digital developer toolkit",
   "repository": "abcnews/aunty",
   "license": "MIT",
   "contributors": [
     "Colin Gourlay <gourlay.colin@abc.net.au>",
     "Simon Elvery <elvery.simon@abc.net.au>",
     "Joshua Byrd <byrd.joshua@abc.net.au>",
-    "Ash Kyd <kyd.ashley@abc.net.au>",
-    "Nathan Hoad"
+    "Ash Kyd <kyd.ashley@abc.net.au>"
   ],
   "scripts": {
-    "postinstall": "node scripts/postinstall.js",
-    "release": "release-it",
-    "test": "jest test/test.js"
+    "build": "tsc",
+    "test": "echo \"Put your tests here\" && exit 1"
   },
   "files": [
-    "assets",
-    "scripts",
-    "src",
-    "ts"
+    "dist"
   ],
   "publishConfig": {
     "access": "public"
   },
   "bin": {
-    "aunty": "src/bin/aunty.js",
-    "nt": "src/bin/aunty.js"
+    "aunty": "./dist/aunty.js",
+    "nt": "./dist/aunty.js"
   },
   "main": "src/api",
   "engines": {
-    "node": ">=16"
-  },
-  "dependencies": {
-    "@babel/core": "^7.11.4",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/plugin-transform-react-jsx": "^7.3.0",
-    "@babel/preset-env": "^7.6.0",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/preset-typescript": "^7.10.4",
-    "await-to-js": "^3.0.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^26.1.0",
-    "babel-loader": "^8.2.2",
-    "basic-ftp": "^5.0.2",
-    "chalk": "^4.1.2",
-    "cli-select": "^1.1.2",
-    "copy-webpack-plugin": "^11.0.0",
-    "css-loader": "^6.7.1",
-    "csv-loader": "^3.0.3",
-    "deepmerge": "^4.0.0",
-    "del": "^6.0.0",
-    "dotenv": "^16.0.3",
-    "dotenv-webpack": "^8.0.1",
-    "execa": "^5.0.0",
-    "fork-ts-checker-webpack-plugin": "^6.2.1",
-    "ftp-deploy": "^2.3.8",
-    "get-all-paths": "^1.0.1",
-    "guess-root-path": "^1.0.0",
-    "i": "^0.3.6",
-    "import-lazy": "^4.0.0",
-    "import-local": "^3.0.2",
-    "jest": "^26.4.1",
-    "load-json-file": "^6.2.0",
-    "log-symbols": "^4.0.0",
-    "make-dir": "^3.0.0",
-    "mem": "^8.1.0",
-    "mini-css-extract-plugin": "^1.4.1",
-    "minimist": "^1.2.5",
-    "node-fetch": "^2.6.0",
-    "ora": "^5.0.0",
-    "pify": "^5.0.0",
-    "prettier": "^2.0.5",
-    "requireg": "^0.2.2",
-    "rsyncwrapper": "^3.0.1",
-    "sass": "^1.96.0",
-    "sass-loader": "^16.0.6",
-    "semver": "^7.3.2",
-    "style-loader": "^2.0.0",
-    "svelte": "^5.17.4",
-    "svelte-loader": "^3.2.4",
-    "svelte-preprocess": "^5.1.1",
-    "tcp-ping-sync": "^1.0.0",
-    "ts-loader": "^9.5.1",
-    "typescript": "^5.3.2",
-    "update-notifier": "^6.0.2",
-    "webpack": "^5.33.2",
-    "webpack-bundle-analyzer": "^4.5.0",
-    "webpack-dev-server": "^4.6.0",
-    "write-json-file": "^4.2.0",
-    "yeoman-environment": "^3.2.0",
-    "yeoman-generator": "^5.2.0"
+    "node": ">=20"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.10",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.7.0",
-    "eslint-config-prettier": "^8.2.0",
-    "release-it": "^15.1.4",
-    "yeoman-automation-adapter": "^2.0.0"
+    "@types/node": "^25.0.10",
+    "eslint": "^9.39.2",
+    "typescript": "^5.9.3"
   }
 }

@@ -1,10 +1,1 @@
-{
-  "extends": ["prettier"],
-  "parser": "babel-eslint",
-  "parserOptions": {
-    "ecmaVersion": 2019,
-    "ecmaFeatures": {
-      "jsx": true
-    }
-  }
-}
+{}
