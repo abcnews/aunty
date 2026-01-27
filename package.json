@@ -15,7 +15,9 @@
     "build": "tsc",
     "dev": "tsx src/bin/aunty.ts",
     "test": "echo \"Put your tests here\" && exit 1",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean"
   },
   "files": [
     "dist"
@@ -34,6 +36,7 @@
     "@eslint/js": "^9.39.2",
     "@types/node": "^25.0.10",
     "eslint": "^9.39.2",
+    "rimraf": "^6.1.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0"
