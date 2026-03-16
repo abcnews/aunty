@@ -20,8 +20,7 @@
     "test": "echo \"Put your tests here\" && exit 1",
     "lint": "eslint src",
     "clean": "rimraf dist",
-    "prebuild": "npm run clean",
-    "postinstall": "node dist/scripts/postinstall.js"
+    "prebuild": "npm run clean"
   },
   "files": [
     "dist"
