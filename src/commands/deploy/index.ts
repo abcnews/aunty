@@ -70,17 +70,12 @@ export async function run(options: DeployOptions = {}) {
   }
 
   // 5. Credential Test & Confirmation
-  const ftpClient = new FtpClient();
-  const spinner = spin("Testing credentials...");
-
+  let ftpClient = new FtpClient();
   try {
-    await ftpClient.connect();
-  } catch (err: any) {
-    spinner.fail("FTP connection failed");
+    await ftpClient.testConnection();
+  } catch (err) {
     return;
   }
-
-  spinner.stop();
 
   const exists = await ftpClient.exists(remoteDir);
 

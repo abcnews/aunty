@@ -2,14 +2,14 @@ import ftp from "basic-ftp";
 import os from "node:os";
 import path from "node:path";
 import { loadJson } from "../../lib/util.ts";
+import { spin } from "../../lib/terminal.ts";
 
 const CREDENTIALS_PATH = path.resolve(os.homedir(), ".abc-credentials");
 
 /**
  * Loads credentials from ~/.abc-credentials
- * @returns The contentftp credentials
  */
-async function getCredentials() {
+async function getCredentials(): Promise<any> {
   const { contentftp } = (await loadJson(CREDENTIALS_PATH)) || {};
   if (!contentftp) {
     throw new Error(
@@ -80,14 +80,6 @@ export class FtpClient {
   }
 
   /**
-   * Upload a single file to a remote path
-   */
-  async uploadFile(localPath: string, remotePath: string) {
-    await this.ensureDir(path.dirname(remotePath));
-    await this.ftpClient.uploadFrom(localPath, remotePath);
-  }
-
-  /**
    * Ensure a remote directory exists (with local caching)
    */
   async ensureDir(remoteDir: string) {
@@ -102,5 +94,21 @@ export class FtpClient {
    */
   close() {
     this.ftpClient.close();
+  }
+
+  /**
+   * Test the FTP connection with a spinner.
+   */
+  async testConnection(): Promise<FtpClient> {
+    const spinner = spin("Testing credentials...");
+
+    try {
+      await this.connect();
+      spinner.stop();
+      return this;
+    } catch (err: any) {
+      spinner.fail(`FTP connection failed: ${err?.message}`);
+      throw err;
+    }
   }
 }
