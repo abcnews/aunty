@@ -7,6 +7,7 @@
 import path from "node:path";
 import { Command } from "commander";
 import { run as runDeploy } from "../commands/deploy/index.ts";
+import { run as runReleaseCheck } from "../commands/release-check/index.ts";
 import { getLogo } from "../lib/terminal.ts";
 import { loadJson } from "../lib/util.ts";
 
@@ -26,12 +27,24 @@ program
   .description("Deploy the project to the content FTP")
   .argument(
     "[destDir]",
-    "Override the target folder name (defaults to version)",
+    "Override the target folder name (defaults to package.json version)",
   )
   .option("-d, --dry-run", "Show what would happen without uploading", false)
   .action(async (destDir, options) => {
     try {
       await runDeploy({ destDir, ...options });
+    } catch (err: any) {
+      console.error(`\n❌ ${err.message}`);
+      process.exit(1);
+    }
+  });
+
+program
+  .command("release-check")
+  .description("Perform pre-release checks (git and FTP)")
+  .action(async (options) => {
+    try {
+      await runReleaseCheck(options);
     } catch (err: any) {
       console.error(`\n❌ ${err.message}`);
       process.exit(1);
