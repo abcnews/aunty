@@ -1,4 +1,4 @@
-import { intro, outro, confirm, log } from "@clack/prompts";
+import { intro, outro, confirm, log, cancel } from "@clack/prompts";
 import path from "node:path";
 import pc from "picocolors";
 import { FtpClient } from "./ftp.ts";
@@ -12,6 +12,7 @@ interface DeployOptions {
   destDir?: string;
   buildDir?: string;
   dryRun?: boolean;
+  force?: boolean;
 }
 
 /**
@@ -40,7 +41,7 @@ export async function run(options: DeployOptions = {}): Promise<number> {
 
   const { name, version } = config;
   if (!name || !version) {
-    log.error("Missing name or version in package.json");
+    cancel("Missing name or version in package.json");
     return 1;
   }
 
@@ -60,14 +61,14 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   try {
     inventory = await getFileInventory(localDir);
   } catch (err) {
-    log.error(
-      `Build directory not found at ${localDir}. Have you run the build command?`,
+    cancel(
+      `Build directory not found at ${pc.cyan(localDir)}. Have you run the build command?`,
     );
     return 1;
   }
 
   if (inventory.length === 0) {
-    log.error(`Build directory is empty! Nothing to deploy.`);
+    cancel(`Build directory is empty! Nothing to deploy.`);
     return 1;
   }
 
@@ -86,12 +87,13 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   try {
     await ftpClient.testConnection();
   } catch (err) {
+    // FtpClient.testConnection() already handles UI feedback via its own spinner
     return 1;
   }
 
   const exists = await ftpClient.exists(remoteDir);
 
-  if (exists) {
+  if (exists && !options.force) {
     // Close the connection before waiting on user input to avoid a socket timeout
     ftpClient.close();
 
@@ -101,14 +103,16 @@ export async function run(options: DeployOptions = {}): Promise<number> {
     });
 
     if (!shouldOverwrite || typeof shouldOverwrite === "symbol") {
-      log.warn("Deploy cancelled.");
+      cancel("Deploy cancelled.");
       return 0;
     }
 
     // Reconnect after the prompt
     await ftpClient.connect();
-  } else {
+  } else if (!exists) {
     await ftpClient.ensureDir(remoteDir);
+  } else if (options.force) {
+    log.info(pc.yellow("Force flag used. Overwriting remote directory."));
   }
 
   const uploadSpinner = spin("Uploading files...");
@@ -117,18 +121,24 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   let currentFile = "";
   const totalFilesStr = inventory.length.toString();
 
-  await ftpClient.uploadDir(localDir, remoteDir, (info) => {
-    if (info.name !== currentFile) {
-      uploadedCount++;
-      currentFile = info.name;
-      const countStr = uploadedCount
-        .toString()
-        .padStart(totalFilesStr.length, " ");
-      uploadSpinner.message(`${countStr}/${totalFilesStr} ${info.name}`);
-    }
-  });
+  try {
+    await ftpClient.uploadDir(localDir, remoteDir, (info) => {
+      if (info.name !== currentFile) {
+        uploadedCount++;
+        currentFile = info.name;
+        const countStr = uploadedCount
+          .toString()
+          .padStart(totalFilesStr.length, " ");
+        uploadSpinner.message(`${countStr}/${totalFilesStr} ${info.name}`);
+      }
+    });
+    uploadSpinner.stop("Upload complete");
+  } catch (err) {
+    uploadSpinner.cancel("Upload failed");
+    ftpClient.close();
+    throw err;
+  }
 
-  uploadSpinner.stop("Upload complete");
   ftpClient.close();
 
   log.info(`${pc.bold("Public URL:")} ${pc.cyan(publicUrl)}`);
