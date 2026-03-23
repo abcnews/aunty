@@ -32,9 +32,10 @@ program
   .option("-d, --dry-run", "Show what would happen without uploading", false)
   .action(async (destDir, options) => {
     try {
-      await runDeploy({ destDir, ...options });
-    } catch (err: any) {
-      console.error(`\n❌ ${err.message}`);
+      process.exit(await runDeploy({ destDir, ...options }));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`\n❌ ${message}`);
       process.exit(1);
     }
   });
@@ -42,11 +43,12 @@ program
 program
   .command("release-check")
   .description("Perform pre-release checks (git and FTP)")
-  .action(async (options) => {
+  .action(async () => {
     try {
-      await runReleaseCheck(options);
-    } catch (err: any) {
-      console.error(`\n❌ ${err.message}`);
+      process.exit(await runReleaseCheck());
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`\n❌ ${message}`);
       process.exit(1);
     }
   });

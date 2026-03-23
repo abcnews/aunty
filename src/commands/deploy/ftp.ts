@@ -9,8 +9,21 @@ const CREDENTIALS_PATH = path.resolve(os.homedir(), ".abc-credentials");
 /**
  * Loads credentials from ~/.abc-credentials
  */
-async function getCredentials(): Promise<any> {
-  const { contentftp } = (await loadJson(CREDENTIALS_PATH)) || {};
+async function getCredentials(): Promise<{
+  host: string;
+  username?: string;
+  password?: string;
+  port?: number;
+}> {
+  const credentials = (await loadJson(CREDENTIALS_PATH)) as {
+    contentftp?: {
+      host: string;
+      username?: string;
+      password?: string;
+      port?: number;
+    };
+  } | null;
+  const contentftp = credentials?.contentftp;
   if (!contentftp) {
     throw new Error(
       `Credentials file not found or missing 'contentftp' at ${CREDENTIALS_PATH}`,
@@ -25,7 +38,7 @@ async function getCredentials(): Promise<any> {
 export class FtpClient {
   private ftpClient: ftp.Client;
   private ensuredDirs: Set<string>;
-  private credentialsPromise: Promise<any>;
+  private credentialsPromise: ReturnType<typeof getCredentials>;
 
   constructor(verbose = false) {
     this.ftpClient = new ftp.Client();
@@ -39,7 +52,9 @@ export class FtpClient {
   /**
    * Connect to the FTP server
    */
-  async connect() {
+  async connect(timeout = 5000) {
+    // @ts-expect-error - basic-ftp context timeout is readonly but allows runtime assignment
+    this.ftpClient.ftp.timeout = timeout;
     const credentials = await this.credentialsPromise;
     await this.ftpClient.access({
       host: credentials.host,
@@ -58,8 +73,8 @@ export class FtpClient {
       const parent = path.dirname(remotePath);
       const name = path.basename(remotePath);
       const list = await this.ftpClient.list(parent);
-      return list.some((item: any) => item.name === name);
-    } catch (err) {
+      return list.some((item) => item.name === name);
+    } catch {
       return false;
     }
   }
@@ -70,7 +85,11 @@ export class FtpClient {
   async uploadDir(
     localDir: string,
     remoteDir: string,
-    onProgress?: (info: any) => void,
+    onProgress?: (info: {
+      name: string;
+      bytes: number;
+      bytesOverall: number;
+    }) => void,
   ) {
     if (onProgress) {
       this.ftpClient.trackProgress(onProgress);
@@ -97,18 +116,26 @@ export class FtpClient {
   }
 
   /**
-   * Test the FTP connection with a spinner.
+   * Test the FTP connection.
    */
-  async testConnection(): Promise<FtpClient> {
-    const spinner = spin("Testing credentials...");
+  async testConnection(
+    timeout = 5000,
+    spinner?: ReturnType<typeof spin>,
+  ): Promise<FtpClient> {
+    const s = spinner || spin("Testing credentials...");
 
     try {
-      await this.connect();
-      spinner.stop();
+      await this.connect(timeout);
+      if (spinner) {
+        s.message("Credentials verified");
+      } else {
+        s.stop("Credentials verified");
+      }
       return this;
-    } catch (err: any) {
-      spinner.fail(`FTP connection failed: ${err?.message}`);
-      throw err;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      s.cancel(`Connection failed: ${message}.`);
+      throw error;
     }
   }
 }

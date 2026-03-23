@@ -1,62 +1,61 @@
+import { intro, outro } from "@clack/prompts";
 import pc from "picocolors";
+import { getHeader, spin } from "../../lib/terminal.ts";
 import { FtpClient } from "../deploy/ftp.ts";
 import * as git from "./git.ts";
 
 /**
  * Release checks that must pass before running an `aunty release`.
  */
-export async function run(options = {}) {
-  console.log(`${pc.bold("Aunty Release Check")}`);
+export async function run(): Promise<number> {
+  intro(getHeader(pc.dim("aunty"), "release-check"));
+
+  const s = spin("Performing pre-release checks...");
 
   // 1. Git Prerelease Checks
-  const gitErrors: string[] = [];
 
   // 1.1 Check git accessibility.
-  // On MacOS the `git` command is behind a paywall and the user must
-  // accept the xcode license agreement before using it. If this isn't
-  // done our commands will return unexpected results. Let's check git -v first.
   if (!(await git.isAccessible())) {
-    gitErrors.push(
-      `Git is not accessible. Please ensure git is installed and any pending licenses (e.g. Xcode) are accepted.`,
+    s.cancel(
+      "Git is not accessible. Please ensure git is installed and any pending licenses (e.g. Xcode) are accepted.",
     );
-  } else {
-    // 1.2 Check for uncommitted changes
-    if (!(await git.isClean())) {
-      gitErrors.push(`You have uncommitted changes.`);
-    }
-
-    // 1.3 Check branch
-    const branch = await git.getBranch();
-    if (branch !== "main") {
-      gitErrors.push(
-        `You are on the ${pc.bold(branch)} branch. Releases must be from ${pc.bold("main")}.`,
-      );
-    }
-
-    // 1.4 Check remote sync
-    if (await git.hasRemote()) {
-      if (await git.isBehindRemote()) {
-        gitErrors.push(`Your local branch is behind the remote.`);
-      }
-    }
+    return 1;
   }
 
-  if (gitErrors.length > 0) {
-    console.log();
-    gitErrors.forEach((error) =>
-      console.error(`${pc.red("[ERROR]")} ${error}`),
+  // 1.2 Check for uncommitted changes
+  if (!(await git.isClean())) {
+    s.cancel("You have uncommitted changes.");
+    return 1;
+  }
+
+  // 1.3 Check branch
+  const branch = await git.getBranch();
+  if (branch !== "main") {
+    s.cancel(
+      `You are on the ${pc.bold(branch)} branch. Releases must be from ${pc.bold("main")}.`,
     );
-    console.log(`${pc.bold(pc.red("Pre-release checks failed."))}`);
-    return;
+    return 1;
+  }
+
+  // 1.4 Check remote sync
+  if (await git.hasRemote()) {
+    if (await git.isBehindRemote()) {
+      s.cancel("Your local branch is behind the remote.");
+      return 1;
+    }
   }
 
   // 2. Check for FTP credentials
+  s.message("Testing FTP connection...");
   try {
-    const ftpClient = await new FtpClient().testConnection();
+    const ftpClient = await new FtpClient().testConnection(5000, s);
     ftpClient.close();
-  } catch (err) {
-    return;
+  } catch {
+    // Spinner cancellation is handled by testConnection
+    return 1;
   }
 
-  console.log(`${pc.bold(pc.green("Pre-release checks passed."))}`);
+  s.stop("Pre-release checks passed");
+  outro(pc.green("Ready for release!"));
+  return 0;
 }
