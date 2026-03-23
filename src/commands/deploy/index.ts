@@ -2,7 +2,7 @@ import { intro, outro, confirm, log } from "@clack/prompts";
 import path from "node:path";
 import pc from "picocolors";
 import { FtpClient } from "./ftp.ts";
-import { loadJson } from "../../lib/util.ts";
+import { loadJson, formatSize } from "../../lib/util.ts";
 import { getHeader, spin } from "../../lib/terminal.ts";
 import { getFileInventory } from "./fs.ts";
 import { BUILD_DIRECTORY_NAME } from "../../lib/constants.ts";
@@ -53,7 +53,7 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   const targetFolder = options.destDir || version;
   const remoteDir = `/www/res/sites/news-projects/${nameSlug}/${targetFolder}/`;
   const publicUrl = `https://www.abc.net.au/res/sites/news-projects/${nameSlug}/${targetFolder}/`;
-  log.info(`${pc.bold("TargetDir:")} ${pc.dim(remoteDir)}`);
+  log.info(`${pc.bold("Remote dir:")} ${pc.dim(remoteDir)}`);
 
   // 4. File Inventory & Size Check
   let inventory;
@@ -71,7 +71,10 @@ export async function run(options: DeployOptions = {}): Promise<number> {
     return 1;
   }
 
-  log.step(`Found ${pc.bold(inventory.length)} files to deploy`);
+  const list = inventory
+    .map((f) => `  ${pc.dim(f.relPath)} (${formatSize(f.size)})`)
+    .join("\n");
+  log.step(`Found ${pc.bold(inventory.length)} files to deploy:\n${list}`);
 
   if (options.dryRun) {
     outro(pc.green("Dry run complete. No files were uploaded."));

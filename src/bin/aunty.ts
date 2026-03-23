@@ -12,7 +12,7 @@ import { getLogo } from "../lib/terminal.ts";
 import { loadJson } from "../lib/util.ts";
 
 const pkgPath = path.join(import.meta.dirname, "../../package.json");
-const pkg = await loadJson(pkgPath);
+const pkg = (await loadJson(pkgPath)) as { version?: string } | null;
 const version = pkg?.version || "0.0.0";
 
 const program = new Command();
