@@ -30,6 +30,7 @@ program
     "Override the target folder name (defaults to package.json version)",
   )
   .option("-d, --dry-run", "Show what would happen without uploading", false)
+  .option("-f, --force", "Overwrite the remote directory if it exists", false)
   .action(async (destDir, options) => {
     try {
       process.exit(await runDeploy({ destDir, ...options }));
