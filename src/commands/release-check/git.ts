@@ -8,7 +8,19 @@ export async function isAccessible(): Promise<boolean> {
   try {
     await $`git --version`.quiet();
     return true;
-  } catch (err) {
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Checks if the current directory is an initialized git repository.
+ */
+export async function isInsideRepo(): Promise<boolean> {
+  try {
+    await $`git rev-parse --is-inside-work-tree`.quiet();
+    return true;
+  } catch {
     return false;
   }
 }
@@ -45,7 +57,7 @@ export async function hasRemote(): Promise<boolean> {
   try {
     await $`git rev-parse --abbrev-ref @{u}`.quiet();
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 }
