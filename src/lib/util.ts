@@ -5,7 +5,9 @@ import pc from "picocolors";
  * Loads and parses a JSON file
  * @param filePath The path to the file
  */
-export async function loadJson<T = unknown>(filePath: string): Promise<T | null> {
+export async function loadJson<T = unknown>(
+  filePath: string,
+): Promise<T | null> {
   try {
     const content = await fs.readFile(filePath, "utf8");
     return JSON.parse(content) as T;
