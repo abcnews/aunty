@@ -8,6 +8,7 @@ import path from "node:path";
 import { Command } from "commander";
 import { run as runDeploy } from "../commands/deploy/index.ts";
 import { run as runReleaseCheck } from "../commands/release-check/index.ts";
+import { run as runCreate } from "../commands/create/index.ts";
 import { getLogo } from "../lib/terminal.ts";
 import { loadJson } from "../lib/util.ts";
 
@@ -34,6 +35,20 @@ program
   .action(async (destDir, options) => {
     try {
       process.exit(await runDeploy({ destDir, ...options }));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`\n❌ ${message}`);
+      process.exit(1);
+    }
+  });
+
+program
+  .command("create")
+  .description("Create a new project from a template")
+  .argument("[destDir]", "Directory to create the project in")
+  .action(async (destDir) => {
+    try {
+      process.exit(await runCreate(destDir));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       console.error(`\n❌ ${message}`);
