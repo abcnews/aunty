@@ -1,7 +1,7 @@
 import { intro, outro } from "@clack/prompts";
 import pc from "picocolors";
 import { getHeader, spin } from "../../lib/terminal.ts";
-import { FtpClient } from "../deploy/ftp.ts";
+import { testFtpConnection } from "../../lib/ftp.ts";
 import * as git from "./git.ts";
 
 /**
@@ -49,13 +49,9 @@ export async function run(): Promise<number> {
 
   // 2. Check for FTP credentials
   s.message("Testing FTP connection...");
-  const ftpClient = new FtpClient();
-  try {
-    await ftpClient.connect(5000);
-    ftpClient.close();
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    errors.push(`FTP connection failed: ${message}`);
+  const { success, error } = await testFtpConnection(5000);
+  if (!success) {
+    errors.push(`FTP connection failed: ${error}`);
   }
 
   if (errors.length > 0) {

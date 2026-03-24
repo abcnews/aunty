@@ -1,8 +1,10 @@
 import ftp from "basic-ftp";
 import os from "node:os";
 import path from "node:path";
-import { loadJson } from "../../lib/util.ts";
-import { spin } from "../../lib/terminal.ts";
+import { loadJson } from "./util.ts";
+import { spin } from "./terminal.ts";
+import { FTP_PROJECTS_PATH } from "./constants.ts";
+import slugify from "slugify";
 
 const CREDENTIALS_PATH = path.resolve(os.homedir(), ".abc-credentials");
 
@@ -139,3 +141,48 @@ export class FtpClient {
     }
   }
 }
+
+/**
+ * Check if a project name is available on the FTP server.
+ * Returns true if available, false if it exists, or "error" if connection fails.
+ */
+export async function isProjectNameAvailable(
+  projectName: string,
+): Promise<boolean | "error"> {
+  const ftpClient = new FtpClient();
+  try {
+    await ftpClient.connect(5000);
+    const nameSlug = (slugify as any)(projectName, { strict: true });
+    const remoteDir = path.join(FTP_PROJECTS_PATH, nameSlug, "/");
+    const exists = await ftpClient.exists(remoteDir);
+    return !exists;
+  } catch {
+    return "error";
+  } finally {
+    ftpClient.close();
+  }
+}
+
+/**
+ * Test the FTP connection and returns success status and optional error message.
+ */
+export async function testFtpConnection(timeout = 5000): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const ftpClient = new FtpClient();
+  try {
+    await ftpClient.connect(timeout);
+    return { success: true };
+  } catch (err: unknown) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
+  } finally {
+    ftpClient.close();
+  }
+}
+
+
+

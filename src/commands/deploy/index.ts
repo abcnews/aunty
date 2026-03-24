@@ -1,11 +1,15 @@
 import { intro, outro, confirm, log, cancel } from "@clack/prompts";
 import path from "node:path";
 import pc from "picocolors";
-import { FtpClient } from "./ftp.ts";
+import { FtpClient } from "../../lib/ftp.ts";
 import { loadJson, formatSize } from "../../lib/util.ts";
 import { getHeader, spin } from "../../lib/terminal.ts";
+import {
+  BUILD_DIRECTORY_NAME,
+  FTP_PROJECTS_PATH,
+  PUBLIC_PROJECTS_URL,
+} from "../../lib/constants.ts";
 import { getFileInventory } from "./fs.ts";
-import { BUILD_DIRECTORY_NAME } from "../../lib/constants.ts";
 import slugify from "slugify";
 
 interface DeployOptions {
@@ -52,15 +56,15 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   );
   const nameSlug = (slugify as any)(name, { strict: true });
   const targetFolder = options.destDir || version;
-  const remoteDir = `/www/res/sites/news-projects/${nameSlug}/${targetFolder}/`;
-  const publicUrl = `https://www.abc.net.au/res/sites/news-projects/${nameSlug}/${targetFolder}/`;
+  const remoteDir = path.join(FTP_PROJECTS_PATH, nameSlug, targetFolder, "/");
+  const publicUrl = `${PUBLIC_PROJECTS_URL}${nameSlug}/${targetFolder}/`;
   log.info(`${pc.bold("Remote dir:")} ${pc.dim(remoteDir)}`);
 
   // 4. File Inventory & Size Check
   let inventory;
   try {
     inventory = await getFileInventory(localDir);
-  } catch (err) {
+  } catch {
     cancel(
       `Build directory not found at ${pc.cyan(localDir)}. Have you run the build command?`,
     );
@@ -73,7 +77,10 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   }
 
   const list = inventory
-    .map((f) => `  ${pc.dim(f.relPath)} (${formatSize(f.size)})`)
+    .map(
+      (f: { relPath: string; size: number }) =>
+        `  ${pc.dim(f.relPath)} (${formatSize(f.size)})`,
+    )
     .join("\n");
   log.step(`Found ${pc.bold(inventory.length)} files to deploy:\n${list}`);
 
@@ -86,7 +93,7 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   const ftpClient = new FtpClient();
   try {
     await ftpClient.testConnection();
-  } catch (err) {
+  } catch {
     // FtpClient.testConnection() already handles UI feedback via its own spinner
     return 1;
   }

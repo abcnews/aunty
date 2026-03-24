@@ -50,10 +50,10 @@
     "typescript-eslint": "^8.54.0"
   },
   "dependencies": {
+    "@clack/prompts": "^1.1.0",
     "async": "^3.2.6",
     "basic-ftp": "^5.2.0",
     "commander": "^14.0.3",
-    "ora": "^9.3.0",
     "picocolors": "^1.1.1",
     "slugify": "^1.6.8",
     "zx": "^8.8.5"
