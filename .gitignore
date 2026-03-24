@@ -9,5 +9,4 @@ dist
 working
 
 # Working templates
-templates/svelte/*/contents/*
 templates/svelte/base/old-aunty-svelte
