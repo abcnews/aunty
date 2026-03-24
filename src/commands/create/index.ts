@@ -61,7 +61,8 @@ export async function run(destDirArg?: string): Promise<number> {
       cancel("Create cancelled.");
       return 0;
     }
-  } else if (!isAvailable) {
+  }
+  if (isAvailable === "exists") {
     const shouldContinue = await confirm({
       message: pc.yellow(
         `Project name "${finalProjectName}" already exists on FTP. Continue?`,
