@@ -143,19 +143,18 @@ export class FtpClient {
 }
 
 /**
- * Check if a project name is available on the FTP server.
- * Returns true if available, false if it exists, or "error" if connection fails.
+ * Checks if a project name already exists on the FTP server.
  */
 export async function isProjectNameAvailable(
   projectName: string,
-): Promise<boolean | "error"> {
+): Promise<"available" | "exists" | "error"> {
   const ftpClient = new FtpClient();
   try {
     await ftpClient.connect(5000);
     const nameSlug = (slugify as any)(projectName, { strict: true });
     const remoteDir = path.join(FTP_PROJECTS_PATH, nameSlug, "/");
     const exists = await ftpClient.exists(remoteDir);
-    return !exists;
+    return exists ? "exists" : "available";
   } catch {
     return "error";
   } finally {
@@ -183,6 +182,3 @@ export async function testFtpConnection(timeout = 5000): Promise<{
     ftpClient.close();
   }
 }
-
-
-

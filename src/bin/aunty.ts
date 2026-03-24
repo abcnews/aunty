@@ -11,6 +11,7 @@ import { run as runReleaseCheck } from "../commands/release-check/index.ts";
 import { run as runCreate } from "../commands/create/index.ts";
 import { getLogo } from "../lib/terminal.ts";
 import { loadJson } from "../lib/util.ts";
+import pc from "picocolors";
 
 const pkgPath = path.join(import.meta.dirname, "../../package.json");
 const pkg = (await loadJson(pkgPath)) as { version?: string } | null;
@@ -33,13 +34,7 @@ program
   .option("-d, --dry-run", "Show what would happen without uploading", false)
   .option("-f, --force", "Overwrite the remote directory if it exists", false)
   .action(async (destDir, options) => {
-    try {
-      process.exit(await runDeploy({ destDir, ...options }));
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      console.error(`\n❌ ${message}`);
-      process.exit(1);
-    }
+    await runDeploy({ destDir, ...options });
   });
 
 program
@@ -47,30 +42,39 @@ program
   .description("Create a new project from a template")
   .argument("[destDir]", "Directory to create the project in")
   .action(async (destDir) => {
-    try {
-      process.exit(await runCreate(destDir));
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      console.error(`\n❌ ${message}`);
-      process.exit(1);
-    }
+    await runCreate(destDir);
+  });
+
+program
+  .command("new", { hidden: true })
+  .description("Alias for create")
+  .argument("[destDir]", "Directory to create the project in")
+  .action(async (destDir) => {
+    await runCreate(destDir);
   });
 
 program
   .command("release-check")
   .description("Perform pre-release checks (git and FTP)")
   .action(async () => {
-    try {
-      process.exit(await runReleaseCheck());
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      console.error(`\n❌ ${message}`);
-      process.exit(1);
-    }
+    await runReleaseCheck();
   });
 
-program.parse(process.argv);
+try {
+  // Start Commander
+  await program.parseAsync(process.argv);
+} catch (err: unknown) {
+  // If Commander throws, print our unhandled exception message
+  if (err instanceof Error) {
+    console.error(`${pc.dim(err.stack)}`);
+  } else {
+    console.error(`${pc.red(pc.bold("Error:"))} ${pc.red(`‘${String(err)}’`)}`);
+  }
 
-if (!process.argv.slice(2).length) {
-  program.outputHelp();
+  console.error(
+    `${pc.red(pc.bold("■ Aunty has encountered an unhandled error."))}
+└ This is likely a bug. Please report it at: ${pc.cyan("https://github.com/abcnews/aunty/issues/new")}`,
+  );
+
+  process.exit(1);
 }
