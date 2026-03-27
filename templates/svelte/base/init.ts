@@ -1,7 +1,7 @@
 import path from "node:path";
 import * as helpers from "../../../src/commands/create/initHelpers.ts";
 
-export async function init({ projectName = "", baseDir = "" }) {
+export async function init({ projectName, baseDir }: helpers.InitOptions) {
   // Copy template to destination
   const contentsDir = path.resolve(import.meta.dirname, "contents");
   await helpers.copyContents(contentsDir, baseDir);
@@ -10,7 +10,7 @@ export async function init({ projectName = "", baseDir = "" }) {
   await helpers.replaceInFile(path.join(baseDir, "index.html"), {
     __AUNTY_NAME_ACTO: projectName.replace(/-/g, ""),
   });
-  await helpers.replaceInFile(path.join(baseDir, "src/main.ts"), {
+  await helpers.replaceInFile(path.join(baseDir, "src/coremedia.ts"), {
     __AUNTY_NAME_ACTO: projectName.replace(/-/g, ""),
   });
   await helpers.replaceInFile(path.join(baseDir, "index.html"), {

@@ -13,6 +13,7 @@ import pc from "picocolors";
 import { $ } from "zx";
 import { getHeader, spin } from "../../lib/terminal.ts";
 import { isProjectNameAvailable } from "../../lib/ftp.ts";
+import type { ProjectTemplate } from "./types.ts";
 import templates from "../../../templates/index.ts";
 
 /**
@@ -86,7 +87,7 @@ export async function run(destDirArg?: string): Promise<number> {
     return 0;
   }
 
-  const selectedProject = projectType as (typeof templates.projects)[0];
+  const selectedProject = projectType as ProjectTemplate;
 
   // 3. Ask questions for patches
   const selectedPatches: string[] = [];

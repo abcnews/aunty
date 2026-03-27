@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Worm from './lib/Worm/Worm.svelte';
+  import Worm from './components/Worm/Worm.svelte';
 </script>
 
 <main>

@@ -11,6 +11,7 @@
     max-width: 320px;
     width: 100%;
     display: inline-block;
+    margin: 5rem 0 0;
 
     :global(svg) {
       width: 100%;

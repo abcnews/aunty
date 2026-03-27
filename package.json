@@ -34,7 +34,7 @@
     "nt": "src/bin/aunty.ts"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

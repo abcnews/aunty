@@ -1,22 +1,10 @@
 import path from "node:path";
 import * as helpers from "../../../src/commands/create/initHelpers.ts";
 
-export async function init({
-  baseDir = "",
-}: {
-  projectName?: string;
-  baseDir?: string;
-}) {
-  const contentsDir = path.resolve(import.meta.dirname, "contents");
-  await helpers.copyContents(contentsDir, baseDir);
-  await helpers.addDependency(
-    baseDir,
-    "@abcnews/svelte-scrollyteller",
-    "^3.0.0",
-  );
-
-  // Thge only Odyssey change is which promise we await
-  await helpers.replaceInFile(path.join(baseDir, "src/main.ts"), {
+export async function init({ baseDir }: helpers.InitOptions) {
+  // Thge only Odyssey change is changing the promise which we await.
+  // This updates the import and the line with the .then().
+  await helpers.replaceInFile(path.join(baseDir, "src/coremedia.ts"), {
     whenDOMReady: "whenOdysseyLoaded",
   });
 

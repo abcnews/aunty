@@ -6,6 +6,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { $ } from "zx";
 import { loadJson } from "../../lib/util.ts";
+import type { InitOptions } from "./types.ts";
+
+export type { InitOptions };
 
 interface PackageJson {
   name?: string;
