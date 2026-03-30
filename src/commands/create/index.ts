@@ -128,9 +128,10 @@ export async function run(destDirArg?: string): Promise<number> {
 
   log.step("Next steps:");
   log.message(
-    [`cd ${finalProjectName}`, "npm run dev"]
-      .map((s, i) => `  ${pc.bold(i + 1)}. ${s}`)
-      .join("\n"),
+    `
+${pc.bold(1)}. cd ${finalProjectName}
+${pc.bold(2)}. npm run dev
+`.trim(),
   );
 
   outro("Happy coding.");
