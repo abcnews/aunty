@@ -24,7 +24,7 @@
     layout={{ resizeInteractive: true }}
   >
     <div class="container">
-      <Worm />
+      <Worm colour={options.colour} />
     </div>
   </Scrollyteller>
 {/if}

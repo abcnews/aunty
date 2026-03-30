@@ -7,15 +7,15 @@ export async function init({ projectName, baseDir }: helpers.InitOptions) {
   await helpers.copyContents(contentsDir, baseDir);
 
   // String replacements
-  await helpers.replaceInFile(path.join(baseDir, "index.html"), {
-    __AUNTY_NAME_ACTO: projectName.replace(/-/g, ""),
-  });
-  await helpers.replaceInFile(path.join(baseDir, "src/coremedia.ts"), {
-    __AUNTY_NAME_ACTO: projectName.replace(/-/g, ""),
-  });
-  await helpers.replaceInFile(path.join(baseDir, "index.html"), {
-    __AUNTY_NAME: projectName,
-  });
+  await helpers.replaceInFiles(
+    baseDir,
+    ["index.html", "src/coremedia.ts", "README.md"],
+    {
+      "__PROJECT_NAME__": projectName,
+      "__PROJECT_NAME_ACTO__": projectName.replace(/-/g, ""),
+      "__PROJECT_TYPE__": "Svelte",
+    },
+  );
 
   // Add metadata to package.json
   const gitUser = await helpers.getGitUser();

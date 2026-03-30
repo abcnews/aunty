@@ -89,22 +89,42 @@ export async function addDependency(
 }
 
 /**
- * Replaces strings in a file.
+ * Replaces strings in a file, relative to a base directory.
  *
- * @param filePath The path to the file
+ * @param baseDir The base directory
+ * @param relPath The relative path to the file
  * @param replacements A record of search/replace terms
  */
 export async function replaceInFile(
-  filePath: string,
+  baseDir: string,
+  relPath: string,
   replacements: Record<string, string>,
 ) {
+  const filePath = path.join(baseDir, relPath);
   let content = await fs.readFile(filePath, "utf-8");
 
   Object.entries(replacements).forEach(([search, replace]) => {
-    content = content.replace(new RegExp(search, "g"), replace);
+    content = content.replaceAll(search, replace);
   });
 
   await fs.writeFile(filePath, content);
+}
+
+/**
+ * Replaces strings in multiple files, relative to a base directory.
+ *
+ * @param baseDir The base directory
+ * @param relPaths An array of relative paths to the files
+ * @param replacements A record of search/replace terms
+ */
+export async function replaceInFiles(
+  baseDir: string,
+  relPaths: string[],
+  replacements: Record<string, string>,
+) {
+  await Promise.all(
+    relPaths.map((relPath) => replaceInFile(baseDir, relPath, replacements)),
+  );
 }
 
 /**

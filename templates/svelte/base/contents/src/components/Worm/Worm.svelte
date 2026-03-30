@@ -1,8 +1,10 @@
 <script lang="ts">
   import wormSrc from './worm.svg?raw';
+  let { colour = '' } = $props();
+  $effect(() => console.log(colour));
 </script>
 
-<div class="worm">
+<div class="worm" class:worm__rainbow={!colour} style="--colour:{colour || 'blue'}">
   {@html wormSrc}
 </div>
 
@@ -10,8 +12,8 @@
   .worm {
     max-width: 320px;
     width: 100%;
-    display: inline-block;
-    margin: 5rem 0 0;
+    display: block;
+    margin: 5rem auto 0;
 
     :global(svg) {
       width: 100%;
@@ -20,10 +22,14 @@
     }
 
     :global(path) {
-      animation: rainbow 5s linear infinite;
+      fill: var(--colour);
+      transition: fill 1s;
     }
   }
 
+  .worm__rainbow :global(path) {
+    animation: rainbow 5s linear infinite;
+  }
   @keyframes rainbow {
     0% {
       fill: hsl(0, 100%, 50%);

@@ -8,7 +8,7 @@ import { mount } from "svelte";
 import App from "./App.svelte";
 import { loadScrollyteller } from "@abcnews/svelte-scrollyteller";
 
-const MARKER_NAME = "__AUNTY_NAME_ACTO";
+const MARKER_NAME = "__PROJECT_NAME_ACTO__";
 
 import { type PanelData } from "./types";
 

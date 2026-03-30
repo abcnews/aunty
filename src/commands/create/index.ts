@@ -13,7 +13,6 @@ import pc from "picocolors";
 import { $ } from "zx";
 import { getHeader, spin } from "../../lib/terminal.ts";
 import { isProjectNameAvailable } from "../../lib/ftp.ts";
-import type { ProjectTemplate } from "./types.ts";
 import templates from "../../../templates/index.ts";
 
 /**
@@ -87,32 +86,9 @@ export async function run(destDirArg?: string): Promise<number> {
     return 0;
   }
 
-  const selectedProject = projectType as ProjectTemplate;
+  const selectedProject = projectType;
 
-  // 3. Ask questions for patches
-  const selectedPatches: string[] = [];
-  if (selectedProject.questions && selectedProject.questions.length > 0) {
-    for (const q of selectedProject.questions) {
-      const answer = await select({
-        message: q.question,
-        options: [
-          { value: true, label: "Yes" },
-          { value: false, label: "No" },
-        ],
-      });
-
-      if (typeof answer === "symbol") {
-        cancel("Operation cancelled.");
-        return 0;
-      }
-
-      if (answer) {
-        selectedPatches.push(q.action);
-      }
-    }
-  }
-
-  // 4. Create directory
+  // 3. Create directory
   if (
     await fs
       .access(projectDest)
@@ -123,32 +99,19 @@ export async function run(destDirArg?: string): Promise<number> {
     return 1;
   }
 
-  const s = spin(`Creating ${pc.bold(finalProjectName)}...`);
-
+  // 4. Run initialization
   try {
-    // 5. Run baseInit
-    await selectedProject.baseInit({
+    const exitCode = await selectedProject.run({
       projectName: finalProjectName,
       baseDir: projectDest,
     });
 
-    // 6. Run selected patches
-    for (const action of selectedPatches) {
-      const patch = selectedProject.patches.find(
-        (p: { name: string }) => p.name === action,
-      );
-      if (patch) {
-        await patch.init({
-          projectName: finalProjectName,
-          baseDir: projectDest,
-        });
-      }
+    if (exitCode !== 0) {
+      return 0;
     }
-
-    s.stop(`Created project ${pc.bold(finalProjectName)}`);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
-    s.cancel(`Failed to create project: ${message}`);
+    cancel(`Failed to create project: ${message}`);
     return 1;
   }
 

@@ -21,13 +21,3 @@ export interface Question {
   question: string;
   action: string;
 }
-
-/**
- * A project template.
- */
-export interface ProjectTemplate {
-  name: string;
-  baseInit: (options: InitOptions) => Promise<void>;
-  patches: Patch[];
-  questions?: Question[];
-}

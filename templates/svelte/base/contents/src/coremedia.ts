@@ -9,7 +9,7 @@ import App from './App.svelte';
 import { mount } from 'svelte';
 
 whenDOMReady.then(() => {
-  const [appMountEl] = selectMounts('interactivefart');
+  const [appMountEl] = selectMounts('__PROJECT_NAME_ACTO__');
 
   if (appMountEl) {
     const appProps = acto(getMountValue(appMountEl));

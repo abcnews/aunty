@@ -54,7 +54,10 @@ export async function run(options: DeployOptions = {}): Promise<number> {
     projectRoot,
     options.buildDir || BUILD_DIRECTORY_NAME,
   );
-  const nameSlug = (slugify as any)(name, { strict: true });
+  const nameSlug = (slugify as unknown as (s: string, o: object) => string)(
+    name,
+    { strict: true },
+  );
   const targetFolder = options.destDir || version;
   const remoteDir = path.join(FTP_PROJECTS_PATH, nameSlug, targetFolder, "/");
   const publicUrl = `${PUBLIC_PROJECTS_URL}${nameSlug}/${targetFolder}/`;

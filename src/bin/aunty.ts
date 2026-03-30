@@ -34,7 +34,7 @@ program
   .option("-d, --dry-run", "Show what would happen without uploading", false)
   .option("-f, --force", "Overwrite the remote directory if it exists", false)
   .action(async (destDir, options) => {
-    await runDeploy({ destDir, ...options });
+    process.exit(await runDeploy({ destDir, ...options }));
   });
 
 program
@@ -42,7 +42,7 @@ program
   .description("Create a new project from a template")
   .argument("[destDir]", "Directory to create the project in")
   .action(async (destDir) => {
-    await runCreate(destDir);
+    process.exit(await runCreate(destDir));
   });
 
 program
@@ -50,14 +50,14 @@ program
   .description("Alias for create")
   .argument("[destDir]", "Directory to create the project in")
   .action(async (destDir) => {
-    await runCreate(destDir);
+    process.exit(await runCreate(destDir));
   });
 
 program
   .command("release-check")
   .description("Perform pre-release checks (git and FTP)")
   .action(async () => {
-    await runReleaseCheck();
+    process.exit(await runReleaseCheck());
   });
 
 try {

@@ -1,7 +1,7 @@
-import svelteIndex from "./svelte/index.ts";
+import svelteRun from "./svelte/index.ts";
 
 const index = {
-  projects: [svelteIndex],
+  projects: [{ name: "Svelte", run: svelteRun }],
 };
 
 export default index;
