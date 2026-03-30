@@ -11,6 +11,7 @@ export async function run(): Promise<number> {
   intro(getHeader(pc.dim("aunty"), "release-check"));
 
   const s = spin("Performing pre-release checks...");
+  /** List of errors blocking release. We check all of these at once for convenience. */
   const errors: string[] = [];
 
   // 1. Git Prerelease Checks

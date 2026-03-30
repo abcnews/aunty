@@ -63,13 +63,13 @@ export async function updatePackageJson(
  *
  * @param dir The directory containing package.json
  * @param name The name of the dependency
- * @param version The version of the dependency (default: "latest")
+ * @param version The version of the dependency (e.g. ^3.0.0)
  * @param isDev Whether to add as devDependencies
  */
 export async function addDependency(
   dir: string,
   name: string,
-  version = "latest",
+  version = "",
   isDev = false,
 ) {
   const pkgPath = path.join(dir, "package.json");
