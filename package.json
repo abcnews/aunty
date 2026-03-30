@@ -45,7 +45,6 @@
     "install": "^0.13.0",
     "npm": "^11.11.1",
     "rimraf": "^6.1.2",
-    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0"
   },
@@ -56,6 +55,7 @@
     "commander": "^14.0.3",
     "picocolors": "^1.1.1",
     "slugify": "^1.6.8",
+    "tsx": "^4.21.0",
     "zx": "^8.8.5"
   }
 }
