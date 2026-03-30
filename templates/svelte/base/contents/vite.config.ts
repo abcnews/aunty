@@ -53,6 +53,9 @@ const getServer = () => {
   };
 };
 
+const isTS = existsSync(join(process.cwd(), 'tsconfig.json'));
+const coremediaEntry = isTS ? 'src/coremedia.ts' : 'src/coremedia.js';
+
 /**
  * Vite plugin to export a CoreMedia-compatible non-module entrypoint to
  * bootstrap the rest of the app as type="module".
@@ -107,7 +110,7 @@ const coremediaPlugin = (): Plugin => {
         if (req.url === '/coremedia.js') {
           res.setHeader('Access-Control-Allow-Origin', '*');
           res.setHeader('Content-Type', 'application/javascript');
-          res.end(getProxyScript('src/coremedia.ts'));
+          res.end(getProxyScript(coremediaEntry));
           return;
         }
         next();
@@ -124,7 +127,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: 'index.html',
-        coremedia: 'src/coremedia.ts'
+        coremedia: coremediaEntry
       },
       output: {
         // entry points don't get hashed so we can use them in future if we need

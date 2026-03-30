@@ -15,6 +15,7 @@ interface PackageJson {
   version?: string;
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
+  scripts?: Record<string, string>;
   [key: string]: unknown;
 }
 
@@ -43,49 +44,37 @@ export async function copyContents(src: string, dest: string) {
 }
 
 /**
- * Updates a package.json file with the provided data.
+ * Edits a package.json file using a callback.
  *
  * @param dir The directory containing package.json
- * @param data The data to merge into package.json
+ * @param callback A function to modify the package object
  */
-export async function updatePackageJson(
+export async function editPackageJson(
   dir: string,
-  data: Record<string, unknown>,
-) {
-  const pkgPath = path.join(dir, "package.json");
-  const pkg = (await loadJson(pkgPath)) || {};
-  const updatedPkg = { ...pkg, ...data };
-  await fs.writeFile(pkgPath, JSON.stringify(updatedPkg, null, 2) + "\n");
-}
-
-/**
- * Adds a dependency to a package.json file.
- *
- * @param dir The directory containing package.json
- * @param name The name of the dependency
- * @param version The version of the dependency (e.g. ^3.0.0)
- * @param isDev Whether to add as devDependencies
- */
-export async function addDependency(
-  dir: string,
-  name: string,
-  version = "",
-  isDev = false,
+  callback: (
+    pkg: PackageJson,
+  ) => Promise<PackageJson | void> | PackageJson | void,
 ) {
   const pkgPath = path.join(dir, "package.json");
   const pkg = ((await loadJson(pkgPath)) as PackageJson) || {};
-  const field = (
-    isDev ? "devDependencies" : "dependencies"
-  ) as keyof PackageJson;
+  const result = await callback(pkg);
+  const finalPkg = result || pkg;
+  await fs.writeFile(pkgPath, JSON.stringify(finalPkg, null, 2) + "\n");
+}
 
-  if (!pkg[field]) {
-    (pkg as Record<string, unknown>)[field] = {};
-  }
-
-  const dependencies = pkg[field] as Record<string, string>;
-  dependencies[name] = version;
-
-  await fs.writeFile(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
+/**
+ * Recursively finds files matching a pattern.
+ *
+ * @param dir The directory to search in
+ * @param pattern The glob pattern to match
+ * @returns An array of absolute file paths
+ */
+export async function findFiles(
+  dir: string,
+  pattern: string,
+): Promise<string[]> {
+  const { glob } = await import("zx");
+  return await glob(pattern, { cwd: dir, absolute: true });
 }
 
 /**

@@ -10,7 +10,7 @@ import { loadScrollyteller } from "@abcnews/svelte-scrollyteller";
 
 const MARKER_NAME = "__PROJECT_NAME_ACTO__";
 
-import { type PanelData } from "./types";
+import { type PanelData } from "./types.ts";
 
 await whenOdysseyLoaded;
 

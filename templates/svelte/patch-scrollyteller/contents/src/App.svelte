@@ -2,7 +2,7 @@
   import Scrollyteller from "@abcnews/svelte-scrollyteller";
   import Worm from "./components/Worm/Worm.svelte";
   import { untrack } from "svelte";
-  import { type PanelData } from "../types";
+  import { type PanelData } from "./types.ts";
 
   interface Panel {
     data: PanelData;
