@@ -23,7 +23,9 @@
     "prebuild": "npm run clean"
   },
   "files": [
-    "dist"
+    "dist",
+    "src",
+    "templates"
   ],
   "publishConfig": {
     "access": "public"
