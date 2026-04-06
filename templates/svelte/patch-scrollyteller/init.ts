@@ -6,12 +6,10 @@ export async function init({ projectName, baseDir }: helpers.InitOptions) {
   const contentsDir = path.resolve(import.meta.dirname, "contents");
   await helpers.copyContents(contentsDir, baseDir);
 
-  await helpers.addDependency(
-    baseDir,
-    "@abcnews/svelte-scrollyteller",
-    "^3.0.0",
-    false,
-  );
+  await helpers.editPackageJson(baseDir, (pkg) => {
+    pkg.dependencies = pkg.dependencies || {};
+    pkg.dependencies["@abcnews/svelte-scrollyteller"] = "^3.0.0";
+  });
 
   // String replacements
   await helpers.replaceInFiles(baseDir, ["index.html", "src/coremedia.ts"], {

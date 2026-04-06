@@ -19,10 +19,12 @@ export async function init({ projectName, baseDir }: helpers.InitOptions) {
 
   // Add metadata to package.json
   const gitUser = await helpers.getGitUser();
-  await helpers.updatePackageJson(baseDir, {
-    name: projectName,
-    license: "MIT",
-    contributors: gitUser ? [gitUser] : [],
-    aunty: { type: "svelte" },
+  await helpers.editPackageJson(baseDir, (pkg) => {
+    Object.assign(pkg, {
+      name: projectName,
+      license: "MIT",
+      contributors: gitUser ? [gitUser] : [],
+      aunty: { type: "svelte" },
+    });
   });
 }
