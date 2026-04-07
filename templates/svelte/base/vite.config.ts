@@ -85,10 +85,10 @@ const coremediaPlugin = (): Plugin => {
 
   return {
     name: 'coremedia-proxy',
-    config(config, { command }) {
+    config(_config, { command }) {
       isBuild = command === 'build';
     },
-    generateBundle(options, bundle) {
+    generateBundle(_options, bundle) {
       if (isBuild) {
         const entry = Object.values(bundle).find(chunk => chunk.type === 'chunk' && chunk.name === 'coremedia');
         if (entry && entry.type === 'chunk') {
