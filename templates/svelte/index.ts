@@ -32,10 +32,11 @@ export default async function run(options: InitOptions) {
   await baseInit(options);
 
   if (projectType === "odyssey") {
+    // patch base to run in odyssey
     await odysseyInit(options);
-  }
-
-  if (projectType === "scrollyteller") {
+  } else if (projectType === "scrollyteller") {
+    // patch base w scrollyteller in Odyssey
+    // scrollyteller already includes the Odyssey patches. Was easier this way.
     await scrollytellerInit(options);
   }
 
