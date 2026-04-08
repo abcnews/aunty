@@ -88,10 +88,10 @@ const coremediaPlugin = (): Plugin => {
 
   return {
     name: 'coremedia-proxy',
-    config(config, { command }) {
+    config(_config, { command }) {
       isBuild = command === 'build';
     },
-    generateBundle(options, bundle) {
+    generateBundle(_options, bundle) {
       if (isBuild) {
         const entry = Object.values(bundle).find(chunk => chunk.type === 'chunk' && chunk.name === 'coremedia');
         if (entry && entry.type === 'chunk') {
@@ -119,23 +119,62 @@ const coremediaPlugin = (): Plugin => {
   };
 };
 
+const ALLOWED_DEV_DOMAINS = ['abc-test.net.au', 'abc-prod.net.au', 'abc.net.au'];
 /**
- * We need this for local development.
+ * A middleware that rejects no-cors mode requests that are not same-origin,
+ * unless they are from a whitelisted ABC domain.
+ *
+ * Cloned and modified from:
+ * https://github.com/vitejs/vite/blob/main/packages/vite/src/node/server/middlewares/rejectNoCorsRequest.ts
  */
-const disableRejectNoCorsPlugin = (): Plugin => ({
-  name: 'disable-reject-no-cors',
+const abcSomeCorsPlugin = (): Plugin => ({
+  name: 'abc-some-cors-plugin',
   configureServer(server) {
-    const stack = (server.middlewares as any).stack;
-    const index = stack.findIndex((m: any) => m.handle.name === 'viteRejectNoCorsRequestMiddleware');
+    const stack = server.middlewares.stack;
+    const index = stack.findIndex(
+      m => typeof m.handle === 'function' && m.handle.name === 'viteRejectNoCorsRequestMiddleware'
+    );
     if (index !== -1) {
       stack.splice(index, 1);
     }
+
+    server.middlewares.use((req, res, next) => {
+      const { headers } = req;
+
+      const isForbiddenNoCorsRequest =
+        headers['sec-fetch-mode'] === 'no-cors' &&
+        headers['sec-fetch-site'] !== 'same-origin' &&
+        headers['sec-fetch-dest'] === 'script';
+
+      if (!isForbiddenNoCorsRequest) {
+        return next();
+      }
+
+      if (headers.referer) {
+        const originHost = new URL(headers.referer).hostname;
+        const isWhitelisted = ALLOWED_DEV_DOMAINS.some(
+          domain => originHost === domain || originHost.endsWith('.' + domain)
+        );
+        if (isWhitelisted) {
+          return next();
+        }
+      }
+
+      // Log the reason for the block to the server console
+      server.config.logger.error(
+        `[abc-some-cors-plugin] Blocked no-cors request for ${req.url} from ${headers.referer || 'unknown origin'}. ` +
+          `Classic scripts from other origins must have 'crossorigin' attribute or be from a whitelisted ABC domain.`
+      );
+
+      res.statusCode = 400;
+      res.end('Unknown referer');
+    });
   }
 });
 
 export default defineConfig({
   base: '',
-  plugins: [svelte(), coremediaPlugin(), disableRejectNoCorsPlugin()],
+  plugins: [svelte(), coremediaPlugin(), abcSomeCorsPlugin()],
   server: getServer(),
   build: {
     rollupOptions: {
