@@ -6,6 +6,7 @@ import {
   confirm,
   log,
   cancel,
+  isCancel,
 } from "@clack/prompts";
 import path from "node:path";
 import fs from "node:fs/promises";
@@ -37,7 +38,7 @@ export async function run(destDirArg?: string): Promise<number> {
       },
     }));
 
-  if (typeof projectName === "symbol") {
+  if (isCancel(projectName)) {
     cancel("Operation cancelled.");
     return 0;
   }
@@ -57,7 +58,7 @@ export async function run(destDirArg?: string): Promise<number> {
       ),
       initialValue: true,
     });
-    if (!shouldContinue || typeof shouldContinue === "symbol") {
+    if (!shouldContinue || isCancel(shouldContinue)) {
       cancel("Create cancelled.");
       return 0;
     }
@@ -69,7 +70,7 @@ export async function run(destDirArg?: string): Promise<number> {
       ),
       initialValue: false,
     });
-    if (!shouldContinue || typeof shouldContinue === "symbol") {
+    if (!shouldContinue || isCancel(shouldContinue)) {
       cancel("Create cancelled.");
       return 0;
     }
@@ -81,7 +82,7 @@ export async function run(destDirArg?: string): Promise<number> {
     options: templates.projects.map((p) => ({ value: p, label: p.name })),
   });
 
-  if (typeof projectType === "symbol") {
+  if (isCancel(projectType)) {
     cancel("Operation cancelled.");
     return 0;
   }

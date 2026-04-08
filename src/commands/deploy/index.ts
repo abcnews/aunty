@@ -1,4 +1,4 @@
-import { intro, outro, confirm, log, cancel } from "@clack/prompts";
+import { intro, outro, confirm, log, cancel, isCancel } from "@clack/prompts";
 import path from "node:path";
 import pc from "picocolors";
 import { FtpClient } from "../../lib/ftp.ts";
@@ -112,7 +112,7 @@ export async function run(options: DeployOptions = {}): Promise<number> {
       initialValue: false,
     });
 
-    if (!shouldOverwrite || typeof shouldOverwrite === "symbol") {
+    if (!shouldOverwrite || isCancel(shouldOverwrite)) {
       cancel("Deploy cancelled.");
       return 0;
     }
