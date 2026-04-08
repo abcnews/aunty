@@ -83,7 +83,7 @@ const coremediaPlugin = (): Plugin => {
 
   cssPaths.forEach(p => crel('link', { rel: 'stylesheet', href: base + p }));
   modulePreloadPaths.forEach(p => crel('link', { rel: 'modulepreload', href: base + p }));
-  crel('script', { type: 'module', src: base + '${entryPath}' });
+  crel('script', { type: 'module', crossorigin:true, src: base + '${entryPath}' });
 })();`;
 
   return {
@@ -119,9 +119,23 @@ const coremediaPlugin = (): Plugin => {
   };
 };
 
+/**
+ * We need this for local development.
+ */
+const disableRejectNoCorsPlugin = (): Plugin => ({
+  name: 'disable-reject-no-cors',
+  configureServer(server) {
+    const stack = (server.middlewares as any).stack;
+    const index = stack.findIndex((m: any) => m.handle.name === 'viteRejectNoCorsRequestMiddleware');
+    if (index !== -1) {
+      stack.splice(index, 1);
+    }
+  }
+});
+
 export default defineConfig({
   base: '',
-  plugins: [svelte(), coremediaPlugin()],
+  plugins: [svelte(), coremediaPlugin(), disableRejectNoCorsPlugin()],
   server: getServer(),
   build: {
     rollupOptions: {
