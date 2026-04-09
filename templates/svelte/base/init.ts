@@ -1,4 +1,6 @@
+import { log } from "@clack/prompts";
 import path from "node:path";
+import fs from "node:fs/promises";
 import * as helpers from "../../../src/commands/create/initHelpers.ts";
 
 export async function init({ projectName, baseDir }: helpers.InitOptions) {
@@ -11,11 +13,25 @@ export async function init({ projectName, baseDir }: helpers.InitOptions) {
     baseDir,
     ["index.html", "src/coremedia.ts", "README.md"],
     {
-      "__PROJECT_NAME__": projectName,
-      "__PROJECT_NAME_ACTO__": projectName.replace(/-/g, ""),
-      "__PROJECT_TYPE__": "Svelte",
+      __PROJECT_NAME__: projectName,
+      __PROJECT_NAME_ACTO__: projectName.replace(/-/g, ""),
+      __PROJECT_TYPE__: "Svelte",
     },
   );
+
+  // Rename _gitignore to .gitignore (npm strips .gitignore from packages)
+  const gitignoreFromPath = path.resolve(baseDir, "_gitignore");
+  const gitignoreToPath = path.resolve(baseDir, ".gitignore");
+  const missingGitignore = await fs.access(gitignoreFromPath).catch(() => true);
+
+  if (missingGitignore) {
+    log.error(
+      "Base template must include a _gitignore file (npm strips .gitignore)",
+    );
+    return 1;
+  }
+
+  await fs.rename(gitignoreFromPath, gitignoreToPath);
 
   // Add metadata to package.json
   const gitUser = await helpers.getGitUser();
