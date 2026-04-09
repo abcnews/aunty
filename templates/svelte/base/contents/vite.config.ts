@@ -53,7 +53,7 @@ const getServer = () => {
   };
 };
 
-const isTS = existsSync(join(process.cwd(), 'tsconfig.json'));
+const isTS = existsSync(join(process.cwd(), 'src/coremedia.ts'));
 const coremediaEntry = isTS ? 'src/coremedia.ts' : 'src/coremedia.js';
 
 /**

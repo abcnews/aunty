@@ -10,20 +10,7 @@ This patch converts a TypeScript-based Svelte project into a plain JavaScript pr
   files to .js.
 - Removes `lang="ts"` and strips types from `<script>` blocks in all `.svelte` files.
 - Updates `index.html` to point to `.js` entry points instead of `.ts`.
-- Deletes TypeScript configuration files:
-  - `tsconfig.json`
-  - `tsconfig.app.json`
-  - `tsconfig.node.json`
-  - `vite-env.d.ts`
+- Retains TypeScript configuration files (`tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json`, `vite-env.d.ts`) to enable JSDoc-based type safety in a plain JavaScript environment.
 
-### Dependencies
-Removes the following from `package.json`:
-- `typescript`
-- `@tsconfig/svelte`
-- `@types/node`
-- `svelte-check`
-- `tslib`
-
-### Scripts
-- Simplifies `dev` and `build` scripts to use plain `vite`.
-- Removes the `check` (svelte-check) script.
+### Dependencies & Scripts
+- Retains TypeScript-related dependencies (`typescript`, `svelte-check`, `tslib`, etc.) and the `check` script so that type checking remains available via CLI or IDE.
