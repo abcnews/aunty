@@ -10,9 +10,17 @@
   </head>
   <body>
     <!-- Add scrollyteller panels for development -->
-    <div id="scrollytellerNAME__PROJECT_NAME_ACTO__1" data-component="Anchor" data-mount="true"></div>
+    <div
+      id="scrollytellerNAME__PROJECT_NAME_ACTO__1"
+      data-component="Anchor"
+      data-mount="true"
+    ></div>
     <p>This is a Svelte Scrollyteller</p>
-    <div id="markCOLOURlimegreen" data-component="Anchor" data-mount="true"></div>
+    <div
+      id="markCOLOURdarkblue"
+      data-component="Anchor"
+      data-mount="true"
+    ></div>
     <p>It should receive marker props (color=limegreen)</p>
     <div id="markCOLOURhotpink" data-component="Anchor" data-mount="true"></div>
     <p>And again (colour=hotpink)</p>
@@ -21,7 +29,7 @@
     <!-- Mock Odyssey's loaded event so *whenOdysseyLoaded* resolves -->
     <script type="text/javascript">
       window.__ODYSSEY__ = { __mock_odyssey: true };
-      window.dispatchEvent(new CustomEvent('odyssey:api'));
+      window.dispatchEvent(new CustomEvent("odyssey:api"));
     </script>
   </body>
 </html>
