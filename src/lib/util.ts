@@ -1,5 +1,7 @@
-import fs from "node:fs/promises";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import pc from "picocolors";
+import type { PackageJson } from "../types.ts";
 
 /**
  * Loads and parses a JSON file
@@ -9,7 +11,7 @@ export async function loadJson<T = unknown>(
   filePath: string,
 ): Promise<T | null> {
   try {
-    const content = await fs.readFile(filePath, "utf8");
+    const content = await readFile(filePath, "utf8");
     return JSON.parse(content) as T;
   } catch {
     return null;
@@ -36,4 +38,25 @@ export function formatSize(bytes: number): string {
   }
 
   return pc.green(formatted);
+}
+/**
+ * Walks up the directory tree to find the nearest package.json.
+ */
+export async function findProjectDetails(
+  startDir: string,
+): Promise<{ root: string; pkg: PackageJson } | null> {
+  let currentDir = startDir;
+
+  while (currentDir !== path.parse(currentDir).root) {
+    const pkgPath = path.join(currentDir, "package.json");
+    const pkg = await loadJson<PackageJson>(pkgPath);
+
+    if (pkg) {
+      return { root: currentDir, pkg };
+    }
+
+    currentDir = path.dirname(currentDir);
+  }
+
+  return null;
 }

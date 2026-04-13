@@ -1,44 +1,14 @@
-import fs from "node:fs/promises";
+import { access } from "node:fs/promises";
 import path from "node:path";
 import { log } from "@clack/prompts";
 import pc from "picocolors";
 import { spin } from "./terminal.ts";
-import { loadJson } from "./util.ts";
-import type { PackageJson } from "../types.ts";
+import { findProjectDetails } from "./util.ts";
 
 /**
  * Standard Vite configuration filenames.
  */
-export const VITE_CONFIG_NAMES = [
-  "vite.config.ts",
-  "vite.config.js",
-  "vite.config.mjs",
-  "vite.config.mts",
-  "vite.config.cjs",
-  "vite.config.cts",
-];
-
-/**
- * Walks up the directory tree to find the nearest package.json.
- */
-export async function findProjectDetails(
-  startDir: string,
-): Promise<{ root: string; pkg: PackageJson } | null> {
-  let currentDir = startDir;
-
-  while (currentDir !== path.parse(currentDir).root) {
-    const pkgPath = path.join(currentDir, "package.json");
-    const pkg = await loadJson<PackageJson>(pkgPath);
-
-    if (pkg) {
-      return { root: currentDir, pkg };
-    }
-
-    currentDir = path.dirname(currentDir);
-  }
-
-  return null;
-}
+export const VITE_CONFIG_NAMES = ["vite.config.ts", "vite.config.js"];
 
 /**
  * Searches for a local Vite configuration file in the project root.
@@ -48,8 +18,7 @@ export async function findLocalViteConfig(
 ): Promise<string | null> {
   for (const name of VITE_CONFIG_NAMES) {
     const configPath = path.join(root, name);
-    const exists = await fs
-      .access(configPath)
+    const exists = await access(configPath)
       .then(() => true)
       .catch(() => false);
     if (exists) return configPath;
@@ -67,8 +36,7 @@ export async function getInternalConfigPath(
     import.meta.dirname,
     `../../templates/${type}/base/vite.config.ts`,
   );
-  const exists = await fs
-    .access(configPath)
+  const exists = await access(configPath)
     .then(() => true)
     .catch(() => false);
   return exists ? configPath : null;
