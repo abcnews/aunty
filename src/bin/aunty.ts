@@ -1,96 +1,42 @@
 #!/usr/bin/env tsx
 
+import { readdir, realpath } from "node:fs/promises";
+import { createRequire } from "node:module";
+import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const filename = fileURLToPath(import.meta.url);
+const require = createRequire(import.meta.url);
+
+console.log(`[aunty] Starting from: ${filename}`);
+
 /**
- * Aunty - ABC News Digital developer toolkit
+ * When running `aunty` globally, check if we're inside a project that
+ * has its own local version of `@abcnews/aunty` installed. If so,
+ * prefer the local version to ensure project-specific behavior.
  */
+const localBinDir = join(process.cwd(), "node_modules/@abcnews/aunty/src/bin");
 
-import path from "node:path";
-import { Command } from "commander";
-import { run as runDeploy } from "../commands/deploy/index.ts";
-import { run as runReleaseCheck } from "../commands/release-check/index.ts";
-import { run as runCreate } from "../commands/create/index.ts";
-import { run as runBuild } from "../commands/build/index.ts";
-import { run as runServe } from "../commands/serve/index.ts";
-import { getLogo } from "../lib/terminal.ts";
-import { loadJson } from "../lib/util.ts";
-import pc from "picocolors";
+let localExecuted = false;
 
-const pkgPath = path.join(import.meta.dirname, "../../package.json");
-const pkg = (await loadJson(pkgPath)) as { version?: string } | null;
-const version = pkg?.version || "0.0.0";
+// Look for any file starting with 'aunty.' (handles both .ts and .js)
+const files = await readdir(localBinDir).catch((_) => []);
+const localFile = files.find((f) => f.startsWith("aunty."));
+const localPath = localFile && resolve(localBinDir, localFile);
 
-const program = new Command();
-
-program
-  .name("aunty")
-  .description(`${getLogo()} ABC News developer toolkit`)
-  .version(version);
-
-program
-  .command("deploy")
-  .description("Deploy the project to the content FTP")
-  .argument(
-    "[destDir]",
-    "Override the target folder name (defaults to package.json version)",
-  )
-  .option("-d, --dry-run", "Show what would happen without uploading", false)
-  .option("-f, --force", "Overwrite the remote directory if it exists", false)
-  .action(async (destDir, options) => {
-    process.exit(await runDeploy({ destDir, ...options }));
-  });
-
-program
-  .command("create")
-  .description("Create a new project from a template")
-  .argument("[destDir]", "Directory to create the project in")
-  .action(async (destDir) => {
-    process.exit(await runCreate(destDir));
-  });
-
-program
-  .command("new", { hidden: true })
-  .description("Alias for create")
-  .argument("[destDir]", "Directory to create the project in")
-  .action(async (destDir) => {
-    process.exit(await runCreate(destDir));
-  });
-
-program
-  .command("release-check")
-  .description("Perform pre-release checks (git and FTP)")
-  .action(async () => {
-    process.exit(await runReleaseCheck());
-  });
-
-program
-  .command("serve")
-  .description("Start a local development server")
-  .action(async () => {
-    await runServe();
-  });
-
-program
-  .command("build")
-  .description("Build the project for production")
-  .action(async () => {
-    process.exit(await runBuild());
-  });
-
-try {
-  // Start Commander
-  await program.parseAsync(process.argv);
-} catch (err: unknown) {
-  // If Commander throws, print our unhandled exception message
-  if (err instanceof Error) {
-    console.error(`${pc.dim(err.stack)}`);
+// if installed in node_modules, execute that version.
+if (localPath && (await realpath(localPath)) !== (await realpath(filename))) {
+  console.log(`[aunty] Local version detected: ${localPath}`);
+  if (localPath.endsWith(".js")) {
+    require(localPath);
   } else {
-    console.error(`${pc.red(pc.bold("Error:"))} ${pc.red(`‘${String(err)}’`)}`);
+    await import(localPath);
   }
+  localExecuted = true;
+}
 
-  console.error(
-    `${pc.red(pc.bold("■ Aunty has encountered an unhandled error."))}
-└ This is likely a bug. Please report it at: ${pc.cyan("https://github.com/abcnews/aunty/issues/new")}`,
-  );
-
-  process.exit(1);
+if (!localExecuted) {
+  // Otherwise keep running this version
+  console.log("[aunty] No local version found, continuing.");
+  await import("./commander.ts");
 }
