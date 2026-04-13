@@ -9,6 +9,8 @@ import { Command } from "commander";
 import { run as runDeploy } from "../commands/deploy/index.ts";
 import { run as runReleaseCheck } from "../commands/release-check/index.ts";
 import { run as runCreate } from "../commands/create/index.ts";
+import { run as runBuild } from "../commands/build/index.ts";
+import { run as runServe } from "../commands/serve/index.ts";
 import { getLogo } from "../lib/terminal.ts";
 import { loadJson } from "../lib/util.ts";
 import pc from "picocolors";
@@ -58,6 +60,20 @@ program
   .description("Perform pre-release checks (git and FTP)")
   .action(async () => {
     process.exit(await runReleaseCheck());
+  });
+
+program
+  .command("serve")
+  .description("Start a local development server")
+  .action(async () => {
+    await runServe();
+  });
+
+program
+  .command("build")
+  .description("Build the project for production")
+  .action(async () => {
+    process.exit(await runBuild());
   });
 
 try {

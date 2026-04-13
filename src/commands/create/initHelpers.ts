@@ -6,18 +6,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { $ } from "zx";
 import { loadJson } from "../../lib/util.ts";
-import type { InitOptions } from "./types.ts";
+import type { PackageJson } from "../../types.ts";
 
-export type { InitOptions };
-
-interface PackageJson {
-  name?: string;
-  version?: string;
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
-  scripts?: Record<string, string>;
-  [key: string]: unknown;
-}
 
 /**
  * Recursively copies contents from one directory to another.

@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import { $ } from "zx";
 import { stripTypeScriptTypes } from "node:module";
 import * as helpers from "../../../src/commands/create/initHelpers.ts";
+import type { InitOptions } from "../../../src/commands/create/types.ts";
 import { spin } from "../../../src/lib/terminal.ts";
 
 /**
@@ -49,7 +50,7 @@ async function processSvelteFile(file: string) {
 /**
  * Strips TypeScript types from project files and converts to plain JavaScript.
  */
-export async function init({ baseDir }: helpers.InitOptions) {
+export async function init({ baseDir }: InitOptions) {
   const s = spin("Converting project to JavaScript");
 
   // 1. Convert .ts to .js
