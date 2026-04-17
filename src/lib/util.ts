@@ -1,0 +1,37 @@
+import fs from "node:fs/promises";
+import pc from "picocolors";
+
+/**
+ * Loads and parses a JSON file
+ * @param filePath The path to the file
+ */
+export async function loadJson<T = unknown>(filePath: string): Promise<T | null> {
+  try {
+    const content = await fs.readFile(filePath, "utf8");
+    return JSON.parse(content) as T;
+  } catch {
+    return null;
+  }
+}
+/**
+ * Format bytes into a human-readable string with color coding.
+ * < 1MB = green
+ * >= 1MB = yellow (orange)
+ */
+export function formatSize(bytes: number): string {
+  const units = ["B", "KB", "MB", "GB"];
+  let unitIndex = 0;
+  let size = bytes;
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+
+  const formatted = `${size.toFixed(1)}${units[unitIndex]}`;
+
+  if (bytes >= 1024 * 1024) {
+    return pc.yellow(formatted);
+  }
+
+  return pc.green(formatted);
+}

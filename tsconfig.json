@@ -7,14 +7,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "baseUrl": "./src",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "paths": {
-      "~/*": [
-        "./*"
-      ]
+      "~/*": ["./*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "scripts/**/*"
-  ]
+  "include": ["src/**/*", "scripts/**/*"]
 }
