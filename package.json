@@ -22,9 +22,6 @@
     "clean": "rimraf dist",
     "prebuild": "npm run clean"
   },
-  "files": [
-    "dist"
-  ],
   "publishConfig": {
     "access": "public"
   },
