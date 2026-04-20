@@ -6,7 +6,7 @@ THIS IS A NEW BRANCH FOR AUNTY@NEXT PLEASE BITE OFF A CHUNK OF WORK AND MERGE IN
 
 ## Developing
 
-Aunty is built using TypeScript, but can be run directly without a build step via `tsx`.
+Aunty is built using TypeScript, but can be run directly without a manual build step because the `bin` is run via tsx. To set up:
 
 1. clone the repo and `npm i`.
 2. run Aunty directly in node with `node . -h` or `node [path to aunty] -h`
