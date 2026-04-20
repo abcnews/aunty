@@ -19,8 +19,8 @@ is untrue/aspirational in the meantime.)
 
 When updating the template, pay special attention to these files which contain Aunty-specific integration logic:
 
-- **`vite.config.ts`**: Essential for coremedia.js, certificates, and solving cross-origin script issues.
-- **`src/coremedia.ts`**: The entry point for CoreMedia content should remain.
+- **`vite.config.ts`**: Essential for es5entry.js, certificates, and solving cross-origin script issues.
+- **`src/index.ts`**: The entry point for your app.
 - **`index.html`**: Contains the logic to load the bootstrapper, be careful not to clobber this.
 
 ### Patch Inheritance

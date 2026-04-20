@@ -12,7 +12,7 @@ export async function init({ projectName, baseDir }: InitOptions) {
   // String replacements
   await helpers.replaceInFiles(
     baseDir,
-    ["index.html", "src/coremedia.ts", "README.md"],
+    ["index.html", "src/index.ts", "README.md"],
     {
       __PROJECT_NAME__: projectName,
       __PROJECT_NAME_ACTO__: projectName.replace(/-/g, ""),

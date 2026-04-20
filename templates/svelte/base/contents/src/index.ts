@@ -1,6 +1,6 @@
 /**
  * @file
- * CoreMedia entrypoint. Creates a non-module coremedia.js in your build.
+ * Entrypoint. Creates a non-module es5entry.js in your build.
  */
 import acto from '@abcnews/alternating-case-to-object';
 import { whenDOMReady } from '@abcnews/env-utils';
