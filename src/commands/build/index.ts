@@ -2,7 +2,7 @@ import { build } from "vite";
 import { intro, log } from "@clack/prompts";
 import pc from "picocolors";
 import { getHeader } from "../../lib/terminal.ts";
-import { resolveProjectConfig, handleViteError } from "../../lib/vite.ts";
+import { resolveProjectConfig, handleViteError } from "../../lib/vite/cliVite.ts";
 
 /**
  * The main entry point for the 'aunty build' command.

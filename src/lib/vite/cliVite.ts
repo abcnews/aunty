@@ -2,8 +2,8 @@ import { access } from "node:fs/promises";
 import path from "node:path";
 import { log } from "@clack/prompts";
 import pc from "picocolors";
-import { spin } from "./terminal.ts";
-import { findProjectDetails } from "./util.ts";
+import { spin } from "../terminal.ts";
+import { findProjectDetails } from "../util.ts";
 
 /**
  * Standard Vite configuration filenames.
@@ -34,7 +34,7 @@ export async function getInternalConfigPath(
 ): Promise<string | null> {
   const configPath = path.resolve(
     import.meta.dirname,
-    `../../templates/${type}/base/vite.config.ts`,
+    `../../../templates/${type}/base/vite.config.ts`,
   );
   const exists = await access(configPath)
     .then(() => true)
