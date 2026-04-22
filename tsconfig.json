@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "baseUrl": "./src",
     "noEmit": true,
+    "allowJs": true,
     "allowImportingTsExtensions": true,
     "paths": {
       "~/*": ["./*"]
