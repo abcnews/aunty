@@ -186,16 +186,26 @@ const abcSomeCorsPlugin = (): Plugin => ({
   },
 });
 
+/**
+ * Application entry points.
+ */
+const rollupInput: Record<string, string> = {
+  "index.html": "index.html",
+  index: entryPoint,
+};
+
+// Add the builder entry point if it exists.
+if (existsSync(join(process.cwd(), "builder/index.html"))) {
+  rollupInput["builder/index.html"] = "builder/index.html";
+}
+
 export default defineConfig({
   base: "",
   plugins: [svelte(), es5EntryPlugin(), abcSomeCorsPlugin()],
   server: getServer(),
   build: {
     rollupOptions: {
-      input: {
-        "index.html": "index.html",
-        index: entryPoint,
-      },
+      input: rollupInput,
       output: {
         // entry points currently get hashed. In the future we will likely
         // want to spit these out into /[name].js so we have a stable /index.js
