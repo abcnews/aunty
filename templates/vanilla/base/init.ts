@@ -1,0 +1,47 @@
+import { log } from "@clack/prompts";
+import path from "node:path";
+import fs from "node:fs/promises";
+import * as helpers from "../../../src/commands/create/initHelpers.ts";
+import type { InitOptions } from "../../../src/commands/create/types.ts";
+
+export async function init({ projectName, baseDir }: InitOptions) {
+  // Copy template to destination
+  const contentsDir = path.resolve(import.meta.dirname, "contents");
+  await helpers.copyContents(contentsDir, baseDir);
+
+  // String replacements
+  // await helpers.replaceInFiles(
+  //   baseDir,
+  //   ["index.html", "src/index.ts", "README.md"],
+  //   {
+  //     __PROJECT_NAME__: projectName,
+  //     __PROJECT_NAME_ACTO__: projectName.replace(/-/g, ""),
+  //     __PROJECT_TYPE__: "Vanilla",
+  //   },
+  // );
+
+  // Rename _gitignore to .gitignore (npm strips .gitignore from packages)
+  const gitignoreFromPath = path.resolve(baseDir, "_gitignore");
+  const gitignoreToPath = path.resolve(baseDir, ".gitignore");
+  const missingGitignore = await fs.access(gitignoreFromPath).catch(() => true);
+
+  if (missingGitignore) {
+    log.error(
+      "Base template must include a _gitignore file (npm strips .gitignore)",
+    );
+    return 1;
+  }
+
+  await fs.rename(gitignoreFromPath, gitignoreToPath);
+
+  // Add metadata to package.json
+  const gitUser = await helpers.getGitUser();
+  await helpers.editPackageJson(baseDir, (pkg) => {
+    Object.assign(pkg, {
+      name: projectName,
+      license: "MIT",
+      contributors: gitUser ? [gitUser] : [],
+      aunty: { type: "vanilla" },
+    });
+  });
+}
