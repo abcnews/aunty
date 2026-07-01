@@ -65,7 +65,6 @@ const PROJECT_TYPES_CONFIG = {
               loader,
               options
             },
-            { loader: require.resolve('ts-loader'), options: { transpileOnly: true } },
             {
               loader: require.resolve('svelte-loader'),
               options: {
@@ -73,7 +72,8 @@ const PROJECT_TYPES_CONFIG = {
                 emitCss: extractCSS,
                 preprocess: sveltePreprocess()
               }
-            }
+            },
+            { loader: require.resolve('ts-loader'), options: { transpileOnly: true } }
           ]
         },
         {
