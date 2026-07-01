@@ -30,10 +30,10 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "src/bin/aunty.ts",
+  "main": "src/bin/aunty.js",
   "bin": {
-    "aunty": "src/bin/aunty.ts",
-    "nt": "src/bin/aunty.ts"
+    "aunty": "src/bin/aunty.js",
+    "nt": "src/bin/aunty.js"
   },
   "engines": {
     "node": ">=24"

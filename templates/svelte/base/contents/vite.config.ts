@@ -53,16 +53,16 @@ const getServer = () => {
   };
 };
 
-const isTS = existsSync(join(process.cwd(), 'src/coremedia.ts'));
-const coremediaEntry = isTS ? 'src/coremedia.ts' : 'src/coremedia.js';
+const isTS = existsSync(join(process.cwd(), 'src/index.ts'));
+const entryPoint = isTS ? 'src/index.ts' : 'src/index.js';
 
 /**
- * Vite plugin to export a CoreMedia-compatible non-module entrypoint to
+ * Vite plugin to export a non-module entrypoint to
  * bootstrap the rest of the app as type="module".
  *
- * /coremedia.js
+ * /es5entry.js
  */
-const coremediaPlugin = (): Plugin => {
+const es5EntryPlugin = (): Plugin => {
   let isBuild = false;
 
   const getProxyScript = (
@@ -87,19 +87,19 @@ const coremediaPlugin = (): Plugin => {
 })();`;
 
   return {
-    name: 'coremedia-proxy',
+    name: 'es5-entry-proxy',
     config(_config, { command }) {
       isBuild = command === 'build';
     },
     generateBundle(_options, bundle) {
       if (isBuild) {
-        const entry = Object.values(bundle).find(chunk => chunk.type === 'chunk' && chunk.name === 'coremedia');
+        const entry = Object.values(bundle).find(chunk => chunk.type === 'chunk' && chunk.name === 'index');
         if (entry && entry.type === 'chunk') {
           const cssPaths = Array.from(entry.viteMetadata?.importedCss || []);
           const modulePreloadPaths = entry.imports;
           this.emitFile({
             type: 'asset',
-            fileName: 'coremedia.js',
+            fileName: 'es5entry.js',
             source: getProxyScript(entry.fileName, cssPaths as string[], modulePreloadPaths)
           });
         }
@@ -107,10 +107,10 @@ const coremediaPlugin = (): Plugin => {
     },
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (req.url === '/coremedia.js') {
+        if (req.url === '/es5entry.js') {
           res.setHeader('Access-Control-Allow-Origin', '*');
           res.setHeader('Content-Type', 'application/javascript');
-          res.end(getProxyScript(coremediaEntry));
+          res.end(getProxyScript(entryPoint));
           return;
         }
         next();
@@ -174,13 +174,13 @@ const abcSomeCorsPlugin = (): Plugin => ({
 
 export default defineConfig({
   base: '',
-  plugins: [svelte(), coremediaPlugin(), abcSomeCorsPlugin()],
+  plugins: [svelte(), es5EntryPlugin(), abcSomeCorsPlugin()],
   server: getServer(),
   build: {
     rollupOptions: {
       input: {
         index: 'index.html',
-        coremedia: coremediaEntry
+        indexEntry: entryPoint
       },
       output: {
         // entry points don't get hashed so we can use them in future if we need
