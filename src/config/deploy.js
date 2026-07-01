@@ -139,3 +139,5 @@ module.exports.addProfileProperties = config => {
 
   return combine(config, profileProps);
 };
+
+module.exports.addKnownProfileProperties = addKnownProfileProperties;

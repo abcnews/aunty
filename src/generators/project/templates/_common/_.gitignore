@@ -1,6 +1,9 @@
 # dependencies
 /node_modules
 
+# environment
+.env
+
 # output
 /<%= OUTPUT_DIRECTORY_NAME %>
 

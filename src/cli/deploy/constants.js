@@ -1,8 +1,4 @@
-// Native
-const { join } = require('path');
-
 // Ours
-const { DEPLOY_FILE_NAME } = require('../../constants');
 const { cmd, hvy, opt, req, sec } = require('../../utils/color');
 const { styleLastSegment } = require('../../utils/text');
 
@@ -38,6 +34,7 @@ module.exports.MESSAGES = {
 
 ${sec('Options')}
 
-  ${opt('-d')}, ${opt('--dry')}  Output the deploy configuration, then exit
+  ${opt('-d')}, ${opt('--dry')}    Output the deploy configuration, then exit
+  ${opt('-f')}, ${opt('--force')}  Do not prompt to overwrite ftp deploy directory ${opt('[default: false]')}
 `
 };

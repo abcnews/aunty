@@ -5,9 +5,7 @@ const del = importLazy('del');
 // Ours
 const { getProjectConfig } = require('../../config/project');
 const { OUTPUT_DIRECTORY_NAME } = require('../../constants');
-const { hvy } = require('../../utils/color');
 const { dry, info, spin } = require('../../utils/logging');
-const { inlineList } = require('../../utils/text');
 const { command } = require('../');
 const { MESSAGES } = require('./constants');
 

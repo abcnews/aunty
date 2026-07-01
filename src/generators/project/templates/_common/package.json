@@ -14,11 +14,5 @@
     "start": "aunty serve",
     "dev": "aunty serve",
     "test": "aunty test"
-  }<% if (projectType === "react") { %>,
-  "abc": {
-    "css": {
-      "libraryDir": "./node_modules/@abcaustralia/nucleus/css",
-      "logVariables": "false"
-    }
-  }<% } %>
+  }
 }

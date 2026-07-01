@@ -5,17 +5,20 @@ const { join } = require('path');
 // External
 const importLazy = require('import-lazy')(require);
 const loadJsonFile = importLazy('load-json-file');
+const { deploymentExists } = require('../../utils/ftp');
+const { to: wrap } = require('await-to-js');
+const cliSelect = importLazy('cli-select');
 
 // Ours
 const { command } = require('../');
 const { addProfileProperties } = require('../../config/deploy');
 const { getProjectConfig } = require('../../config/project');
 const { DEPLOY_FILE_NAME, OUTPUT_DIRECTORY_NAME } = require('../../constants');
-const { packs, throws, unpack } = require('../../utils/async');
-const { dry, info, spin, warn } = require('../../utils/logging');
+const { throws } = require('../../utils/async');
+const { dry, info, spin, warn, log, error } = require('../../utils/logging');
 const { ftp, rsync } = require('../../utils/remote');
-const { combine } = require('../../utils/structures');
-const { DEFAULTS, MESSAGES, VALID_TYPES } = require('./constants');
+const { MESSAGES, VALID_TYPES } = require('./constants');
+const { dim, opt, hvy, req } = require('../../utils/color');
 
 module.exports = command(
   {
@@ -83,24 +86,66 @@ module.exports = command(
     // 4b) Deploy
 
     for (let target of targets) {
-      const { publicPath, type } = target;
-      info(MESSAGES.deploy(target));
+      const { publicPath, type, to } = target;
+      let shouldOverwrite = false;
 
-      const spinner = spin('Deploying');
+      // Check if the deployment already exists
+      if (argv.force) shouldOverwrite = true;
+      else if (type === 'ftp') {
+        const [checkErr] = await wrap(deploymentExists(to));
 
-      try {
-        if (type === 'ftp') {
-          throws(await ftp(target, spinner));
-        } else if (type === 'ssh') {
-          throws(await rsync(target));
+        if (checkErr) {
+          if (checkErr.code === 550) {
+            // Directory doesn't exist. This is actually good though. OK to write.
+            shouldOverwrite = true;
+          } else {
+            error('An FTP error ocurred');
+          }
+        } else {
+          warn('Destination directory exists. OK to overwrite?');
+          log(`  ┗ ${hvy('dir')}: ${req(to)}`);
+
+          const overwriteSelection = (
+            await cliSelect({
+              defaultValue: 1,
+              selected: opt('❯'),
+              unselected: ' ',
+              values: [
+                { label: 'Yes', choice: true },
+                { label: 'No', choice: false }
+              ],
+              valueRenderer: ({ label }, selected) => (selected ? opt(label) : label)
+            })
+          ).value;
+          shouldOverwrite = overwriteSelection.choice;
+          log(`${dim(`Destination overwrite: ${shouldOverwrite}`)}\n`);
         }
-      } catch (err) {
-        spinner.fail('Deployment failed');
-
-        throw err;
       }
 
-      spinner.succeed(MESSAGES.deployed(publicPath));
+      // Overwrite by default if ssh for now
+      if (type === 'ssh') shouldOverwrite = true;
+
+      if (shouldOverwrite) {
+        info(MESSAGES.deploy(target));
+
+        const spinner = spin('Deploying');
+
+        try {
+          if (type === 'ftp') {
+            throws(await ftp(target, spinner));
+          } else if (type === 'ssh') {
+            throws(await rsync(target));
+          }
+        } catch (err) {
+          spinner.fail('Deployment failed');
+
+          throw err;
+        }
+
+        spinner.succeed(MESSAGES.deployed(publicPath));
+      } else {
+        log('Exiting');
+      }
     }
   }
 );

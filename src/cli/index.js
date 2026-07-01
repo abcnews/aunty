@@ -1,3 +1,6 @@
+// Env
+require('dotenv').config();
+
 // Native
 const { resolve } = require('path');
 

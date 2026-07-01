@@ -17,7 +17,8 @@ module.exports.getWebpackDevServerConfig = async () => {
       allowedHosts: 'all',
       client: {
         logging: 'warn',
-        overlay: true
+        overlay: true,
+        webSocketURL: `ws${https ? 's' : ''}://${host}:${port}/ws`
       },
       devMiddleware: {
         publicPath: `http${https ? 's' : ''}://${host}:${port}/`
@@ -36,9 +37,9 @@ module.exports.getWebpackDevServerConfig = async () => {
             }
           : 'https'
         : 'http',
-      static: {
-        directory: join(root, staticDir)
-      }
+      static: (Array.isArray(staticDir) ? staticDir : [staticDir]).map(dirName => ({
+        directory: join(root, dirName)
+      }))
     },
     projectWebpackDevServerConfig
   );

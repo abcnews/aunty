@@ -9,7 +9,7 @@ const mem = require('mem');
 
 // Ours
 const { hvy } = require('../utils/color');
-const { pretty, warn } = require('../utils/logging');
+const { pretty } = require('../utils/logging');
 const { combine } = require('../utils/structures');
 const { PROJECT_CONFIG_FILE_NAME } = require('../constants');
 

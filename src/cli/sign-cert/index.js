@@ -7,7 +7,6 @@ const makeDir = importLazy('make-dir');
 
 // Ours
 const { DEFAULT_HOST, SERVER_CERT_FILENAME, SERVER_KEY_FILENAME, getSSLPath } = require('../../config/serve');
-const { hvy } = require('../../utils/color');
 const { dry, info, spin } = require('../../utils/logging');
 const { command } = require('../');
 const { MESSAGES } = require('./constants');

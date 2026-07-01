@@ -1,14 +1,14 @@
 // Ours
 const { cmd, hvy, opt, sec } = require('../../utils/color');
 
-const BUNDLE_ANALYZER_CONFIG = (module.exports.BUNDLE_ANALYZER_CONFIG = {
+module.exports.BUNDLE_ANALYZER_CONFIG = {
   analyzerHost: '127.0.0.1',
   logLevel: 'error',
   openAnalyzer: false
-});
+};
 
 module.exports.MESSAGES = {
-  port: port => `Port ${port} already in use attempting to use port ${port + 1}`,
+  port: ({ port, errorType }) => `Port ${port} could not be used (${errorType}). Attempting to use port ${port + 1}`,
   analysis: ({ analyzerHost, analyzerPort }) => `http://${analyzerHost}:${analyzerPort}`,
   serve: ({ bundleAnalysisPath, hot, publicPath }) => `Serve (${hvy(process.env.NODE_ENV)}):${
     bundleAnalysisPath

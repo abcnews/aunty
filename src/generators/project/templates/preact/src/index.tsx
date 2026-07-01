@@ -26,7 +26,7 @@ if (module.hot) {
   module.hot.accept('./components/App', () => {
     try {
       renderApp();
-    } catch (err) {
+    } catch (err<% if (isTS) { %>: any<% } %>) {
       import('./components/ErrorBox').then(({ default: ErrorBox }) => {
         if (appMountEl) {
           render(<ErrorBox error={err} />, appMountEl);

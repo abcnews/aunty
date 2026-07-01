@@ -19,6 +19,73 @@ const { command } = require('../');
 const cleanCommand = require('../clean');
 const { MESSAGES, OPTIONS } = require('./constants');
 
+const build = async argv => {
+  const { root } = getProjectConfig();
+  const webpackConfig = getWebpackConfig();
+  let deployConfig;
+
+  if (!argv.local) {
+    deployConfig = getDeployConfig({ id: argv.id });
+    webpackConfig.forEach(config => {
+      config.output.publicPath = deployConfig.targets[0].publicPath;
+    });
+  }
+
+  if (argv.dry) {
+    return dry(
+      combine(
+        {
+          'Webpack config': webpackConfig
+        },
+        deployConfig
+          ? {
+              'Deploy config': deployConfig
+            }
+          : {}
+      )
+    );
+  }
+
+  throws(await cleanCommand(['--quiet']));
+
+  info(
+    MESSAGES.build({
+      id: deployConfig ? deployConfig.id : null,
+      publicPaths: deployConfig ? deployConfig.targets.map(x => x.publicPath) : [webpackConfig[0].output.publicPath]
+    })
+  );
+
+  let spinner = spin('Building');
+  const startTime = Date.now();
+  const compiler = webpack(webpackConfig);
+  const stats = unpack(await packs(pify(compiler.run.bind(compiler)))());
+
+  if (stats.hasErrors()) {
+    const errors = stats.toJson({}, true).errors;
+
+    spinner.fail();
+
+    if (errors.length > 1) {
+      throw MESSAGES.multipleErrors(errors.map(error => error.message));
+    }
+
+    throw errors[0];
+  }
+
+  if (stats.hasWarnings()) {
+    spinner.warn();
+    stats.toJson({}, true).warnings.forEach(warning => warn(warning.message));
+  } else {
+    spinner.succeed(`Built in ${((Date.now() - startTime) / 1000).toFixed(2)}s`);
+  }
+
+  if (deployConfig) {
+    spinner = spin('Creating deploy configuration');
+    writeJsonFile.sync(join(root, OUTPUT_DIRECTORY_NAME, DEPLOY_FILE_NAME), deployConfig);
+    spinner.succeed('Created deploy configuration');
+  }
+};
+
 module.exports = command(
   {
     name: 'build',
@@ -26,70 +93,8 @@ module.exports = command(
     options: OPTIONS,
     usage: MESSAGES.usage
   },
-  async argv => {
-    const { root } = getProjectConfig();
-    const webpackConfig = getWebpackConfig();
-    let deployConfig;
-
-    if (!argv.local) {
-      deployConfig = getDeployConfig({ id: argv.id });
-      webpackConfig.forEach(config => {
-        config.output.publicPath = deployConfig.targets[0].publicPath;
-      });
-    }
-
-    if (argv.dry) {
-      return dry(
-        combine(
-          {
-            'Webpack config': webpackConfig
-          },
-          deployConfig
-            ? {
-                'Deploy config': deployConfig
-              }
-            : {}
-        )
-      );
-    }
-
-    throws(await cleanCommand(['--quiet']));
-
-    info(
-      MESSAGES.build({
-        id: deployConfig ? deployConfig.id : null,
-        publicPaths: deployConfig ? deployConfig.targets.map(x => x.publicPath) : [webpackConfig[0].output.publicPath]
-      })
-    );
-
-    let spinner = spin('Building');
-    const startTime = Date.now();
-    const compiler = webpack(webpackConfig);
-    const stats = unpack(await packs(pify(compiler.run.bind(compiler)))());
-
-    if (stats.hasErrors()) {
-      const errors = stats.toJson({}, true).errors;
-
-      spinner.fail();
-
-      if (errors.length > 1) {
-        throw MESSAGES.multipleErrors(errors.map(error => error.message));
-      }
-
-      throw errors[0];
-    }
-
-    if (stats.hasWarnings()) {
-      spinner.warn();
-      stats.toJson({}, true).warnings.forEach(warning => warn(warning.message));
-    } else {
-      spinner.succeed(`Built in ${((Date.now() - startTime) / 1000).toFixed(2)}s`);
-    }
-
-    if (deployConfig) {
-      spinner = spin('Creating deploy configuration');
-      writeJsonFile.sync(join(root, OUTPUT_DIRECTORY_NAME, DEPLOY_FILE_NAME), deployConfig);
-      spinner.succeed('Created deploy configuration');
-    }
-  }
+  build
 );
+
+// Expose this for the tests
+module.exports._testBuild = build;

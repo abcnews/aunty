@@ -4,12 +4,11 @@ const { join, resolve } = require('path');
 
 // External
 const importLazy = require('import-lazy')(require);
-const getContext = importLazy('@abcaustralia/postcss-config/getContext'); // optional dependency
 const CopyPlugin = importLazy('copy-webpack-plugin');
+const Dotenv = importLazy('dotenv-webpack');
 const ForkTsCheckerWebpackPlugin = importLazy('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = importLazy('mini-css-extract-plugin');
 const sveltePreprocess = importLazy('svelte-preprocess');
-const TerserPlugin = importLazy('terser-webpack-plugin');
 const EnvironmentPlugin = importLazy('webpack/lib/EnvironmentPlugin');
 
 // Ours
@@ -18,8 +17,11 @@ const { getBabelConfig } = require('./babel');
 const { getBuildConfig } = require('./build');
 const { getProjectConfig } = require('./project');
 
-const URL_LOADER_LIMIT = 10000;
 const JSX_RESOLVE_EXTENSIONS = ['.jsx', '.tsx'];
+
+/**
+ * Project types to override the Webpack config.
+ */
 const PROJECT_TYPES_CONFIG = {
   preact: {
     resolve: {
@@ -36,17 +38,16 @@ const PROJECT_TYPES_CONFIG = {
       extensions: JSX_RESOLVE_EXTENSIONS
     }
   },
+
+  /**
+   * Svelte uses a function to modify the existing config, rather than just merging in.
+   * @see combine
+   */
   svelte: config => {
     config.resolve = {
-      // Make sure that only one copy of the Svelte runtime is bundled in the app
-      alias: {
-        svelte: resolve('node_modules', 'svelte')
-      },
-      // Recognise .svelte files
       extensions: [...config.resolve.extensions, '.svelte'],
-      // When using Svelte components installed from npm, use the original component
-      // source code, rather than consuming the already-compiled version
-      mainFields: ['svelte', 'browser', 'module', 'main']
+      mainFields: ['svelte', 'browser', 'module', 'main'],
+      conditionNames: ['svelte', 'browser', 'import']
     };
 
     const { include, loader, options } = getHintedRule(config, 'scripts');
@@ -54,31 +55,62 @@ const PROJECT_TYPES_CONFIG = {
 
     include.push(/(node_modules\/svelte)/);
 
-    config.module.rules.push({
-      test: /\.svelte$/,
-      include,
-      use: [
+    // options from https://github.com/sveltejs/svelte-loader
+    config.module.rules.push(
+      ...[
         {
-          loader,
-          options
+          test: /\.svelte\.ts$/,
+          use: [
+            {
+              loader,
+              options
+            },
+            { loader: require.resolve('ts-loader'), options: { transpileOnly: true } },
+            {
+              loader: require.resolve('svelte-loader'),
+              options: {
+                dev: config.mode === 'development',
+                emitCss: extractCSS,
+                preprocess: sveltePreprocess()
+              }
+            }
+          ]
         },
         {
-          loader: require.resolve('svelte-loader'),
+          test: /(?<!\.svelte)\.ts$/,
+          loader: require.resolve('ts-loader'),
           options: {
-            dev: config.mode === 'development',
-            emitCss: extractCSS,
-            preprocess: sveltePreprocess()
+            transpileOnly: true // you should use svelte-check for type checking
+          }
+        },
+        {
+          // Svelte 5+:
+          test: /\.(svelte|svelte\.js)$/,
+          include,
+          use: [
+            {
+              loader,
+              options
+            },
+            {
+              loader: require.resolve('svelte-loader'),
+              options: {
+                dev: config.mode === 'development',
+                emitCss: extractCSS,
+                preprocess: sveltePreprocess()
+              }
+            }
+          ]
+        },
+        {
+          // required to prevent errors from Svelte on Webpack 5+, omit on Webpack 4
+          test: /node_modules\/svelte\/.*\.mjs$/,
+          resolve: {
+            fullySpecified: false
           }
         }
       ]
-    });
-    // Required to prevent errors from Svelte on Webpack 5+
-    config.module.rules.push({
-      test: /node_modules\/svelte\/.*\.mjs$/,
-      resolve: {
-        fullySpecified: false
-      }
-    });
+    );
 
     return config;
   }
@@ -148,6 +180,8 @@ function createWebpackConfig({ isModernJS } = {}) {
   const { pkg, root, hasTS, type, webpack: projectWebpackConfig } = getProjectConfig();
   const { entry, extractCSS, from, includedDependencies, staticDir, to, useCSSModules } = getBuildConfig();
   const isProd = process.env.NODE_ENV === 'production';
+  const hasEnvFile = existsSync(join(root, '.env'));
+  const hasEnvExampleFile = existsSync(join(root, '.env.example'));
 
   const config = merge(
     {
@@ -167,6 +201,10 @@ function createWebpackConfig({ isModernJS } = {}) {
       module: {
         rules: [
           {
+            /**
+             * hints are used by PROJECT_TYPES_CONFIGs to quickly select the right config.
+             * @see PROJECT_TYPES_CONFIG
+             */
             __hint__: 'scripts',
             test: hasTS ? /\.m?[jt]sx?$/ : /\.m?jsx?$/,
             include: [resolve(root, from)].concat(resolveIncludedDependencies(includedDependencies, root)),
@@ -213,48 +251,31 @@ function createWebpackConfig({ isModernJS } = {}) {
             }
           },
           {
-            test: /\.(jpg|png|gif|mp4|m4v|flv|mp3|wav|m4a)$/,
-            loader: require.resolve('file-loader'),
-            options: {
-              name: '[name]-[contenthash].[ext]'
-            }
+            test: /\.(jpg|png|gif|mp4|m4v|flv|mp3|wav|m4a|eot|ttf|woff|woff2|webm|webp|avif)$/,
+            type: 'asset'
           },
           {
-            test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('url-loader'),
-            options: {
-              limit: URL_LOADER_LIMIT,
-              mimetype: 'application/font-woff'
-            }
+            test: /\.svg$/,
+            resourceQuery: { not: [/raw/] },
+            type: 'asset'
           },
           {
-            test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('url-loader'),
-            options: {
-              limit: URL_LOADER_LIMIT,
-              mimetype: 'application/octet-stream'
-            }
-          },
-          {
-            test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('file-loader')
-          },
-          {
-            test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-            loader: require.resolve('url-loader'),
-            options: {
-              limit: URL_LOADER_LIMIT,
-              mimetype: 'image/svg+xml'
-            }
+            resourceQuery: /raw/,
+            type: 'asset/source'
           },
           {
             test: /\.html$/,
-            loader: require.resolve('html-loader')
+            type: 'asset/source'
           }
         ]
       },
       plugins: [
         new EnvironmentPlugin(Object.keys(process.env)),
+        hasEnvFile || hasEnvExampleFile
+          ? new Dotenv({
+              safe: hasEnvExampleFile
+            })
+          : null,
         hasTS
           ? new ForkTsCheckerWebpackPlugin({
               logger: { infrastructure: 'silent', issues: 'silent' },
@@ -272,18 +293,15 @@ function createWebpackConfig({ isModernJS } = {}) {
             })
           : null,
         new CopyPlugin({
-          patterns: [
-            {
-              from: join(root, staticDir)
-            }
-          ]
+          patterns: (Array.isArray(staticDir) ? staticDir : [staticDir]).map(dirName => ({
+            from: join(root, dirName)
+          }))
         })
       ].filter(x => x),
       optimization: {
         moduleIds: isProd ? 'deterministic' : 'named'
       }
     },
-    conditionallyEnableABCAustraliaStyles,
     PROJECT_TYPES_CONFIG[type],
     projectWebpackConfig
   );
@@ -304,75 +322,4 @@ function createWebpackConfig({ isModernJS } = {}) {
 
 function getHintedRule(config, hint) {
   return config.module.rules.find(rule => rule.__hint__ === hint);
-}
-
-const ABC_POSTCSS_CONTEXT_SUGGESTION = `
-
-To compile @abcaustralia/* styles, you need to add the following to your package.json:
-
-"abc": {
-  "css": {
-    "libraryDir": "./node_modules/@abcaustralia/nucleus/css",
-    "logVariables": "false"
-  }
-}
-`;
-
-function getABCAustraliaPostCSSContext(isDev) {
-  try {
-    return getContext(isDev);
-  } catch (err) {
-    if (err.message.indexOf('css') > -1) {
-      err.message += ABC_POSTCSS_CONTEXT_SUGGESTION;
-    }
-
-    throw err;
-  }
-}
-
-const ABC_PACKAGE_PATTERN = /(node_modules\/@abcaustralia\/*)/;
-
-function conditionallyEnableABCAustraliaStyles(config) {
-  const { pkg } = getProjectConfig();
-
-  // Only enable if we have an @abcaustralia/* dependency
-  if (!Object.keys(pkg.dependencies || {}).find(x => x.indexOf('@abcaustralia/') === 0)) {
-    return config;
-  }
-
-  const isProd = config.mode === 'production';
-  const stylesRule = getHintedRule(config, 'styles');
-
-  stylesRule.exclude = ABC_PACKAGE_PATTERN;
-
-  config.module.rules.push({
-    __hint__: 'styles/@abcaustralia',
-    test: /\.css$/,
-    include: ABC_PACKAGE_PATTERN,
-    use: [
-      stylesRule.use[0],
-      {
-        loader: require.resolve('css-loader'),
-        options: {
-          importLoaders: 1,
-          modules: {
-            exportLocalsConvention: 'camelCase',
-            localIdentName: `${isProd ? '' : '[name]__[local]--'}[contenthash:base64:5]`
-          },
-          url: false
-        }
-      },
-      {
-        loader: require.resolve('postcss-loader'),
-        options: {
-          postcssOptions: {
-            config: require.resolve('@abcaustralia/postcss-config'),
-            ...getABCAustraliaPostCSSContext(!isProd)
-          }
-        }
-      }
-    ]
-  });
-
-  return config;
 }
