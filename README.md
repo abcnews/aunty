@@ -152,6 +152,26 @@ You _could_ also specify `type` (`"ftp"`/`"ssh"`), `host`, `port`, `username` & 
 
 Aunty comes with a few basic generators. Run `aunty generate --help` for the full list, or `aunty generate <generator> --help` for further details.
 
+### Including dependencies
+
+Sometimes you will want webpack to build specific dependencies along side your project code, for example, when a dependency is distributed with non-javascript modules like Typescript or Svelte components.
+
+To instruct webpack to include those dependencies during build add the dependency's name to the `build::includeDependencies` array in your aunty config. For example:
+
+```
+// package.json
+...
+  "aunty": {
+    "type": "svelte",
+    "build": {
+      "includedDependencies": [
+        "layercake"
+      ]
+    }
+  }
+...
+```
+
 ## Authors
 
 - Colin Gourlay
