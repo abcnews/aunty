@@ -1,7 +1,22 @@
+import { realpathSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import pc from "picocolors";
 import type { PackageJson } from "../types.ts";
+
+/**
+ * Determines if the current execution of the CLI is running from a local development clone
+ * (e.g., cloned project, npm link, or running via tsx from sources) rather than being run
+ * as an installed package inside a project's node_modules directory.
+ */
+export function isLocalDevelopment(): boolean {
+  try {
+    const realDir = realpathSync(import.meta.dirname);
+    return !realDir.includes("node_modules");
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Loads and parses a JSON file
@@ -64,4 +79,3 @@ export async function findProjectDetails(
   );
   return null;
 }
-

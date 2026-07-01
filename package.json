@@ -31,6 +31,10 @@
     "access": "public"
   },
   "main": "src/bin/aunty.js",
+  "exports": {
+    ".": "./src/bin/aunty.js",
+    "./vite": "./src/lib/vite.ts"
+  },
   "bin": {
     "aunty": "src/bin/aunty.js",
     "nt": "src/bin/aunty.js"

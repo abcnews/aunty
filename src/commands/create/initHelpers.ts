@@ -5,9 +5,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { $ } from "zx";
-import { loadJson } from "../../lib/util.ts";
+import { loadJson, isLocalDevelopment } from "../../lib/util.ts";
 import type { PackageJson } from "../../types.ts";
-
 
 /**
  * Recursively copies contents from one directory to another.
@@ -123,4 +122,38 @@ export async function getGitUser(): Promise<{
   } catch {
     return null;
   }
+}
+
+/**
+ * Adds @abcnews/aunty to the package.json devDependencies of the target directory.
+ * Resolves to the local development path if running in local development mode,
+ * or the version of the currently executing aunty.
+ *
+ * @todo: remove or make local dev checks optional once the Vite helpers are
+ * published, so we can use the local version for real projects too.
+ *
+ * @param baseDir The directory of the newly created project
+ */
+export async function installAunty(baseDir: string): Promise<void> {
+  const localDev = isLocalDevelopment();
+  let auntyDepValue = "";
+
+  // The running aunty's root directory is 3 levels up relative to this file
+  const auntyRoot = path.resolve(import.meta.dirname, "../../../");
+
+  if (localDev) {
+    auntyDepValue = `file:${auntyRoot}`;
+  } else {
+    const pkg = await loadJson<PackageJson>(
+      path.join(auntyRoot, "package.json"),
+    );
+    auntyDepValue = pkg ? `^${pkg.version}` : "latest";
+  }
+
+  await editPackageJson(baseDir, (pkg) => {
+    if (!pkg.devDependencies) {
+      pkg.devDependencies = {};
+    }
+    pkg.devDependencies["@abcnews/aunty"] = auntyDepValue;
+  });
 }

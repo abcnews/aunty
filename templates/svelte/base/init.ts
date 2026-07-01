@@ -44,4 +44,6 @@ export async function init({ projectName, baseDir }: InitOptions) {
       aunty: { type: "svelte" },
     });
   });
+
+  await helpers.installAunty(baseDir);
 }
