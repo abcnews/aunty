@@ -58,5 +58,10 @@ export async function findProjectDetails(
     currentDir = path.dirname(currentDir);
   }
 
+  const { log } = await import("@clack/prompts");
+  log.error(
+    `Could not find ${pc.cyan("package.json")} in this or any parent directory.`,
+  );
   return null;
 }
+

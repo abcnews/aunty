@@ -1,8 +1,8 @@
-import { build } from "vite";
 import { intro, log } from "@clack/prompts";
 import pc from "picocolors";
+import { $ } from "zx";
 import { getHeader } from "../../lib/terminal.ts";
-import { resolveProjectConfig, handleViteError } from "../../lib/vite.ts";
+import { findProjectDetails } from "../../lib/util.ts";
 
 /**
  * The main entry point for the 'aunty build' command.
@@ -10,22 +10,26 @@ import { resolveProjectConfig, handleViteError } from "../../lib/vite.ts";
 export async function run(): Promise<number> {
   intro(getHeader(pc.dim("aunty"), "build"));
 
-  const config = await resolveProjectConfig();
-  if (!config) return 1;
+  // 1. Load config
+  const details = await findProjectDetails(process.cwd());
 
-  const { root, configFile } = config;
+  if (!details) return 1;
 
-  // 3. Execute the build
-  log.info("Deferring to Vite\n");
+  const { pkg } = details;
 
-  const buildError = await build({
-    root,
-    configFile,
-  }).catch((error) => error);
-
-  if (buildError instanceof Error) {
-    return handleViteError(buildError);
+  if (!pkg.scripts?.build) {
+    log.error(`Could not find a ${pc.cyan("build")} script in package.json.`);
+    return 1;
   }
 
-  return 0;
+  try {
+    await $({ stdio: "inherit" })`npm run build`;
+    return 0;
+  } catch (err: any) {
+    if (err.exitCode !== undefined) {
+      return err.exitCode;
+    }
+    log.error(`Failed to start npm command: ${err.message}`);
+    return 1;
+  }
 }

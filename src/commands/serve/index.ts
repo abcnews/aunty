@@ -1,8 +1,8 @@
-import { createServer } from "vite";
 import { intro, log } from "@clack/prompts";
 import pc from "picocolors";
+import { $ } from "zx";
 import { getHeader } from "../../lib/terminal.ts";
-import { resolveProjectConfig, handleViteError } from "../../lib/vite.ts";
+import { findProjectDetails } from "../../lib/util.ts";
 
 /**
  * The main entry point for the 'aunty serve' command.
@@ -10,26 +10,33 @@ import { resolveProjectConfig, handleViteError } from "../../lib/vite.ts";
 export async function run(): Promise<number> {
   intro(getHeader(pc.dim("aunty"), "serve"));
 
-  const config = await resolveProjectConfig();
-  if (!config) return 1;
+  // 1. Load config
+  const details = await findProjectDetails(process.cwd());
 
-  const { root, configFile } = config;
+  if (!details) return 1;
 
-  log.info("Starting dev server\n");
+  const { pkg } = details;
+  const scriptName = pkg.scripts?.dev
+    ? "dev"
+    : pkg.scripts?.serve
+      ? "serve"
+      : null;
 
-  const server = await createServer({
-    root,
-    configFile,
-  }).catch((error: Error) => error);
-
-  if (server instanceof Error) {
-    return handleViteError(server);
+  if (!scriptName) {
+    log.error(
+      `Could not find a ${pc.cyan("dev")} or ${pc.cyan("serve")} script in package.json.`,
+    );
+    return 1;
   }
 
-  await server.listen();
-  server.printUrls();
-  server.bindCLIShortcuts({ print: true });
-  console.log(""); //print one extra line so errors are clearer.
-
-  return 0;
+  try {
+    await $({ stdio: "inherit" })`npm run ${scriptName}`;
+    return 0;
+  } catch (err: any) {
+    if (err.exitCode !== undefined) {
+      return err.exitCode;
+    }
+    log.error(`Failed to start npm command: ${err.message}`);
+    return 1;
+  }
 }

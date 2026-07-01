@@ -2,7 +2,7 @@ import { intro, outro, confirm, log, cancel, isCancel } from "@clack/prompts";
 import path from "node:path";
 import pc from "picocolors";
 import { FtpClient } from "../../lib/ftp.ts";
-import { loadJson, formatSize } from "../../lib/util.ts";
+import { formatSize, findProjectDetails } from "../../lib/util.ts";
 import { getHeader, spin } from "../../lib/terminal.ts";
 import {
   BUILD_DIRECTORY_NAME,
@@ -33,16 +33,11 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   );
 
   // 1. Load config
-  const config = (await loadJson(path.join(projectRoot, "package.json"))) as {
-    name: string;
-    version: string;
-  } | null;
+  const details = await findProjectDetails(process.cwd());
 
-  if (!config) {
-    log.error(`package.json not found in ${projectRoot}`);
-    return 1;
-  }
+  if (!details) return 1;
 
+  const { root: projectRoot, pkg: config } = details;
   const { name, version } = config;
   if (!name || !version) {
     cancel("Missing name or version in package.json");
