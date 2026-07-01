@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/bin/aunty.ts",
-    "test": "echo \"Put your tests here\" && exit 1",
+    "test": "node --experimental-test-module-mocks --import tsx --test test/e2e.test.ts",
     "lint": "eslint src",
     "clean": "rimraf dist",
     "prebuild": "npm run clean"
