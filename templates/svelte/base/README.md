@@ -12,8 +12,6 @@ copy over the changed bits, namely `package.json` and other dependencies.
 
 The new vite config should not be committed. If the config needs to be modified
 you can edit it in the current folder [./vite.config.ts](./vite.config.ts).
-(FIXME: During aunty@next dev this file is stored in contents/, so this comment
-is untrue/aspirational in the meantime.)
 
 ### Critical Files to Preserve
 
