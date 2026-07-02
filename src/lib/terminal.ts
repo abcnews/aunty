@@ -52,3 +52,15 @@ export const spin = (
   s.start(text);
   return s;
 };
+
+/**
+ * Renders a single line with Clack's vertical line and a coloured emoji/symbol.
+ */
+export function renderClackMoji(
+  symbol: string,
+  color: "green" | "red" | "yellow" | "cyan" | "magenta" | "blue" | "gray",
+  text: string,
+): void {
+  const colouredSymbol = pc[color](symbol);
+  console.log(`${pc.gray("│")}  ${colouredSymbol} ${text}`);
+}
