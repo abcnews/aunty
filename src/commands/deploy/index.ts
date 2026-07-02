@@ -23,8 +23,6 @@ interface DeployOptions {
  * The main entry point for the 'aunty deploy' command.
  */
 export async function run(options: DeployOptions = {}): Promise<number> {
-  const projectRoot = process.cwd();
-
   intro(
     getHeader(
       pc.dim("aunty"),

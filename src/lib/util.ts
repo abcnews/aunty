@@ -79,3 +79,23 @@ export async function findProjectDetails(
   );
   return null;
 }
+
+/**
+ * Runs the npm run build script for the project.
+ */
+export async function runBuild(options: { stdio?: "inherit" | "pipe" | "ignore" } = {}): Promise<void> {
+  const { stdio = "inherit" } = options;
+  
+  const details = await findProjectDetails(process.cwd());
+  if (!details) {
+    throw new Error("Could not find project details.");
+  }
+
+  const { pkg } = details;
+  if (!pkg.scripts?.build) {
+    throw new Error("Could not find a build script in package.json.");
+  }
+
+  const { $ } = await import("zx");
+  await $({ stdio })`npm run build`;
+}
