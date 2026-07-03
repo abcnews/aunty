@@ -33,6 +33,18 @@
     "cyan": {
       "startFg": [0, 236, 255],
       "endFg": [0, 236, 86]
+    },
+    "yellow": {
+      "startFg": [255, 255, 0],
+      "endFg": [255, 170, 0]
+    },
+    "magenta": {
+      "startFg": [255, 0, 255],
+      "endFg": [255, 0, 128]
+    },
+    "red": {
+      "startFg": [255, 0, 0],
+      "endFg": [255, 95, 31]
     }
   },
   "commands": {

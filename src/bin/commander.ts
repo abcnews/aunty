@@ -16,11 +16,6 @@ import { loadJson } from "../lib/util.ts";
 import pc from "picocolors";
 import colours from "../lib/colours.json" with { type: "json" };
 
-import {
-  colours as gradientColours,
-  applyGradientLine,
-} from "../lib/terminalColours.ts";
-
 const pkgPath = path.join(import.meta.dirname, "../../package.json");
 const pkg = (await loadJson(pkgPath)) as {
   version: string;
@@ -31,18 +26,16 @@ const version = pkg?.version || "0.0.0";
 
 const program = new Command();
 
-const underline = applyGradientLine(
-  " ────── ",
-  "",
-  gradientColours.rainbow,
-  [],
-  8,
-);
-
 program
   .name("aunty")
   .description(
-    `${getHeader("", `${pkg.name}${pc.dim("@" + pkg.version)}`, "")}\n${underline} ${pc.dim(pkg.description.slice(0, 73))}`,
+    getHeader(
+      `${pkg.name}${pc.dim("@" + pkg.version)}`,
+      `${pc.dim(pkg.description.slice(0, 73))}`,
+      { prepend: "" },
+    ) +
+      "\n" +
+      pc.dim("─".repeat(80)),
   )
   .version(version);
 
@@ -63,11 +56,27 @@ program.configureHelp({
     const term = new Help().subcommandTerm(cmd);
     return term.replace(name, colourFn(name));
   },
+  formatHelp: (cmd, helper) => {
+    const baseHelp = new Help().formatHelp(cmd, helper);
+    if (cmd.parent) {
+      const name = cmd.name();
+      const commandsColourMap = colours.commands as Record<string, string>;
+      const colourName = commandsColourMap[name] || "rainbow";
+      const logoHeader = getHeader("aunty", name, {
+        prepend: "",
+        colour: colourName as any,
+      });
+      return `${logoHeader}\n\n${baseHelp}`;
+    }
+    return baseHelp;
+  },
 });
 
 program
   .command("deploy")
-  .description("Deploy the project to the content FTP")
+  .description(
+    "Deploy the project to FTP. This deploys the current dist/ folder to the speficied remote folder, falling back to the current version number. Use this to retry a failed release.",
+  )
   .argument(
     "[destDir]",
     "Override the target folder name (defaults to package.json version)",
@@ -96,14 +105,14 @@ program
 
 program
   .command("release-check")
-  .description("Perform pre-release checks (git and FTP)")
+  .description("Perform pre-release checks")
   .action(async () => {
     process.exit(await runReleaseCheck());
   });
 
 program
   .command("release")
-  .description("Select a new version for release (dry run)")
+  .description("Version and release your project to FTP")
   .option("--version <version>", "Override the release version directly")
   .action(async (options) => {
     process.exit(await runRelease(options));
@@ -124,7 +133,7 @@ program
   });
 
 program
-  .command("dev-colors", { hidden: true })
+  .command("dev-colours", { hidden: true })
   .description("Test all available gradient colors")
   .action(() => {
     printDevColors();
