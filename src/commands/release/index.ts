@@ -2,7 +2,7 @@ import { intro, outro, select, cancel, isCancel, log } from "@clack/prompts";
 import pc from "picocolors";
 import semver from "semver";
 import { $ } from "zx";
-import { getHeader } from "../../lib/terminal.ts";
+import { getHeader, spin } from "../../lib/terminal.ts";
 import { findProjectDetails } from "../../lib/util.ts";
 import { getVersionOptions } from "../../lib/semver.ts";
 import { run as runReleaseCheck } from "../release-check/index.ts";
@@ -97,10 +97,12 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
   }
 
   // 6. Push local changes and version tag to remote
+  const pushSpinner = spin("Pushing release & tag to remote...");
   try {
-    log.info("Pushing branch and tags to remote...");
     await $`git push origin HEAD --follow-tags`.quiet();
+    pushSpinner.stop("Pushed to remote");
   } catch (err) {
+    pushSpinner.cancel("Push failed");
     outro(
       pc.red(
         `Failed to push to remote: ${err instanceof Error ? err.message : String(err)}`,

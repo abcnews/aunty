@@ -11,34 +11,43 @@ import {
 const EXPECTED_LOGO = "│  ⣾⢷⡾⢷⡾⣷ aunty\n│  ⢿⡾⢷⡾⢷⡿ create";
 
 describe("svelte", () => {
-  /** Throw and don't proceed if a silly duffer left a node_modules in the template dirs */
+  /** Throw and don't proceed if a silly duffer left a node_modules or .DS_Store in the template dirs */
   before(async () => {
     const templatesDir = path.resolve(import.meta.dirname, "../templates");
 
-    async function checkDir(dir: string): Promise<string[]> {
-      const found: string[] = [];
+    async function checkDir(dir: string): Promise<{ nodeModules: string[]; dsStores: string[] }> {
+      const nodeModules: string[] = [];
+      const dsStores: string[] = [];
       const entries = await fs.readdir(dir, { withFileTypes: true });
 
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
         if (entry.isDirectory()) {
           if (entry.name === "node_modules") {
-            found.push(fullPath);
+            nodeModules.push(fullPath);
           } else {
             const nested = await checkDir(fullPath);
-            found.push(...nested);
+            nodeModules.push(...nested.nodeModules);
+            dsStores.push(...nested.dsStores);
           }
+        } else if (entry.isFile() && entry.name.toLowerCase() === ".ds_store") {
+          dsStores.push(fullPath);
         }
       }
 
-      return found;
+      return { nodeModules, dsStores };
     }
 
-    const nodeModulesDirs = await checkDir(templatesDir);
+    const { nodeModules, dsStores } = await checkDir(templatesDir);
     assert.deepStrictEqual(
-      nodeModulesDirs,
+      nodeModules,
       [],
-      `Found unexpected node_modules directory in templates: ${nodeModulesDirs.join(", ")}`,
+      `Found unexpected node_modules directory in templates: ${nodeModules.join(", ")}`,
+    );
+    assert.deepStrictEqual(
+      dsStores,
+      [],
+      `Found unexpected .DS_Store files in templates: ${dsStores.join(", ")}`,
     );
   });
 
