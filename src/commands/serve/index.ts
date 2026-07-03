@@ -1,4 +1,4 @@
-import { intro, log } from "@clack/prompts";
+import { intro, outro, log } from "@clack/prompts";
 import pc from "picocolors";
 import { $ } from "zx";
 import { getHeader } from "../../lib/terminal.ts";
@@ -8,7 +8,8 @@ import { findProjectDetails } from "../../lib/util.ts";
  * The main entry point for the 'aunty serve' command.
  */
 export async function run(): Promise<number> {
-  intro(getHeader(pc.dim("aunty"), "serve"));
+  intro(getHeader(pc.dim("aunty"), "serve", { colour: "cyan" }));
+  outro("Starting development server...");
 
   // 1. Load config
   const details = await findProjectDetails(process.cwd());
@@ -30,7 +31,12 @@ export async function run(): Promise<number> {
   }
 
   try {
-    await $({ stdio: "inherit" })`npm run ${scriptName}`;
+    const isVite = pkg.scripts?.[scriptName]?.includes("vite");
+    if (isVite) {
+      await $({ stdio: "inherit" })`npm run ${scriptName} -- --clearScreen false`;
+    } else {
+      await $({ stdio: "inherit" })`npm run ${scriptName}`;
+    }
     return 0;
   } catch (err: any) {
     if (err.exitCode !== undefined) {

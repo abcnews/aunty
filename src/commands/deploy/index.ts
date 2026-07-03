@@ -29,6 +29,7 @@ export async function run(options: DeployOptions = {}): Promise<number> {
       getHeader(
         pc.dim("aunty"),
         `deploy${options.dryRun ? ` ${pc.cyan("[dry]")}` : ""}`,
+        { colour: "orange" }
       ),
     );
   }

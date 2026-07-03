@@ -17,7 +17,7 @@ interface ReleaseOptions {
  * The main entry point for the 'aunty release' command.
  */
 export async function run(options: ReleaseOptions = {}): Promise<number> {
-  intro(getHeader(pc.dim("aunty"), "release"));
+  intro(getHeader(pc.dim("aunty"), "release", { colour: "pink" }));
 
   // 1. Load project details
   const details = await findProjectDetails(process.cwd());

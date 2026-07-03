@@ -20,7 +20,7 @@ import templates from "../../../templates/index.ts";
  * The main entry point for the 'aunty create' command.
  */
 export async function run(destDirArg?: string): Promise<number> {
-  intro(getHeader(pc.dim("aunty"), "create"));
+  intro(getHeader(pc.dim("aunty"), "create", { colour: "green" }));
 
   // 1. Get project name
   const projectName =
