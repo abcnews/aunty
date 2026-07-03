@@ -1,5 +1,7 @@
-import { test, describe } from "node:test";
+import { test, describe, before } from "node:test";
 import assert from "node:assert";
+import fs from "node:fs/promises";
+import path from "node:path";
 import {
   createProject,
   buildProject,
@@ -9,6 +11,37 @@ import {
 const EXPECTED_LOGO = "│  ⣾⢷⡾⢷⡾⣷ aunty\n│  ⢿⡾⢷⡾⢷⡿ create";
 
 describe("svelte", () => {
+  /** Throw and don't proceed if a silly duffer left a node_modules in the template dirs */
+  before(async () => {
+    const templatesDir = path.resolve(import.meta.dirname, "../templates");
+
+    async function checkDir(dir: string): Promise<string[]> {
+      const found: string[] = [];
+      const entries = await fs.readdir(dir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          if (entry.name === "node_modules") {
+            found.push(fullPath);
+          } else {
+            const nested = await checkDir(fullPath);
+            found.push(...nested);
+          }
+        }
+      }
+
+      return found;
+    }
+
+    const nodeModulesDirs = await checkDir(templatesDir);
+    assert.deepStrictEqual(
+      nodeModulesDirs,
+      [],
+      `Found unexpected node_modules directory in templates: ${nodeModulesDirs.join(", ")}`,
+    );
+  });
+
   test("creates and builds base svelte project with TypeScript", async () => {
     const projectName = "svelte-base-ts";
 

@@ -17,18 +17,21 @@ interface DeployOptions {
   buildDir?: string;
   dryRun?: boolean;
   force?: boolean;
+  skipHeader?: boolean;
 }
 
 /**
  * The main entry point for the 'aunty deploy' command.
  */
 export async function run(options: DeployOptions = {}): Promise<number> {
-  intro(
-    getHeader(
-      pc.dim("aunty"),
-      `deploy${options.dryRun ? ` ${pc.cyan("[dry]")}` : ""}`,
-    ),
-  );
+  if (!options.skipHeader) {
+    intro(
+      getHeader(
+        pc.dim("aunty"),
+        `deploy${options.dryRun ? ` ${pc.cyan("[dry]")}` : ""}`,
+      ),
+    );
+  }
 
   // 1. Load config
   const details = await findProjectDetails(process.cwd());
@@ -54,7 +57,6 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   const targetFolder = options.destDir || version;
   const remoteDir = path.join(FTP_PROJECTS_PATH, nameSlug, targetFolder, "/");
   const publicUrl = `${PUBLIC_PROJECTS_URL}${nameSlug}/${targetFolder}/`;
-  log.info(`${pc.bold("Remote dir:")} ${pc.dim(remoteDir)}`);
 
   // 4. File Inventory & Size Check
   let inventory;
@@ -88,9 +90,11 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   // 5. Credential Test & Confirmation
   const ftpClient = new FtpClient();
   try {
-    await ftpClient.testConnection();
-  } catch {
-    // FtpClient.testConnection() already handles UI feedback via its own spinner
+    await ftpClient.connect();
+  } catch (err) {
+    log.error(
+      `FTP connection failed: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return 1;
   }
 
@@ -124,6 +128,7 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   let currentFile = "";
   const totalFilesStr = inventory.length.toString();
 
+  const startTime = Date.now();
   try {
     await ftpClient.uploadDir(localDir, remoteDir, (info) => {
       if (info.name !== currentFile) {
@@ -135,7 +140,8 @@ export async function run(options: DeployOptions = {}): Promise<number> {
         uploadSpinner.message(`${countStr}/${totalFilesStr} ${info.name}`);
       }
     });
-    uploadSpinner.stop("Upload complete");
+    const time = Math.round((Date.now() - startTime) / 100) / 10 + "s";
+    uploadSpinner.stop(`Upload finished in ${time}`);
   } catch (err) {
     uploadSpinner.cancel("Upload failed");
     ftpClient.close();
@@ -144,7 +150,6 @@ export async function run(options: DeployOptions = {}): Promise<number> {
 
   ftpClient.close();
 
-  log.info(`${pc.bold("Public URL:")} ${pc.cyan(publicUrl)}`);
-  outro(pc.green("Deploy complete!"));
+  outro(`${pc.bold("Released to:")} ${pc.cyan(publicUrl)}`);
   return 0;
 }

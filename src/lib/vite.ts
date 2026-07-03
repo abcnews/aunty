@@ -82,7 +82,7 @@ export function es5EntryPlugin(): any {
         const entry = Object.values(bundle).find(
           (chunk: any) => chunk.type === "chunk" && chunk.name === "index",
         );
-        if (entry && entry.type === "chunk") {
+        if (entry && (entry as any).type === "chunk") {
           const cssPaths = Array.from((entry as any).viteMetadata?.importedCss || []);
           const modulePreloadPaths = (entry as any).imports;
           this.emitFile({

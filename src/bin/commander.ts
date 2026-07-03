@@ -7,6 +7,7 @@ import path from "node:path";
 import { Command } from "commander";
 import { run as runDeploy } from "../commands/deploy/index.ts";
 import { run as runReleaseCheck } from "../commands/release-check/index.ts";
+import { run as runRelease } from "../commands/release/index.ts";
 import { run as runCreate } from "../commands/create/index.ts";
 import { run as runBuild } from "../commands/build/index.ts";
 import { run as runServe } from "../commands/serve/index.ts";
@@ -59,6 +60,14 @@ program
   .description("Perform pre-release checks (git and FTP)")
   .action(async () => {
     process.exit(await runReleaseCheck());
+  });
+
+program
+  .command("release")
+  .description("Select a new version for release (dry run)")
+  .option("--version <version>", "Override the release version directly")
+  .action(async (options) => {
+    process.exit(await runRelease(options));
   });
 
 program

@@ -103,7 +103,7 @@ mock.module("@clack/prompts", {
 const ftpModulePath = path.resolve(import.meta.dirname, "../src/lib/ftp.ts");
 mock.module(ftpModulePath, {
   namedExports: {
-    isProjectNameAvailable: async () => "error",
+    isProjectNameAndVersionAvailable: async () => "error",
     testFtpConnection: async () => ({ success: false, error: "Mocked" }),
   }
 });
