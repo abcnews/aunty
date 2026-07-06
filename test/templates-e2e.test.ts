@@ -8,14 +8,16 @@ import {
   assertBuildOutputsExist,
 } from "./helpers.ts";
 
-const EXPECTED_LOGO = "│  ⣾⢷⡾⢷⡾⣷ aunty\n│  ⢿⡾⢷⡾⢷⡿ create";
+const EXPECTED_LOGO = "│ ⣾⢷⡾⢷⡾⣷  aunty\n│ ⢿⡾⢷⡾⢷⡿  create";
 
 describe("svelte", () => {
   /** Throw and don't proceed if a silly duffer left a node_modules or .DS_Store in the template dirs */
   before(async () => {
     const templatesDir = path.resolve(import.meta.dirname, "../templates");
 
-    async function checkDir(dir: string): Promise<{ nodeModules: string[]; dsStores: string[] }> {
+    async function checkDir(
+      dir: string,
+    ): Promise<{ nodeModules: string[]; dsStores: string[] }> {
       const nodeModules: string[] = [];
       const dsStores: string[] = [];
       const entries = await fs.readdir(dir, { withFileTypes: true });

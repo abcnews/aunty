@@ -1,7 +1,7 @@
 import { log } from "@clack/prompts";
 import path from "node:path";
 import fs from "node:fs/promises";
-import * as helpers from "../../../src/commands/create/initHelpers.ts";
+import * as helpers from "../../../src/lib/initHelpers.ts";
 import type { InitOptions } from "../../../src/commands/create/types.ts";
 
 export async function init({ projectName, baseDir }: InitOptions) {

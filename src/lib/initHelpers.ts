@@ -5,8 +5,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { $ } from "zx";
-import { loadJson, isLocalDevelopment } from "../../lib/util.ts";
-import type { PackageJson } from "../../types.ts";
+import { loadJson, isLocalDevelopment } from "./util.ts";
+import type { PackageJson } from "../types.ts";
 
 /**
  * Recursively copies contents from one directory to another.
@@ -138,8 +138,8 @@ export async function installAunty(baseDir: string): Promise<void> {
   const localDev = isLocalDevelopment();
   let auntyDepValue = "";
 
-  // The running aunty's root directory is 3 levels up relative to this file
-  const auntyRoot = path.resolve(import.meta.dirname, "../../../");
+  // The running aunty's root directory is 2 levels up relative to this file
+  const auntyRoot = path.resolve(import.meta.dirname, "../../");
 
   if (localDev) {
     auntyDepValue = `file:${auntyRoot}`;

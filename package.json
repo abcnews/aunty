@@ -21,7 +21,8 @@
     "test": "node --experimental-test-module-mocks --import tsx --test test/*.test.ts",
     "lint": "eslint src",
     "clean": "rimraf dist",
-    "prebuild": "npm run clean"
+    "prebuild": "npm run clean",
+    "release": "np"
   },
   "files": [
     "dist",
@@ -53,6 +54,7 @@
     "esbuild": "^0.28.1",
     "eslint": "^9.39.2",
     "install": "^0.13.0",
+    "np": "^11.2.2",
     "npm": "^11.11.1",
     "rimraf": "^6.1.2",
     "typescript": "^5.9.3",

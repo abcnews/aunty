@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { $ } from "zx";
 import { stripTypeScriptTypes } from "node:module";
-import * as helpers from "../../../src/commands/create/initHelpers.ts";
+import * as helpers from "../../../src/lib/initHelpers.ts";
 import type { InitOptions } from "../../../src/commands/create/types.ts";
 import { spin } from "../../../src/lib/terminal.ts";
 

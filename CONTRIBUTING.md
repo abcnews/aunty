@@ -20,35 +20,19 @@ To revert to your original global install, run:
 npm unlink
 ```
 
+For ease of use, you can use the Aunty version directly with `node <path to aunty repo> -h`.
+
 ## Releasing new versions of `@abcnews/aunty`
 
-Releases are managed by `release-it`. To release a new version of aunty from the default branch, run:
+Releases are managed by `np`. To release a new version of aunty from the default branch, run:
 
-```
+```bash
 npm run release
 ```
 
-By default this will do the following:
+This will run tests, prompt you to select the version increment, and then publish to npm, commit, tag, and push to GitHub.
 
-1. Bump the `patch` version in `package.json` (and `package-lock.json` if it exists)
-2. Commit and tag that version.
-3. Push the tag & commit to GitHub
-4. Publish to npm
-
-If you want to cut a minor or major release, run either of the following commands instead:
-
-```
-npm run release -- minor
-npm run release -- major
-```
-
-If you're ever unsure about what will happen, you can perform a dry run (which logs to the console) by running:
-
-```
-npm run release -- --dry-run
-```
-
-View the [`release-it` docs](https://www.npmjs.com/package/release-it) for full usage examples, including pre-release and npm tag management.
+For more information, see the [`np` documentation](https://github.com/sindresorhus/np).
 
 ## Style
 
