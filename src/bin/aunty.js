@@ -2,10 +2,12 @@
 
 /**
  * @file Aunty CLI Entry Point
+ * 
+ * This is the main file that launches Aunty. It handles:
+ * - Deferring to the locally installed version if available
+ * - Deciding whether to use the built JS in prod, or `tsx` in dev-like environments
  *
  * This file MUST be plain JavaScript to ensure compatibility as a CLI entry point.
- * Using JS avoids the need for a global `tsx` or a pre-configured TypeScript
- * loader in the user's environment, preventing "env: tsx: No such file or directory" errors.
  */
 
 import { spawnSync } from "node:child_process";
@@ -45,12 +47,16 @@ async function run() {
   let execPath;
   let execArgs;
 
-  if (existsSync(builtCommanderPath)) {
-    // If the built files are available, use those directly with node
+  /** If running from node_modules, we are almost certainly looking for the prod build  */
+  const isRunningFromNodeModules = filename.includes("node_modules");
+
+  if (isRunningFromNodeModules && existsSync(builtCommanderPath)) {
+    // If the built files are available and we are executing from node_modules, use those directly with node
     execPath = process.execPath;
     execArgs = [builtCommanderPath, ...process.argv.slice(2)];
   } else {
     // Otherwise run the package via tsx
+    // This is hit for local dev or when running straight from a Github branch
     const localTsx = path.resolve(dirname, "../../node_modules/.bin/tsx");
     execPath = existsSync(localTsx) ? localTsx : "tsx";
     execArgs = [commanderPath, ...process.argv.slice(2)];
