@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Helpers for vite.confifg.ts files
+ */
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { homedir, hostname } from "node:os";
@@ -14,7 +18,8 @@ export function getServer() {
   const hostArg = process.argv.find((arg: string) => arg.startsWith("--host="));
   const host = hostArg
     ? hostArg.split("=")[1]
-    : process.env.AUNTY_HOST || `${hostname().toLowerCase().split(".")[0]}${INTERNAL_SUFFIX}`;
+    : process.env.AUNTY_HOST ||
+      `${hostname().toLowerCase().split(".")[0]}${INTERNAL_SUFFIX}`;
 
   const certDir = join(SSL_DIR, host);
   const certFile = join(certDir, "server.crt");
@@ -83,7 +88,9 @@ export function es5EntryPlugin(): any {
           (chunk: any) => chunk.type === "chunk" && chunk.name === "index",
         );
         if (entry && (entry as any).type === "chunk") {
-          const cssPaths = Array.from((entry as any).viteMetadata?.importedCss || []);
+          const cssPaths = Array.from(
+            (entry as any).viteMetadata?.importedCss || [],
+          );
           const modulePreloadPaths = (entry as any).imports;
           this.emitFile({
             type: "asset",
@@ -111,7 +118,11 @@ export function es5EntryPlugin(): any {
   };
 }
 
-const ALLOWED_DEV_DOMAINS = ["abc-test.net.au", "abc-prod.net.au", "abc.net.au"];
+const ALLOWED_DEV_DOMAINS = [
+  "abc-test.net.au",
+  "abc-prod.net.au",
+  "abc.net.au",
+];
 
 /**
  * A middleware that rejects no-cors mode requests that are not same-origin,
@@ -124,7 +135,8 @@ export function abcCorsPlugin(): any {
       const stack = server.middlewares.stack;
       const index = stack.findIndex(
         (m: any) =>
-          typeof m.handle === "function" && m.handle.name === "viteRejectNoCorsRequestMiddleware",
+          typeof m.handle === "function" &&
+          m.handle.name === "viteRejectNoCorsRequestMiddleware",
       );
       if (index !== -1) {
         stack.splice(index, 1);
@@ -145,7 +157,8 @@ export function abcCorsPlugin(): any {
         if (headers.referer) {
           const originHost = new URL(headers.referer).hostname;
           const isWhitelisted = ALLOWED_DEV_DOMAINS.some(
-            (domain) => originHost === domain || originHost.endsWith("." + domain),
+            (domain) =>
+              originHost === domain || originHost.endsWith("." + domain),
           );
           if (isWhitelisted) {
             return next();

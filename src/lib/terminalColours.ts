@@ -9,10 +9,7 @@ export interface ColorScheme {
   endFg?: Colour;
 }
 
-export const colours = rawColours.schemes as unknown as Record<
-  string,
-  ColorScheme
->;
+export const colours = rawColours.schemes;
 
 /** Get the ANSI escape sequence for a 24-bit RGB colour */
 export const rgbColour = (colour: Colour, { isBg = false } = {}): string => {

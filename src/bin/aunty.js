@@ -10,11 +10,11 @@
  * This file MUST be plain JavaScript to ensure compatibility as a CLI entry point.
  */
 
-import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { realpath } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { $ } from "zx";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -34,10 +34,8 @@ async function run() {
     (await realpath(localAuntyPath)) !== (await realpath(filename))
   ) {
     console.log(`[aunty] Local version detected: ${localAuntyPath}`);
-    const { status } = spawnSync(process.execPath, [localAuntyPath, ...process.argv.slice(2)], {
-      stdio: "inherit",
-    });
-    process.exit(status ?? 0);
+    const result = await $({ stdio: "inherit" }).nothrow()`${process.execPath} ${localAuntyPath} ${process.argv.slice(2)}`;
+    process.exit(result.exitCode);
   }
 
   // Resolve paths for the built JS and original TS commander files.
@@ -62,17 +60,8 @@ async function run() {
     execArgs = [commanderPath, ...process.argv.slice(2)];
   }
 
-  const result = spawnSync(execPath, execArgs, {
-    stdio: "inherit",
-    env: process.env,
-  });
-
-  if (result.error) {
-    console.error(`[aunty] Failed to launch CLI process: ${result.error.message}`);
-    process.exit(1);
-  }
-
-  process.exit(result.status ?? 0);
+  const result = await $({ stdio: "inherit" }).nothrow()`${execPath} ${execArgs}`;
+  process.exit(result.exitCode);
 }
 
 run().catch((err) => {

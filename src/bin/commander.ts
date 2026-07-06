@@ -11,10 +11,22 @@ import { run as runRelease } from "../commands/release/index.ts";
 import { run as runCreate } from "../commands/create/index.ts";
 import { run as runBuild } from "../commands/build/index.ts";
 import { run as runServe } from "../commands/serve/index.ts";
-import { getHeader, printDevColors } from "../lib/terminal.ts";
+import { getHeader, printDevColours } from "../lib/terminal.ts";
 import { loadJson } from "../lib/util.ts";
 import pc from "picocolors";
-import colours from "../lib/colours.json" with { type: "json" };
+import rawColours from "../lib/colours.json" with { type: "json" };
+
+interface Colours {
+  schemes: Record<string, {
+    chars?: [number, number, number][];
+    startFg?: [number, number, number];
+    endFg?: [number, number, number];
+  }>;
+  commands: Record<string, string>;
+}
+
+const colours = rawColours as unknown as Colours;
+const pcColors = pc as unknown as Record<string, (str: string) => string>;
 
 const pkgPath = path.join(import.meta.dirname, "../../package.json");
 const pkg = (await loadJson(pkgPath)) as {
@@ -46,9 +58,7 @@ program
 program.configureHelp({
   subcommandTerm: (cmd) => {
     const name = cmd.name();
-    const commandsColourMap = colours.commands as Record<string, string>;
-    const colourName = commandsColourMap[name];
-    const pcColors = pc as unknown as Record<string, (str: string) => string>;
+    const colourName = colours.commands[name];
     const colourFn =
       colourName && typeof pcColors[colourName] === "function"
         ? pcColors[colourName]
@@ -60,11 +70,10 @@ program.configureHelp({
     const baseHelp = new Help().formatHelp(cmd, helper);
     if (cmd.parent) {
       const name = cmd.name();
-      const commandsColourMap = colours.commands as Record<string, string>;
-      const colourName = commandsColourMap[name] || "rainbow";
+      const colourName = colours.commands[name] || "rainbow";
       const logoHeader = getHeader("aunty", name, {
         prepend: "",
-        colour: colourName as any,
+        colour: colourName as keyof typeof rawColours.schemes,
       });
       return `${logoHeader}\n\n${baseHelp}`;
     }
@@ -134,9 +143,9 @@ program
 
 program
   .command("dev-colours", { hidden: true })
-  .description("Test all available gradient colors")
+  .description("Test all available gradient colours")
   .action(() => {
-    printDevColors();
+    printDevColours();
     process.exit(0);
   });
 

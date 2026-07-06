@@ -17,25 +17,21 @@ export async function run(): Promise<number> {
   if (!details) return 1;
 
   const { pkg } = details;
-  const scriptName = pkg.scripts?.dev
-    ? "dev"
-    : pkg.scripts?.serve
-      ? "serve"
-      : null;
+  const hasDevScript = !!pkg.scripts?.dev;
 
-  if (!scriptName) {
+  if (!hasDevScript) {
     log.error(
-      `Could not find a ${pc.cyan("dev")} or ${pc.cyan("serve")} script in package.json.`,
+      `Could not find a ${pc.cyan("dev")} script in package.json.`,
     );
     return 1;
   }
 
   try {
-    const isVite = pkg.scripts?.[scriptName]?.includes("vite");
+    const isVite = pkg.scripts?.dev?.includes("vite");
     if (isVite) {
-      await $({ stdio: "inherit" })`npm run ${scriptName} -- --clearScreen false`;
+      await $({ stdio: "inherit" })`npm run dev -- --clearScreen false`;
     } else {
-      await $({ stdio: "inherit" })`npm run ${scriptName}`;
+      await $({ stdio: "inherit" })`npm run dev`;
     }
     return 0;
   } catch (err: any) {

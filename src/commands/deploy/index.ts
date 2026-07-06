@@ -29,7 +29,7 @@ export async function run(options: DeployOptions = {}): Promise<number> {
       getHeader(
         pc.dim("aunty"),
         `deploy${options.dryRun ? ` ${pc.cyan("[dry]")}` : ""}`,
-        { colour: "orange" }
+        { colour: "orange" },
       ),
     );
   }
@@ -129,7 +129,6 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   let currentFile = "";
   const totalFilesStr = inventory.length.toString();
 
-  const startTime = Date.now();
   try {
     await ftpClient.uploadDir(localDir, remoteDir, (info) => {
       if (info.name !== currentFile) {
@@ -141,8 +140,8 @@ export async function run(options: DeployOptions = {}): Promise<number> {
         uploadSpinner.message(`${countStr}/${totalFilesStr} ${info.name}`);
       }
     });
-    const time = Math.round((Date.now() - startTime) / 100) / 10 + "s";
-    uploadSpinner.stop(`Upload finished in ${time}`);
+
+    uploadSpinner.stop(`Upload finished`);
   } catch (err) {
     uploadSpinner.cancel("Upload failed");
     ftpClient.close();

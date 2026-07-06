@@ -83,8 +83,8 @@ export const spin = (
   return s;
 };
 
-/** Print all available header colors for dev testing */
-export const printDevColors = () => {
+/** Print all available header colours for dev testing */
+export const printDevColours = () => {
   Object.keys(colours).forEach((colour) => {
     if (colour === "commands") return;
     console.log(`\n--- ${colour.toUpperCase()} ---`);

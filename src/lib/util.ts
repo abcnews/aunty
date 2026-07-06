@@ -58,34 +58,33 @@ export function formatSize(bytes: number): string {
  * Walks up the directory tree to find the nearest package.json.
  */
 export async function findProjectDetails(
-  startDir: string,
+  currentDir: string,
 ): Promise<{ root: string; pkg: PackageJson } | null> {
-  let currentDir = startDir;
-
-  while (currentDir !== path.parse(currentDir).root) {
-    const pkgPath = path.join(currentDir, "package.json");
-    const pkg = await loadJson<PackageJson>(pkgPath);
-
-    if (pkg) {
-      return { root: currentDir, pkg };
-    }
-
-    currentDir = path.dirname(currentDir);
+  if (currentDir === path.parse(currentDir).root) {
+    const { log } = await import("@clack/prompts");
+    log.error(
+      `Could not find ${pc.cyan("package.json")} in this or any parent directory.`,
+    );
+    return null;
   }
 
-  const { log } = await import("@clack/prompts");
-  log.error(
-    `Could not find ${pc.cyan("package.json")} in this or any parent directory.`,
-  );
-  return null;
+  const pkgPath = path.join(currentDir, "package.json");
+  const pkg = await loadJson<PackageJson>(pkgPath);
+  if (pkg) {
+    return { root: currentDir, pkg };
+  }
+
+  return findProjectDetails(path.dirname(currentDir));
 }
 
 /**
  * Runs the npm run build script for the project.
  */
-export async function runBuild(options: { stdio?: "inherit" | "pipe" | "ignore" } = {}): Promise<void> {
+export async function runBuild(
+  options: { stdio?: "inherit" | "pipe" | "ignore" } = {},
+): Promise<void> {
   const { stdio = "inherit" } = options;
-  
+
   const details = await findProjectDetails(process.cwd());
   if (!details) {
     throw new Error("Could not find project details.");
