@@ -42,7 +42,7 @@ async function run() {
    */
   const result = spawnSync(
     process.execPath,
-    ["--experimental-strip-types", commanderPath, ...process.argv.slice(2)],
+    [commanderPath, ...process.argv.slice(2)],
     {
       stdio: "inherit",
       env: process.env,
