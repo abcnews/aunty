@@ -12,14 +12,14 @@ export const testTempDir = path.resolve(import.meta.dirname, "../.test-temp");
 try {
   await fs.rm(testTempDir, { recursive: true, force: true });
 } catch (err: any) {
-  console.warn(`Warning: Could not clear .test-temp folder at startup (files might be locked by another process): ${err.message}`);
+  console.warn(
+    `Warning: Could not clear .test-temp folder at startup (files might be locked by another process): ${err.message}`,
+  );
 }
 await fs.mkdir(testTempDir, { recursive: true });
 
 interface MockAnswers {
-  projectName: string;
-  projectType: "base" | "odyssey" | "scrollyteller";
-  useTypescript: boolean;
+  prompts: Record<string, any>;
 }
 
 let activeAnswers: MockAnswers;
@@ -34,8 +34,40 @@ function stripAnsi(str: string): string {
   return str.replace(/\u001b\[[0-9;]*m/g, "");
 }
 
-function setMockAnswers(answers: MockAnswers) {
-  activeAnswers = answers;
+function setMockAnswers(prompts: Record<string, any>) {
+  activeAnswers = { prompts };
+}
+
+function resolvePrompt(type: "text" | "select" | "confirm", options: any): any {
+  const message = stripAnsi(options?.message || "");
+
+  const match = Object.entries(activeAnswers.prompts).find(([pattern]) =>
+    message.includes(pattern)
+  );
+
+  if (!match) {
+    throw new Error(
+      `Unexpected clack prompt (${type}) with message: "${message}". Please specify a mock answer for this prompt pattern in your test.`,
+    );
+  }
+
+  const [pattern, value] = match;
+  let resolvedValue = value;
+
+  if (type === "select" && Array.isArray(options.options)) {
+    const foundOption = options.options.find(
+      (opt: any) =>
+        opt.label === value ||
+        opt.value === value ||
+        (opt.value && typeof opt.value === "object" && opt.value.name === value),
+    );
+    if (foundOption) {
+      resolvedValue = foundOption.value;
+    }
+  }
+
+  transcript.push(`prompt.${type}: ${pattern} -> ${value}`);
+  return resolvedValue;
 }
 
 // Mock @clack/prompts
@@ -76,26 +108,9 @@ mock.module("@clack/prompts", {
         if (msg) transcript.push(`spinner.cancel: ${stripAnsi(msg).trim()}`);
       },
     }),
-    text: async () => {
-      transcript.push(`prompt.text: project name requested`);
-      return activeAnswers.projectName;
-    },
-    select: async (options: any) => {
-      if (options.options[0]?.value?.run) {
-        transcript.push(`prompt.select: root template selected`);
-        return options.options[0].value;
-      }
-      transcript.push(`prompt.select: project type selected -> ${activeAnswers.projectType}`);
-      return activeAnswers.projectType;
-    },
-    confirm: async ({ message }: { message: string }) => {
-      if (message.includes("Continue anyway?")) {
-        transcript.push("prompt.confirm: continue on FTP warning -> true");
-        return true;
-      }
-      transcript.push(`prompt.confirm: use typescript -> ${activeAnswers.useTypescript}`);
-      return activeAnswers.useTypescript;
-    },
+    text: async (options: any) => resolvePrompt("text", options),
+    select: async (options: any) => resolvePrompt("select", options),
+    confirm: async (options: any) => resolvePrompt("confirm", options),
   },
 });
 
@@ -105,7 +120,7 @@ mock.module(ftpModulePath, {
   namedExports: {
     isProjectNameAndVersionAvailable: async () => "error",
     testFtpConnection: async () => ({ success: false, error: "Mocked" }),
-  }
+  },
 });
 
 // Import runCreate after mocking @clack/prompts
@@ -114,22 +129,25 @@ const { run: runCreate } = await import("../src/commands/create/index.ts");
 /**
  * Helper to create a project using the CLI creator.
  */
-export async function createProject(options: {
-  projectName: string;
-  projectType: "base" | "odyssey" | "scrollyteller";
-  useTypescript: boolean;
-}): Promise<{ projectDir: string; transcript: string[] }> {
-  const projectDir = path.join(testTempDir, options.projectName);
+export async function createProject(
+  projectName: string,
+  prompts: Record<string, any>,
+): Promise<{ projectDir: string; transcript: string[] }> {
+  const projectDir = path.join(testTempDir, projectName);
 
   clearTranscript();
-  setMockAnswers(options);
+  setMockAnswers(prompts);
 
   const originalCwd = process.cwd;
   process.cwd = () => testTempDir;
 
   try {
-    const exitCode = await runCreate(options.projectName);
-    assert.strictEqual(exitCode, 0, `Failed to create project with exit code ${exitCode}`);
+    const exitCode = await runCreate();
+    assert.strictEqual(
+      exitCode,
+      0,
+      `Failed to create project with exit code ${exitCode}`,
+    );
   } finally {
     process.cwd = originalCwd;
   }
@@ -147,7 +165,9 @@ export async function buildProject(projectDir: string): Promise<void> {
 /**
  * Helper to assert that expected build outputs are generated.
  */
-export async function assertBuildOutputsExist(projectDir: string): Promise<void> {
+export async function assertBuildOutputsExist(
+  projectDir: string,
+): Promise<void> {
   const distDir = path.join(projectDir, "dist");
   const files = [
     path.join(distDir, "index.html"),
@@ -162,6 +182,6 @@ export async function assertBuildOutputsExist(projectDir: string): Promise<void>
       } catch {
         assert.fail(`Expected build output file to exist: ${file}`);
       }
-    })
+    }),
   );
 }

@@ -54,10 +54,12 @@ describe("svelte", () => {
   test("creates and builds base svelte project with TypeScript", async () => {
     const projectName = "svelte-base-ts";
 
-    const { projectDir, transcript } = await createProject({
-      projectName,
-      projectType: "base",
-      useTypescript: true,
+    const { projectDir, transcript } = await createProject(projectName, {
+      "What is your project named?": projectName,
+      "Continue anyway?": true,
+      "Select a project type:": "Svelte",
+      "What kind of project do you want?": "base",
+      "Do you want to use TypeScript?": true,
     });
 
     await buildProject(projectDir);
@@ -66,12 +68,13 @@ describe("svelte", () => {
     // Verify CLI transcript
     assert.deepStrictEqual(transcript, [
       `intro: ${EXPECTED_LOGO}`,
+      "prompt.text: What is your project named? -> svelte-base-ts",
       "spinner.start: Checking project name availability...",
       "spinner.stop: Project name checked",
-      "prompt.confirm: continue on FTP warning -> true",
-      "prompt.select: root template selected",
-      "prompt.select: project type selected -> base",
-      "prompt.confirm: use typescript -> true",
+      "prompt.confirm: Continue anyway? -> true",
+      "prompt.select: Select a project type: -> Svelte",
+      "prompt.select: What kind of project do you want? -> base",
+      "prompt.confirm: Do you want to use TypeScript? -> true",
       "spinner.start: Installing dependencies...",
       "spinner.stop: Dependencies installed",
       "log.step: Next steps:",
@@ -83,10 +86,12 @@ describe("svelte", () => {
   test("creates and builds base svelte project with JavaScript", async () => {
     const projectName = "svelte-base-js";
 
-    const { projectDir, transcript } = await createProject({
-      projectName,
-      projectType: "base",
-      useTypescript: false,
+    const { projectDir, transcript } = await createProject(projectName, {
+      "What is your project named?": projectName,
+      "Continue anyway?": true,
+      "Select a project type:": "Svelte",
+      "What kind of project do you want?": "base",
+      "Do you want to use TypeScript?": false,
     });
 
     await buildProject(projectDir);
@@ -95,12 +100,13 @@ describe("svelte", () => {
     // Verify CLI transcript (including JavaScript patch spinner logs)
     assert.deepStrictEqual(transcript, [
       `intro: ${EXPECTED_LOGO}`,
+      "prompt.text: What is your project named? -> svelte-base-js",
       "spinner.start: Checking project name availability...",
       "spinner.stop: Project name checked",
-      "prompt.confirm: continue on FTP warning -> true",
-      "prompt.select: root template selected",
-      "prompt.select: project type selected -> base",
-      "prompt.confirm: use typescript -> false",
+      "prompt.confirm: Continue anyway? -> true",
+      "prompt.select: Select a project type: -> Svelte",
+      "prompt.select: What kind of project do you want? -> base",
+      "prompt.confirm: Do you want to use TypeScript? -> false",
       "spinner.start: Converting project to JavaScript",
       "spinner.message: Converting .ts to .js",
       "spinner.message: Updating config",
@@ -118,10 +124,12 @@ describe("svelte", () => {
   test("creates and builds odyssey svelte project with TypeScript", async () => {
     const projectName = "svelte-odyssey-ts";
 
-    const { projectDir, transcript } = await createProject({
-      projectName,
-      projectType: "odyssey",
-      useTypescript: true,
+    const { projectDir, transcript } = await createProject(projectName, {
+      "What is your project named?": projectName,
+      "Continue anyway?": true,
+      "Select a project type:": "Svelte",
+      "What kind of project do you want?": "odyssey",
+      "Do you want to use TypeScript?": true,
     });
 
     await buildProject(projectDir);
@@ -129,12 +137,13 @@ describe("svelte", () => {
 
     assert.deepStrictEqual(transcript, [
       `intro: ${EXPECTED_LOGO}`,
+      "prompt.text: What is your project named? -> svelte-odyssey-ts",
       "spinner.start: Checking project name availability...",
       "spinner.stop: Project name checked",
-      "prompt.confirm: continue on FTP warning -> true",
-      "prompt.select: root template selected",
-      "prompt.select: project type selected -> odyssey",
-      "prompt.confirm: use typescript -> true",
+      "prompt.confirm: Continue anyway? -> true",
+      "prompt.select: Select a project type: -> Svelte",
+      "prompt.select: What kind of project do you want? -> odyssey",
+      "prompt.confirm: Do you want to use TypeScript? -> true",
       "spinner.start: Installing dependencies...",
       "spinner.stop: Dependencies installed",
       "log.step: Next steps:",
@@ -146,10 +155,12 @@ describe("svelte", () => {
   test("creates and builds odyssey svelte project with JavaScript", async () => {
     const projectName = "svelte-odyssey-js";
 
-    const { projectDir, transcript } = await createProject({
-      projectName,
-      projectType: "odyssey",
-      useTypescript: false,
+    const { projectDir, transcript } = await createProject(projectName, {
+      "What is your project named?": projectName,
+      "Continue anyway?": true,
+      "Select a project type:": "Svelte",
+      "What kind of project do you want?": "odyssey",
+      "Do you want to use TypeScript?": false,
     });
 
     await buildProject(projectDir);
@@ -157,12 +168,13 @@ describe("svelte", () => {
 
     assert.deepStrictEqual(transcript, [
       `intro: ${EXPECTED_LOGO}`,
+      "prompt.text: What is your project named? -> svelte-odyssey-js",
       "spinner.start: Checking project name availability...",
       "spinner.stop: Project name checked",
-      "prompt.confirm: continue on FTP warning -> true",
-      "prompt.select: root template selected",
-      "prompt.select: project type selected -> odyssey",
-      "prompt.confirm: use typescript -> false",
+      "prompt.confirm: Continue anyway? -> true",
+      "prompt.select: Select a project type: -> Svelte",
+      "prompt.select: What kind of project do you want? -> odyssey",
+      "prompt.confirm: Do you want to use TypeScript? -> false",
       "spinner.start: Converting project to JavaScript",
       "spinner.message: Converting .ts to .js",
       "spinner.message: Updating config",
@@ -180,10 +192,12 @@ describe("svelte", () => {
   test("creates and builds scrollyteller svelte project with TypeScript", async () => {
     const projectName = "svelte-scrollyteller-ts";
 
-    const { projectDir, transcript } = await createProject({
-      projectName,
-      projectType: "scrollyteller",
-      useTypescript: true,
+    const { projectDir, transcript } = await createProject(projectName, {
+      "What is your project named?": projectName,
+      "Continue anyway?": true,
+      "Select a project type:": "Svelte",
+      "What kind of project do you want?": "scrollyteller",
+      "Do you want to use TypeScript?": true,
     });
 
     await buildProject(projectDir);
@@ -191,12 +205,13 @@ describe("svelte", () => {
 
     assert.deepStrictEqual(transcript, [
       `intro: ${EXPECTED_LOGO}`,
+      "prompt.text: What is your project named? -> svelte-scrollyteller-ts",
       "spinner.start: Checking project name availability...",
       "spinner.stop: Project name checked",
-      "prompt.confirm: continue on FTP warning -> true",
-      "prompt.select: root template selected",
-      "prompt.select: project type selected -> scrollyteller",
-      "prompt.confirm: use typescript -> true",
+      "prompt.confirm: Continue anyway? -> true",
+      "prompt.select: Select a project type: -> Svelte",
+      "prompt.select: What kind of project do you want? -> scrollyteller",
+      "prompt.confirm: Do you want to use TypeScript? -> true",
       "spinner.start: Installing dependencies...",
       "spinner.stop: Dependencies installed",
       "log.step: Next steps:",
@@ -208,10 +223,12 @@ describe("svelte", () => {
   test("creates and builds scrollyteller svelte project with JavaScript", async () => {
     const projectName = "svelte-scrollyteller-js";
 
-    const { projectDir, transcript } = await createProject({
-      projectName,
-      projectType: "scrollyteller",
-      useTypescript: false,
+    const { projectDir, transcript } = await createProject(projectName, {
+      "What is your project named?": projectName,
+      "Continue anyway?": true,
+      "Select a project type:": "Svelte",
+      "What kind of project do you want?": "scrollyteller",
+      "Do you want to use TypeScript?": false,
     });
 
     await buildProject(projectDir);
@@ -219,12 +236,13 @@ describe("svelte", () => {
 
     assert.deepStrictEqual(transcript, [
       `intro: ${EXPECTED_LOGO}`,
+      "prompt.text: What is your project named? -> svelte-scrollyteller-js",
       "spinner.start: Checking project name availability...",
       "spinner.stop: Project name checked",
-      "prompt.confirm: continue on FTP warning -> true",
-      "prompt.select: root template selected",
-      "prompt.select: project type selected -> scrollyteller",
-      "prompt.confirm: use typescript -> false",
+      "prompt.confirm: Continue anyway? -> true",
+      "prompt.select: Select a project type: -> Svelte",
+      "prompt.select: What kind of project do you want? -> scrollyteller",
+      "prompt.confirm: Do you want to use TypeScript? -> false",
       "spinner.start: Converting project to JavaScript",
       "spinner.message: Converting .ts to .js",
       "spinner.message: Updating config",
