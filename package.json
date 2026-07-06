@@ -15,7 +15,8 @@
     "Ash Kyd <kyd.ashley@abc.net.au>"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "esbuild src/bin/commander.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/bin/commander.js",
+    "prepublishOnly": "npm run build",
     "dev": "tsx src/bin/aunty.ts",
     "test": "node --experimental-test-module-mocks --import tsx --test test/*.test.ts",
     "lint": "eslint src",
@@ -49,6 +50,7 @@
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^25.0.10",
     "@types/semver": "^7.7.1",
+    "esbuild": "^0.28.1",
     "eslint": "^9.39.2",
     "install": "^0.13.0",
     "npm": "^11.11.1",

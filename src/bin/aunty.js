@@ -38,19 +38,25 @@ async function run() {
     process.exit(status ?? 0);
   }
 
-  // Resolve the main commander logic.
+  // Resolve paths for the built JS and original TS commander files.
+  const builtCommanderPath = path.resolve(dirname, "../../dist/bin/commander.js");
   const commanderPath = path.resolve(dirname, "commander.ts");
 
-  /**
-   * We must use `tsx` to execute our TypeScript source files without a build step.
-   * To ensure this works even when `tsx` isn't in the global PATH, we resolve
-   * the version installed as a dependency of @abcnews/aunty and use it directly.
-   */
-  const localTsx = path.resolve(dirname, "../../node_modules/.bin/tsx");
-  const hasLocalTsx = existsSync(localTsx);
-  const execPath = hasLocalTsx ? localTsx : "tsx";
+  let execPath;
+  let execArgs;
 
-  const result = spawnSync(execPath, [commanderPath, ...process.argv.slice(2)], {
+  if (existsSync(builtCommanderPath)) {
+    // If the built files are available, use those directly with node
+    execPath = process.execPath;
+    execArgs = [builtCommanderPath, ...process.argv.slice(2)];
+  } else {
+    // Otherwise run the package via tsx
+    const localTsx = path.resolve(dirname, "../../node_modules/.bin/tsx");
+    execPath = existsSync(localTsx) ? localTsx : "tsx";
+    execArgs = [commanderPath, ...process.argv.slice(2)];
+  }
+
+  const result = spawnSync(execPath, execArgs, {
     stdio: "inherit",
     env: process.env,
   });
