@@ -259,3 +259,75 @@ describe("svelte", () => {
     ]);
   });
 });
+
+describe("vanilla", () => {
+  test("creates and builds base vanilla project with TypeScript", async () => {
+    const projectName = "vanilla-base-ts";
+
+    const { projectDir, transcript } = await createProject(projectName, {
+      "What is your project named?": projectName,
+      "Continue anyway?": true,
+      "Select a project type:": "Plain JS",
+      "What kind of project do you want?": "base",
+      "Do you want to use TypeScript?": true,
+    });
+
+    await buildProject(projectDir);
+    await assertBuildOutputsExist(projectDir);
+
+    // Verify CLI transcript
+    assert.deepStrictEqual(transcript, [
+      `intro: ${EXPECTED_LOGO}`,
+      "prompt.text: What is your project named? -> vanilla-base-ts",
+      "spinner.start: Checking project name availability...",
+      "spinner.stop: Project name checked",
+      "prompt.confirm: Continue anyway? -> true",
+      "prompt.select: Select a project type: -> Plain JS",
+      "prompt.select: What kind of project do you want? -> base",
+      "prompt.confirm: Do you want to use TypeScript? -> true",
+      "spinner.start: Installing dependencies...",
+      "spinner.stop: Dependencies installed",
+      "log.step: Next steps:",
+      `log.message: 1. cd ${projectName}\n2. npm run dev`,
+      "outro: Happy coding.",
+    ]);
+  });
+
+  test("creates and builds base vanilla project with JavaScript", async () => {
+    const projectName = "vanilla-base-js";
+
+    const { projectDir, transcript } = await createProject(projectName, {
+      "What is your project named?": projectName,
+      "Continue anyway?": true,
+      "Select a project type:": "Plain JS",
+      "What kind of project do you want?": "base",
+      "Do you want to use TypeScript?": false,
+    });
+
+    await buildProject(projectDir);
+    await assertBuildOutputsExist(projectDir);
+
+    // Verify CLI transcript (including JavaScript patch spinner logs)
+    assert.deepStrictEqual(transcript, [
+      `intro: ${EXPECTED_LOGO}`,
+      "prompt.text: What is your project named? -> vanilla-base-js",
+      "spinner.start: Checking project name availability...",
+      "spinner.stop: Project name checked",
+      "prompt.confirm: Continue anyway? -> true",
+      "prompt.select: Select a project type: -> Plain JS",
+      "prompt.select: What kind of project do you want? -> base",
+      "prompt.confirm: Do you want to use TypeScript? -> false",
+      "spinner.start: Converting project to JavaScript",
+      "spinner.message: Converting .ts to .js",
+      "spinner.message: Installing dependencies",
+      "spinner.message: Formatting project",
+      "spinner.stop: Project converted to JavaScript",
+      "spinner.start: Installing dependencies...",
+      "spinner.stop: Dependencies installed",
+      "log.step: Next steps:",
+      `log.message: 1. cd ${projectName}\n2. npm run dev`,
+      "outro: Happy coding.",
+    ]);
+  });
+});
+
