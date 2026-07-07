@@ -33,7 +33,6 @@ async function run() {
     existsSync(localAuntyPath) &&
     (await realpath(localAuntyPath)) !== (await realpath(filename))
   ) {
-    console.log(`[aunty] Local version detected: ${localAuntyPath}`);
     const result = await $({ stdio: "inherit" }).nothrow()`${process.execPath} ${localAuntyPath} ${process.argv.slice(2)}`;
     process.exit(result.exitCode);
   }
@@ -45,7 +44,7 @@ async function run() {
   let execPath;
   let execArgs;
 
-  /** If running from node_modules, we are almost certainly looking for the prod build  */
+  /** If running from node_modules, we are almost certainly running in prod  */
   const isRunningFromNodeModules = filename.includes("node_modules");
 
   if (isRunningFromNodeModules && existsSync(builtCommanderPath)) {

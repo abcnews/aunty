@@ -84,7 +84,7 @@ program.configureHelp({
 program
   .command("deploy")
   .description(
-    "Deploy the project to FTP. This deploys the current dist/ folder to the speficied remote folder, falling back to the current version number. Use this to retry a failed release.",
+    "Deploy the project to FTP. This deploys the current dist/ folder to the specified remote folder, falling back to the current version number. Use this to retry a failed release.",
   )
   .argument(
     "[destDir]",
