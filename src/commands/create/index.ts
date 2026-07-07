@@ -113,6 +113,9 @@ export async function run(destDirArg?: string): Promise<number> {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     cancel(`Failed to create project: ${message}`);
+    if (err instanceof Error && err.stack) {
+      console.error(err.stack);
+    }
     return 1;
   }
 

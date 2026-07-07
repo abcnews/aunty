@@ -33,7 +33,7 @@ async function run() {
     existsSync(localAuntyPath) &&
     (await realpath(localAuntyPath)) !== (await realpath(filename))
   ) {
-    const result = await $({ stdio: "inherit" }).nothrow()`${process.execPath} ${localAuntyPath} ${process.argv.slice(2)}`;
+    const result = await $({ stdio: "inherit", nothrow: true })`${process.execPath} ${localAuntyPath} ${process.argv.slice(2)}`;
     process.exit(result.exitCode);
   }
 
@@ -59,7 +59,7 @@ async function run() {
     execArgs = [commanderPath, ...process.argv.slice(2)];
   }
 
-  const result = await $({ stdio: "inherit" }).nothrow()`${execPath} ${execArgs}`;
+  const result = await $({ stdio: "inherit", nothrow: true })`${execPath} ${execArgs}`;
   process.exit(result.exitCode);
 }
 

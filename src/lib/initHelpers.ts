@@ -4,6 +4,7 @@
  */
 import fs from "node:fs/promises";
 import path from "node:path";
+import { stripTypeScriptTypes } from "node:module";
 import { $ } from "zx";
 import { loadJson, isLocalDevelopment } from "./util.ts";
 import type { PackageJson } from "../types.ts";
@@ -156,4 +157,52 @@ export async function installAunty(baseDir: string): Promise<void> {
     }
     pkg.devDependencies["@abcnews/aunty"] = auntyDepValue;
   });
+}
+
+/**
+ * Renames _gitignore to .gitignore in the target directory.
+ *
+ * @param baseDir The directory containing the _gitignore file
+ */
+export async function renameGitignore(baseDir: string): Promise<void> {
+  const { log } = await import("@clack/prompts");
+  const gitignoreFromPath = path.resolve(baseDir, "_gitignore");
+  const gitignoreToPath = path.resolve(baseDir, ".gitignore");
+  
+  try {
+    await fs.access(gitignoreFromPath);
+  } catch {
+    log.error(
+      "Base template must include a _gitignore file (npm strips .gitignore)",
+    );
+    throw new Error("Missing _gitignore file");
+  }
+
+  await fs.rename(gitignoreFromPath, gitignoreToPath);
+}
+
+/**
+ * Rewrites .ts and .tsx extensions in imports to .js and .jsx.
+ *
+ * @param content The source code content
+ * @returns The content with rewritten import paths
+ */
+export function rewriteImports(content: string): string {
+  return content
+    .replace(/(from\s+['"])(.*?)\.ts(['"])/g, "$1$2.js$3")
+    .replace(/(import\s+['"])(.*?)\.ts(['"])/g, "$1$2.js$3");
+}
+
+/**
+ * Converts a .ts file to .js by stripping types and rewriting imports.
+ *
+ * @param tsFile The path to the TypeScript file
+ */
+export async function stripTypesFromFile(tsFile: string) {
+  const jsFile = tsFile.replace(/\.ts$/, ".js");
+  const content = await fs.readFile(tsFile, "utf-8");
+  const stripped = stripTypeScriptTypes(content);
+  const rewritten = rewriteImports(stripped);
+  await fs.writeFile(jsFile, rewritten);
+  await fs.unlink(tsFile);
 }

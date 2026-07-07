@@ -1,4 +1,3 @@
-import { log } from "@clack/prompts";
 import path from "node:path";
 import fs from "node:fs/promises";
 import * as helpers from "../../../src/lib/initHelpers.ts";
@@ -10,19 +9,14 @@ export async function init({ projectName, baseDir }: InitOptions) {
   await helpers.copyContents(contentsDir, baseDir);
 
   // String replacements
-  await helpers.replaceInFiles(
-    baseDir,
-    ["index.html", "src/index.ts", "README.md"],
-    {
-      __PROJECT_NAME__: projectName,
-      __PROJECT_NAME_ACTO__: projectName.replace(/-/g, ""),
-      __PROJECT_TYPE__: "Svelte",
-    },
-  );
+  await helpers.replaceInFiles(baseDir, ["index.html", "src/index.ts"], {
+    __PROJECT_NAME__: projectName,
+    __PROJECT_NAME_ACTO__: projectName.replace(/-/g, ""),
+    __PROJECT_TYPE__: "Svelte",
+  });
 
   // Rename _gitignore to .gitignore (npm strips .gitignore from packages)
   await helpers.renameGitignore(baseDir);
-
 
   // Add metadata to package.json
   const gitUser = await helpers.getGitUser();

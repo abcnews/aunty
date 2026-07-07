@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="src/assets/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <script src="src/iframe.ts" type="module"></script>
+    <title>__PROJECT_NAME__</title>
+  </head>
+  <body>
+    <div data-mount id="__PROJECT_NAME_ACTO__X42YtextZtrue"></div>
+
+    <script type="text/javascript">
+      (() => {
+        // Mock Odyssey's loaded event so *whenOdysseyLoaded* resolves
+        window.__ODYSSEY__ = { __mock_odyssey: true };
+        window.dispatchEvent(new CustomEvent("odyssey:api"));
+
+        // Emit resize events to resize when embedded inside an article
+        let prevHeight = 0;
+        function emitResize(height) {
+          if (prevHeight === height) return;
+          prevHeight = height;
+          window.parent?.postMessage({ type: "embed-size", height }, "*");
+        }
+        const observer = new ResizeObserver(() =>
+          emitResize(document.documentElement.offsetHeight),
+        );
+        observer.observe(document.documentElement);
+      })();
+    </script>
+  </body>
+</html>

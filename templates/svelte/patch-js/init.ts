@@ -6,27 +6,6 @@ import type { InitOptions } from "../../../src/commands/create/types.ts";
 import { spin } from "../../../src/lib/terminal.ts";
 
 /**
- * Rewrites .ts and .tsx extensions in imports to .js and .jsx.
- */
-function rewriteImports(content: string): string {
-  return content
-    .replace(/(from\s+['"])(.*?)\.ts(['"])/g, "$1$2.js$3")
-    .replace(/(import\s+['"])(.*?)\.ts(['"])/g, "$1$2.js$3");
-}
-
-/**
- * Converts a .ts file to .js by stripping types and rewriting imports.
- */
-async function processTsFile(tsFile: string) {
-  const jsFile = tsFile.replace(/\.ts$/, ".js");
-  const content = await fs.readFile(tsFile, "utf-8");
-  const stripped = stripTypeScriptTypes(content);
-  const rewritten = rewriteImports(stripped);
-  await fs.writeFile(jsFile, rewritten);
-  await fs.unlink(tsFile);
-}
-
-/**
  * Removes type annotations and rewrites imports in a .svelte file.
  */
 async function processSvelteFile(file: string) {
@@ -38,7 +17,7 @@ async function processSvelteFile(file: string) {
 
   for (const match of matches) {
     const stripped = stripTypeScriptTypes(match[1]);
-    const rewritten = rewriteImports(stripped);
+    const rewritten = helpers.rewriteImports(stripped);
     content = content.replace(
       match[0],
       `<script>\n${rewritten.trim()}\n</script>`,
@@ -56,7 +35,7 @@ export async function init({ baseDir }: InitOptions) {
   // 1. Convert .ts to .js
   s.message("Converting .ts to .js");
   const tsFiles = await helpers.findFiles(baseDir, "**/*.ts");
-  await Promise.all(tsFiles.map(processTsFile));
+  await Promise.all(tsFiles.map(helpers.stripTypesFromFile));
 
   // 2. Un-typescript .svelte files
   const svelteFiles = await helpers.findFiles(baseDir, "**/*.svelte");
