@@ -54,6 +54,7 @@
     "release-check": "magenta",
     "release": "red",
     "serve": "cyan",
-    "build": "blue"
+    "build": "blue",
+    "migrate": "rainbow"
   }
 }

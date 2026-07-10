@@ -29,7 +29,10 @@ async function run() {
   );
 
   // If a local version exists and we are not it, prefer the local version.
+  // Do not defer to local version for the 'migrate' command, as it is used to upgrade the project.
+  const isMigrate = process.argv.includes("migrate");
   if (
+    !isMigrate &&
     existsSync(localAuntyPath) &&
     (await realpath(localAuntyPath)) !== (await realpath(filename))
   ) {

@@ -11,6 +11,7 @@ import { run as runRelease } from "../commands/release/index.ts";
 import { run as runCreate } from "../commands/create/index.ts";
 import { run as runBuild } from "../commands/build/index.ts";
 import { run as runServe } from "../commands/serve/index.ts";
+import { run as runMigrate } from "../commands/migrate/index.ts";
 import { getHeader, printDevColours } from "../lib/terminal.ts";
 import { loadJson } from "../lib/util.ts";
 import pc from "picocolors";
@@ -139,6 +140,15 @@ program
   .description("Build the project for production")
   .action(async () => {
     process.exit(await runBuild());
+  });
+
+program
+  .command("migrate")
+  .description("Migrate a legacy project to use Vite and the latest version of aunty")
+  .option("-y, --yes", "Skip confirmation prompt", false)
+  .option("--skip-git", "Skip Git safety checks", false)
+  .action(async (options) => {
+    process.exit(await runMigrate(options));
   });
 
 program
