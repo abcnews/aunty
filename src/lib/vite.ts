@@ -85,7 +85,7 @@ export function es5EntryPlugin(): any {
     generateBundle(_options: any, bundle: any) {
       if (isBuild) {
         const entry = Object.values(bundle).find(
-          (chunk: any) => chunk.type === "chunk" && chunk.name === "index",
+          (chunk: any) => chunk.type === "chunk" && chunk.name === "indexEntry",
         );
         if (entry && (entry as any).type === "chunk") {
           const cssPaths = Array.from(
