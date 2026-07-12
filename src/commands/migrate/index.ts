@@ -35,6 +35,16 @@ export async function run(options: MigrateOptions = {}): Promise<number> {
   }
   const baseDir = details.root;
 
+  // Check for aunty.config.js in the root of the repo
+  const configPath = path.join(baseDir, "aunty.config.js");
+  const hasConfig = await fs.access(configPath).then(() => true).catch(() => false);
+  if (hasConfig) {
+    log.error(
+      `Found legacy ${pc.cyan("aunty.config.js")} at the root of the project. We cannot migrate this project automatically. Please delete or rename the file before continuing, and configure Vite manually after migration.`
+    );
+    return 1;
+  }
+
   // 2. Git Safety Checks (bypassed if options.skipGit is true)
   if (!options.skipGit) {
     const gitAccessible = await git.isAccessible();
