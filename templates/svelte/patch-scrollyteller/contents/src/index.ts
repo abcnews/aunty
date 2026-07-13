@@ -32,3 +32,5 @@ mounts.forEach((mountEl) => {
     },
   });
 });
+
+// __ADDITIONAL_MOUNTS__

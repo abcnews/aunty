@@ -21,20 +21,19 @@ export async function init({ projectName, baseDir }: InitOptions) {
   const entryPath = path.join(baseDir, entryFile);
   const entryContent = await fs.readFile(entryPath, "utf-8");
 
-  const searchPattern = `  // __ADDITIONAL_MOUNTS__`;
+  const searchPattern = `// __ADDITIONAL_MOUNTS__`;
 
-  const builderMountCode = `  const [builderMountEl] = selectMounts('builder');
+  const builderMountCode = `const [builderMountEl] = selectMounts('builder');
 
-  if (builderMountEl) {
-    const appProps = acto(getMountValue(builderMountEl));
-    const builderModule = await import('./components/Builder/Builder.svelte');
-    mount(builderModule.default, {
-      target: builderMountEl,
-      props: appProps
-    });
-  }
+if (builderMountEl) {
+  const appProps = getMountValue(builderMountEl);
+  const builderModule = await import('./components/Builder/Builder.svelte');
+  mount(builderModule.default, {
+    target: builderMountEl
+  });
+}
 
-  // __ADDITIONAL_MOUNTS__`;
+// __ADDITIONAL_MOUNTS__`;
 
   if (entryContent.includes(searchPattern)) {
     await helpers.replaceInFile(baseDir, entryFile, {
