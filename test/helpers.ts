@@ -38,7 +38,7 @@ function setMockAnswers(prompts: Record<string, any>) {
   activeAnswers = { prompts };
 }
 
-function resolvePrompt(type: "text" | "select" | "confirm", options: any): any {
+function resolvePrompt(type: "text" | "select" | "confirm" | "multiselect", options: any): any {
   const message = stripAnsi(options?.message || "");
 
   const match = Object.entries(activeAnswers.prompts).find(([pattern]) =>
@@ -64,6 +64,16 @@ function resolvePrompt(type: "text" | "select" | "confirm", options: any): any {
     if (foundOption) {
       resolvedValue = foundOption.value;
     }
+  }
+
+  if (type === "multiselect" && Array.isArray(options.options)) {
+    const selectedValues = Array.isArray(value) ? value : [value];
+    resolvedValue = selectedValues.map((val: any) => {
+      const foundOption = options.options.find(
+        (opt: any) => opt.label === val || opt.value === val
+      );
+      return foundOption ? foundOption.value : val;
+    });
   }
 
   transcript.push(`prompt.${type}: ${pattern} -> ${value}`);
@@ -111,6 +121,7 @@ mock.module("@clack/prompts", {
     text: async (options: any) => resolvePrompt("text", options),
     select: async (options: any) => resolvePrompt("select", options),
     confirm: async (options: any) => resolvePrompt("confirm", options),
+    multiselect: async (options: any) => resolvePrompt("multiselect", options),
   },
 });
 

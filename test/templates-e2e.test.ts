@@ -60,9 +60,7 @@ describe("svelte", () => {
       "What is your project named?": projectName,
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
-      "What kind of project do you want?": "base",
-      "Would you like to add a Builder?": false,
-      "Do you want to use TypeScript?": true,
+      "Select features to enable:": ["typescript"],
     });
 
     await buildProject(projectDir);
@@ -76,9 +74,7 @@ describe("svelte", () => {
       "spinner.stop: Project name checked",
       "prompt.confirm: Continue anyway? -> true",
       "prompt.select: Select a project type: -> Svelte",
-      "prompt.select: What kind of project do you want? -> base",
-      "prompt.confirm: Would you like to add a Builder? -> false",
-      "prompt.confirm: Do you want to use TypeScript? -> true",
+      "prompt.multiselect: Select features to enable: -> typescript",
       "spinner.start: Installing dependencies...",
       "spinner.stop: Dependencies installed",
       "log.step: Next steps:",
@@ -94,9 +90,7 @@ describe("svelte", () => {
       "What is your project named?": projectName,
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
-      "What kind of project do you want?": "odyssey",
-      "Would you like to add a Builder?": false,
-      "Do you want to use TypeScript?": true,
+      "Select features to enable:": ["typescript", "odyssey"],
     });
 
     await buildProject(projectDir);
@@ -109,9 +103,7 @@ describe("svelte", () => {
       "spinner.stop: Project name checked",
       "prompt.confirm: Continue anyway? -> true",
       "prompt.select: Select a project type: -> Svelte",
-      "prompt.select: What kind of project do you want? -> odyssey",
-      "prompt.confirm: Would you like to add a Builder? -> false",
-      "prompt.confirm: Do you want to use TypeScript? -> true",
+      "prompt.multiselect: Select features to enable: -> typescript,odyssey",
       "spinner.start: Installing dependencies...",
       "spinner.stop: Dependencies installed",
       "log.step: Next steps:",
@@ -127,9 +119,7 @@ describe("svelte", () => {
       "What is your project named?": projectName,
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
-      "What kind of project do you want?": "scrollyteller",
-      "Would you like to add a Builder?": false,
-      "Do you want to use TypeScript?": true,
+      "Select features to enable:": ["typescript", "scrollyteller"],
     });
 
     await buildProject(projectDir);
@@ -142,9 +132,7 @@ describe("svelte", () => {
       "spinner.stop: Project name checked",
       "prompt.confirm: Continue anyway? -> true",
       "prompt.select: Select a project type: -> Svelte",
-      "prompt.select: What kind of project do you want? -> scrollyteller",
-      "prompt.confirm: Would you like to add a Builder? -> false",
-      "prompt.confirm: Do you want to use TypeScript? -> true",
+      "prompt.multiselect: Select features to enable: -> typescript,scrollyteller",
       "spinner.start: Installing dependencies...",
       "spinner.stop: Dependencies installed",
       "log.step: Next steps:",
@@ -160,14 +148,16 @@ describe("svelte", () => {
       "What is your project named?": projectName,
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
-      "What kind of project do you want?": "base",
-      "Would you like to add a Builder?": true,
-      "Do you want to use TypeScript?": true,
+      "Select features to enable:": ["typescript", "builder"],
     });
 
     // Check files exist
     await fs.access(path.join(projectDir, "builder/index.html"));
     await fs.access(path.join(projectDir, "src/components/Builder/Builder.svelte"));
+
+    // Verify builder mount is added to index.ts
+    const indexContent = await fs.readFile(path.join(projectDir, "src/index.ts"), "utf-8");
+    assert.ok(indexContent.includes("selectMounts('builder')"));
 
     await buildProject(projectDir);
     await assertBuildOutputsExist(projectDir);
@@ -183,14 +173,16 @@ describe("svelte", () => {
       "What is your project named?": projectName,
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
-      "What kind of project do you want?": "scrollyteller",
-      "Would you like to add a Builder?": true,
-      "Do you want to use TypeScript?": false,
+      "Select features to enable:": ["scrollyteller", "builder"],
     });
 
     // Check files exist
     await fs.access(path.join(projectDir, "builder/index.html"));
     await fs.access(path.join(projectDir, "src/components/Builder/Builder.svelte"));
+
+    // Verify builder mount is added to index.js
+    const indexContent = await fs.readFile(path.join(projectDir, "src/index.js"), "utf-8");
+    assert.ok(indexContent.includes("selectMounts('builder')"));
 
     await buildProject(projectDir);
     await assertBuildOutputsExist(projectDir);
