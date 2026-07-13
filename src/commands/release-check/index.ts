@@ -22,7 +22,7 @@ export async function run(
   } = {},
 ): Promise<number> {
   if (!options.skipHeader) {
-    intro(getHeader(pc.dim("aunty"), "release-check", { colour: "purple" }));
+    intro(getHeader(pc.dim("aunty"), "release-check", { colour: "magenta" }));
   }
 
   const s = spin("Performing pre-release checks...");

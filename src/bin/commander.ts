@@ -18,11 +18,6 @@ import pc from "picocolors";
 import rawColours from "../lib/colours.json" with { type: "json" };
 
 interface Colours {
-  schemes: Record<string, {
-    chars?: [number, number, number][];
-    startFg?: [number, number, number];
-    endFg?: [number, number, number];
-  }>;
   commands: Record<string, string>;
 }
 
@@ -74,7 +69,7 @@ program.configureHelp({
       const colourName = colours.commands[name] || "rainbow";
       const logoHeader = getHeader("aunty", name, {
         prepend: "",
-        colour: colourName as keyof typeof rawColours.schemes,
+        colour: colourName,
       });
       return `${logoHeader}\n\n${baseHelp}`;
     }
