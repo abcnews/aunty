@@ -24,7 +24,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: 'index.html',
-        indexEntry: entryPoint
+        indexEntry: entryPoint,
+        ...(existsSync(join(process.cwd(), 'builder/index.html')) ? { builder: 'builder/index.html' } : {})
       },
       output: {
         // entry points don't get hashed to remain backward compatibility

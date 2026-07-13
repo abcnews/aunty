@@ -2,7 +2,7 @@
  * @file
  * This config does two things:
  * 1. resolve your Aunty certificates and serve via HTTPS on your ABC hostname
- * 2. create a non-ESM entrypoint called coremedia.js, to bootstrap our ESM app
+ * 2. create a non-ESM entrypoint called es5entry.js, to bootstrap our ESM app
  *
  * The idea is that eventually these will be imported from @abcnews/aunty, but
  * for now they're inline so we can test and modify.

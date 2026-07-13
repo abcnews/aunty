@@ -8,7 +8,7 @@ import { getMountValue, selectMounts } from '@abcnews/mount-utils';
 import App from './App.svelte';
 import { mount } from 'svelte';
 
-whenDOMReady.then(() => {
+whenDOMReady.then(async () => {
   const [appMountEl] = selectMounts('__PROJECT_NAME_ACTO__');
 
   if (appMountEl) {
@@ -19,6 +19,8 @@ whenDOMReady.then(() => {
       props: appProps
     });
   }
+
+  // __ADDITIONAL_MOUNTS__
 });
 
 export default App;

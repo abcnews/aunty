@@ -20,6 +20,38 @@ interface MigrateOptions {
 }
 
 /**
+ * Migrates a legacy HTML file by removing legacy scripts and comments,
+ * injecting the new Vite entry script, writing it to the destination, and deleting the source.
+ */
+async function migrateHtmlFile(
+  srcPath: string,
+  destPath: string,
+  entryFile: string,
+): Promise<void> {
+  let content = await fs.readFile(srcPath, "utf-8");
+
+  // Remove legacy script tags (e.g. referencing index.js, index_modern.js, etc.)
+  content = content.replace(
+    /<script\s+src=["'](?:index\.js|index_modern\.js)["']\s*><\/script>/gi,
+    "",
+  );
+  // Remove all HTML comments
+  content = content.replace(/<!--[\s\S]*?-->/g, "");
+
+  // Inject the new Vite entry point
+  const scriptTag = `<script type="module" src="/${entryFile}"></script>`;
+  if (content.includes("</head>")) {
+    content = content.replace("</head>", `  ${scriptTag}\n  </head>`);
+  } else {
+    content = scriptTag + "\n" + content;
+  }
+
+  await fs.mkdir(path.dirname(destPath), { recursive: true });
+  await fs.writeFile(destPath, content);
+  await fs.unlink(srcPath);
+}
+
+/**
  * The main entry point for the 'aunty migrate' command.
  */
 export async function run(options: MigrateOptions = {}): Promise<number> {
@@ -175,29 +207,28 @@ export async function run(options: MigrateOptions = {}): Promise<number> {
 
     // Move index.html
     const destHtmlPath = path.join(baseDir, "index.html");
-    let htmlContent = await fs.readFile(publicHtmlPath, "utf-8");
+    await migrateHtmlFile(publicHtmlPath, destHtmlPath, entryFile);
 
-    // Remove legacy script tags (e.g. referencing index.js, index_modern.js, etc.)
-    htmlContent = htmlContent.replace(
-      /<script\s+src=["'](?:index\.js|index_modern\.js)["']\s*><\/script>/gi,
-      "",
-    );
-    // Remove all HTML comments
-    htmlContent = htmlContent.replace(/<!--[\s\S]*?-->/g, "");
+    // Check for legacy builder in public/builder/index.html
+    const publicBuilderHtmlPath = path.join(baseDir, "public/builder/index.html");
+    const hasLegacyBuilder = await fs
+      .access(publicBuilderHtmlPath)
+      .then(() => true)
+      .catch(() => false);
 
-    // Inject the new Vite entry point
-    const scriptTag = `<script type="module" src="/${entryFile}"></script>`;
-    if (htmlContent.includes("</head>")) {
-      htmlContent = htmlContent.replace("</head>", `  ${scriptTag}\n  </head>`);
-    } else {
-      htmlContent = scriptTag + "\n" + htmlContent;
+    if (hasLegacyBuilder) {
+      const destBuilderHtmlPath = path.join(baseDir, "builder/index.html");
+      await migrateHtmlFile(publicBuilderHtmlPath, destBuilderHtmlPath, entryFile);
+
+      // Clean up legacy builder directory inside public if it exists and is empty
+      try {
+        await fs.rmdir(path.join(baseDir, "public/builder"));
+      } catch {}
     }
 
-    await fs.writeFile(destHtmlPath, htmlContent);
-    await fs.unlink(publicHtmlPath); // delete public/index.html
-
     migrationSpinner.stop(
-      "Configuration files updated and index.html migrated successfully",
+      "Configuration files updated and index.html migrated successfully" +
+        (hasLegacyBuilder ? " (including builder)" : ""),
     );
   } catch (err: any) {
     migrationSpinner.cancel("Failed during file migration step");

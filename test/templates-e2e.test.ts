@@ -61,6 +61,7 @@ describe("svelte", () => {
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
       "What kind of project do you want?": "base",
+      "Would you like to add a Builder?": false,
       "Do you want to use TypeScript?": true,
     });
 
@@ -76,6 +77,7 @@ describe("svelte", () => {
       "prompt.confirm: Continue anyway? -> true",
       "prompt.select: Select a project type: -> Svelte",
       "prompt.select: What kind of project do you want? -> base",
+      "prompt.confirm: Would you like to add a Builder? -> false",
       "prompt.confirm: Do you want to use TypeScript? -> true",
       "spinner.start: Installing dependencies...",
       "spinner.stop: Dependencies installed",
@@ -93,6 +95,7 @@ describe("svelte", () => {
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
       "What kind of project do you want?": "base",
+      "Would you like to add a Builder?": false,
       "Do you want to use TypeScript?": false,
     });
 
@@ -108,6 +111,7 @@ describe("svelte", () => {
       "prompt.confirm: Continue anyway? -> true",
       "prompt.select: Select a project type: -> Svelte",
       "prompt.select: What kind of project do you want? -> base",
+      "prompt.confirm: Would you like to add a Builder? -> false",
       "prompt.confirm: Do you want to use TypeScript? -> false",
       "spinner.start: Converting project to JavaScript",
       "spinner.message: Converting .ts to .js",
@@ -131,6 +135,7 @@ describe("svelte", () => {
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
       "What kind of project do you want?": "odyssey",
+      "Would you like to add a Builder?": false,
       "Do you want to use TypeScript?": true,
     });
 
@@ -145,6 +150,7 @@ describe("svelte", () => {
       "prompt.confirm: Continue anyway? -> true",
       "prompt.select: Select a project type: -> Svelte",
       "prompt.select: What kind of project do you want? -> odyssey",
+      "prompt.confirm: Would you like to add a Builder? -> false",
       "prompt.confirm: Do you want to use TypeScript? -> true",
       "spinner.start: Installing dependencies...",
       "spinner.stop: Dependencies installed",
@@ -162,6 +168,7 @@ describe("svelte", () => {
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
       "What kind of project do you want?": "odyssey",
+      "Would you like to add a Builder?": false,
       "Do you want to use TypeScript?": false,
     });
 
@@ -176,6 +183,7 @@ describe("svelte", () => {
       "prompt.confirm: Continue anyway? -> true",
       "prompt.select: Select a project type: -> Svelte",
       "prompt.select: What kind of project do you want? -> odyssey",
+      "prompt.confirm: Would you like to add a Builder? -> false",
       "prompt.confirm: Do you want to use TypeScript? -> false",
       "spinner.start: Converting project to JavaScript",
       "spinner.message: Converting .ts to .js",
@@ -199,6 +207,7 @@ describe("svelte", () => {
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
       "What kind of project do you want?": "scrollyteller",
+      "Would you like to add a Builder?": false,
       "Do you want to use TypeScript?": true,
     });
 
@@ -213,6 +222,7 @@ describe("svelte", () => {
       "prompt.confirm: Continue anyway? -> true",
       "prompt.select: Select a project type: -> Svelte",
       "prompt.select: What kind of project do you want? -> scrollyteller",
+      "prompt.confirm: Would you like to add a Builder? -> false",
       "prompt.confirm: Do you want to use TypeScript? -> true",
       "spinner.start: Installing dependencies...",
       "spinner.stop: Dependencies installed",
@@ -230,6 +240,7 @@ describe("svelte", () => {
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
       "What kind of project do you want?": "scrollyteller",
+      "Would you like to add a Builder?": false,
       "Do you want to use TypeScript?": false,
     });
 
@@ -244,6 +255,7 @@ describe("svelte", () => {
       "prompt.confirm: Continue anyway? -> true",
       "prompt.select: Select a project type: -> Svelte",
       "prompt.select: What kind of project do you want? -> scrollyteller",
+      "prompt.confirm: Would you like to add a Builder? -> false",
       "prompt.confirm: Do you want to use TypeScript? -> false",
       "spinner.start: Converting project to JavaScript",
       "spinner.message: Converting .ts to .js",
@@ -257,6 +269,52 @@ describe("svelte", () => {
       `log.message: 1. cd ${projectName}\n2. npm run dev`,
       "outro: Happy coding.",
     ]);
+  });
+
+  test("creates and builds base svelte project with Builder and TypeScript", async () => {
+    const projectName = "svelte-base-builder-ts";
+
+    const { projectDir } = await createProject(projectName, {
+      "What is your project named?": projectName,
+      "Continue anyway?": true,
+      "Select a project type:": "Svelte",
+      "What kind of project do you want?": "base",
+      "Would you like to add a Builder?": true,
+      "Do you want to use TypeScript?": true,
+    });
+
+    // Check files exist
+    await fs.access(path.join(projectDir, "builder/index.html"));
+    await fs.access(path.join(projectDir, "src/components/Builder/Builder.svelte"));
+
+    await buildProject(projectDir);
+    await assertBuildOutputsExist(projectDir);
+
+    // Also assert builder output exists
+    await fs.access(path.join(projectDir, "dist/builder/index.html"));
+  });
+
+  test("creates and builds base svelte project with Builder and JavaScript", async () => {
+    const projectName = "svelte-base-builder-js";
+
+    const { projectDir } = await createProject(projectName, {
+      "What is your project named?": projectName,
+      "Continue anyway?": true,
+      "Select a project type:": "Svelte",
+      "What kind of project do you want?": "base",
+      "Would you like to add a Builder?": true,
+      "Do you want to use TypeScript?": false,
+    });
+
+    // Check files exist
+    await fs.access(path.join(projectDir, "builder/index.html"));
+    await fs.access(path.join(projectDir, "src/components/Builder/Builder.svelte"));
+
+    await buildProject(projectDir);
+    await assertBuildOutputsExist(projectDir);
+
+    // Also assert builder output exists
+    await fs.access(path.join(projectDir, "dist/builder/index.html"));
   });
 });
 

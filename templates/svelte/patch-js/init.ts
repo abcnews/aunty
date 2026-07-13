@@ -29,7 +29,7 @@ async function processSvelteFile(file: string) {
 /**
  * Strips TypeScript types from project files and converts to plain JavaScript.
  */
-export async function init({ baseDir }: InitOptions) {
+export async function init({ baseDir }: InitOptions, hasBuilder?: boolean) {
   const s = spin("Converting project to JavaScript");
 
   // 1. Convert .ts to .js
@@ -41,8 +41,12 @@ export async function init({ baseDir }: InitOptions) {
   const svelteFiles = await helpers.findFiles(baseDir, "**/*.svelte");
   await Promise.all(svelteFiles.map(processSvelteFile));
 
-  // 3. Update index.html to point to .js entry points
-  await helpers.replaceInFiles(baseDir, ["index.html"], { ".ts": ".js" });
+  // 3. Update index.html and builder/index.html to point to .js entry points
+  const htmlFiles = ["index.html"];
+  if (hasBuilder) {
+    htmlFiles.push("builder/index.html");
+  }
+  await helpers.replaceInFiles(baseDir, htmlFiles, { ".ts": ".js" });
 
   // 4. Update config (empty for now as we're keeping TS bits for JSDoc support)
   s.message("Updating config");

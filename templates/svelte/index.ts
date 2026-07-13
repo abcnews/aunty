@@ -19,6 +19,16 @@ export default async function run(options: InitOptions) {
     return 1;
   }
 
+  const useBuilder = await confirm({
+    message: "Would you like to add a Builder?",
+    initialValue: false,
+  });
+
+  if (isCancel(useBuilder)) {
+    cancel("Operation cancelled.");
+    return 1;
+  }
+
   const useTypescript = await confirm({
     message: "Do you want to use TypeScript?",
     initialValue: true,
@@ -40,9 +50,14 @@ export default async function run(options: InitOptions) {
     await scrollytellerInit(options);
   }
 
+  if (useBuilder) {
+    const { init: builderInit } = await import("./patch-builder/init.ts");
+    await builderInit(options);
+  }
+
   if (!useTypescript) {
     const { init: jsInit } = await import("./patch-js/init.ts");
-    await jsInit(options);
+    await jsInit(options, useBuilder);
   }
 
   return 0;
