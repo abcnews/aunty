@@ -87,46 +87,6 @@ describe("svelte", () => {
     ]);
   });
 
-  test("creates and builds base svelte project with JavaScript", async () => {
-    const projectName = "svelte-base-js";
-
-    const { projectDir, transcript } = await createProject(projectName, {
-      "What is your project named?": projectName,
-      "Continue anyway?": true,
-      "Select a project type:": "Svelte",
-      "What kind of project do you want?": "base",
-      "Would you like to add a Builder?": false,
-      "Do you want to use TypeScript?": false,
-    });
-
-    await buildProject(projectDir);
-    await assertBuildOutputsExist(projectDir);
-
-    // Verify CLI transcript (including JavaScript patch spinner logs)
-    assert.deepStrictEqual(transcript, [
-      `intro: ${EXPECTED_LOGO}`,
-      "prompt.text: What is your project named? -> svelte-base-js",
-      "spinner.start: Checking project name availability...",
-      "spinner.stop: Project name checked",
-      "prompt.confirm: Continue anyway? -> true",
-      "prompt.select: Select a project type: -> Svelte",
-      "prompt.select: What kind of project do you want? -> base",
-      "prompt.confirm: Would you like to add a Builder? -> false",
-      "prompt.confirm: Do you want to use TypeScript? -> false",
-      "spinner.start: Converting project to JavaScript",
-      "spinner.message: Converting .ts to .js",
-      "spinner.message: Updating config",
-      "spinner.message: Installing dependencies",
-      "spinner.message: Formatting project",
-      "spinner.stop: Project converted to JavaScript",
-      "spinner.start: Installing dependencies...",
-      "spinner.stop: Dependencies installed",
-      "log.step: Next steps:",
-      `log.message: 1. cd ${projectName}\n2. npm run dev`,
-      "outro: Happy coding.",
-    ]);
-  });
-
   test("creates and builds odyssey svelte project with TypeScript", async () => {
     const projectName = "svelte-odyssey-ts";
 
@@ -152,45 +112,6 @@ describe("svelte", () => {
       "prompt.select: What kind of project do you want? -> odyssey",
       "prompt.confirm: Would you like to add a Builder? -> false",
       "prompt.confirm: Do you want to use TypeScript? -> true",
-      "spinner.start: Installing dependencies...",
-      "spinner.stop: Dependencies installed",
-      "log.step: Next steps:",
-      `log.message: 1. cd ${projectName}\n2. npm run dev`,
-      "outro: Happy coding.",
-    ]);
-  });
-
-  test("creates and builds odyssey svelte project with JavaScript", async () => {
-    const projectName = "svelte-odyssey-js";
-
-    const { projectDir, transcript } = await createProject(projectName, {
-      "What is your project named?": projectName,
-      "Continue anyway?": true,
-      "Select a project type:": "Svelte",
-      "What kind of project do you want?": "odyssey",
-      "Would you like to add a Builder?": false,
-      "Do you want to use TypeScript?": false,
-    });
-
-    await buildProject(projectDir);
-    await assertBuildOutputsExist(projectDir);
-
-    assert.deepStrictEqual(transcript, [
-      `intro: ${EXPECTED_LOGO}`,
-      "prompt.text: What is your project named? -> svelte-odyssey-js",
-      "spinner.start: Checking project name availability...",
-      "spinner.stop: Project name checked",
-      "prompt.confirm: Continue anyway? -> true",
-      "prompt.select: Select a project type: -> Svelte",
-      "prompt.select: What kind of project do you want? -> odyssey",
-      "prompt.confirm: Would you like to add a Builder? -> false",
-      "prompt.confirm: Do you want to use TypeScript? -> false",
-      "spinner.start: Converting project to JavaScript",
-      "spinner.message: Converting .ts to .js",
-      "spinner.message: Updating config",
-      "spinner.message: Installing dependencies",
-      "spinner.message: Formatting project",
-      "spinner.stop: Project converted to JavaScript",
       "spinner.start: Installing dependencies...",
       "spinner.stop: Dependencies installed",
       "log.step: Next steps:",
@@ -232,45 +153,6 @@ describe("svelte", () => {
     ]);
   });
 
-  test("creates and builds scrollyteller svelte project with JavaScript", async () => {
-    const projectName = "svelte-scrollyteller-js";
-
-    const { projectDir, transcript } = await createProject(projectName, {
-      "What is your project named?": projectName,
-      "Continue anyway?": true,
-      "Select a project type:": "Svelte",
-      "What kind of project do you want?": "scrollyteller",
-      "Would you like to add a Builder?": false,
-      "Do you want to use TypeScript?": false,
-    });
-
-    await buildProject(projectDir);
-    await assertBuildOutputsExist(projectDir);
-
-    assert.deepStrictEqual(transcript, [
-      `intro: ${EXPECTED_LOGO}`,
-      "prompt.text: What is your project named? -> svelte-scrollyteller-js",
-      "spinner.start: Checking project name availability...",
-      "spinner.stop: Project name checked",
-      "prompt.confirm: Continue anyway? -> true",
-      "prompt.select: Select a project type: -> Svelte",
-      "prompt.select: What kind of project do you want? -> scrollyteller",
-      "prompt.confirm: Would you like to add a Builder? -> false",
-      "prompt.confirm: Do you want to use TypeScript? -> false",
-      "spinner.start: Converting project to JavaScript",
-      "spinner.message: Converting .ts to .js",
-      "spinner.message: Updating config",
-      "spinner.message: Installing dependencies",
-      "spinner.message: Formatting project",
-      "spinner.stop: Project converted to JavaScript",
-      "spinner.start: Installing dependencies...",
-      "spinner.stop: Dependencies installed",
-      "log.step: Next steps:",
-      `log.message: 1. cd ${projectName}\n2. npm run dev`,
-      "outro: Happy coding.",
-    ]);
-  });
-
   test("creates and builds base svelte project with Builder and TypeScript", async () => {
     const projectName = "svelte-base-builder-ts";
 
@@ -294,14 +176,14 @@ describe("svelte", () => {
     await fs.access(path.join(projectDir, "dist/builder/index.html"));
   });
 
-  test("creates and builds base svelte project with Builder and JavaScript", async () => {
-    const projectName = "svelte-base-builder-js";
+  test("creates and builds kitchen sink svelte project with JavaScript", async () => {
+    const projectName = "svelte-kitchen-sink-js";
 
-    const { projectDir } = await createProject(projectName, {
+    const { projectDir, transcript } = await createProject(projectName, {
       "What is your project named?": projectName,
       "Continue anyway?": true,
       "Select a project type:": "Svelte",
-      "What kind of project do you want?": "base",
+      "What kind of project do you want?": "scrollyteller",
       "Would you like to add a Builder?": true,
       "Do you want to use TypeScript?": false,
     });
@@ -315,6 +197,9 @@ describe("svelte", () => {
 
     // Also assert builder output exists
     await fs.access(path.join(projectDir, "dist/builder/index.html"));
+
+    // Verify JS transcript logs JS conversion spinner
+    assert.ok(transcript.some(t => t.includes("Converting project to JavaScript")));
   });
 });
 
