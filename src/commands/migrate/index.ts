@@ -38,6 +38,17 @@ async function migrateHtmlFile(
   // Remove all HTML comments
   content = content.replace(/<!--[\s\S]*?-->/g, "");
 
+  // Update inline script tags that dispatch 'odyssey:api' to be modules so they run after deferred module entry points.
+  content = content.replace(/<script([\s\S]*?)>([\s\S]*?)<\/script>/gi, (match, attributes, innerContent) => {
+    const hasOdysseyApi = innerContent.includes("odyssey:api");
+    const isClassicScript = !attributes.trim() || attributes.includes('type="text/javascript"') || attributes.includes("type='text/javascript'");
+
+    if (hasOdysseyApi && isClassicScript) {
+      return `<script type="module">${innerContent}</script>`;
+    }
+    return match;
+  });
+
   // Inject the new Vite entry point
   const scriptTag = `<script type="module" src="/${entryFile}"></script>`;
   if (content.includes("</head>")) {
