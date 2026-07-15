@@ -1,7 +1,10 @@
 import { intro } from "@clack/prompts";
 import pc from "picocolors";
 import { getHeader, spin } from "../../lib/terminal.ts";
-import { testFtpConnection, isProjectNameAndVersionAvailable } from "../../lib/ftp.ts";
+import {
+  testFtpConnection,
+  isProjectNameAndVersionAvailable,
+} from "../../lib/ftp.ts";
 import { runBuild } from "../../lib/util.ts";
 import * as git from "../../lib/git.ts";
 
@@ -70,7 +73,9 @@ export async function run(
       );
     } else {
       checks.push(
-        renderError("Your local branch has no remote tracking branch"),
+        renderError(
+          "Your local branch has no remote tracking branch. Try running git push.",
+        ),
       );
     }
   }
