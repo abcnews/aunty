@@ -1,11 +1,15 @@
-import { intro, outro, confirm, log, cancel } from "@clack/prompts";
+import { intro, outro, confirm, log, cancel, isCancel } from "@clack/prompts";
 import path from "node:path";
 import pc from "picocolors";
-import { FtpClient } from "./ftp.ts";
-import { loadJson, formatSize } from "../../lib/util.ts";
+import { FtpClient } from "../../lib/ftp.ts";
+import { formatSize, findProjectDetails } from "../../lib/util.ts";
 import { getHeader, spin } from "../../lib/terminal.ts";
+import {
+  BUILD_DIRECTORY_NAME,
+  FTP_PROJECTS_PATH,
+  PUBLIC_PROJECTS_URL,
+} from "../../lib/constants.ts";
 import { getFileInventory } from "./fs.ts";
-import { BUILD_DIRECTORY_NAME } from "../../lib/constants.ts";
 import slugify from "slugify";
 
 interface DeployOptions {
@@ -13,32 +17,29 @@ interface DeployOptions {
   buildDir?: string;
   dryRun?: boolean;
   force?: boolean;
+  skipHeader?: boolean;
 }
 
 /**
  * The main entry point for the 'aunty deploy' command.
  */
 export async function run(options: DeployOptions = {}): Promise<number> {
-  const projectRoot = process.cwd();
-
-  intro(
-    getHeader(
-      pc.dim("aunty"),
-      `deploy${options.dryRun ? ` ${pc.cyan("[dry]")}` : ""}`,
-    ),
-  );
-
-  // 1. Load config
-  const config = (await loadJson(path.join(projectRoot, "package.json"))) as {
-    name: string;
-    version: string;
-  } | null;
-
-  if (!config) {
-    log.error(`package.json not found in ${projectRoot}`);
-    return 1;
+  if (!options.skipHeader) {
+    intro(
+      getHeader(
+        pc.dim("aunty"),
+        `deploy${options.dryRun ? ` ${pc.cyan("[dry]")}` : ""}`,
+        { colour: "red" },
+      ),
+    );
   }
 
+  // 1. Load config
+  const details = await findProjectDetails(process.cwd());
+
+  if (!details) return 1;
+
+  const { root: projectRoot, pkg: config } = details;
   const { name, version } = config;
   if (!name || !version) {
     cancel("Missing name or version in package.json");
@@ -50,17 +51,19 @@ export async function run(options: DeployOptions = {}): Promise<number> {
     projectRoot,
     options.buildDir || BUILD_DIRECTORY_NAME,
   );
-  const nameSlug = (slugify as any)(name, { strict: true });
+  const nameSlug = (slugify as unknown as (s: string, o: object) => string)(
+    name,
+    { strict: true },
+  );
   const targetFolder = options.destDir || version;
-  const remoteDir = `/www/res/sites/news-projects/${nameSlug}/${targetFolder}/`;
-  const publicUrl = `https://www.abc.net.au/res/sites/news-projects/${nameSlug}/${targetFolder}/`;
-  log.info(`${pc.bold("Remote dir:")} ${pc.dim(remoteDir)}`);
+  const remoteDir = path.join(FTP_PROJECTS_PATH, nameSlug, targetFolder, "/");
+  const publicUrl = `${PUBLIC_PROJECTS_URL}${nameSlug}/${targetFolder}/`;
 
   // 4. File Inventory & Size Check
   let inventory;
   try {
     inventory = await getFileInventory(localDir);
-  } catch (err) {
+  } catch {
     cancel(
       `Build directory not found at ${pc.cyan(localDir)}. Have you run the build command?`,
     );
@@ -73,7 +76,10 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   }
 
   const list = inventory
-    .map((f) => `  ${pc.dim(f.relPath)} (${formatSize(f.size)})`)
+    .map(
+      (f: { relPath: string; size: number }) =>
+        `  ${pc.dim(f.relPath)} (${formatSize(f.size)})`,
+    )
     .join("\n");
   log.step(`Found ${pc.bold(inventory.length)} files to deploy:\n${list}`);
 
@@ -85,9 +91,11 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   // 5. Credential Test & Confirmation
   const ftpClient = new FtpClient();
   try {
-    await ftpClient.testConnection();
+    await ftpClient.connect();
   } catch (err) {
-    // FtpClient.testConnection() already handles UI feedback via its own spinner
+    log.error(
+      `FTP connection failed: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return 1;
   }
 
@@ -102,7 +110,7 @@ export async function run(options: DeployOptions = {}): Promise<number> {
       initialValue: false,
     });
 
-    if (!shouldOverwrite || typeof shouldOverwrite === "symbol") {
+    if (!shouldOverwrite || isCancel(shouldOverwrite)) {
       cancel("Deploy cancelled.");
       return 0;
     }
@@ -132,7 +140,8 @@ export async function run(options: DeployOptions = {}): Promise<number> {
         uploadSpinner.message(`${countStr}/${totalFilesStr} ${info.name}`);
       }
     });
-    uploadSpinner.stop("Upload complete");
+
+    uploadSpinner.stop(`Upload finished`);
   } catch (err) {
     uploadSpinner.cancel("Upload failed");
     ftpClient.close();
@@ -141,7 +150,6 @@ export async function run(options: DeployOptions = {}): Promise<number> {
 
   ftpClient.close();
 
-  log.info(`${pc.bold("Public URL:")} ${pc.cyan(publicUrl)}`);
-  outro(pc.green("Deploy complete!"));
+  outro(`${pc.bold("Released to:")} ${pc.cyan(publicUrl)}`);
   return 0;
 }

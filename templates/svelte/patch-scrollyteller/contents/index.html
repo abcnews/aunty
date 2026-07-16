@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="src/assets/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <script src="src/iframe.ts" type="module"></script>
+    <title>__PROJECT_NAME__</title>
+  </head>
+  <body>
+    <!-- Add scrollyteller panels for development -->
+    <div
+      id="scrollytellerNAME__PROJECT_NAME_ACTO__1"
+      data-component="Anchor"
+      data-mount="true"
+    ></div>
+    <p>This is a Svelte Scrollyteller</p>
+    <div
+      id="markCOLOURdarkblue"
+      data-component="Anchor"
+      data-mount="true"
+    ></div>
+    <p>It should receive marker props (color=limegreen)</p>
+    <div id="markCOLOURhotpink" data-component="Anchor" data-mount="true"></div>
+    <p>And again (colour=hotpink)</p>
+    <div id="endscrollyteller" data-component="Anchor" data-mount="true"></div>
+
+    <!-- Mock Odyssey's loaded event so *whenOdysseyLoaded* resolves -->
+    <script type="module">
+      window.__ODYSSEY__ = { __mock_odyssey: true };
+      window.dispatchEvent(new CustomEvent("odyssey:api"));
+    </script>
+  </body>
+</html>

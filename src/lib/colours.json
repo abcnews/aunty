@@ -1,0 +1,12 @@
+{
+  "commands": {
+    "deploy": "red",
+    "create": "green",
+    "new": "green",
+    "release-check": "magenta",
+    "release": "yellow",
+    "serve": "cyan",
+    "build": "blue",
+    "migrate": "rainbow"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "vite-vanilla",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "aunty": {
+    "type": "vanilla"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3.5.1",
+    "typescript": "~5.9.3",
+    "vite": "^8.0.1"
+  },
+  "dependencies": {
+    "@abcnews/alternating-case-to-object": "^3.2.0",
+    "@abcnews/env-utils": "^6.0.0",
+    "@abcnews/mount-utils": "^3.0.1"
+  }
+}
