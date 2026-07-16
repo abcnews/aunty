@@ -10,3 +10,8 @@ working
 
 # Working templates
 templates/svelte/base/old-aunty*
+
+# E2E test temp directory
+/.test-temp
+
+dist

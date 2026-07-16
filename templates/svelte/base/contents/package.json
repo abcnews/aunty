@@ -1,7 +1,7 @@
 {
   "name": "contents",
   "private": true,
-  "version": "1.0.0-pre",
+  "version": "1.0.0-prerelease.0",
   "description": "A project generated from aunty's svelte project template.",
   "license": "MIT",
   "type": "module",
@@ -24,6 +24,6 @@
   "dependencies": {
     "@abcnews/alternating-case-to-object": "^3.2.0",
     "@abcnews/env-utils": "^6.0.0",
-    "@abcnews/mount-utils": "^3.0.0"
+    "@abcnews/mount-utils": "^3.0.1"
   }
 }

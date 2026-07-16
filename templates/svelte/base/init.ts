@@ -1,9 +1,10 @@
 import { log } from "@clack/prompts";
 import path from "node:path";
 import fs from "node:fs/promises";
-import * as helpers from "../../../src/commands/create/initHelpers.ts";
+import * as helpers from "../../../src/lib/initHelpers.ts";
+import type { InitOptions } from "../../../src/commands/create/types.ts";
 
-export async function init({ projectName, baseDir }: helpers.InitOptions) {
+export async function init({ projectName, baseDir }: InitOptions) {
   // Copy template to destination
   const contentsDir = path.resolve(import.meta.dirname, "contents");
   await helpers.copyContents(contentsDir, baseDir);
@@ -11,7 +12,7 @@ export async function init({ projectName, baseDir }: helpers.InitOptions) {
   // String replacements
   await helpers.replaceInFiles(
     baseDir,
-    ["index.html", "src/coremedia.ts", "README.md"],
+    ["index.html", "src/index.ts", "README.md"],
     {
       __PROJECT_NAME__: projectName,
       __PROJECT_NAME_ACTO__: projectName.replace(/-/g, ""),
@@ -20,18 +21,8 @@ export async function init({ projectName, baseDir }: helpers.InitOptions) {
   );
 
   // Rename _gitignore to .gitignore (npm strips .gitignore from packages)
-  const gitignoreFromPath = path.resolve(baseDir, "_gitignore");
-  const gitignoreToPath = path.resolve(baseDir, ".gitignore");
-  const missingGitignore = await fs.access(gitignoreFromPath).catch(() => true);
+  await helpers.renameGitignore(baseDir);
 
-  if (missingGitignore) {
-    log.error(
-      "Base template must include a _gitignore file (npm strips .gitignore)",
-    );
-    return 1;
-  }
-
-  await fs.rename(gitignoreFromPath, gitignoreToPath);
 
   // Add metadata to package.json
   const gitUser = await helpers.getGitUser();
@@ -43,4 +34,6 @@ export async function init({ projectName, baseDir }: helpers.InitOptions) {
       aunty: { type: "svelte" },
     });
   });
+
+  await helpers.installAunty(baseDir);
 }

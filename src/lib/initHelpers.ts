@@ -4,20 +4,10 @@
  */
 import fs from "node:fs/promises";
 import path from "node:path";
+import { stripTypeScriptTypes } from "node:module";
 import { $ } from "zx";
-import { loadJson } from "../../lib/util.ts";
-import type { InitOptions } from "./types.ts";
-
-export type { InitOptions };
-
-interface PackageJson {
-  name?: string;
-  version?: string;
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
-  scripts?: Record<string, string>;
-  [key: string]: unknown;
-}
+import { loadJson, isLocalDevelopment } from "./util.ts";
+import type { PackageJson } from "../types.ts";
 
 /**
  * Recursively copies contents from one directory to another.
@@ -133,4 +123,86 @@ export async function getGitUser(): Promise<{
   } catch {
     return null;
   }
+}
+
+/**
+ * Adds @abcnews/aunty to the package.json devDependencies of the target directory.
+ * Resolves to the local development path if running in local development mode,
+ * or the version of the currently executing aunty.
+ *
+ * @todo: remove or make local dev checks optional once the Vite helpers are
+ * published, so we can use the local version for real projects too.
+ *
+ * @param baseDir The directory of the newly created project
+ */
+export async function installAunty(baseDir: string): Promise<void> {
+  const localDev = isLocalDevelopment();
+  let auntyDepValue = "";
+
+  // The running aunty's root directory is 2 levels up relative to this file
+  const auntyRoot = path.resolve(import.meta.dirname, "../../");
+
+  if (localDev) {
+    auntyDepValue = `file:${auntyRoot}`;
+  } else {
+    const pkg = await loadJson<PackageJson>(
+      path.join(auntyRoot, "package.json"),
+    );
+    auntyDepValue = pkg ? `^${pkg.version}` : "latest";
+  }
+
+  await editPackageJson(baseDir, (pkg) => {
+    if (!pkg.devDependencies) {
+      pkg.devDependencies = {};
+    }
+    pkg.devDependencies["@abcnews/aunty"] = auntyDepValue;
+  });
+}
+
+/**
+ * Renames _gitignore to .gitignore in the target directory.
+ *
+ * @param baseDir The directory containing the _gitignore file
+ */
+export async function renameGitignore(baseDir: string): Promise<void> {
+  const { log } = await import("@clack/prompts");
+  const gitignoreFromPath = path.resolve(baseDir, "_gitignore");
+  const gitignoreToPath = path.resolve(baseDir, ".gitignore");
+  
+  try {
+    await fs.access(gitignoreFromPath);
+  } catch {
+    log.error(
+      "Base template must include a _gitignore file (npm strips .gitignore)",
+    );
+    throw new Error("Missing _gitignore file");
+  }
+
+  await fs.rename(gitignoreFromPath, gitignoreToPath);
+}
+
+/**
+ * Rewrites .ts and .tsx extensions in imports to .js and .jsx.
+ *
+ * @param content The source code content
+ * @returns The content with rewritten import paths
+ */
+export function rewriteImports(content: string): string {
+  return content
+    .replace(/(from\s+['"])(.*?)\.ts(['"])/g, "$1$2.js$3")
+    .replace(/(import\s+['"])(.*?)\.ts(['"])/g, "$1$2.js$3");
+}
+
+/**
+ * Converts a .ts file to .js by stripping types and rewriting imports.
+ *
+ * @param tsFile The path to the TypeScript file
+ */
+export async function stripTypesFromFile(tsFile: string) {
+  const jsFile = tsFile.replace(/\.ts$/, ".js");
+  const content = await fs.readFile(tsFile, "utf-8");
+  const stripped = stripTypeScriptTypes(content);
+  const rewritten = rewriteImports(stripped);
+  await fs.writeFile(jsFile, rewritten);
+  await fs.unlink(tsFile);
 }

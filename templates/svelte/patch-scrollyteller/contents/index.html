@@ -27,7 +27,7 @@
     <div id="endscrollyteller" data-component="Anchor" data-mount="true"></div>
 
     <!-- Mock Odyssey's loaded event so *whenOdysseyLoaded* resolves -->
-    <script type="text/javascript">
+    <script type="module">
       window.__ODYSSEY__ = { __mock_odyssey: true };
       window.dispatchEvent(new CustomEvent("odyssey:api"));
     </script>

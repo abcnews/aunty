@@ -1,6 +1,6 @@
 /**
  * @file
- * CoreMedia entrypoint. Creates a non-module coremedia.js in your build.
+ * Entrypoint. Creates a non-module es5entry.js in your build.
  */
 import { whenOdysseyLoaded } from "@abcnews/env-utils";
 import { getMountValue, selectMounts } from "@abcnews/mount-utils";
@@ -32,3 +32,5 @@ mounts.forEach((mountEl) => {
     },
   });
 });
+
+// __ADDITIONAL_MOUNTS__

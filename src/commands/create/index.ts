@@ -13,14 +13,14 @@ import fs from "node:fs/promises";
 import pc from "picocolors";
 import { $ } from "zx";
 import { getHeader, spin } from "../../lib/terminal.ts";
-import { isProjectNameAvailable } from "../../lib/ftp.ts";
+import { isProjectNameAndVersionAvailable } from "../../lib/ftp.ts";
 import templates from "../../../templates/index.ts";
 
 /**
  * The main entry point for the 'aunty create' command.
  */
 export async function run(destDirArg?: string): Promise<number> {
-  intro(getHeader(pc.dim("aunty"), "create"));
+  intro(getHeader(pc.dim("aunty"), "create", { colour: "green" }));
 
   // 1. Get project name
   const projectName =
@@ -48,7 +48,7 @@ export async function run(destDirArg?: string): Promise<number> {
 
   // 1.5. Check FTP for name collision
   const ftpSpinner = spin("Checking project name availability...");
-  const isAvailable = await isProjectNameAvailable(finalProjectName);
+  const isAvailable = await isProjectNameAndVersionAvailable(finalProjectName);
   ftpSpinner.stop("Project name checked");
 
   if (isAvailable === "error") {
@@ -113,6 +113,9 @@ export async function run(destDirArg?: string): Promise<number> {
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     cancel(`Failed to create project: ${message}`);
+    if (err instanceof Error && err.stack) {
+      console.error(err.stack);
+    }
     return 1;
   }
 
@@ -126,6 +129,11 @@ export async function run(destDirArg?: string): Promise<number> {
       "Failed to install dependencies. You may need to run 'npm install' manually.",
     );
   }
+
+  // 8. Initialize Git Repository
+  try {
+    await $({ cwd: projectDest })`git init`.quiet();
+  } catch {}
 
   log.step("Next steps:");
   log.message(

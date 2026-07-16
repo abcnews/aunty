@@ -15,12 +15,14 @@
     "Ash Kyd <kyd.ashley@abc.net.au>"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "esbuild src/bin/commander.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/bin/commander.js",
+    "prepublishOnly": "npm run build",
     "dev": "tsx src/bin/aunty.ts",
-    "test": "echo \"Put your tests here\" && exit 1",
+    "test": "node --experimental-test-module-mocks --import tsx --test test/*.test.ts",
     "lint": "eslint src",
     "clean": "rimraf dist",
-    "prebuild": "npm run clean"
+    "prebuild": "npm run clean",
+    "release": "np"
   },
   "files": [
     "dist",
@@ -30,10 +32,14 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "src/bin/aunty.ts",
+  "main": "src/bin/aunty.js",
+  "exports": {
+    ".": "./src/bin/aunty.js",
+    "./vite": "./src/lib/vite.ts"
+  },
   "bin": {
-    "aunty": "src/bin/aunty.ts",
-    "nt": "src/bin/aunty.ts"
+    "aunty": "src/bin/aunty.js",
+    "nt": "src/bin/aunty.js"
   },
   "engines": {
     "node": ">=24"
@@ -44,8 +50,11 @@
     "@types/fs-extra": "^11.0.4",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^25.0.10",
+    "@types/semver": "^7.7.1",
+    "esbuild": "^0.28.1",
     "eslint": "^9.39.2",
     "install": "^0.13.0",
+    "np": "^11.2.2",
     "npm": "^11.11.1",
     "rimraf": "^6.1.2",
     "typescript": "^5.9.3",
@@ -58,8 +67,10 @@
     "commander": "^14.0.3",
     "lodash-es": "^4.17.23",
     "picocolors": "^1.1.1",
+    "semver": "^7.8.5",
     "slugify": "^1.6.8",
     "tsx": "^4.21.0",
+    "type-fest": "^5.5.0",
     "zx": "^8.8.5"
   }
 }

@@ -2,7 +2,7 @@ import { intro, outro, confirm, log, cancel, isCancel } from "@clack/prompts";
 import path from "node:path";
 import pc from "picocolors";
 import { FtpClient } from "../../lib/ftp.ts";
-import { loadJson, formatSize } from "../../lib/util.ts";
+import { formatSize, findProjectDetails } from "../../lib/util.ts";
 import { getHeader, spin } from "../../lib/terminal.ts";
 import {
   BUILD_DIRECTORY_NAME,
@@ -17,32 +17,29 @@ interface DeployOptions {
   buildDir?: string;
   dryRun?: boolean;
   force?: boolean;
+  skipHeader?: boolean;
 }
 
 /**
  * The main entry point for the 'aunty deploy' command.
  */
 export async function run(options: DeployOptions = {}): Promise<number> {
-  const projectRoot = process.cwd();
-
-  intro(
-    getHeader(
-      pc.dim("aunty"),
-      `deploy${options.dryRun ? ` ${pc.cyan("[dry]")}` : ""}`,
-    ),
-  );
-
-  // 1. Load config
-  const config = (await loadJson(path.join(projectRoot, "package.json"))) as {
-    name: string;
-    version: string;
-  } | null;
-
-  if (!config) {
-    log.error(`package.json not found in ${projectRoot}`);
-    return 1;
+  if (!options.skipHeader) {
+    intro(
+      getHeader(
+        pc.dim("aunty"),
+        `deploy${options.dryRun ? ` ${pc.cyan("[dry]")}` : ""}`,
+        { colour: "red" },
+      ),
+    );
   }
 
+  // 1. Load config
+  const details = await findProjectDetails(process.cwd());
+
+  if (!details) return 1;
+
+  const { root: projectRoot, pkg: config } = details;
   const { name, version } = config;
   if (!name || !version) {
     cancel("Missing name or version in package.json");
@@ -61,7 +58,6 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   const targetFolder = options.destDir || version;
   const remoteDir = path.join(FTP_PROJECTS_PATH, nameSlug, targetFolder, "/");
   const publicUrl = `${PUBLIC_PROJECTS_URL}${nameSlug}/${targetFolder}/`;
-  log.info(`${pc.bold("Remote dir:")} ${pc.dim(remoteDir)}`);
 
   // 4. File Inventory & Size Check
   let inventory;
@@ -95,9 +91,11 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   // 5. Credential Test & Confirmation
   const ftpClient = new FtpClient();
   try {
-    await ftpClient.testConnection();
-  } catch {
-    // FtpClient.testConnection() already handles UI feedback via its own spinner
+    await ftpClient.connect();
+  } catch (err) {
+    log.error(
+      `FTP connection failed: ${err instanceof Error ? err.message : String(err)}`,
+    );
     return 1;
   }
 
@@ -142,7 +140,8 @@ export async function run(options: DeployOptions = {}): Promise<number> {
         uploadSpinner.message(`${countStr}/${totalFilesStr} ${info.name}`);
       }
     });
-    uploadSpinner.stop("Upload complete");
+
+    uploadSpinner.stop(`Upload finished`);
   } catch (err) {
     uploadSpinner.cancel("Upload failed");
     ftpClient.close();
@@ -151,7 +150,6 @@ export async function run(options: DeployOptions = {}): Promise<number> {
 
   ftpClient.close();
 
-  log.info(`${pc.bold("Public URL:")} ${pc.cyan(publicUrl)}`);
-  outro(pc.green("Deploy complete!"));
+  outro(`${pc.bold("Released to:")} ${pc.cyan(publicUrl)}`);
   return 0;
 }
