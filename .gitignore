@@ -5,5 +5,13 @@ node_modules
 .DS_Store
 
 # Build output
-dist
+# dist
 working
+
+# Working templates
+templates/svelte/base/old-aunty*
+
+# E2E test temp directory
+/.test-temp
+
+dist

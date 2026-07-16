@@ -1,8 +1,9 @@
 import ftp from "basic-ftp";
 import os from "node:os";
 import path from "node:path";
-import { loadJson } from "../../lib/util.ts";
-import { spin } from "../../lib/terminal.ts";
+import { loadJson } from "./util.ts";
+import { FTP_PROJECTS_PATH } from "./constants.ts";
+import slugify from "slugify";
 
 const CREDENTIALS_PATH = path.resolve(os.homedir(), ".abc-credentials");
 
@@ -114,28 +115,53 @@ export class FtpClient {
   close() {
     this.ftpClient.close();
   }
+}
 
-  /**
-   * Test the FTP connection.
-   */
-  async testConnection(
-    timeout = 5000,
-    spinner?: ReturnType<typeof spin>,
-  ): Promise<FtpClient> {
-    const s = spinner || spin("Testing credentials...");
-
-    try {
-      await this.connect(timeout);
-      if (spinner) {
-        s.message("Credentials verified");
-      } else {
-        s.stop("Credentials verified");
-      }
-      return this;
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      s.cancel(`Connection failed: ${message}.`);
-      throw error;
+/**
+ * Checks if a project name already exists on the FTP server.
+ */
+export async function isProjectNameAndVersionAvailable(
+  projectName: string,
+  version?: string,
+  ftpClient?: FtpClient,
+): Promise<"available" | "exists" | "error"> {
+  const client = ftpClient || new FtpClient();
+  try {
+    if (!ftpClient) {
+      await client.connect(5000);
     }
+    const nameSlug = slugify(projectName, { strict: true });
+    const remoteDir = version
+      ? path.join(FTP_PROJECTS_PATH, nameSlug, version, "/")
+      : path.join(FTP_PROJECTS_PATH, nameSlug, "/");
+    const exists = await client.exists(remoteDir);
+    return exists ? "exists" : "available";
+  } catch {
+    return "available";
+  } finally {
+    if (!ftpClient) {
+      client.close();
+    }
+  }
+}
+
+/**
+ * Test the FTP connection and returns success status and optional error message.
+ */
+export async function testFtpConnection(timeout = 5000): Promise<{
+  success: boolean;
+  ftpClient?: FtpClient;
+  error?: string;
+}> {
+  const ftpClient = new FtpClient();
+  try {
+    await ftpClient.connect(timeout);
+    return { success: true, ftpClient };
+  } catch (err: unknown) {
+    ftpClient.close();
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
   }
 }
