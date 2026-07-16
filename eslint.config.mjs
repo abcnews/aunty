@@ -3,5 +3,10 @@ import tseslint from 'typescript-eslint';
 
 export default [
   js.configs.recommended,
-  ...tseslint.configs.recommended
+  ...tseslint.configs.recommended,
+  {
+    "env": {
+      "node": true,
+    }
+  }
 ];
