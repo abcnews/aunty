@@ -39,7 +39,7 @@ export function getServer() {
     host,
     port: 8000,
     cors: {
-      origin: "*",
+      origin: true,
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
       credentials: true,
     },
