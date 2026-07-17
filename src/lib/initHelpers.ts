@@ -126,6 +126,15 @@ export async function getGitUser(): Promise<{
 }
 
 /**
+ * Gets the root directory of the aunty package.
+ * Resolves relative to the root since template scripts get bundled by esbuild
+ * into `dist/bin/commander.js`, altering their local directory context.
+ */
+export function getAuntyRoot(): string {
+  return path.resolve(import.meta.dirname, "../../");
+}
+
+/**
  * Adds @abcnews/aunty to the package.json devDependencies of the target directory.
  * Resolves to the local development path if running in local development mode,
  * or the version of the currently executing aunty.
@@ -139,8 +148,7 @@ export async function installAunty(baseDir: string): Promise<void> {
   const localDev = isLocalDevelopment();
   let auntyDepValue = "";
 
-  // The running aunty's root directory is 2 levels up relative to this file
-  const auntyRoot = path.resolve(import.meta.dirname, "../../");
+  const auntyRoot = getAuntyRoot();
 
   if (localDev) {
     auntyDepValue = `file:${auntyRoot}`;
