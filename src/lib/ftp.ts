@@ -130,7 +130,10 @@ export async function isProjectNameAndVersionAvailable(
     if (!ftpClient) {
       await client.connect(5000);
     }
-    const nameSlug = slugify(projectName, { strict: true });
+    const nameSlug = (slugify as unknown as (s: string, o: object) => string)(
+      projectName,
+      { strict: true },
+    );
     const remoteDir = version
       ? path.join(FTP_PROJECTS_PATH, nameSlug, version, "/")
       : path.join(FTP_PROJECTS_PATH, nameSlug, "/");
