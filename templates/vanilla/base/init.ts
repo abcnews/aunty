@@ -5,7 +5,7 @@ import type { InitOptions } from "../../../src/commands/create/types.ts";
 
 export async function init({ projectName, baseDir }: InitOptions) {
   // Copy template to destination
-  const contentsDir = path.resolve(import.meta.dirname, "contents");
+  const contentsDir = path.resolve(helpers.getAuntyRoot(), "templates/vanilla/base/contents");
   await helpers.copyContents(contentsDir, baseDir);
 
   // String replacements

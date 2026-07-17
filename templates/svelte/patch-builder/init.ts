@@ -8,7 +8,7 @@ import fs from "node:fs/promises";
  */
 export async function init({ projectName, baseDir }: InitOptions) {
   // Copy patch-builder files to target
-  const contentsDir = path.resolve(import.meta.dirname, "contents");
+  const contentsDir = path.resolve(helpers.getAuntyRoot(), "templates/svelte/patch-builder/contents");
   await helpers.copyContents(contentsDir, baseDir);
 
   // Update builder/index.html with project name
