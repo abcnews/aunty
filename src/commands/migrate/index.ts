@@ -12,7 +12,7 @@ import { $, glob } from "zx";
 import { getHeader, spin } from "../../lib/terminal.ts";
 import { findProjectDetails, loadJson } from "../../lib/util.ts";
 import * as git from "../../lib/git.ts";
-import { installAunty } from "../../lib/initHelpers.ts";
+import { installAunty, getAuntyRoot } from "../../lib/initHelpers.ts";
 
 interface MigrateOptions {
   yes?: boolean;
@@ -176,8 +176,8 @@ export async function run(options: MigrateOptions = {}): Promise<number> {
   const migrationSpinner = spin("Migrating configuration files...");
   try {
     const templateDir = path.resolve(
-      import.meta.dirname,
-      "../../../templates/svelte/base/contents",
+      getAuntyRoot(),
+      "templates/svelte/base/contents",
     );
 
     // Copy Vite config files
@@ -251,8 +251,8 @@ export async function run(options: MigrateOptions = {}): Promise<number> {
   const pkgSpinner = spin("Updating package.json dependencies and scripts...");
   try {
     const templateDir = path.resolve(
-      import.meta.dirname,
-      "../../../templates/svelte/base/contents",
+      getAuntyRoot(),
+      "templates/svelte/base/contents",
     );
     const pkgPath = path.join(baseDir, "package.json");
     const pkg = await loadJson<any>(pkgPath);
