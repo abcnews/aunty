@@ -21,6 +21,20 @@ Aunty uses the pattern of "helpers" to abstract complex logic out and hopefully 
 
 The main CLI logic is in [src/bin/commander.ts](./src/bin/commander.ts).
 
+# Developing
+
+To develop on Aunty, run the watch command to compile your changes in real-time:
+
+```bash
+npm run watch
+```
+
+Or build the project manually:
+
+```bash
+npm run build
+```
+
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for specifics.
 
 # Templates

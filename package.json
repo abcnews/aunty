@@ -15,9 +15,10 @@
     "Ash Kyd <kyd.ashley@abc.net.au>"
   ],
   "scripts": {
-    "build": "esbuild src/bin/commander.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/bin/commander.js",
+    "build": "esbuild src/bin/aunty.ts src/bin/commander.ts src/lib/vite.ts --bundle --platform=node --format=esm --packages=external --outdir=dist && tsc",
+    "watch": "esbuild src/bin/aunty.ts src/bin/commander.ts src/lib/vite.ts --bundle --platform=node --format=esm --packages=external --outdir=dist --watch",
     "prepublishOnly": "npm run build",
-    "dev": "tsx src/bin/aunty.ts",
+    "dev": "npm run watch",
     "test": "node --experimental-test-module-mocks --import tsx --test test/*.test.ts",
     "lint": "eslint src",
     "clean": "rimraf dist",
@@ -27,14 +28,14 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "src/bin/aunty.js",
+  "main": "dist/bin/aunty.js",
   "exports": {
-    ".": "./src/bin/aunty.js",
-    "./vite": "./src/lib/vite.ts"
+    ".": "./dist/bin/aunty.js",
+    "./vite": "./dist/lib/vite.js"
   },
   "bin": {
-    "aunty": "src/bin/aunty.js",
-    "nt": "src/bin/aunty.js"
+    "aunty": "dist/bin/aunty.js",
+    "nt": "dist/bin/aunty.js"
   },
   "engines": {
     "node": ">=24"

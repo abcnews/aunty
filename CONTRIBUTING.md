@@ -9,18 +9,31 @@ git clone git@github.com:abcnews/aunty.git
 ...then, from the project directory, run:
 
 ```bash
+npm run build
 npm link
 ```
 
-This will link the globally-available `aunty` command to your clone.
-
-To revert to your original global install, run:
+This will link the globally-available `aunty` command to your clone. While developing, run:
 
 ```bash
-npm unlink
+npm run watch
 ```
 
-For ease of use, you can use the Aunty version directly with `node <path to aunty repo> -h`.
+to compile changes to the `dist/` directory automatically.
+
+To revert and uninstall the locally linked version, run:
+
+```bash
+npm uninstall -g @abcnews/aunty
+```
+
+To reinstall the latest published registry version:
+
+```bash
+npm install -g @abcnews/aunty
+```
+
+For ease of use, you can use the Aunty version directly with `node <path to aunty repo>/dist/bin/aunty.js -h`.
 
 ## Releasing new versions of `@abcnews/aunty`
 
