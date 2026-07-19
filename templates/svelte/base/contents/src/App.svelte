@@ -11,7 +11,7 @@
 </main>
 
 <style lang="scss">
-  :global(body) {
+  .container {
     margin: 0;
     padding: 0;
     font-family: 'ABCSans', sans-serif;
