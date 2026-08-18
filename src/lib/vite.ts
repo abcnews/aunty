@@ -47,6 +47,25 @@ export function getServer() {
 }
 
 /**
+ * Recursively retrieves all imported CSS file paths for a chunk and its dependencies.
+ */
+function getChunkCss(
+  chunkName: string,
+  bundle: any,
+  visited = new Set<string>(),
+): string[] {
+  if (visited.has(chunkName)) return [];
+  visited.add(chunkName);
+  const chunk = bundle[chunkName];
+  if (!chunk) return [];
+  const css = Array.from((chunk.viteMetadata?.importedCss || []) as string[]);
+  const importedCss = (chunk.imports || []).flatMap((imp: string) =>
+    getChunkCss(imp, bundle, visited),
+  );
+  return [...css, ...importedCss];
+}
+
+/**
  * Vite plugin to export a non-module entrypoint to
  * bootstrap the rest of the app as type="module".
  */
@@ -88,16 +107,13 @@ export function es5EntryPlugin(): any {
           (chunk: any) => chunk.type === "chunk" && chunk.name === "indexEntry",
         );
         if (entry && (entry as any).type === "chunk") {
-          const cssPaths = Array.from(
-            (entry as any).viteMetadata?.importedCss || [],
-          );
           const modulePreloadPaths = (entry as any).imports;
           this.emitFile({
             type: "asset",
             fileName: "es5entry.js",
             source: getProxyScript(
               (entry as any).fileName,
-              cssPaths as string[],
+              Array.from(new Set(getChunkCss((entry as any).fileName, bundle))),
               modulePreloadPaths,
             ),
           });
