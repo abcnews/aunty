@@ -10,6 +10,7 @@ import { homedir, hostname } from "node:os";
  * Get SSL config from the Aunty dir, if exists.
  */
 export function getServer() {
+  const DEV_PORT = 8000;
   const HOME_DIR = homedir();
   const SSL_DIR = join(HOME_DIR, ".aunty/ssl");
   const INTERNAL_SUFFIX = ".aus.aunty.abc.net.au";
@@ -33,11 +34,11 @@ export function getServer() {
           cert: readFileSync(certFile),
         }
       : undefined;
-
   return {
     https,
     host,
-    port: 8000,
+    port: DEV_PORT,
+    origin: `${https ? "https" : "http"}://${host}:${DEV_PORT}`,
     cors: {
       origin: true,
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
