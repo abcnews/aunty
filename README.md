@@ -40,3 +40,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for specifics.
 # Templates
 
 `aunty create` uses a custom template system to create new projects. See [TEMPLATES.md](./TEMPLATES.md) for specifics.
+
+# Troubleshooting
+
+- **Firefox intermittently fails** to load dev-server modules due to Local Network Access (LNA) permission prompts not appearing — workaround: add your local dev server address to the `network.lna.skip-domains` key in `about:config` (see [aunty#266](https://github.com/abcnews/aunty/issues/266)) and [Firefox LNA docs](https://support.mozilla.org/en-US/kb/control-personal-device-local-network-permissions-firefox).
