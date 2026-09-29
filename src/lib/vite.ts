@@ -6,23 +6,73 @@ import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { homedir, hostname } from "node:os";
 
+import { createServer } from "node:net";
+
+const DEV_PORT = 8000;
+const INTERNAL_SUFFIX = ".aus.aunty.abc.net.au";
+
+// Determine host - check command line args first, then environment, then default
+const hostArg = process.argv.find((arg: string) => arg.startsWith("--host="));
+const HOST = hostArg
+  ? hostArg.split("=")[1]
+  : process.env.AUNTY_HOST ||
+    `${hostname().toLowerCase().split(".")[0]}${INTERNAL_SUFFIX}`;
+
+/**
+ * Finds the first free port from `port` up to `max`, probing on `host` by
+ * trying to listen on it (so it matches what Vite will actually bind).
+ */
+async function findFreePort(
+  port: number,
+  max = port + 100,
+  host = "0.0.0.0",
+): Promise<number> {
+  const outcome = await new Promise<string>((resolve) => {
+    const probe = createServer();
+
+    probe.once("listening", () => probe.close(() => resolve("free")));
+
+    probe.once("error", (e: NodeJS.ErrnoException & { hostname?: string }) => {
+      if (
+        e.code === "ENOTFOUND" &&
+        e.syscall === "getaddrinfo" &&
+        e.hostname?.includes(INTERNAL_SUFFIX)
+      ) {
+        console.error(
+          [
+            "Could not resolve hostname " + e.hostname,
+            "You appear to be on the ABC network without a hostname attached to your computer.",
+            "Aunty can't continue. Consider reconnecting, or add your hostname to your hosts file.",
+            "",
+          ].join("\n"),
+        );
+        process.exit(1);
+      }
+      // In use, or an unexpected error: log the reason and keep seeking.
+      resolve(e.code === "EADDRINUSE" ? "in use" : `error code ${e.code}`);
+    });
+
+    probe.listen(port, host);
+  });
+
+  if (outcome === "free") return port;
+
+  console.log(`Port ${port} unavailable (${outcome})`);
+  if (port >= max) throw new Error("Could not find an available port");
+  return findFreePort(port + 1, max, host);
+}
+
+// Resolved once at import (top-level await) so getServer() can stay synchronous.
+const FREE_PORT = await findFreePort(DEV_PORT, DEV_PORT + 100, HOST);
+
 /**
  * Get SSL config from the Aunty dir, if exists.
  */
 export function getServer() {
-  const DEV_PORT = 8000;
   const HOME_DIR = homedir();
   const SSL_DIR = join(HOME_DIR, ".aunty/ssl");
-  const INTERNAL_SUFFIX = ".aus.aunty.abc.net.au";
 
-  // Determine host - check command line args first, then environment, then default
-  const hostArg = process.argv.find((arg: string) => arg.startsWith("--host="));
-  const host = hostArg
-    ? hostArg.split("=")[1]
-    : process.env.AUNTY_HOST ||
-      `${hostname().toLowerCase().split(".")[0]}${INTERNAL_SUFFIX}`;
-
-  const certDir = join(SSL_DIR, host);
+  const certDir = join(SSL_DIR, HOST);
   const certFile = join(certDir, "server.crt");
   const keyFile = join(certDir, "server.key");
 
@@ -36,9 +86,10 @@ export function getServer() {
       : undefined;
   return {
     https,
-    host,
-    port: DEV_PORT,
-    origin: `${https ? "https" : "http"}://${host}:${DEV_PORT}`,
+    host: HOST,
+    port: FREE_PORT,
+    strictPort: true,
+    origin: `${https ? "https" : "http"}://${HOST}:${FREE_PORT}`,
     cors: {
       origin: true,
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
