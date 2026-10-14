@@ -1,6 +1,7 @@
 import ftp from "basic-ftp";
 import os from "node:os";
 import path from "node:path";
+import { Readable } from "node:stream";
 import { loadJson } from "./util.ts";
 import { FTP_PROJECTS_PATH } from "./constants.ts";
 import slugify from "slugify";
@@ -97,6 +98,17 @@ export class FtpClient {
     }
     await this.ftpClient.ensureDir(remoteDir);
     await this.ftpClient.uploadFromDir(localDir);
+  }
+
+  /**
+   * Upload in-memory text content to an absolute remote file path
+   */
+  async uploadFile(content: string, remotePath: string) {
+    await this.ftpClient.ensureDir(path.dirname(remotePath));
+    await this.ftpClient.uploadFrom(
+      Readable.from(Buffer.from(content)),
+      remotePath,
+    );
   }
 
   /**

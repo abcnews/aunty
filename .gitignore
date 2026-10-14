@@ -15,3 +15,5 @@ templates/svelte/base/old-aunty*
 /.test-temp
 
 dist
+
+.jest-test-projects

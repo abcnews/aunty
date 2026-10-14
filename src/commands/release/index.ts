@@ -113,7 +113,29 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
   }
 
   // 7. Deploy the release
-  const deployResult = await runDeploy({ skipHeader: true });
+  // Stable releases also publish a `v<major>.x.x-latest.html` redirect.
+  // The page is usually loaded in an iframe, so it's transparent and declares
+  // `color-scheme` up front to avoid a flash. `#builder` goes to `builder/`
+  // with no params; anything else keeps its query string and hash.
+  //
+  // This file is cached for <= 24h as of 2026. If that's not acceptable, use
+  // the cache clearing tool.
+  const target = `./${nextVersion}/`;
+  const extraFiles = [
+    semver.prerelease(nextVersion) && {
+      name: `v${semver.major(nextVersion)}.x.x-latest.html`,
+      content: `<!doctype html>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
+<title>Redirecting…</title>
+<style>:root{color-scheme:light dark}html,body{background:transparent;margin:0}</style>
+<script>location.replace(${JSON.stringify(target)}+(location.hash.includes("#builder")?"builder/":location.search+location.hash))</script>
+<noscript><meta http-equiv="refresh" content="0;url=${target}"></noscript>
+`,
+    },
+  ].filter(Boolean);
+
+  const deployResult = await runDeploy({ skipHeader: true, extraFiles });
 
   if (deployResult !== 0) {
     outro(

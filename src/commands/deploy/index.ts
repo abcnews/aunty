@@ -18,6 +18,8 @@ interface DeployOptions {
   dryRun?: boolean;
   force?: boolean;
   skipHeader?: boolean;
+  /** Files written to the project folder (beside the version folders), after the build uploads */
+  extraFiles?: { name: string; content: string }[];
 }
 
 /**
@@ -75,13 +77,17 @@ export async function run(options: DeployOptions = {}): Promise<number> {
     return 1;
   }
 
-  const list = inventory
-    .map(
-      (f: { relPath: string; size: number }) =>
-        `  ${pc.dim(f.relPath)} (${formatSize(f.size)})`,
-    )
+  const files = [
+    ...inventory,
+    ...(options.extraFiles || []).map(({ name, content }) => ({
+      relPath: `../${name}`,
+      size: Buffer.byteLength(content),
+    })),
+  ];
+  const list = files
+    .map((f) => `  ${pc.dim(f.relPath)} (${formatSize(f.size)})`)
     .join("\n");
-  log.step(`Found ${pc.bold(inventory.length)} files to deploy:\n${list}`);
+  log.step(`Found ${pc.bold(files.length)} files to deploy:\n${list}`);
 
   if (options.dryRun) {
     outro(pc.green("Dry run complete. No files were uploaded."));
@@ -141,6 +147,15 @@ export async function run(options: DeployOptions = {}): Promise<number> {
       }
     });
 
+    // Uploaded last so a redirect never points at a version that isn't there yet
+    // One at a time: basic-ftp can't run concurrent tasks on a single connection
+    for (const { name, content } of extraFiles) {
+      await ftpClient.uploadFile(
+        content,
+        path.join(FTP_PROJECTS_PATH, nameSlug, name),
+      );
+    }
+
     uploadSpinner.stop(`Upload finished`);
   } catch (err) {
     uploadSpinner.cancel("Upload failed");
@@ -151,5 +166,8 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   ftpClient.close();
 
   outro(`${pc.bold("Released to:")} ${pc.cyan(publicUrl)}`);
+  extraFiles.forEach(({ name }) =>
+    log.info(`${PUBLIC_PROJECTS_URL}${nameSlug}/${name}`),
+  );
   return 0;
 }
