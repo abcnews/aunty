@@ -19,7 +19,7 @@
     "watch": "esbuild src/bin/aunty.ts src/bin/commander.ts src/lib/vite.ts --bundle --platform=node --format=esm --packages=external --outdir=dist --watch",
     "prepublishOnly": "npm run build",
     "dev": "npm run watch",
-    "test": "node --experimental-test-module-mocks --import tsx --test test/*.test.ts",
+    "test": "npm run build && node --experimental-test-module-mocks --import tsx --test test/*.test.ts",
     "lint": "eslint src",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
