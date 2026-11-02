@@ -31,7 +31,10 @@
   "main": "dist/bin/aunty.js",
   "exports": {
     ".": "./dist/bin/aunty.js",
-    "./vite": "./dist/lib/vite.js"
+    "./vite": {
+      "types": "./dist/src/lib/vite.d.ts",
+      "default": "./dist/lib/vite.js"
+    }
   },
   "bin": {
     "aunty": "dist/bin/aunty.js",
