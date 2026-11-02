@@ -130,7 +130,7 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   const totalFilesStr = inventory.length.toString();
 
   try {
-    await ftpClient.uploadDir(localDir, remoteDir, (info) => {
+    await ftpClient.uploadInventory(inventory, remoteDir, (info) => {
       if (info.name !== currentFile) {
         uploadedCount++;
         currentFile = info.name;
