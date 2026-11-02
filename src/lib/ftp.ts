@@ -1,3 +1,4 @@
+import { eachLimit, eachSeries } from "async";
 import ftp from "basic-ftp";
 import os from "node:os";
 import path from "node:path";
@@ -31,6 +32,13 @@ async function getCredentials(): Promise<{
     );
   }
   return contentftp;
+}
+
+/**
+ * Joins a local relative path (OS separators) onto a remote directory (always "/").
+ */
+export function toRemotePath(remoteDir: string, relPath: string) {
+  return path.posix.join(remoteDir, relPath.split(path.sep).join("/"));
 }
 
 /**
@@ -98,10 +106,7 @@ export class FtpClient {
     }
     await inventory.reduce(async (previous, { path: localPath, relPath }) => {
       await previous;
-      const remotePath = path.posix.join(
-        remoteDir,
-        relPath.split(path.sep).join("/"),
-      );
+      const remotePath = toRemotePath(remoteDir, relPath);
       await this.ensureDir(path.posix.dirname(remotePath));
       await this.ftpClient.uploadFrom(localPath, remotePath);
     }, Promise.resolve());
@@ -122,6 +127,70 @@ export class FtpClient {
    */
   close() {
     this.ftpClient.close();
+  }
+}
+
+/**
+ * Uploads an inventory over several simultaneous FTP connections.
+ * The given (already connected) client is reused and additional clients connect
+ * in series from the constructor.
+ */
+export class FtpClientPool {
+  private clients: FtpClient[];
+  /** Settles once the extra clients have connected; rejects on the first failure */
+  private ready: Promise<void>;
+
+  constructor(primaryClient: FtpClient, size = 4) {
+    const extraClients = Array.from(
+      { length: size - 1 },
+      () => new FtpClient(),
+    );
+    this.clients = [primaryClient, ...extraClients];
+
+    // eachSeries stops at the first failed connection
+    this.ready = eachSeries(extraClients, (client) => client.connect());
+  }
+
+  /**
+   * @param onFileStart Called once per file as its upload begins, from any connection
+   */
+  async uploadInventory(
+    inventory: { path: string; relPath: string }[],
+    remoteDir: string,
+    onFileStart?: (name: string) => void,
+  ) {
+    const [primaryClient] = this.clients;
+    await this.ready;
+
+    // Create every remote directory up front on one connection, so the
+    // parallel workers never race to create the same directory
+    const remoteSubDirs = [
+      ...new Set(
+        inventory.map(({ relPath }) =>
+          path.posix.dirname(toRemotePath(remoteDir, relPath)),
+        ),
+      ),
+    ];
+    await eachSeries(remoteSubDirs, (dir) => primaryClient.ensureDir(dir));
+
+    const idleClients = [...this.clients];
+
+    await eachLimit(inventory, this.clients.length, async (file) => {
+      const client = idleClients.pop()!;
+      try {
+        onFileStart?.(file.relPath);
+        await client.uploadInventory([file], remoteDir);
+      } finally {
+        idleClients.push(client);
+      }
+    });
+  }
+
+  /**
+   * Close every connection, including the primary
+   */
+  close() {
+    this.clients.forEach((client) => client.close());
   }
 }
 

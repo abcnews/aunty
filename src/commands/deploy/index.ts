@@ -1,7 +1,7 @@
 import { intro, outro, confirm, log, cancel, isCancel } from "@clack/prompts";
 import path from "node:path";
 import pc from "picocolors";
-import { FtpClient } from "../../lib/ftp.ts";
+import { FtpClient, FtpClientPool } from "../../lib/ftp.ts";
 import { formatSize, findProjectDetails } from "../../lib/util.ts";
 import { getHeader, spin } from "../../lib/terminal.ts";
 import {
@@ -11,6 +11,9 @@ import {
 } from "../../lib/constants.ts";
 import { getFileInventory } from "./fs.ts";
 import slugify from "slugify";
+
+/** Simultaneous FTP connections used for uploading */
+const UPLOAD_CONNECTIONS = 4;
 
 interface DeployOptions {
   destDir?: string;
@@ -126,29 +129,26 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   const uploadSpinner = spin("Uploading files...");
 
   let uploadedCount = 0;
-  let currentFile = "";
   const totalFilesStr = inventory.length.toString();
 
+  const pool = new FtpClientPool(ftpClient, UPLOAD_CONNECTIONS);
+
   try {
-    await ftpClient.uploadInventory(inventory, remoteDir, (info) => {
-      if (info.name !== currentFile) {
-        uploadedCount++;
-        currentFile = info.name;
-        const countStr = uploadedCount
-          .toString()
-          .padStart(totalFilesStr.length, " ");
-        uploadSpinner.message(`${countStr}/${totalFilesStr} ${info.name}`);
-      }
+    await pool.uploadInventory(inventory, remoteDir, (name) => {
+      uploadedCount++;
+      const countStr = uploadedCount
+        .toString()
+        .padStart(totalFilesStr.length, " ");
+      uploadSpinner.message(`${countStr}/${totalFilesStr} ${name}`);
     });
 
     uploadSpinner.stop(`Upload finished`);
   } catch (err) {
     uploadSpinner.cancel("Upload failed");
-    ftpClient.close();
     throw err;
+  } finally {
+    pool.close();
   }
-
-  ftpClient.close();
 
   outro(`${pc.bold("Released to:")} ${pc.cyan(publicUrl)}`);
   return 0;
