@@ -95,7 +95,8 @@ export async function uploadInventoryWithCurl({
     // basic-ftp used PASV, not EPSV; matching it keeps the comparison fair
     "disable-epsv",
     `user = ${quoteConfigValue(userValue)}`,
-    `write-out = ${quoteConfigValue("%{json}\\n")}`,
+    // \n is left unescaped on purpose: curl turns it into a newline inside a quoted config value
+    'write-out = "%{json}\\n"',
     // curl pairs the nth upload-file with the nth url
     ...urlByFile.flatMap(({ file, url }) => [
       `upload-file = ${quoteConfigValue(file.path)}`,
