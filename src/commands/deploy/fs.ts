@@ -15,6 +15,9 @@ export async function getFileInventory(
   const entries = await fs.readdir(dirPath, { withFileTypes: true });
 
   for (const entry of entries) {
+    // Never deploy dotfiles or dot-directories (.env, .git, .DS_Store etc.)
+    if (entry.name.startsWith(".")) continue;
+
     const fullPath = path.join(dirPath, entry.name);
     if (entry.isDirectory()) {
       inventory.push(...(await getFileInventory(fullPath, baseDir)));

@@ -81,10 +81,11 @@ export class FtpClient {
   }
 
   /**
-   * Upload a directory to a remote path
+   * Upload exactly the files in an inventory beneath a remote directory.
+   * Sequential: a single FTP connection can't parallelise.
    */
-  async uploadDir(
-    localDir: string,
+  async uploadInventory(
+    inventory: { path: string; relPath: string }[],
     remoteDir: string,
     onProgress?: (info: {
       name: string;
@@ -95,8 +96,15 @@ export class FtpClient {
     if (onProgress) {
       this.ftpClient.trackProgress(onProgress);
     }
-    await this.ftpClient.ensureDir(remoteDir);
-    await this.ftpClient.uploadFromDir(localDir);
+    await inventory.reduce(async (previous, { path: localPath, relPath }) => {
+      await previous;
+      const remotePath = path.posix.join(
+        remoteDir,
+        relPath.split(path.sep).join("/"),
+      );
+      await this.ensureDir(path.posix.dirname(remotePath));
+      await this.ftpClient.uploadFrom(localPath, remotePath);
+    }, Promise.resolve());
   }
 
   /**
