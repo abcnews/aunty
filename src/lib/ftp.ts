@@ -89,27 +89,11 @@ export class FtpClient {
   }
 
   /**
-   * Upload exactly the files in an inventory beneath a remote directory.
-   * Sequential: a single FTP connection can't parallelise.
+   * Upload a single local file to an absolute remote path.
+   * The remote directory must already exist (see ensureDir).
    */
-  async uploadInventory(
-    inventory: { path: string; relPath: string }[],
-    remoteDir: string,
-    onProgress?: (info: {
-      name: string;
-      bytes: number;
-      bytesOverall: number;
-    }) => void,
-  ) {
-    if (onProgress) {
-      this.ftpClient.trackProgress(onProgress);
-    }
-    await inventory.reduce(async (previous, { path: localPath, relPath }) => {
-      await previous;
-      const remotePath = toRemotePath(remoteDir, relPath);
-      await this.ensureDir(path.posix.dirname(remotePath));
-      await this.ftpClient.uploadFrom(localPath, remotePath);
-    }, Promise.resolve());
+  async uploadFile(localPath: string, remotePath: string) {
+    await this.ftpClient.uploadFrom(localPath, remotePath);
   }
 
   /**
@@ -175,15 +159,19 @@ export class FtpClientPool {
 
     const idleClients = [...this.clients];
 
-    await eachLimit(inventory, this.clients.length, async (file) => {
-      const client = idleClients.pop()!;
-      try {
-        onFileStart?.(file.relPath);
-        await client.uploadInventory([file], remoteDir);
-      } finally {
-        idleClients.push(client);
-      }
-    });
+    await eachLimit(
+      inventory,
+      this.clients.length,
+      async ({ path: localPath, relPath }) => {
+        const client = idleClients.pop()!;
+        try {
+          onFileStart?.(relPath);
+          await client.uploadFile(localPath, toRemotePath(remoteDir, relPath));
+        } finally {
+          idleClients.push(client);
+        }
+      },
+    );
   }
 
   /**

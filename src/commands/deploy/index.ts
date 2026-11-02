@@ -12,9 +12,6 @@ import {
 import { getFileInventory } from "./fs.ts";
 import slugify from "slugify";
 
-/** Simultaneous FTP connections used for uploading */
-const UPLOAD_CONNECTIONS = 4;
-
 interface DeployOptions {
   destDir?: string;
   buildDir?: string;
@@ -131,7 +128,7 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   let uploadedCount = 0;
   const totalFilesStr = inventory.length.toString();
 
-  const pool = new FtpClientPool(ftpClient, UPLOAD_CONNECTIONS);
+  const pool = new FtpClientPool(ftpClient);
 
   try {
     await pool.uploadInventory(inventory, remoteDir, (name) => {
