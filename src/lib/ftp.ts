@@ -11,7 +11,7 @@ const CREDENTIALS_PATH = path.resolve(os.homedir(), ".abc-credentials");
 /**
  * Loads credentials from ~/.abc-credentials
  */
-async function getCredentials(): Promise<{
+export async function getCredentials(): Promise<{
   host: string;
   username?: string;
   password?: string;

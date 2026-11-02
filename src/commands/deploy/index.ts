@@ -1,7 +1,8 @@
 import { intro, outro, confirm, log, cancel, isCancel } from "@clack/prompts";
 import path from "node:path";
 import pc from "picocolors";
-import { FtpClient, FtpClientPool } from "../../lib/ftp.ts";
+import { FtpClient } from "../../lib/ftp.ts";
+import { uploadInventoryWithCurl } from "../../lib/curl-upload.ts";
 import { formatSize, findProjectDetails } from "../../lib/util.ts";
 import { getHeader, spin } from "../../lib/terminal.ts";
 import {
@@ -126,28 +127,53 @@ export async function run(options: DeployOptions = {}): Promise<number> {
     log.info(pc.yellow("Force flag used. Overwriting remote directory."));
   }
 
-  const uploadSpinner = spin("Uploading files...");
-
+  let uploadSpinner: ReturnType<typeof spin> | undefined;
   let uploadedCount = 0;
   const totalFilesStr = inventory.length.toString();
 
-  const pool = new FtpClientPool(ftpClient, UPLOAD_CONNECTIONS);
-
   try {
-    await pool.uploadInventory(inventory, remoteDir, (name) => {
-      uploadedCount++;
-      const countStr = uploadedCount
-        .toString()
-        .padStart(totalFilesStr.length, " ");
-      uploadSpinner.message(`${countStr}/${totalFilesStr} ${name}`);
+    const uploaded = await uploadInventoryWithCurl({
+      ftpClient,
+      inventory,
+      remoteDir,
+      connections: UPLOAD_CONNECTIONS,
+      confirmRun: async ({ command, config }) => {
+        log.message(
+          `${pc.bold("curl command:")} ${command}\n\n${pc.dim(config)}`,
+        );
+        // Drop the idle connection while waiting on input to avoid a socket timeout
+        ftpClient.close();
+        const shouldRun = await confirm({
+          message: "Run this curl upload?",
+          initialValue: true,
+        });
+        if (shouldRun !== true) return false;
+
+        await ftpClient.connect();
+        return true;
+      },
+      onStart: () => {
+        uploadSpinner = spin("Uploading files...");
+      },
+      onFileDone: (relPath) => {
+        uploadedCount++;
+        const countStr = uploadedCount
+          .toString()
+          .padStart(totalFilesStr.length, " ");
+        uploadSpinner?.message(`${countStr}/${totalFilesStr} ${relPath}`);
+      },
     });
 
-    uploadSpinner.stop(`Upload finished`);
+    if (!uploaded) {
+      cancel("Deploy cancelled.");
+      return 0;
+    }
+    uploadSpinner?.stop(`Upload finished`);
   } catch (err) {
-    uploadSpinner.cancel("Upload failed");
+    uploadSpinner?.cancel("Upload failed");
     throw err;
   } finally {
-    pool.close();
+    ftpClient.close();
   }
 
   outro(`${pc.bold("Released to:")} ${pc.cyan(publicUrl)}`);
