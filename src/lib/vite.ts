@@ -5,18 +5,36 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { homedir, hostname } from "node:os";
-
 import { createServer } from "node:net";
+import { lookup } from "node:dns/promises";
 
 const DEV_PORT = 8000;
 const INTERNAL_SUFFIX = ".aus.aunty.abc.net.au";
 
 // Determine host - check command line args first, then environment, then default
 const hostArg = process.argv.find((arg: string) => arg.startsWith("--host="));
-const HOST = hostArg
+const requestedHost = hostArg
   ? hostArg.split("=")[1]
   : process.env.AUNTY_HOST ||
     `${hostname().toLowerCase().split(".")[0]}${INTERNAL_SUFFIX}`;
+
+async function resolveHost(): Promise<string> {
+  try {
+    await lookup(requestedHost);
+    return requestedHost;
+  } catch {
+    console.warn(
+      [
+        `Could not resolve ${requestedHost}.`,
+        "Falling back to localhost.",
+        "Consider adding your hostname to your hosts file or setting --host / AUNTY_HOST.",
+      ].join("\n"),
+    );
+    return "localhost";
+  }
+}
+
+const HOST = await resolveHost();
 
 /**
  * Finds the first free port from `port` up to `max`, probing on `host` by
@@ -32,20 +50,9 @@ async function findFreePort(
 
     probe.once("listening", () => probe.close(() => resolve("free")));
 
-    probe.once("error", (e: NodeJS.ErrnoException & { hostname?: string }) => {
-      if (
-        e.code === "ENOTFOUND" &&
-        e.syscall === "getaddrinfo" &&
-        e.hostname?.includes(INTERNAL_SUFFIX)
-      ) {
-        console.error(
-          [
-            "Could not resolve hostname " + e.hostname,
-            "You appear to be on the ABC network without a hostname attached to your computer.",
-            "Aunty can't continue. Consider reconnecting, or add your hostname to your hosts file.",
-            "",
-          ].join("\n"),
-        );
+    probe.once("error", (e: NodeJS.ErrnoException) => {
+      if (e.code === "ENOTFOUND") {
+        console.error(`Could not resolve host "${host}".`);
         process.exit(1);
       }
       // In use, or an unexpected error: log the reason and keep seeking.
