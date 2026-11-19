@@ -112,7 +112,7 @@ export class FtpClient {
    * Upload in-memory text content to an absolute remote file path
    */
   async uploadFile(content: string, remotePath: string) {
-    await this.ftpClient.ensureDir(path.dirname(remotePath));
+    await this.ensureDir(path.posix.dirname(remotePath));
     await this.ftpClient.uploadFrom(
       Readable.from(Buffer.from(content)),
       remotePath,

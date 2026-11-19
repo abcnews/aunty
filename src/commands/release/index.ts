@@ -113,27 +113,33 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
   }
 
   // 7. Deploy the release
-  // Stable releases also publish a `v<major>.x.x-latest.html` redirect.
+  // Stable releases also publish a `<major>.x.x-latest.html` redirect, so CMS
+  // iframes can point at one URL per major version. Prereleases never move it.
   // The page is usually loaded in an iframe, so it's transparent and declares
-  // `color-scheme` up front to avoid a flash. `#builder` goes to `builder/`
-  // with no params; anything else keeps its query string and hash.
+  // `color-scheme` up front to avoid a flash.
+  //
+  // A hash of exactly one segment of letters, digits and hyphens (e.g.
+  // `#builder`) goes to `<version>/<segment>/`. Anything else goes to the
+  // version root. The query string and hash are always dropped.
   //
   // This file is cached for <= 24h as of 2026. If that's not acceptable, use
   // the cache clearing tool.
   const target = `./${nextVersion}/`;
-  const extraFiles = [
-    semver.prerelease(nextVersion) && {
-      name: `v${semver.major(nextVersion)}.x.x-latest.html`,
-      content: `<!doctype html>
+  const extraFiles = semver.prerelease(nextVersion)
+    ? []
+    : [
+        {
+          name: `${semver.major(nextVersion)}.x.x-latest.html`,
+          content: `<!doctype html>
 <meta charset="utf-8">
 <meta name="color-scheme" content="light dark">
 <title>Redirecting…</title>
 <style>:root{color-scheme:light dark}html,body{background:transparent;margin:0}</style>
-<script>location.replace(${JSON.stringify(target)}+(location.hash.includes("#builder")?"builder/":location.search+location.hash))</script>
+<script>var m=location.hash.match(/^#([a-z0-9-]{1,64})$/i);location.replace(${JSON.stringify(target)}+(m?m[1]+"/":""))</script>
 <noscript><meta http-equiv="refresh" content="0;url=${target}"></noscript>
 `,
-    },
-  ].filter(Boolean);
+        },
+      ];
 
   const deployResult = await runDeploy({ skipHeader: true, extraFiles });
 

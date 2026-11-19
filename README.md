@@ -14,6 +14,8 @@ The repo is split up by commands. You should be able to jump into the command yo
 - [create](./src/commands/create/index.ts) (aliased as `new`)
 - [deploy](./src/commands/deploy/index.ts)
 - [release](./src/commands/release/index.ts)
+  - Stable releases also publish `<project>/<major>.x.x-latest.html`, which redirects to the latest release in that major version. Use it for CMS iframes.
+  - A hash of letters, digits and hyphens adds a path, e.g. `3.x.x-latest.html#builder` goes to `3.2.1/builder/`.
 - [release-check](./src/commands/release-check/index.ts)
 - [serve](./src/commands/serve/index.ts)
 

@@ -77,9 +77,10 @@ export async function run(options: DeployOptions = {}): Promise<number> {
     return 1;
   }
 
+  const { extraFiles = [] } = options;
   const files = [
     ...inventory,
-    ...(options.extraFiles || []).map(({ name, content }) => ({
+    ...extraFiles.map(({ name, content }) => ({
       relPath: `../${name}`,
       size: Buffer.byteLength(content),
     })),
@@ -149,12 +150,13 @@ export async function run(options: DeployOptions = {}): Promise<number> {
 
     // Uploaded last so a redirect never points at a version that isn't there yet
     // One at a time: basic-ftp can't run concurrent tasks on a single connection
-    for (const { name, content } of extraFiles) {
+    await extraFiles.reduce(async (previous, { name, content }) => {
+      await previous;
       await ftpClient.uploadFile(
         content,
-        path.join(FTP_PROJECTS_PATH, nameSlug, name),
+        path.posix.join(FTP_PROJECTS_PATH, nameSlug, name),
       );
-    }
+    }, Promise.resolve());
 
     uploadSpinner.stop(`Upload finished`);
   } catch (err) {
