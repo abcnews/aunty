@@ -1,6 +1,6 @@
 {
   "name": "@abcnews/aunty",
-  "version": "17.0.0-next.10",
+  "version": "17.0.0-next.12",
   "type": "module",
   "description": "ABC News Digital developer toolkit",
   "repository": {
@@ -19,7 +19,7 @@
     "watch": "esbuild src/bin/aunty.ts src/bin/commander.ts src/lib/vite.ts --bundle --platform=node --format=esm --packages=external --outdir=dist --watch",
     "prepublishOnly": "npm run build",
     "dev": "npm run watch",
-    "test": "node --experimental-test-module-mocks --import tsx --test test/*.test.ts",
+    "test": "npm run build && node --experimental-test-module-mocks --import tsx --test test/*.test.ts",
     "lint": "eslint src",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
@@ -31,7 +31,10 @@
   "main": "dist/bin/aunty.js",
   "exports": {
     ".": "./dist/bin/aunty.js",
-    "./vite": "./dist/lib/vite.js"
+    "./vite": {
+      "types": "./dist/src/lib/vite.d.ts",
+      "default": "./dist/lib/vite.js"
+    }
   },
   "bin": {
     "aunty": "dist/bin/aunty.js",
