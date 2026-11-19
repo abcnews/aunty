@@ -113,17 +113,7 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
   }
 
   // 7. Deploy the release
-  // Stable releases also publish a `<major>.x.x-latest.html` redirect, so CMS
-  // iframes can point at one URL per major version. Prereleases never move it.
-  // The page is usually loaded in an iframe, so it's transparent and declares
-  // `color-scheme` up front to avoid a flash.
-  //
-  // A hash of exactly one segment of letters, digits and hyphens (e.g.
-  // `#builder`) goes to `<version>/<segment>/`. Anything else goes to the
-  // version root. The query string and hash are always dropped.
-  //
-  // This file is cached for <= 24h as of 2026. If that's not acceptable, use
-  // the cache clearing tool.
+  // Stable releases publish a transparent `<major>.x.x-latest.html` iframe redirect; `#segment` → `<version>/<segment>/`
   const target = `./${nextVersion}/`;
   const extraFiles = semver.prerelease(nextVersion)
     ? []
