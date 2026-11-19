@@ -1,5 +1,6 @@
 import { intro, outro, confirm, log, cancel, isCancel } from "@clack/prompts";
 import path from "node:path";
+import { eachSeries } from "async";
 import pc from "picocolors";
 import { FtpClient } from "../../lib/ftp.ts";
 import { formatSize, findProjectDetails } from "../../lib/util.ts";
@@ -150,13 +151,12 @@ export async function run(options: DeployOptions = {}): Promise<number> {
 
     // Uploaded last so a redirect never points at a version that isn't there yet
     // One at a time: basic-ftp can't run concurrent tasks on a single connection
-    await extraFiles.reduce(async (previous, { name, content }) => {
-      await previous;
+    await eachSeries(extraFiles, async ({ name, content }) => {
       await ftpClient.uploadFile(
         content,
         path.posix.join(FTP_PROJECTS_PATH, nameSlug, name),
       );
-    }, Promise.resolve());
+    });
 
     uploadSpinner.stop(`Upload finished`);
   } catch (err) {
