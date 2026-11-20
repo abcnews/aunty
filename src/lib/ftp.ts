@@ -2,9 +2,8 @@ import ftp from "basic-ftp";
 import os from "node:os";
 import path from "node:path";
 import { Readable } from "node:stream";
-import { loadJson } from "./util.ts";
+import { slugifyStrict, loadJson } from "./util.ts";
 import { FTP_PROJECTS_PATH } from "./constants.ts";
-import slugify from "slugify";
 
 const CREDENTIALS_PATH = path.resolve(os.homedir(), ".abc-credentials");
 
@@ -150,10 +149,7 @@ export async function isProjectNameAndVersionAvailable(
     if (!ftpClient) {
       await client.connect(5000);
     }
-    const nameSlug = (slugify as unknown as (s: string, o: object) => string)(
-      projectName,
-      { strict: true },
-    );
+    const nameSlug = slugifyStrict(projectName);
     const remoteDir = version
       ? path.join(FTP_PROJECTS_PATH, nameSlug, version, "/")
       : path.join(FTP_PROJECTS_PATH, nameSlug, "/");

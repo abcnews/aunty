@@ -3,15 +3,19 @@ import path from "node:path";
 import { eachSeries } from "async";
 import pc from "picocolors";
 import { FtpClient } from "../../lib/ftp.ts";
-import { formatSize, findProjectDetails } from "../../lib/util.ts";
+import {
+  formatSize,
+  findProjectDetails,
+  slugifyStrict,
+} from "../../lib/util.ts";
 import { getHeader, spin } from "../../lib/terminal.ts";
 import {
   BUILD_DIRECTORY_NAME,
+  FTP_LIVE_IFRAMES_PATH,
   FTP_PROJECTS_PATH,
   PUBLIC_PROJECTS_URL,
 } from "../../lib/constants.ts";
 import { getFileInventory } from "./fs.ts";
-import slugify from "slugify";
 
 interface DeployOptions {
   destDir?: string;
@@ -19,7 +23,7 @@ interface DeployOptions {
   dryRun?: boolean;
   force?: boolean;
   skipHeader?: boolean;
-  /** Files written to the project folder (beside the version folders), after the build uploads */
+  /** Files written to the short-cache `live-iframes/<project>/` folder, after the build uploads */
   extraFiles?: { name: string; content: string }[];
 }
 
@@ -54,10 +58,7 @@ export async function run(options: DeployOptions = {}): Promise<number> {
     projectRoot,
     options.buildDir || BUILD_DIRECTORY_NAME,
   );
-  const nameSlug = (slugify as unknown as (s: string, o: object) => string)(
-    name,
-    { strict: true },
-  );
+  const nameSlug = slugifyStrict(name);
   const targetFolder = options.destDir || version;
   const remoteDir = path.join(FTP_PROJECTS_PATH, nameSlug, targetFolder, "/");
   const publicUrl = `${PUBLIC_PROJECTS_URL}${nameSlug}/${targetFolder}/`;
@@ -79,10 +80,14 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   }
 
   const { extraFiles = [] } = options;
+  const extraFilesWithPaths = extraFiles.map((file) => ({
+    ...file,
+    remotePath: path.posix.join(FTP_LIVE_IFRAMES_PATH, nameSlug, file.name),
+  }));
   const files = [
     ...inventory,
-    ...extraFiles.map(({ name, content }) => ({
-      relPath: `../${name}`,
+    ...extraFilesWithPaths.map(({ remotePath, content }) => ({
+      relPath: remotePath,
       size: Buffer.byteLength(content),
     })),
   ];
@@ -151,11 +156,8 @@ export async function run(options: DeployOptions = {}): Promise<number> {
 
     // Uploaded last so a redirect never points at a version that isn't there yet
     // One at a time: basic-ftp can't run concurrent tasks on a single connection
-    await eachSeries(extraFiles, async ({ name, content }) => {
-      await ftpClient.uploadFile(
-        content,
-        path.posix.join(FTP_PROJECTS_PATH, nameSlug, name),
-      );
+    await eachSeries(extraFilesWithPaths, async ({ content, remotePath }) => {
+      await ftpClient.uploadFile(content, remotePath);
     });
 
     uploadSpinner.stop(`Upload finished`);
@@ -168,8 +170,6 @@ export async function run(options: DeployOptions = {}): Promise<number> {
   ftpClient.close();
 
   outro(`${pc.bold("Released to:")} ${pc.cyan(publicUrl)}`);
-  extraFiles.forEach(({ name }) =>
-    log.info(`${PUBLIC_PROJECTS_URL}${nameSlug}/${name}`),
-  );
+  extraFilesWithPaths.forEach(({ remotePath }) => log.info(remotePath));
   return 0;
 }

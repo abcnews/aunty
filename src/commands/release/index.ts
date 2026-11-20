@@ -3,7 +3,8 @@ import pc from "picocolors";
 import semver from "semver";
 import { $ } from "zx";
 import { getHeader, spin } from "../../lib/terminal.ts";
-import { findProjectDetails } from "../../lib/util.ts";
+import { findProjectDetails, slugifyStrict } from "../../lib/util.ts";
+import { PUBLIC_PROJECTS_URL } from "../../lib/constants.ts";
 import { getVersionOptions } from "../../lib/semver.ts";
 import { run as runReleaseCheck } from "../release-check/index.ts";
 import { run as runDeploy } from "../deploy/index.ts";
@@ -26,7 +27,12 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
   }
 
   const { pkg } = details;
-  const currentVersion = pkg.version;
+  const { name: projectName, version: currentVersion } = pkg;
+
+  if (!projectName) {
+    cancel("No name found in package.json, please set up your project.");
+    return 1;
+  }
 
   if (!currentVersion) {
     cancel("No version found in package.json, please set up your project.");
@@ -114,7 +120,7 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
 
   // 7. Deploy the release
   // Stable releases publish a transparent `<major>.x.x-latest.html` iframe redirect; `#segment` → `<version>/<segment>/`
-  const target = `./${nextVersion}/`;
+  const target = `${PUBLIC_PROJECTS_URL}${slugifyStrict(projectName)}/${nextVersion}/`;
   const extraFiles = semver.prerelease(nextVersion)
     ? []
     : [
