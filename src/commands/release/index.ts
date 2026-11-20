@@ -131,7 +131,10 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
 <meta name="color-scheme" content="light dark">
 <title>Redirecting…</title>
 <style>:root{color-scheme:light dark}html,body{background:transparent;margin:0}</style>
-<script>var m=location.hash.match(/^#([a-z0-9-]{1,64})$/i);location.replace(${JSON.stringify(target)}+(m?m[1]+"/":""))</script>
+<script>
+var segment=location.hash.match(/^#([a-z0-9-]{1,64})$/i)?.[1];
+location.replace(${JSON.stringify(target)}+(segment?segment+"/":""));
+</script>
 <noscript><meta http-equiv="refresh" content="0;url=${target}"></noscript>
 `,
         },
