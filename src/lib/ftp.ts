@@ -1,9 +1,9 @@
 import ftp from "basic-ftp";
 import os from "node:os";
 import path from "node:path";
-import { loadJson } from "./util.ts";
+import { Readable } from "node:stream";
+import { slugifyStrict, loadJson } from "./util.ts";
 import { FTP_PROJECTS_PATH } from "./constants.ts";
-import slugify from "slugify";
 
 const CREDENTIALS_PATH = path.resolve(os.homedir(), ".abc-credentials");
 
@@ -108,6 +108,17 @@ export class FtpClient {
   }
 
   /**
+   * Upload in-memory text content to an absolute remote file path
+   */
+  async uploadFile(content: string, remotePath: string) {
+    await this.ensureDir(path.posix.dirname(remotePath));
+    await this.ftpClient.uploadFrom(
+      Readable.from(Buffer.from(content)),
+      remotePath,
+    );
+  }
+
+  /**
    * Ensure a remote directory exists (with local caching)
    */
   async ensureDir(remoteDir: string) {
@@ -138,10 +149,7 @@ export async function isProjectNameAndVersionAvailable(
     if (!ftpClient) {
       await client.connect(5000);
     }
-    const nameSlug = (slugify as unknown as (s: string, o: object) => string)(
-      projectName,
-      { strict: true },
-    );
+    const nameSlug = slugifyStrict(projectName);
     const remoteDir = version
       ? path.join(FTP_PROJECTS_PATH, nameSlug, version, "/")
       : path.join(FTP_PROJECTS_PATH, nameSlug, "/");

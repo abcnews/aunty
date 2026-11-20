@@ -5,6 +5,8 @@ import type { PackageJson as BasePackageJson } from "type-fest";
  */
 export interface AuntyConfig {
   type?: "svelte" | string;
+  /** On stable releases, also publish a `<major>.x.x-latest.html` redirect for CMS iframes */
+  useEvergreenIndex?: boolean;
   [key: string]: unknown;
 }
 

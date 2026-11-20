@@ -3,7 +3,8 @@ import pc from "picocolors";
 import semver from "semver";
 import { $ } from "zx";
 import { getHeader, spin } from "../../lib/terminal.ts";
-import { findProjectDetails } from "../../lib/util.ts";
+import { findProjectDetails, slugifyStrict } from "../../lib/util.ts";
+import { PUBLIC_PROJECTS_URL } from "../../lib/constants.ts";
 import { getVersionOptions } from "../../lib/semver.ts";
 import { run as runReleaseCheck } from "../release-check/index.ts";
 import { run as runDeploy } from "../deploy/index.ts";
@@ -26,7 +27,12 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
   }
 
   const { pkg } = details;
-  const currentVersion = pkg.version;
+  const { name: projectName, version: currentVersion } = pkg;
+
+  if (!projectName) {
+    cancel("No name found in package.json, please set up your project.");
+    return 1;
+  }
 
   if (!currentVersion) {
     cancel("No version found in package.json, please set up your project.");
@@ -113,7 +119,30 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
   }
 
   // 7. Deploy the release
-  const deployResult = await runDeploy({ skipHeader: true });
+  // Opted-in stable releases publish a transparent `<major>.x.x-latest.html` iframe redirect; `#segment` → `<version>/<segment>/`
+  const target = `${PUBLIC_PROJECTS_URL}${slugifyStrict(projectName)}/${nextVersion}/`;
+  const extraFiles =
+    pkg.aunty?.useEvergreenIndex !== true || semver.prerelease(nextVersion)
+      ? []
+      : [
+          {
+            name: `${semver.major(nextVersion)}.x.x-latest.html`,
+            content: `<!doctype html>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
+<meta name="version" content="${nextVersion}">
+<title>Loading…</title>
+<style>:root{color-scheme:light dark}html,body{background:transparent;margin:0}</style>
+<script>
+var segment=location.hash.match(/^#([a-z0-9-]{1,64})$/i)?.[1];
+location.replace(${JSON.stringify(target)}+(segment?segment+"/":""));
+</script>
+<noscript><meta http-equiv="refresh" content="0;url=${target}"></noscript>
+`,
+          },
+        ];
+
+  const deployResult = await runDeploy({ skipHeader: true, extraFiles });
 
   if (deployResult !== 0) {
     outro(
