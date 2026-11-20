@@ -129,7 +129,8 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
           content: `<!doctype html>
 <meta charset="utf-8">
 <meta name="color-scheme" content="light dark">
-<title>Redirecting…</title>
+<meta name="version" content="${nextVersion}">
+<title>Loading…</title>
 <style>:root{color-scheme:light dark}html,body{background:transparent;margin:0}</style>
 <script>
 var segment=location.hash.match(/^#([a-z0-9-]{1,64})$/i)?.[1];
