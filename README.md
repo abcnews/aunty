@@ -43,7 +43,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for specifics.
 
 # Evergreen index
 
-If you're using iframes or builders, you can publish a `/dat/news/live-iframes/<project>/<major>.x.x-latest.html`, which redirects to the latest release in that major version. Set it up by adding this to your `package.json`:
+If you're using iframes or builders, Aunty can publish a `/dat/news/live-iframes/<project>/<major>.x.x-latest.html` file, which redirects to the latest release in that major version. Set it up by adding this to your `package.json`:
 
 ```json
 "aunty": { "useEvergreenIndex": true }
