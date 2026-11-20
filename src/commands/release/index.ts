@@ -119,14 +119,15 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
   }
 
   // 7. Deploy the release
-  // Stable releases publish a transparent `<major>.x.x-latest.html` iframe redirect; `#segment` → `<version>/<segment>/`
+  // Opted-in stable releases publish a transparent `<major>.x.x-latest.html` iframe redirect; `#segment` → `<version>/<segment>/`
   const target = `${PUBLIC_PROJECTS_URL}${slugifyStrict(projectName)}/${nextVersion}/`;
-  const extraFiles = semver.prerelease(nextVersion)
-    ? []
-    : [
-        {
-          name: `${semver.major(nextVersion)}.x.x-latest.html`,
-          content: `<!doctype html>
+  const extraFiles =
+    pkg.aunty?.useEvergreenIndex !== true || semver.prerelease(nextVersion)
+      ? []
+      : [
+          {
+            name: `${semver.major(nextVersion)}.x.x-latest.html`,
+            content: `<!doctype html>
 <meta charset="utf-8">
 <meta name="color-scheme" content="light dark">
 <meta name="version" content="${nextVersion}">
@@ -138,8 +139,8 @@ location.replace(${JSON.stringify(target)}+(segment?segment+"/":""));
 </script>
 <noscript><meta http-equiv="refresh" content="0;url=${target}"></noscript>
 `,
-        },
-      ];
+          },
+        ];
 
   const deployResult = await runDeploy({ skipHeader: true, extraFiles });
 
