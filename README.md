@@ -49,7 +49,13 @@ If you're using iframes or builders, Aunty can publish a `/dat/news/live-iframes
 "aunty": { "useEvergreenIndex": true }
 ```
 
-Then link to `https://abc.net.au/dat/news/live-iframes/`[…]
+Then link to `https://www.abc.net.au/dat/news/live-iframes/<project>/<major>.x.x-latest.html`.
+
+- `?path=<folder>` redirects to a sub-folder of the release, e.g. `?path=map` → `<version>/map/`. Only letters, numbers and `-` (max 64 chars) are allowed; anything else is ignored.
+- All other query params are forwarded.
+- The hash is forwarded as-is.
+
+Example: `2.x.x-latest.html?path=map&theme=dark#top` → `2.3.1/map/?theme=dark#top`.
 
 # Troubleshooting
 

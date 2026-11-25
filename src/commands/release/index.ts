@@ -6,6 +6,7 @@ import { getHeader, spin } from "../../lib/terminal.ts";
 import { findProjectDetails, slugifyStrict } from "../../lib/util.ts";
 import { PUBLIC_PROJECTS_URL } from "../../lib/constants.ts";
 import { getVersionOptions } from "../../lib/semver.ts";
+import { getEvergreenRedirectHtml } from "../../lib/evergreen.ts";
 import { run as runReleaseCheck } from "../release-check/index.ts";
 import { run as runDeploy } from "../deploy/index.ts";
 import * as git from "../../lib/git.ts";
@@ -119,7 +120,8 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
   }
 
   // 7. Deploy the release
-  // Opted-in stable releases publish a transparent `<major>.x.x-latest.html` iframe redirect; `#segment` → `<version>/<segment>/`
+  // Opted-in stable releases publish a transparent `<major>.x.x-latest.html` iframe redirect.
+  // `?path=<segment>` → `<version>/<segment>/`; other query params and the hash are forwarded.
   const target = `${PUBLIC_PROJECTS_URL}${slugifyStrict(projectName)}/${nextVersion}/`;
   const extraFiles =
     pkg.aunty?.useEvergreenIndex !== true || semver.prerelease(nextVersion)
@@ -127,18 +129,7 @@ export async function run(options: ReleaseOptions = {}): Promise<number> {
       : [
           {
             name: `${semver.major(nextVersion)}.x.x-latest.html`,
-            content: `<!doctype html>
-<meta charset="utf-8">
-<meta name="color-scheme" content="light dark">
-<meta name="version" content="${nextVersion}">
-<title>Loading…</title>
-<style>:root{color-scheme:light dark}html,body{background:transparent;margin:0}</style>
-<script>
-var segment=location.hash.match(/^#([a-z0-9-]{1,64})$/i)?.[1];
-location.replace(${JSON.stringify(target)}+(segment?segment+"/":""));
-</script>
-<noscript><meta http-equiv="refresh" content="0;url=${target}"></noscript>
-`,
+            content: getEvergreenRedirectHtml({ target, version: nextVersion }),
           },
         ];
 
