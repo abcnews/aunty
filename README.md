@@ -13,7 +13,7 @@ The repo is split up by commands. You should be able to jump into the command yo
 - [build](./src/commands/build/index.ts)
 - [create](./src/commands/create/index.ts) (aliased as `new`)
 - [deploy](./src/commands/deploy/index.ts)
-- [release](./src/commands/release/index.ts)
+- [release](./src/commands/release/index.ts) (see [Evergreen index](#evergreen-index))
 - [release-check](./src/commands/release-check/index.ts)
 - [serve](./src/commands/serve/index.ts)
 
@@ -40,6 +40,16 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for specifics.
 # Templates
 
 `aunty create` uses a custom template system to create new projects. See [TEMPLATES.md](./TEMPLATES.md) for specifics.
+
+# Evergreen index
+
+If you're using iframes or builders, Aunty can publish a `/dat/news/live-iframes/<project>/<major>.x.x-latest.html` file, which redirects to the latest release in that major version. Set it up by adding this to your `package.json`:
+
+```json
+"aunty": { "useEvergreenIndex": true }
+```
+
+Then link to `https://abc.net.au/dat/news/live-iframes/`[…]
 
 # Troubleshooting
 

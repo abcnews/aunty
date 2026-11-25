@@ -2,7 +2,12 @@ import { realpathSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import pc from "picocolors";
+import slugify from "slugify";
 import type { PackageJson } from "../types.ts";
+
+export function slugifyStrict(name: string): string {
+  return slugify(name, { strict: true });
+}
 
 /**
  * Determines if the current execution of the CLI is running from a local development clone
